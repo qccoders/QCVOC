@@ -1,19 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Backend.Controllers
+using QCVOC.Data.DTO;
+
+namespace QCVOC.Backend.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
-    public class ValuesController : Controller
+    public class SessionsController : Controller
     {
         // GET api/values
+        [AllowAnonymous]
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IActionResult Get()
         {
-            return new string[] { "value1", "value2" };
+            return Ok("test");
         }
 
         // GET api/values/5
@@ -25,8 +30,9 @@ namespace Backend.Controllers
 
         // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public IActionResult Post([FromBody]SessionInfo sessionInfo)
         {
+            return Ok(sessionInfo);
         }
 
         // PUT api/values/5
