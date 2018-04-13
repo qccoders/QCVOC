@@ -2,16 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using QCVOC.DTO;
 
 namespace QCVOC.Backend.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class SessionsController : Controller
     {
         // GET api/values
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult Get()
         {
