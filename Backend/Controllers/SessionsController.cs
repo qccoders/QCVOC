@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using QCVOC.DTO;
+using QCVOC.Data.DTO;
 
 namespace QCVOC.Backend.Controllers
 {
