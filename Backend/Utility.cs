@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace QCVOC.Backend.Utility
+namespace QCVOC.Backend
 {
     public static class Utility
     {
@@ -49,6 +49,30 @@ namespace QCVOC.Backend.Utility
             }
             catch
             {
+            }
+
+            return retVal;
+        }
+
+        /// <summary>
+        ///     Attempts to retrieve the value of the given <paramref name="settingName"/>, first from environment variables, then
+        ///     appsettings.json. Throws <see cref="InvalidOperationException"/> if the setting could not be retrieved.
+        /// </summary>
+        /// <typeparam name="T">The expected value <see cref="Type"/>.</typeparam>
+        /// <param name="settingName">The name of the setting to be retrieved.</param>
+        /// <returns>The value of the retrieved <paramref name="settingName"/> converted to the desired <see cref="Type"/><typeparamref name="T"/>.</returns>
+        /// <exception cref="InvalidCastException"></exception>
+        /// <exception cref="FormatException"></exception>
+        /// <exception cref="OverflowException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static T GetSetting<T>(string settingName)
+        {
+            var retVal = GetSetting<T>(settingName, default(T));
+
+            if (retVal == null)
+            {
+                throw new InvalidOperationException("The specified setting could not be found, and no default value was given.  Check the configuration.");
             }
 
             return retVal;
