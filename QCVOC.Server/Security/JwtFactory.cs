@@ -7,7 +7,7 @@ using System.Text;
 
 namespace QCVOC.Server.Security
 {
-    public class JwtFactory
+    public class JwtFactory : IJwtFactory
     {
         #region Public Methods
 

@@ -13,6 +13,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using QCVOC.Server.Data.Repository;
+using QCVOC.Server.Security;
 
 namespace QCVOC.Server
 {
@@ -31,19 +33,22 @@ namespace QCVOC.Server
             services.AddMvc();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-              .AddJwtBearer(options =>
-              {
-                  options.TokenValidationParameters = new TokenValidationParameters
-                  {
-                      ValidateIssuer = true,
-                      ValidateAudience = true,
-                      ValidateLifetime = true,
-                      ValidateIssuerSigningKey = true,
-                      ValidIssuer = "QCVOC",
-                      ValidAudience = "QCVOC",
-                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("test_key"))
-                  };
-              });
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = "QCVOC",
+                        ValidAudience = "QCVOC",
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("test_key"))
+                    };
+                });
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IJwtFactory, JwtFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
