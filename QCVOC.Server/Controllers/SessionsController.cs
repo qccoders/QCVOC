@@ -6,45 +6,43 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using QCVOC.Data.DTO;
+using QCVOC.Server.Data.Model;
+using QCVOC.Server.Data.Repository;
+using QCVOC.Server.Security;
 
 namespace QCVOC.Server.Controllers
 {
-    [Authorize]
+    [AllowAnonymous]
     [Route("api/[controller]")]
     public class SessionsController : Controller
     {
-        // GET api/values
-        [AllowAnonymous]
-        [HttpGet]
-        public IActionResult Get()
+        private IUserRepository UserRepository { get; set; }
+        private IJwtFactory JwtFactory { get; set; }
+
+        public SessionsController(IUserRepository userRepository, IJwtFactory jwtFactory)
         {
-            return Ok("test");
+            UserRepository = userRepository;
+            JwtFactory = jwtFactory;
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
         [HttpPost]
         public IActionResult Post([FromBody]SessionInfo sessionInfo)
         {
-            return Ok(sessionInfo);
-        }
+            User user = UserRepository.Get(sessionInfo.Name);
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
+            if (user == default(User))
+            {
+                return Unauthorized();
+            }
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            string passwordHash = Utility.ComputeSHA512Hash(sessionInfo.Password);
+
+            if (passwordHash != user.PasswordHash)
+            {
+                return Unauthorized();
+            }
+
+            return Ok(JwtFactory.GetJwt(user));
         }
     }
 }
