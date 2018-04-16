@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace QCVOC.Server.Data.Repository
 {
-    internal interface IRepository<T>
+    public interface IRepository<T>
     {
         #region Public Methods
 

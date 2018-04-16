@@ -2,7 +2,7 @@
 
 namespace QCVOC.Server.Security
 {
-    internal interface IJwtFactory
+    public interface IJwtFactory
     {
         #region Public Methods
 

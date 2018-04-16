@@ -2,7 +2,7 @@
 
 namespace QCVOC.Server.Data.Repository
 {
-    internal interface IUserRepository : IRepository<User>
+    public interface IUserRepository : IRepository<User>
     {
         #region Public Methods
 
