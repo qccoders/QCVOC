@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace QCVOC.Backend
+namespace QCVOC.Server
 {
     public class Startup
     {

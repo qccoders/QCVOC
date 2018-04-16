@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using QCVOC.Data.DTO;
 
-namespace QCVOC.Backend.Controllers
+namespace QCVOC.Server.Controllers
 {
     [Authorize]
     [Route("api/[controller]")]

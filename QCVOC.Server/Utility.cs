@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace QCVOC.Backend
+namespace QCVOC.Server
 {
     public static class Utility
     {

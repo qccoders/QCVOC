@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Backend.Tests
+namespace Server.Tests
 {
     public class UnitTest1
     {

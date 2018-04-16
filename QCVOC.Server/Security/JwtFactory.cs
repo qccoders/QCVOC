@@ -1,11 +1,11 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using QCVOC.Backend.Data.Model;
+using QCVOC.Server.Data.Model;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace QCVOC.Backend.Security
+namespace QCVOC.Server.Security
 {
     public class JwtFactory
     {

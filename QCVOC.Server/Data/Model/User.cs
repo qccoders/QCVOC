@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace QCVOC.Backend.Data.Model
+namespace QCVOC.Server.Data.Model
 {
     public class User
     {
