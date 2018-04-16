@@ -1,12 +1,13 @@
 ﻿using QCVOC.Server.Data.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace QCVOC.Server.Data.Repository
 {
-    interface IUserRepository : IRepository<User>
+    internal interface IUserRepository : IRepository<User>
     {
+        #region Public Methods
+
+        User Get(string name);
+
+        #endregion Public Methods
     }
 }
