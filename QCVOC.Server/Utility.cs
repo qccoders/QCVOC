@@ -1,16 +1,55 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
-namespace QCVOC.Backend
+namespace QCVOC.Server
 {
     public static class Utility
     {
         #region Public Methods
 
         /// <summary>
+        ///     Computes and returns the SHA512 hash of the specified string.
+        /// </summary>
+        /// <param name="content">The string for which the SHA512 hash is to be computed.</param>
+        /// <returns>The SHA512 hash of the specified string.</returns>
+        public static string ComputeSHA512Hash(string content)
+        {
+            return ComputeSHA512Hash(Encoding.ASCII.GetBytes(content));
+        }
+
+        /// <summary>
+        ///     Computes and returns the SHA512 hash of the specified byte array.
+        /// </summary>
+        /// <param name="content">The byte array for which the SHA512 hash is to be computed.</param>
+        /// <returns>The SHA512 hash of the specified byte array.</returns>
+        public static string ComputeSHA512Hash(byte[] content)
+        {
+            byte[] hash;
+
+            using (SHA512 sha512 = new SHA512Managed())
+            {
+                hash = sha512.ComputeHash(content);
+            }
+
+            StringBuilder stringBuilder = new StringBuilder(128);
+
+            foreach (byte b in hash)
+            {
+                stringBuilder.Append(b.ToString("X2"));
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        /// <summary>
         ///     Attempts to retrieve the value of the given <paramref name="settingName"/> from
-        ///     <code>appsettings.json</code>, returning <see cref="string.Empty"/> if the setting could not be retrieved.
+        ///     <code>
+        /// appsettings.json
+        ///     </code>
+        ///     , returning <see cref="string.Empty"/> if the setting could not be retrieved.
         /// </summary>
         /// <param name="settingName">The name of the setting to be retrieved.</param>
         /// <returns>The value of the retrieved <paramref name="settingName"/>.</returns>
