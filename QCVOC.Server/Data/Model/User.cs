@@ -8,7 +8,7 @@ namespace QCVOC.Server.Data.Model
 
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public string PasswordSHA256 { get; set; }
+        public string PasswordHash { get; set; }
         public Role Role { get; set; }
 
         #endregion Public Properties
