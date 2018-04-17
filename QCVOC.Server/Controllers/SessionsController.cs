@@ -28,6 +28,11 @@ namespace QCVOC.Server.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]SessionInfo sessionInfo)
         {
+            if (sessionInfo == default(SessionInfo) || string.IsNullOrEmpty(sessionInfo.Name) || string.IsNullOrEmpty(sessionInfo.Password))
+            {
+                return BadRequest("Invalid session info; please supply a Name and a Password.");
+            }
+
             User user = UserRepository.Get(sessionInfo.Name);
 
             if (user == default(User))
