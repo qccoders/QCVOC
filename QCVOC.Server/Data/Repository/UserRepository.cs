@@ -1,12 +1,19 @@
 ﻿using QCVOC.Server.Data.Model;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace QCVOC.Server.Data.Repository
 {
     public class UserRepository : IRepository<User>, IUserRepository
     {
+        #region Private Properties
+
+        private IDbConnection DbConnection { get; set; }
+
+        #endregion Private Properties
+
         #region Private Fields
 
         private User testUser = new User()
@@ -21,13 +28,15 @@ namespace QCVOC.Server.Data.Repository
 
         #region Public Constructors
 
-        public UserRepository()
+        public UserRepository(IDbConnection dbConnection)
         {
             Users = new List<User>();
             Users.Add(testUser); // remove this later
         }
 
         #endregion Public Constructors
+
+
 
         #region Private Properties
 
