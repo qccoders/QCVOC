@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Npgsql;
+using System;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -13,6 +14,10 @@ namespace QCVOC.Server.Data
             if (typeof(T) == typeof(SqlConnection))
             {
                 return new SqlConnection(connectionString);
+            }
+            else if (typeof(T) == typeof(NpgsqlConnection))
+            {
+                return new NpgsqlConnection(connectionString);
             }
             else
             {
