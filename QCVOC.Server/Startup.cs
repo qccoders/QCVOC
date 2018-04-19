@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 using QCVOC.Server.Data.Repository;
 using QCVOC.Server.Security;
+using System.Data;
 using System.Text;
 
 namespace QCVOC.Server
@@ -63,6 +65,7 @@ namespace QCVOC.Server
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IJwtFactory, JwtFactory>();
+            services.AddTransient<IDbConnection, NpgsqlConnection>(serviceProvider => new NpgsqlConnection("conn string"));
         }
 
         #endregion Public Methods
