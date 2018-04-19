@@ -2,6 +2,7 @@
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SQLite;
 
 namespace QCVOC.Server.Data
 {
@@ -18,6 +19,10 @@ namespace QCVOC.Server.Data
             else if (typeof(T) == typeof(NpgsqlConnection))
             {
                 return new NpgsqlConnection(connectionString);
+            }
+            else if (typeof(T) == typeof(SQLiteConnection))
+            {
+                return new SQLiteConnection(connectionString);
             }
             else
             {
