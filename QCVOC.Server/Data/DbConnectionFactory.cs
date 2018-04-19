@@ -8,7 +8,7 @@ namespace QCVOC.Server.Data
     {
         #region Public Methods
 
-        public IDbConnection GetDbConnection<T>(string connectionString)
+        public IDbConnection GetDbConnection<T>(string connectionString) where T : IDbConnection
         {
             if (typeof(T) == typeof(SqlConnection))
             {
