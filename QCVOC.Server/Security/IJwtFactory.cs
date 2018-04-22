@@ -1,4 +1,5 @@
 ﻿using QCVOC.Server.Data.Model;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace QCVOC.Server.Security
 {
@@ -6,7 +7,7 @@ namespace QCVOC.Server.Security
     {
         #region Public Methods
 
-        string GetJwt(Account account);
+        JwtSecurityToken GetJwt(Account account);
 
         #endregion Public Methods
     }
