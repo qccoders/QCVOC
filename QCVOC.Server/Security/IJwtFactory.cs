@@ -6,7 +6,7 @@ namespace QCVOC.Server.Security
     {
         #region Public Methods
 
-        string GetJwt(User user);
+        string GetJwt(Account account);
 
         #endregion Public Methods
     }

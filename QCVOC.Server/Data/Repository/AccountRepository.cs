@@ -7,11 +7,11 @@ using System.Linq;
 
 namespace QCVOC.Server.Data.Repository
 {
-    public class UserRepository : IRepository<User>, IUserRepository
+    public class AccountRepository : IRepository<Account>, IAccountRepository
     {
         #region Public Constructors
 
-        public UserRepository(IDbConnection dbConnection)
+        public AccountRepository(IDbConnection dbConnection)
         {
             DbConnection = dbConnection;
         }
@@ -21,13 +21,13 @@ namespace QCVOC.Server.Data.Repository
         #region Private Properties
 
         private IDbConnection DbConnection { get; set; }
-        private List<User> Users { get; set; }
+        private List<Account> Accounts { get; set; }
 
         #endregion Private Properties
 
         #region Public Methods
 
-        public void Create(User user)
+        public void Create(Account Account)
         {
         }
 
@@ -35,36 +35,36 @@ namespace QCVOC.Server.Data.Repository
         {
         }
 
-        public void Delete(User user)
+        public void Delete(Account Account)
         {
         }
 
-        public User Get(Guid id)
-        {
-            FetchAccounts();
-
-            return Users.Where(u => u.Id == id).FirstOrDefault();
-        }
-
-        public User Get(string name)
+        public Account Get(Guid id)
         {
             FetchAccounts();
 
-            return Users.Where(u => u.Name == name).FirstOrDefault();
+            return Accounts.Where(u => u.Id == id).FirstOrDefault();
         }
 
-        public IList<User> GetAll()
+        public Account Get(string name)
         {
             FetchAccounts();
 
-            return Users;
+            return Accounts.Where(u => u.Name == name).FirstOrDefault();
         }
 
-        public void Update(Guid id, User updatedUser)
+        public IList<Account> GetAll()
+        {
+            FetchAccounts();
+
+            return Accounts;
+        }
+
+        public void Update(Guid id, Account updatedAccount)
         {
         }
 
-        public void Update(User user, User updatedUser)
+        public void Update(Account Account, Account updatedAccount)
         {
         }
 
@@ -74,7 +74,7 @@ namespace QCVOC.Server.Data.Repository
         {
             var query = "SELECT id, name, passwordhash, role FROM account";
 
-            Users = (List<User>)DbConnection.Query<User>(query);
+            Accounts = (List<Account>)DbConnection.Query<Account>(query);
         }
     }
 }

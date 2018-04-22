@@ -17,7 +17,7 @@ namespace QCVOC.Server.Data.Model
 
         public DateTime EndTime { get; set; }
 
-        public IList<User> Hosts { get; set; }
+        public IList<Account> Hosts { get; set; }
 
         #endregion Public Properties
     }

@@ -16,12 +16,12 @@ namespace QCVOC.Server.Controllers
     [Route("api/[controller]")]
     public class SessionsController : Controller
     {
-        private IUserRepository UserRepository { get; set; }
+        private IAccountRepository AccountRepository { get; set; }
         private IJwtFactory JwtFactory { get; set; }
 
-        public SessionsController(IUserRepository userRepository, IJwtFactory jwtFactory)
+        public SessionsController(IAccountRepository accountRepository, IJwtFactory jwtFactory)
         {
-            UserRepository = userRepository;
+            AccountRepository = accountRepository;
             JwtFactory = jwtFactory;
         }
 
@@ -33,21 +33,21 @@ namespace QCVOC.Server.Controllers
                 return BadRequest("Invalid session info; please supply a Name and a Password.");
             }
 
-            User user = UserRepository.Get(sessionInfo.Name);
+            Account account = AccountRepository.Get(sessionInfo.Name);
 
-            if (user == default(User))
+            if (account == default(Account))
             {
                 return Unauthorized();
             }
 
             string passwordHash = Utility.ComputeSHA512Hash(sessionInfo.Password);
 
-            if (passwordHash != user.PasswordHash)
+            if (passwordHash != account.PasswordHash)
             {
                 return Unauthorized();
             }
 
-            return Ok(JwtFactory.GetJwt(user));
+            return Ok(JwtFactory.GetJwt(account));
         }
     }
 }

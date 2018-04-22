@@ -2,7 +2,7 @@
 
 namespace QCVOC.Server.Data.Model
 {
-    public class User
+    public class Account
     {
         #region Public Properties
 

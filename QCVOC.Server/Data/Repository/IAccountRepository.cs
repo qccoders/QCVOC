@@ -2,11 +2,11 @@
 
 namespace QCVOC.Server.Data.Repository
 {
-    public interface IUserRepository : IRepository<User>
+    public interface IAccountRepository : IRepository<Account>
     {
         #region Public Methods
 
-        User Get(string name);
+        Account Get(string name);
 
         #endregion Public Methods
     }
