@@ -5,10 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using QCVOC.Server.Data.Model;
 
 namespace QCVOC.Server.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = nameof(Role.Administrator))]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class ValuesController : Controller

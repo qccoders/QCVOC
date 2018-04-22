@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,6 +9,8 @@ using Npgsql;
 using QCVOC.Server.Data.Repository;
 using QCVOC.Server.Security;
 using System.Data;
+using System.Runtime.ExceptionServices;
+using System.Security.Claims;
 using System.Text;
 
 namespace QCVOC.Server
@@ -40,6 +43,7 @@ namespace QCVOC.Server
             }
 
             app.UseAuthentication();
+
             app.UseMvc();
         }
 
