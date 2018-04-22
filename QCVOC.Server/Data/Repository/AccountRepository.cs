@@ -13,14 +13,14 @@ namespace QCVOC.Server.Data.Repository
 
         public AccountRepository(IDbConnection dbConnection)
         {
-            DbConnection = dbConnection;
+            Db = dbConnection;
         }
 
         #endregion Public Constructors
 
         #region Private Properties
 
-        private IDbConnection DbConnection { get; set; }
+        private IDbConnection Db { get; set; }
         private List<Account> Accounts { get; set; }
 
         #endregion Private Properties
@@ -41,23 +41,25 @@ namespace QCVOC.Server.Data.Repository
 
         public Account Get(Guid id)
         {
-            FetchAccounts();
+            string sql = "SELECT id, name, passwordhash, role FROM account";
+            sql += " WHERE id = @Id";
 
-            return Accounts.Where(u => u.Id == id).FirstOrDefault();
+            return Db.Query<Account>(sql, new { Id = id }).FirstOrDefault();
         }
 
         public Account Get(string name)
         {
-            FetchAccounts();
+            string sql = "SELECT id, name, passwordhash, role FROM account";
+            sql += " WHERE name = @Name";
 
-            return Accounts.Where(u => u.Name == name).FirstOrDefault();
+            return Db.Query<Account>(sql, new { Name = name }).FirstOrDefault();
         }
 
         public IList<Account> GetAll()
         {
-            FetchAccounts();
+            string sql = "SELECT id, name, passwordhash, role FROM account";
 
-            return Accounts;
+            return Db.Query<Account>(sql).ToList();
         }
 
         public void Update(Guid id, Account updatedAccount)
@@ -69,12 +71,5 @@ namespace QCVOC.Server.Data.Repository
         }
 
         #endregion Public Methods
-
-        private void FetchAccounts()
-        {
-            var query = "SELECT id, name, passwordhash, role FROM account";
-
-            Accounts = (List<Account>)DbConnection.Query<Account>(query);
-        }
     }
 }
