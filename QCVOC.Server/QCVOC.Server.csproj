@@ -6,6 +6,10 @@
     <AssemblyName>QCVOC.Server</AssemblyName>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp2.0\QCVOC.Server.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Data\DbConnectionFactory.cs" />
     <Compile Remove="Data\DbConnectionType.cs" />
