@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using QCVOC.Server.Data.Repository;
@@ -10,6 +11,7 @@ using QCVOC.Server.Security;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Text;
 
 namespace QCVOC.Server
@@ -77,6 +79,9 @@ namespace QCVOC.Server
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
+
+                var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "QCVOC.Server.xml");
+                c.IncludeXmlComments(filePath);
 
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme()
                 {
