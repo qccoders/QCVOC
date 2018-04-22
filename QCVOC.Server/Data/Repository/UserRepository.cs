@@ -1,4 +1,5 @@
-﻿using QCVOC.Server.Data.Model;
+﻿using Dapper;
+using QCVOC.Server.Data.Model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -8,38 +9,18 @@ namespace QCVOC.Server.Data.Repository
 {
     public class UserRepository : IRepository<User>, IUserRepository
     {
-        #region Private Properties
-
-        private IDbConnection DbConnection { get; set; }
-
-        #endregion Private Properties
-
-        #region Private Fields
-
-        private User testUser = new User()
-        {
-            Id = Guid.NewGuid(),
-            Name = "test",
-            PasswordHash = "EE26B0DD4AF7E749AA1A8EE3C10AE9923F618980772E473F8819A5D4940E0DB27AC185F8A0E1D5F84F88BC887FD67B143732C304CC5FA9AD8E6F57F50028A8FF", // test
-            Role = Role.Administrator
-        };
-
-        #endregion Private Fields
-
         #region Public Constructors
 
         public UserRepository(IDbConnection dbConnection)
         {
-            Users = new List<User>();
-            Users.Add(testUser); // remove this later
+            DbConnection = dbConnection;
         }
 
         #endregion Public Constructors
 
-
-
         #region Private Properties
 
+        private IDbConnection DbConnection { get; set; }
         private List<User> Users { get; set; }
 
         #endregion Private Properties
@@ -60,16 +41,22 @@ namespace QCVOC.Server.Data.Repository
 
         public User Get(Guid id)
         {
+            FetchAccounts();
+
             return Users.Where(u => u.Id == id).FirstOrDefault();
         }
 
         public User Get(string name)
         {
+            FetchAccounts();
+
             return Users.Where(u => u.Name == name).FirstOrDefault();
         }
 
         public IList<User> GetAll()
         {
+            FetchAccounts();
+
             return Users;
         }
 
@@ -82,5 +69,12 @@ namespace QCVOC.Server.Data.Repository
         }
 
         #endregion Public Methods
+
+        private void FetchAccounts()
+        {
+            var query = "SELECT id, name, passwordhash, role FROM account";
+
+            Users = (List<User>)DbConnection.Query<User>(query);
+        }
     }
 }
