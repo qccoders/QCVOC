@@ -65,7 +65,8 @@ namespace QCVOC.Server
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IJwtFactory, JwtFactory>();
-            services.AddTransient<IDbConnection, NpgsqlConnection>(serviceProvider => new NpgsqlConnection("conn string"));
+            services.AddTransient<IDbConnection, NpgsqlConnection>(serviceProvider => 
+                new NpgsqlConnection("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
         }
 
         #endregion Public Methods
