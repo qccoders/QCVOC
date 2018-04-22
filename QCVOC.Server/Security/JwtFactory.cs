@@ -26,7 +26,7 @@ namespace QCVOC.Server.Security
                 issuer: Utility.GetSetting<string>("JwtIssuer", "QCVOC"),
                 audience: Utility.GetSetting<string>("JwtAudience", "QCVOC"),
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddDays(1),
                 signingCredentials: credentials
             );
 

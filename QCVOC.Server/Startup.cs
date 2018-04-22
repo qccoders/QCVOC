@@ -39,29 +39,28 @@ namespace QCVOC.Server
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseMvc();
             app.UseAuthentication();
+            app.UseMvc();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
                         ValidIssuer = "QCVOC",
+                        ValidateIssuer = true,
                         ValidAudience = "QCVOC",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("test_key"))
-                    };
-                });
+                        ValidateAudience = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>("JwtKey", "EE26B0DD4AF7E749AA1A8EE3C10AE9923F618980772E473F8819A5D4940E0DB27AC185F8A0E1D5F84F88BC887FD67B143732C304CC5FA9AD8E6F57F50028A8FF"))),
+                        ValidateIssuerSigningKey = true,
+                };
+            });
+
+            services.AddMvc();
 
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<IJwtFactory, JwtFactory>();
