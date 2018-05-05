@@ -14,7 +14,8 @@ using System.Security.Claims;
 namespace QCVOC.Server.Controllers
 {
     [AllowAnonymous]
-    [Route("api/[controller]")]
+    [Route("api/sessions")]
+    [Produces("application/json")]
     public class SessionsController : Controller
     {
         #region Public Constructors
@@ -45,7 +46,7 @@ namespace QCVOC.Server.Controllers
         /// <response code="400">The provided input is invalid.</response>
         /// <response code="401">Authentication failed.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
-        [HttpPost("/")]
+        [HttpPost("")]
         [ProducesResponseType(typeof(Jwt), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
