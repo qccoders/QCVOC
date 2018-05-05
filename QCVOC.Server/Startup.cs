@@ -5,8 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
 using Npgsql;
 using QCVOC.Server.Data.Repository;
+using QCVOC.Server.Middleware;
 using QCVOC.Server.Security;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
@@ -18,6 +20,8 @@ namespace QCVOC.Server
 {
     public class Startup
     {
+        private readonly Logger logger = LogManager.GetCurrentClassLogger();
+
         #region Public Constructors
 
         public Startup(IConfiguration configuration)
@@ -43,6 +47,7 @@ namespace QCVOC.Server
             }
 
             app.UseAuthentication();
+            app.UseMiddleware<LoggingMiddleware>();
 
             app.UseMvc();
 
@@ -58,7 +63,7 @@ namespace QCVOC.Server
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<IJwtFactory, JwtFactory>();
             services.AddTransient<IDbConnection, NpgsqlConnection>(serviceProvider =>
-                new NpgsqlConnection("User ID=QCVOC;Password=QCVOC;Host=postgresql.celg76k5a9gh.us-east-1.rds.amazonaws.com;Port=5432;Database=QCVOC;Pooling = true;"));
+                new NpgsqlConnection("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
