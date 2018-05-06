@@ -224,3 +224,5 @@ OpenCover/*
 !.vscode/launch.json
 !.vscode/extensions.json
 
+# JetBrains Rider
+.idea/*
