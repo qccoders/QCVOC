@@ -10,8 +10,9 @@ using QCVOC.Server.Data.Model;
 namespace QCVOC.Server.Controllers
 {
     [Authorize(Roles = nameof(Role.Administrator))]
+    [ApiVersion("2")]
+    [Route("api/v2/[controller]")]
     [Produces("application/json")]
-    [Route("api/[controller]")]
     public class ValuesController : Controller
     {
         // GET: api/Values

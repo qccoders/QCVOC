@@ -14,8 +14,10 @@ using System.Security.Claims;
 namespace QCVOC.Server.Controllers
 {
     [AllowAnonymous]
-    [Route("api/sessions")]
+    [ApiVersion("1")]
+    [Route("api/v1/[controller]")]
     [Produces("application/json")]
+    [Consumes("application/json")]
     public class SessionsController : Controller
     {
         #region Public Constructors
