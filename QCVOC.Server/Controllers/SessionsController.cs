@@ -1,18 +1,18 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using QCVOC.Data.DTO;
-using QCVOC.Server.Data.DTO;
-using QCVOC.Server.Data.Model;
-using QCVOC.Server.Data.Repository;
-using QCVOC.Server.Security;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-
 namespace QCVOC.Server.Controllers
 {
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using QCVOC.Data.DTO;
+    using QCVOC.Server.Data.DTO;
+    using QCVOC.Server.Data.Model;
+    using QCVOC.Server.Data.Repository;
+    using QCVOC.Server.Security;
+    using System;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Linq;
+    using System.Security.Claims;
+    
     [AllowAnonymous]
     [ApiVersion("1")]
     [Route("api/v1/[controller]")]
