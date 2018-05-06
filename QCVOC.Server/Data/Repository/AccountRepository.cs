@@ -1,12 +1,12 @@
-﻿using Dapper;
-using QCVOC.Server.Data.Model;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-
-namespace QCVOC.Server.Data.Repository
+﻿namespace QCVOC.Server.Data.Repository
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+    using System.Linq;
+    using Dapper;
+    using QCVOC.Server.Data.Model;
+
     public class AccountRepository : IRepository<Account>, IAccountRepository
     {
         #region Public Constructors
