@@ -8,6 +8,7 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
 using Npgsql;
+using QCVOC.Server.Data.ConnectionFactory;
 using QCVOC.Server.Data.Repository;
 using QCVOC.Server.Middleware;
 using QCVOC.Server.Security;
@@ -23,7 +24,11 @@ namespace QCVOC.Server
 {
     public class Startup
     {
+        #region Private Fields
+
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
+
+        #endregion Private Fields
 
         #region Public Constructors
 
@@ -66,8 +71,8 @@ namespace QCVOC.Server
         {
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<IJwtFactory, JwtFactory>();
-            services.AddTransient<IDbConnection, NpgsqlConnection>(serviceProvider =>
-                new NpgsqlConnection("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
+            services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
+                new NpgsqlDbConnectionFactory("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -85,7 +90,8 @@ namespace QCVOC.Server
 
             services.AddMvc();
 
-            services.AddApiVersioning(o => {
+            services.AddApiVersioning(o =>
+            {
                 o.ReportApiVersions = true;
                 o.AssumeDefaultVersionWhenUnspecified = true;
                 o.DefaultApiVersion = new ApiVersion(2, 0);
