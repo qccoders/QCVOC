@@ -1,29 +1,28 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.PlatformAbstractions;
-using Microsoft.IdentityModel.Tokens;
-using NLog;
-using Npgsql;
-using QCVOC.Server.Data.ConnectionFactory;
-using QCVOC.Server.Data.Model;
-using QCVOC.Server.Data.Repository;
-using QCVOC.Server.Middleware;
-using QCVOC.Server.Security;
-using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-namespace QCVOC.Server
+﻿namespace QCVOC.Server
 {
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Reflection;
+    using System.Text;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ApiExplorer;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.PlatformAbstractions;
+    using Microsoft.IdentityModel.Tokens;
+    using NLog;
+    using QCVOC.Server.Data.ConnectionFactory;
+    using QCVOC.Server.Data.Model;
+    using QCVOC.Server.Data.Repository;
+    using QCVOC.Server.Middleware;
+    using QCVOC.Server.Security;
+    using Swashbuckle.AspNetCore.Swagger;
+    using Swashbuckle.AspNetCore.SwaggerGen;
+
     public class Startup
     {
         #region Private Fields
@@ -74,10 +73,8 @@ namespace QCVOC.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IJwtFactory, JwtFactory>();
-
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
                 new NpgsqlDbConnectionFactory("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
-
             services.AddTransient<IRepository<Account>, Repository<Account>>(serviceProvider =>
                 new Repository<Account>(serviceProvider.GetService<IDbConnectionFactory>()));
 
@@ -95,18 +92,6 @@ namespace QCVOC.Server
                     };
                 });
 
-            // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
-            // note: the specified format code will format the version as "'v'major[.minor][-status]"
-            services.AddMvcCore().AddVersionedApiExplorer(
-                options =>
-                {
-                    options.GroupNameFormat = "'v'VVV";
-
-                    // note: this option is only necessary when versioning by url segment. the SubstitutionFormat can also be used
-                    // to control the format of the API version in route templates
-                    options.SubstituteApiVersionInUrl = true;
-                });
-
             services.AddMvc();
 
             services.AddApiVersioning(o =>
@@ -116,14 +101,16 @@ namespace QCVOC.Server
                 o.DefaultApiVersion = new ApiVersion(2, 0);
             });
 
+            services.AddMvcCore().AddVersionedApiExplorer(o =>
+            {
+                o.GroupNameFormat = "'v'VVV";
+                o.SubstituteApiVersionInUrl = true;
+            });
+
             services.AddSwaggerGen(c =>
             {
-                // resolve the IApiVersionDescriptionProvider service
-                // note: that we have to build a temporary service provider here because one has not been created yet
                 var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
 
-                // add a swagger document for each discovered API version
-                // note: you might choose to skip or document deprecated API versions differently
                 foreach (var description in provider.ApiVersionDescriptions)
                 {
                     c.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
@@ -138,16 +125,17 @@ namespace QCVOC.Server
                     return versions.Any(v => $"v{v.ToString()}" == docName);
                 });
 
-                var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "QCVOC.Server.xml");
-                c.IncludeXmlComments(filePath);
+                c.IncludeXmlComments(GetXmlCommentsFilePath());
 
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme()
+                var apiKeyScheme = new ApiKeyScheme()
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
                     In = "header",
-                    Type = "apiKey"
-                });
+                    Type = "apiKey",
+                };
+
+                c.AddSecurityDefinition("Bearer", apiKeyScheme);
 
                 c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
                 {
@@ -178,6 +166,13 @@ namespace QCVOC.Server
             }
 
             return info;
+        }
+
+        private static string GetXmlCommentsFilePath()
+        {
+            var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+            var fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
+            return Path.Combine(basePath, fileName);
         }
 
         #endregion Private Methods
