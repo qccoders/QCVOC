@@ -18,14 +18,14 @@ namespace QCVOC.Server.Controllers
     [Authorize(Roles = nameof(Role.Administrator))]
     [Authorize(Roles = nameof(Role.Supervisor))]
     [ApiVersion("1")]
-    [Route("api/v1/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     [Consumes("application/json")]
     public class AccountsController : Controller
     {
         #region Public Constructors
 
-        public AccountsController(IAccountRepository accountRepository)
+        public AccountsController(IRepository<Account> accountRepository)
         {
             AccountRepository = accountRepository;
         }
@@ -34,7 +34,7 @@ namespace QCVOC.Server.Controllers
 
         #region Private Properties
 
-        private IAccountRepository AccountRepository { get; set; }
+        private IRepository<Account> AccountRepository { get; set; }
 
         #endregion Private Properties
 

@@ -1,5 +1,9 @@
 namespace QCVOC.Server.Controllers
 {
+    using System;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Linq;
+    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -8,21 +12,17 @@ namespace QCVOC.Server.Controllers
     using QCVOC.Server.Data.Model;
     using QCVOC.Server.Data.Repository;
     using QCVOC.Server.Security;
-    using System;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Linq;
-    using System.Security.Claims;
-    
+
     [AllowAnonymous]
     [ApiVersion("1")]
-    [Route("api/v1/[controller]")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     [Consumes("application/json")]
     public class SessionsController : Controller
     {
         #region Public Constructors
 
-        public SessionsController(IAccountRepository accountRepository, IJwtFactory jwtFactory)
+        public SessionsController(IRepository<Account> accountRepository, IJwtFactory jwtFactory)
         {
             AccountRepository = accountRepository;
             JwtFactory = jwtFactory;
@@ -32,7 +32,7 @@ namespace QCVOC.Server.Controllers
 
         #region Private Properties
 
-        private IAccountRepository AccountRepository { get; set; }
+        private IRepository<Account> AccountRepository { get; set; }
         private IJwtFactory JwtFactory { get; set; }
 
         #endregion Private Properties
@@ -48,7 +48,7 @@ namespace QCVOC.Server.Controllers
         /// <response code="400">The provided input is invalid.</response>
         /// <response code="401">Authentication failed.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
-        [HttpPost("")]
+        [HttpPost]
         [ProducesResponseType(typeof(Jwt), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
@@ -60,7 +60,7 @@ namespace QCVOC.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            Account account = AccountRepository.Get(sessionInfo.Name);
+            Account account = AccountRepository.GetAll().Where(a => a.Name == sessionInfo.Name).FirstOrDefault();
 
             if (account == default(Account))
             {
