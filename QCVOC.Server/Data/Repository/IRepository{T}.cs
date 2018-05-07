@@ -19,8 +19,8 @@ namespace QCVOC.Server.Data.Repository
         /// <summary>
         ///     Creates a new resource from the specified resource.
         /// </summary>
-        /// <param name="newResource">The resource to create.</param>
-        void Create(T newResource);
+        /// <param name="resource">The resource to create.</param>
+        void Create(T resource);
 
         /// <summary>
         ///     Deletes the resource matching the specified <paramref name="id"/>.
@@ -48,18 +48,10 @@ namespace QCVOC.Server.Data.Repository
         IEnumerable<T> GetAll();
 
         /// <summary>
-        ///     Updates the resource matching the specified <paramref name="id"/> with the specified <paramref name="updatedResource"/>.
+        ///     Updates the specified <paramref name="resource"/>.
         /// </summary>
-        /// <param name="id">The id of the resource to update.</param>
-        /// <param name="updatedResource">The information with which to update the resource.</param>
-        void Update(Guid id, T updatedResource);
-
-        /// <summary>
-        ///     Updates the specified <paramref name="resource"/> with the specified <paramref name="updatedResource"/>.
-        /// </summary>
-        /// <param name="resource">The resource to update.</param>
-        /// <param name="updatedResource">The information with which to update the resource.</param>
-        void Update(T resource, T updatedResource);
+        /// <param name="resource">The updated resource.</param>
+        void Update(T resource);
 
         #endregion Public Methods
     }
