@@ -72,7 +72,10 @@ namespace QCVOC.Server.Controllers
                 return Unauthorized();
             }
 
-            return Ok(JwtFactory.GetJwt(account));
+            var jwt = JwtFactory.GetJwt(account);
+            var token = new JwtSecurityTokenHandler().WriteToken(jwt);
+
+            return Ok(token);
         }
 
         #endregion Public Methods
