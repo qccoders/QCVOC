@@ -43,7 +43,7 @@ namespace QCVOC.Server.Controllers
         ///     Starts a new session with the provided name and password.
         /// </summary>
         /// <param name="sessionInfo">The name and password with which to create the session.</param>
-        /// <returns></returns>
+        /// <returns>See attributes.</returns>
         /// <response code="200">Session started successfully.</response>
         /// <response code="400">The provided input is invalid.</response>
         /// <response code="401">Authentication failed.</response>
