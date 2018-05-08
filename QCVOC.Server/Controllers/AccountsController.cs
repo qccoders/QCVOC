@@ -15,8 +15,7 @@ namespace QCVOC.Server.Controllers
     using QCVOC.Server.Data.Model;
     using QCVOC.Server.Data.Repository;
 
-    [Authorize(Roles = nameof(Role.Administrator))]
-    [Authorize(Roles = nameof(Role.Supervisor))]
+    [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
