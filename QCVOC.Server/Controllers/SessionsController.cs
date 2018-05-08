@@ -3,12 +3,10 @@ namespace QCVOC.Server.Controllers
     using System;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
-    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Data.DTO;
-    using QCVOC.Server.Data.DTO;
     using QCVOC.Server.Data.Model;
     using QCVOC.Server.Data.Repository;
     using QCVOC.Server.Security;
@@ -49,7 +47,7 @@ namespace QCVOC.Server.Controllers
         /// <response code="401">Authentication failed.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost]
-        [ProducesResponseType(typeof(Jwt), 200)]
+        [ProducesResponseType(typeof(JwtSecurityToken), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(typeof(Exception), 500)]
@@ -74,17 +72,7 @@ namespace QCVOC.Server.Controllers
                 return Unauthorized();
             }
 
-            JwtSecurityToken token = JwtFactory.GetJwt(account);
-
-            Jwt jwt = new Jwt()
-            {
-                Token = new JwtSecurityTokenHandler().WriteToken(token),
-                Name = token.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value,
-                Role = (Role)Enum.Parse(typeof(Role), token.Claims.Where(c => c.Type == ClaimTypes.Role).FirstOrDefault().Value),
-                Expires = token.ValidTo
-            };
-
-            return Ok(jwt);
+            return Ok(JwtFactory.GetJwt(account));
         }
 
         #endregion Public Methods
