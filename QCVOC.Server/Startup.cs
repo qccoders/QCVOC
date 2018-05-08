@@ -14,6 +14,8 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.PlatformAbstractions;
     using Microsoft.IdentityModel.Tokens;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Converters;
     using NLog;
     using QCVOC.Server.Data.ConnectionFactory;
     using QCVOC.Server.Data.Model;
@@ -92,7 +94,11 @@
                     };
                 });
 
-            services.AddMvc();
+            services.AddMvc().AddJsonOptions(options =>
+            {
+                options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            });
 
             services.AddApiVersioning(o =>
             {
@@ -152,12 +158,11 @@
         {
             var info = new Info()
             {
-                Title = $"Sample API {description.ApiVersion}",
+                Title = $"QCVOC API v{description.ApiVersion}",
                 Version = description.ApiVersion.ToString(),
-                Description = "A sample application with Swagger, Swashbuckle, and API versioning.",
-                Contact = new Contact() { Name = "Bill Mei", Email = "bill.mei@somewhere.com" },
-                TermsOfService = "Shareware",
-                License = new License() { Name = "MIT", Url = "https://opensource.org/licenses/MIT" }
+                Description = "An event management application for the Quad Cities Veteran's Outreach Center.",
+                Contact = new Contact() { Name = "QC Coders", Email = "info@qccoders.org" },
+                License = new License() { Name = "GPLv3", Url = "https://www.gnu.org/licenses/gpl-3.0.en.html" }
             };
 
             if (description.IsDeprecated)
