@@ -18,8 +18,8 @@ namespace QCVOC.Server.Security
 
             var claims = new[]
             {
-                new Claim("name", account.Name),
-                new Claim("role", account.Role.ToString()),
+                new Claim(ClaimTypes.Name, account.Name),
+                new Claim(ClaimTypes.Role, account.Role.ToString()),
             };
 
             var token = new JwtSecurityToken(
