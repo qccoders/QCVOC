@@ -7,6 +7,7 @@ namespace QCVOC.Server.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Data.DTO;
+    using QCVOC.Server.Data.DTO;
     using QCVOC.Server.Data.Model;
     using QCVOC.Server.Data.Repository;
     using QCVOC.Server.Security;
@@ -72,10 +73,10 @@ namespace QCVOC.Server.Controllers
                 return Unauthorized();
             }
 
-            var jwt = JwtFactory.GetJwt(account);
-            var token = new JwtSecurityTokenHandler().WriteToken(jwt);
+            var accessToken = JwtFactory.GetAccessToken(account);
+            var refreshToken = JwtFactory.GetRefreshToken(Guid.NewGuid());
 
-            return Ok(token);
+            return Ok(new JwtResponse(accessToken, refreshToken));
         }
 
         #endregion Public Methods
