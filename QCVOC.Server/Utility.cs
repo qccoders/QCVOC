@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace QCVOC.Server
+﻿namespace QCVOC.Server
 {
+    using System;
+    using System.IO;
+    using System.Security.Cryptography;
+    using System.Text;
+    using Microsoft.Extensions.Configuration;
+
     public static class Utility
     {
         #region Public Methods
