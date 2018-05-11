@@ -1,21 +1,17 @@
 ﻿namespace QCVOC.Server.Security
 {
     using System;
-    using System.IdentityModel.Tokens.Jwt;
-    using System.Security.Claims;
     using QCVOC.Server.Data.Model.Security;
 
     public interface IJwtFactory
     {
         #region Public Methods
 
-        JwtSecurityToken GetAccessToken(Account account);
+        Jwt GetJwt(Account account);
 
-        JwtSecurityToken GetJwtSecurityToken(int expiry, params Claim[] claims);
+        Jwt GetJwt(Account account, Guid refreshTokenId);
 
-        JwtSecurityToken GetRefreshToken(Guid id);
-
-        bool TryParseJwtSecurityToken(string token, out JwtSecurityToken jwt);
+        bool TryParseRefreshTokenId(string jwt, out Guid refreshTokenId);
 
         #endregion Public Methods
     }
