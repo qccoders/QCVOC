@@ -31,11 +31,13 @@
         public bool TryParseJwtSecurityToken(string token, out JwtSecurityToken jwtSecurityToken)
         {
             jwtSecurityToken = default(JwtSecurityToken);
-            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var validationParameters = new TokenValidationParametersFactory().GetParameters();
 
             try
             {
-                tokenHandler.Can;
+                SecurityToken securityToken;
+                new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out securityToken);
 
                 jwtSecurityToken = new JwtSecurityToken(token);
                 return true;
