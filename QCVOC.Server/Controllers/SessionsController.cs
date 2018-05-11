@@ -8,7 +8,7 @@ namespace QCVOC.Server.Controllers
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Data.DTO;
     using QCVOC.Server.Data.DTO;
-    using QCVOC.Server.Data.Model;
+    using QCVOC.Server.Data.Model.Security;
     using QCVOC.Server.Data.Repository;
     using QCVOC.Server.Security;
 
@@ -21,10 +21,11 @@ namespace QCVOC.Server.Controllers
     {
         #region Public Constructors
 
-        public SessionsController(IRepository<Account> accountRepository, IJwtFactory jwtFactory)
+        public SessionsController(IRepository<Account> accountRepository, IJwtFactory jwtFactory, IRepository<RefreshToken> refreshTokenRepository)
         {
             AccountRepository = accountRepository;
             JwtFactory = jwtFactory;
+            RefreshTokenRepository = refreshTokenRepository;
         }
 
         #endregion Public Constructors
@@ -33,6 +34,7 @@ namespace QCVOC.Server.Controllers
 
         private IRepository<Account> AccountRepository { get; set; }
         private IJwtFactory JwtFactory { get; set; }
+        private IRepository<RefreshToken> RefreshTokenRepository { get; set; }
 
         #endregion Private Properties
 
@@ -52,7 +54,7 @@ namespace QCVOC.Server.Controllers
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Post([FromBody]SessionInfo sessionInfo)
+        public IActionResult CreateSession([FromBody]SessionInfo sessionInfo)
         {
             if (!ModelState.IsValid)
             {
