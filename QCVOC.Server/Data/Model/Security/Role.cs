@@ -1,4 +1,4 @@
-﻿namespace QCVOC.Server.Data.Model
+﻿namespace QCVOC.Server.Data.Model.Security
 {
     public enum Role
     {

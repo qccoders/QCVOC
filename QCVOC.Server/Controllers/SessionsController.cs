@@ -3,6 +3,7 @@ namespace QCVOC.Server.Controllers
     using System;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
+    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -76,9 +77,69 @@ namespace QCVOC.Server.Controllers
             }
 
             var accessToken = JwtFactory.GetAccessToken(account);
-            var refreshToken = JwtFactory.GetRefreshToken(Guid.NewGuid());
+            var refreshJwt = JwtFactory.GetRefreshToken(Guid.NewGuid());
 
-            return Ok(new JwtResponse(accessToken, refreshToken));
+            var refreshToken = new RefreshToken()
+            {
+                id = Guid.Parse(refreshJwt.Claims.Where(c => c.Type == ClaimTypes.Hash).FirstOrDefault().Value),
+                accountid = account.Id,
+                issued = DateTime.UtcNow,
+                expires = DateTime.UtcNow, // todo: figure this out
+            };
+
+            // todo: error handling? returns 500 regardless, can improve messaging
+            //RefreshTokenRepository.Create(refreshToken);
+
+            Console.WriteLine(refreshToken.id);
+            return Ok(new JwtResponse(accessToken, refreshJwt));
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(JwtSecurityToken), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult RefreshSession([FromBody]string refreshToken)
+        {
+            JwtSecurityToken refreshJwt;
+            var badRequest = BadRequest("The provided refresh token is invalid.");
+
+            if (!JwtFactory.TryParseJwtSecurityToken(refreshToken, out refreshJwt))
+            {
+                return badRequest;
+            }
+
+            var claim = refreshJwt.Claims.Where(c => c.Type == ClaimTypes.Hash).FirstOrDefault();
+
+            if (claim == default(Claim))
+            {
+                return badRequest;
+            }
+
+            var id = claim.Value;
+            Guid guid;
+
+            if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out guid))
+            {
+                return badRequest;
+            }
+
+            var token = RefreshTokenRepository.Get(guid);
+
+            if (token == default(RefreshToken))
+            {
+                return Unauthorized();
+            }
+
+            var account = AccountRepository.Get(token.accountid);
+
+            if (account == default(Account))
+            {
+                return Unauthorized();
+            }
+
+            var accessToken = JwtFactory.GetAccessToken(account);
+
+            return Ok(new JwtResponse(accessToken, refreshJwt));
         }
 
         #endregion Public Methods

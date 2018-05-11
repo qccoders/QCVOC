@@ -7,6 +7,7 @@ namespace QCVOC.Server.Data.DTO
 {
     using System;
     using QCVOC.Server.Data.Model;
+    using QCVOC.Server.Data.Model.Security;
 
     public class AccountResponse
     {

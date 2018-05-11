@@ -13,6 +13,7 @@ namespace QCVOC.Server.Controllers
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Server.Data.DTO;
     using QCVOC.Server.Data.Model;
+    using QCVOC.Server.Data.Model.Security;
     using QCVOC.Server.Data.Repository;
 
     [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]

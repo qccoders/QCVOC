@@ -6,10 +6,10 @@
     {
         #region Public Properties
 
-        public Guid AccountId { get; set; }
-        public DateTime Expires { get; set; }
-        public Guid Id { get; set; }
-        public DateTime Issued { get; set; }
+        public Guid accountid { get; set; }
+        public DateTime expires { get; set; }
+        public Guid id { get; set; }
+        public DateTime issued { get; set; }
 
         #endregion Public Properties
     }
