@@ -57,11 +57,6 @@ namespace QCVOC.Server.Controllers
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult CreateOrRefreshSession([FromBody]SessionInfo sessionInfo)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             Account account = AccountRepository.GetAll().Where(a => a.Name == sessionInfo.Name).FirstOrDefault();
 
             if (account == default(Account))
@@ -101,54 +96,8 @@ namespace QCVOC.Server.Controllers
             return Ok(new JwtResponse(accessToken, refreshJwt));
         }
 
-        [HttpPut]
-        [ProducesResponseType(typeof(JwtSecurityToken), 200)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult RefreshSession([FromBody]string refreshToken)
-        {
-            JwtSecurityToken refreshJwt;
-            var badRequest = BadRequest("The provided refresh token is invalid.");
-
-            if (!JwtFactory.TryParseJwtSecurityToken(refreshToken, out refreshJwt))
-            {
-                return badRequest;
-            }
-
-            var claim = refreshJwt.Claims.Where(c => c.Type == ClaimTypes.Hash).FirstOrDefault();
-
-            if (claim == default(Claim))
-            {
-                return badRequest;
-            }
-
-            var id = claim.Value;
-            Guid guid;
-
-            if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out guid))
-            {
-                return badRequest;
-            }
-
-            var token = RefreshTokenRepository.Get(guid);
-
-            if (token == default(RefreshToken))
-            {
-                return Unauthorized();
-            }
-
-            var account = AccountRepository.Get(token.AccountId);
-
-            if (account == default(Account))
-            {
-                return Unauthorized();
-            }
-
-            var accessToken = JwtFactory.GetAccessToken(account);
-
-            return Ok(new Jwt(accessToken, refreshJwt));
-        }
-
         #endregion Public Methods
+
+        private
     }
 }
