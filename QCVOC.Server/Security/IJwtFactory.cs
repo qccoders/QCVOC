@@ -3,7 +3,7 @@
     using System;
     using System.IdentityModel.Tokens.Jwt;
     using System.Security.Claims;
-    using QCVOC.Server.Data.Model;
+    using QCVOC.Server.Data.Model.Security;
 
     public interface IJwtFactory
     {

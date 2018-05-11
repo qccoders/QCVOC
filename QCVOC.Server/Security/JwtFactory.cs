@@ -5,7 +5,7 @@
     using System.Security.Claims;
     using System.Text;
     using Microsoft.IdentityModel.Tokens;
-    using QCVOC.Server.Data.Model;
+    using QCVOC.Server.Data.Model.Security;
     using Utility = Utility;
 
     public class JwtFactory : IJwtFactory
