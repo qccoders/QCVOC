@@ -55,7 +55,7 @@ namespace QCVOC.Server.Controllers
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult CreateSession([FromBody]SessionInfo sessionInfo)
+        public IActionResult CreateOrRefreshSession([FromBody]SessionInfo sessionInfo)
         {
             if (!ModelState.IsValid)
             {
@@ -146,7 +146,7 @@ namespace QCVOC.Server.Controllers
 
             var accessToken = JwtFactory.GetAccessToken(account);
 
-            return Ok(new JwtResponse(accessToken, refreshJwt));
+            return Ok(new Jwt(accessToken, refreshJwt));
         }
 
         #endregion Public Methods
