@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Server.Data.Model
+namespace QCVOC.Server.Data.Model.Security
 {
     using System;
 
