@@ -25,6 +25,8 @@
     using QCVOC.Server.Security;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
+    using Dapper;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class Startup
     {

@@ -1,15 +1,23 @@
 ﻿namespace QCVOC.Server.Data.Model.Security
 {
+    using Dapper.Contrib.Extensions;
     using System;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     public class RefreshToken
     {
         #region Public Properties
 
-        public Guid accountid { get; set; }
-        public DateTime expires { get; set; }
-        public Guid id { get; set; }
-        public DateTime issued { get; set; }
+        [ExplicitKey]
+        [Column("accountid")]
+        public Guid AccountId { get; set; }
+        [Column("expires")]
+        public DateTime Expires { get; set; }
+
+        [Column("tokenid")]
+        public Guid TokenId { get; set; }
+        [Column("issued")]
+        public DateTime Issued { get; set; }
 
         #endregion Public Properties
     }

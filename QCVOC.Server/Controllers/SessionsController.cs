@@ -77,20 +77,27 @@ namespace QCVOC.Server.Controllers
             }
 
             var accessToken = JwtFactory.GetAccessToken(account);
-            var refreshJwt = JwtFactory.GetRefreshToken(Guid.NewGuid());
 
-            var refreshToken = new RefreshToken()
+            var token = RefreshTokenRepository.Get(account.Id);
+            Guid refreshTokenId;
+
+            if (token == default(RefreshToken))
             {
-                id = Guid.Parse(refreshJwt.Claims.Where(c => c.Type == ClaimTypes.Hash).FirstOrDefault().Value),
-                accountid = account.Id,
-                issued = DateTime.UtcNow,
-                expires = DateTime.UtcNow, // todo: figure this out
-            };
+                refreshTokenId = Guid.NewGuid();
 
-            // todo: error handling? returns 500 regardless, can improve messaging
-            //RefreshTokenRepository.Create(refreshToken);
+                var refreshToken = new RefreshToken()
+                {
+                    TokenId = Guid.NewGuid(),
+                    AccountId = account.Id,
+                    Issued = DateTime.UtcNow,
+                    Expires = DateTime.UtcNow, // todo: figure this out
+                };
 
-            Console.WriteLine(refreshToken.id);
+                // todo: error handling? returns 500 regardless, can improve messaging
+                RefreshTokenRepository.Create(refreshToken);
+            }
+
+            var refreshJwt = JwtFactory.GetRefreshToken(refreshTokenId);
             return Ok(new JwtResponse(accessToken, refreshJwt));
         }
 
@@ -130,7 +137,7 @@ namespace QCVOC.Server.Controllers
                 return Unauthorized();
             }
 
-            var account = AccountRepository.Get(token.accountid);
+            var account = AccountRepository.Get(token.AccountId);
 
             if (account == default(Account))
             {
