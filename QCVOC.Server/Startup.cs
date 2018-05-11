@@ -19,6 +19,7 @@
     using NLog;
     using QCVOC.Server.Data.ConnectionFactory;
     using QCVOC.Server.Data.Model;
+    using QCVOC.Server.Data.Model.Security;
     using QCVOC.Server.Data.Repository;
     using QCVOC.Server.Middleware;
     using QCVOC.Server.Security;
@@ -74,11 +75,13 @@
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IJwtFactory, JwtFactory>();
+            services.AddSingleton<IJwtFactory, JwtFactory>();
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
                 new NpgsqlDbConnectionFactory("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
-            services.AddTransient<IRepository<Account>, Repository<Account>>(serviceProvider =>
+            services.AddScoped<IRepository<Account>, Repository<Account>>(serviceProvider =>
                 new Repository<Account>(serviceProvider.GetService<IDbConnectionFactory>()));
+            services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>(serviceProvider =>
+                new Repository<RefreshToken>(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
