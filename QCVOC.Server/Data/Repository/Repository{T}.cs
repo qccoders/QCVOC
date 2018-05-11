@@ -10,6 +10,10 @@ namespace QCVOC.Server.Data.Repository
     using System.Data;
     using Dapper.Contrib.Extensions;
     using QCVOC.Server.Data.ConnectionFactory;
+    using QCVOC.Server.Data.Model.Security;
+    using Dapper;
+    using System.Linq;
+    using System.ComponentModel.DataAnnotations.Schema;
 
     /// <summary>
     ///     A repository for application user Accounts.
@@ -26,6 +30,16 @@ namespace QCVOC.Server.Data.Repository
         public Repository(IDbConnectionFactory dbConnectionFactory)
         {
             ConnectionFactory = dbConnectionFactory;
+
+            Dapper.SqlMapper.SetTypeMap(
+    typeof(RefreshToken),
+    new CustomPropertyTypeMap(
+        typeof(RefreshToken),
+        (type, columnName) =>
+            type.GetProperties().FirstOrDefault(prop =>
+                prop.GetCustomAttributes(false)
+                    .OfType<ColumnAttribute>()
+                    .Any(attr => attr.Name == columnName))));
         }
 
         #endregion Public Constructors
@@ -40,9 +54,11 @@ namespace QCVOC.Server.Data.Repository
 
         public void Create(T resource)
         {
+
             using (IDbConnection db = ConnectionFactory.CreateConnection())
             {
-                db.Insert<T>(resource);
+                var id = db.Insert<T>(resource);
+                id = id;
             }
         }
 
