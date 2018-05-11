@@ -15,6 +15,8 @@
 
         JwtSecurityToken GetRefreshToken(Guid id);
 
+        JwtSecurityToken ParseJwtSecurityToken(string token);
+
         #endregion Public Methods
     }
 }

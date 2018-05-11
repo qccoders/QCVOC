@@ -38,6 +38,22 @@
             return GetJwtSecurityToken(expiry, claims);
         }
 
+        public bool TryParseJwtSecurityToken(string token, out JwtSecurityToken jwtSecurityToken)
+        {
+            jwtSecurityToken = default(JwtSecurityToken);
+
+            try
+            {
+                // TODO: validate
+                jwtSecurityToken = new JwtSecurityToken(token);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         #endregion Public Methods
 
         #region Private Methods
