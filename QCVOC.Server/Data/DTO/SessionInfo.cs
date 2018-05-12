@@ -4,9 +4,7 @@ namespace QCVOC.Data.DTO
     {
         #region Public Properties
 
-        public string Name { get; set; }
-
-        public string Password { get; set; }
+        public SessionInfoCredentials Credentials { get; set; }
 
         public string RefreshToken { get; set; }
 
