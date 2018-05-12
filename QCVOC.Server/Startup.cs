@@ -77,7 +77,7 @@
         }
 
         public void ConfigureServices(IServiceCollection services)
-        {
+        {            
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
                 new NpgsqlDbConnectionFactory(Configuration.GetValue<string>("qcvoc_connectionstring")));
@@ -87,7 +87,18 @@
                 new Repository<RefreshToken>(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => new TokenValidationParametersFactory().GetParameters());
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = "QCVOC",
+                        ValidateIssuer = true,
+                        ValidAudience = "QCVOC",
+                        ValidateAudience = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>("JwtKey", "EE26B0DD4AF7E749AA1A8EE3C10AE9923F618980772E473F8819A5D4940E0DB27AC185F8A0E1D5F84F88BC887FD67B143732C304CC5FA9AD8E6F57F50028A8FF"))),
+                        ValidateIssuerSigningKey = true,
+                    };
+                });
 
             services.AddMvc().AddJsonOptions(options =>
             {
