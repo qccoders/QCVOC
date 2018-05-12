@@ -22,12 +22,14 @@ namespace Server.Tests
         [Property(DisplayName = "Given an account, when it's created then it can be deleted."), Trait("Type", "Integration")]
         public Property CreateAccount()
         {
-            Func<Account, Boolean> badClassification = (account) 
-                => string.IsNullOrWhiteSpace(account?.Name) || string.IsNullOrWhiteSpace(account?.PasswordHash);
-
             return Prop.ForAll<Account>(account =>
             {
-                if (!badClassification(account))
+                var badClassification = 
+                    account == null
+                    || string.IsNullOrWhiteSpace(account?.Name) 
+                    || string.IsNullOrWhiteSpace(account?.PasswordHash);
+
+                if (!badClassification)
                 {
                     var accounts = new AccountRepository(ConnectionFactory);
                     var inserted = accounts.Add(account);

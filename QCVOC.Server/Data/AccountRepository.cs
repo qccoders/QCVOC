@@ -19,21 +19,23 @@ namespace QCVOC.Server.Data
         public Account Add(Account account)
         {
             // TODO: Move this validation up to a service, but don't put it in the controller.
-            if (account == null)
+            if (account is null)
                 throw new ArgumentException("account cannot be null", nameof(account));
+
             if (string.IsNullOrWhiteSpace(account.Name))
                 throw new ArgumentException("name cannot be null", nameof(account));
+                
             if (string.IsNullOrWhiteSpace(account.PasswordHash))
                 throw new ArgumentException("password hash cannot be null", nameof(account));
 
             using (var db = ConnectionFactory.CreateConnection())
             {
                 // Encoding protects against null characters in the string.
-                var rowsAffected = db.Execute("INSERT into accounts(id, name, passwordhash, role) VALUES(@Id, @Name, @PasswordHash, @Role);", new
+                db.Execute("INSERT into accounts(id, name, passwordhash, role) VALUES(@Id, @Name, @PasswordHash, @Role);", new
                 {
                     id = account.Id,
-                    name = Encoding.UTF8.GetBytes(account.Name),
-                    passwordhash = Encoding.UTF8.GetBytes(account.PasswordHash),
+                    name = account.Name,
+                    passwordhash = account.PasswordHash,
                     role = account.Role
                 });
 
