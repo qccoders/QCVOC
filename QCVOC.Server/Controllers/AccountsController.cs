@@ -12,7 +12,6 @@ namespace QCVOC.Server.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Server.Data.DTO;
-    using QCVOC.Server.Data.Model;
     using QCVOC.Server.Data.Model.Security;
     using QCVOC.Server.Data.Repository;
 
@@ -47,9 +46,7 @@ namespace QCVOC.Server.Controllers
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Get(string id)
         {
-            Guid guid;
-
-            if (!Guid.TryParse(id, out guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 var err = new ModelStateDictionary();
                 err.AddModelError("id", "The requested Id must be a valid Guid.");
