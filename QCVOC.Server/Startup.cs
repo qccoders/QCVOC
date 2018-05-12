@@ -27,7 +27,6 @@
     using Swashbuckle.AspNetCore.SwaggerGen;
     using Dapper;
     using System.ComponentModel.DataAnnotations.Schema;
-    using System;
 
     public class Startup
     {
@@ -80,7 +79,7 @@
         {
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
-                new NpgsqlDbConnectionFactory(Configuration.GetValue<string>("qcvoc_connectionstring")));
+                new NpgsqlDbConnectionFactory("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
             services.AddScoped<IRepository<Account>, Repository<Account>>(serviceProvider =>
                 new Repository<Account>(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>(serviceProvider =>
