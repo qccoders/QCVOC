@@ -6,11 +6,13 @@
 namespace QCVOC.Server.Data.Model.Security
 {
     using System;
+    using Dapper.Contrib.Extensions;
 
     public class Account
     {
         #region Public Properties
 
+        [ExplicitKey]
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string PasswordHash { get; set; }

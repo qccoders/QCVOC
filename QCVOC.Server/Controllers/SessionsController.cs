@@ -22,7 +22,10 @@ namespace QCVOC.Server.Controllers
     {
         #region Public Constructors
 
-        public SessionsController(IRepository<Account> accountRepository, IJwtFactory jwtFactory, IRepository<RefreshToken> refreshTokenRepository)
+        public SessionsController(
+            IRepository<Account> accountRepository, 
+            IJwtFactory jwtFactory, 
+            IRepository<RefreshToken> refreshTokenRepository)
         {
             AccountRepository = accountRepository;
             JwtFactory = jwtFactory;
@@ -62,7 +65,10 @@ namespace QCVOC.Server.Controllers
                 return BadRequest(ModelState);
             }
 
-            Account account = AccountRepository.GetAll().Where(a => a.Name == sessionInfo.Name).FirstOrDefault();
+            Account account = AccountRepository
+            .GetAll()
+            .Where(a => a.Name == sessionInfo.Name)
+            .FirstOrDefault();
 
             if (account == default(Account))
             {
