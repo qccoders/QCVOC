@@ -78,7 +78,28 @@ namespace QCVOC.Server.Controllers
                     return Unauthorized();
                 }
 
-                return Ok(JwtFactory.GetJwt(account));
+                var refreshTokenRecord = RefreshTokenRepository.Get(account.Id);
+                var refreshTokenId = Guid.NewGuid();
+
+                if (refreshTokenRecord == null)
+                {
+                    var refreshToken = new RefreshToken()
+                    {
+                        TokenId = refreshTokenId,
+                        AccountId = account.Id,
+                        Issued = DateTime.UtcNow,
+                        Expires = DateTime.UtcNow,
+                    };
+
+                    RefreshTokenRepository.Create(refreshToken);
+                }
+                else
+                {
+                    refreshTokenId = refreshTokenRecord.TokenId;
+                }
+
+                var jwt = JwtFactory.GetJwt(account, refreshTokenId);
+                return Ok(jwt);
             }
             else if (string.IsNullOrEmpty(sessionInfo.RefreshToken))
             {
