@@ -8,7 +8,7 @@ namespace QCVOC.Server.Data.Model.Security
     using System;
     using Dapper.Contrib.Extensions;
 
-    public class Account
+    public class Account : IEquatable<Account>
     {
         #region Public Properties
 
@@ -17,6 +17,17 @@ namespace QCVOC.Server.Data.Model.Security
         public string Name { get; set; }
         public string PasswordHash { get; set; }
         public Role Role { get; set; }
+
+        public bool Equals(Account other)
+        {
+            if (other == null)
+                return (this == null);
+            
+            return this.Id == other.Id 
+            && this.Name == other.Name
+            && this.PasswordHash == other.PasswordHash
+            && this.Role == other.Role;
+        }
 
         #endregion Public Properties
     }
