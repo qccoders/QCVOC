@@ -58,101 +58,92 @@ namespace QCVOC.Server.Controllers
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult CreateSession([FromBody]SessionInfo sessionInfo)
+        public IActionResult CreateOrRefreshSession([FromBody]SessionInfo sessionInfo)
         {
-            if (!ModelState.IsValid)
+            if (sessionInfo.Credentials != default(SessionInfoCredentials))
             {
-                return BadRequest(ModelState);
-            }
-
-            Account account = AccountRepository
-            .GetAll()
-            .Where(a => a.Name == sessionInfo.Name)
-            .FirstOrDefault();
-
-            if (account == default(Account))
-            {
-                return Unauthorized();
-            }
-
-            string passwordHash = Utility.ComputeSHA512Hash(sessionInfo.Password);
-
-            if (passwordHash != account.PasswordHash)
-            {
-                return Unauthorized();
-            }
-
-            var accessToken = JwtFactory.GetAccessToken(account);
-
-            var token = RefreshTokenRepository.Get(account.Id);
-            Guid refreshTokenId;
-
-            if (token == default(RefreshToken))
-            {
-                refreshTokenId = Guid.NewGuid();
-
-                var refreshToken = new RefreshToken()
+                if (string.IsNullOrEmpty(sessionInfo.Credentials.Name) || string.IsNullOrEmpty(sessionInfo.Credentials.Password))
                 {
-                    TokenId = Guid.NewGuid(),
-                    AccountId = account.Id,
-                    Issued = DateTime.UtcNow,
-                    Expires = DateTime.UtcNow, // todo: figure this out
-                };
+                    return BadRequest("The specified session info is invalid; both a user name and password must be supplied.");
+                }
 
-                // todo: error handling? returns 500 regardless, can improve messaging
-                RefreshTokenRepository.Create(refreshToken);
+
+                var account = AccountRepository.GetAll().Where(a => a.Name == sessionInfo.Credentials.Name).FirstOrDefault();
+
+                if (account == default(Account))
+                {
+                    return Unauthorized();
+                }
+
+                string passwordHash = Utility.ComputeSHA512Hash(sessionInfo.Credentials.Password);
+
+                if (passwordHash != account.PasswordHash)
+                {
+                    return Unauthorized();
+                }
+
+                var refreshTokenRecord = RefreshTokenRepository.Get(account.Id);
+                var refreshTokenId = Guid.NewGuid();
+
+                if (refreshTokenRecord == null)
+                {
+                    var refreshToken = new RefreshToken()
+                    {
+                        TokenId = refreshTokenId,
+                        AccountId = account.Id,
+                        Issued = DateTime.UtcNow,
+                        Expires = DateTime.UtcNow,
+                    };
+
+                    RefreshTokenRepository.Create(refreshToken);
+                }
+                else
+                {
+                    refreshTokenId = refreshTokenRecord.TokenId;
+                }
+
+                var jwt = JwtFactory.GetJwt(account, refreshTokenId);
+                return Ok(jwt);
             }
-
-            var refreshJwt = JwtFactory.GetRefreshToken(refreshTokenId);
-            return Ok(new JwtResponse(accessToken, refreshJwt));
-        }
-
-        [HttpPut]
-        [ProducesResponseType(typeof(JwtSecurityToken), 200)]
-        [ProducesResponseType(401)]
-        [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult RefreshSession([FromBody]string refreshToken)
-        {
-            JwtSecurityToken refreshJwt;
-            var badRequest = BadRequest("The provided refresh token is invalid.");
-
-            if (!JwtFactory.TryParseJwtSecurityToken(refreshToken, out refreshJwt))
+            else if (string.IsNullOrEmpty(sessionInfo.RefreshToken))
             {
-                return badRequest;
+                if (!JwtFactory.TryParseJwtSecurityToken(sessionInfo.RefreshToken, out JwtSecurityToken jwtSecurityToken))
+                {
+                    return Unauthorized();
+                }
+
+                var refreshTokenIdString = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Hash).FirstOrDefault()?.Value;
+
+                if (string.IsNullOrEmpty(refreshTokenIdString))
+                {
+                    return Unauthorized();
+                }
+
+                if (!Guid.TryParse(refreshTokenIdString, out Guid refreshTokenId))
+                {
+                    return Unauthorized();
+                }
+
+                var refreshToken = RefreshTokenRepository.Get(refreshTokenId);
+
+                if (refreshToken == default(RefreshToken) && refreshToken.Expires <= DateTime.UtcNow)
+                {
+                    return Unauthorized();
+                }
+
+                var account = AccountRepository.Get(refreshToken.AccountId);
+
+                if (account == default(Account))
+                {
+                    return Unauthorized();
+                }
+
+                return Ok(JwtFactory.GetJwt(account, refreshToken.TokenId));
             }
-
-            var claim = refreshJwt.Claims.Where(c => c.Type == ClaimTypes.Hash).FirstOrDefault();
-
-            if (claim == default(Claim))
+            else
             {
-                return badRequest;
+                return BadRequest("The specified session info is invalid; either credentials or a refresh token is expected.");
             }
-
-            var id = claim.Value;
-            Guid guid;
-
-            if (string.IsNullOrEmpty(id) || !Guid.TryParse(id, out guid))
-            {
-                return badRequest;
-            }
-
-            var token = RefreshTokenRepository.Get(guid);
-
-            if (token == default(RefreshToken))
-            {
-                return Unauthorized();
-            }
-
-            var account = AccountRepository.Get(token.AccountId);
-
-            if (account == default(Account))
-            {
-                return Unauthorized();
-            }
-
-            var accessToken = JwtFactory.GetAccessToken(account);
-
-            return Ok(new JwtResponse(accessToken, refreshJwt));
         }
 
         #endregion Public Methods
