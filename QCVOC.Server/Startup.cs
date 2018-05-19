@@ -1,5 +1,11 @@
-﻿namespace QCVOC.Server
+﻿// <copyright file="Startup.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
+namespace QCVOC.Server
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -18,16 +24,12 @@
     using Newtonsoft.Json.Converters;
     using NLog;
     using QCVOC.Server.Data.ConnectionFactory;
-    using QCVOC.Server.Data.Model;
     using QCVOC.Server.Data.Model.Security;
     using QCVOC.Server.Data.Repository;
     using QCVOC.Server.Middleware;
     using QCVOC.Server.Security;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
-    using Dapper;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System;
 
     public class Startup
     {
@@ -61,9 +63,8 @@
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseAuthentication();
             app.UseMiddleware<LoggingMiddleware>();
-
+            app.UseAuthentication();
             app.UseMvc();
 
             app.UseSwagger();
@@ -79,18 +80,19 @@
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<IJwtFactory, JwtFactory>();
+            services.AddSingleton<ITokenValidator, TokenValidator>(serviceProvider =>
+                new TokenValidator(GetTokenValidationParameters()));
+
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
                 new NpgsqlDbConnectionFactory("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
+
             services.AddScoped<IRepository<Account>, Repository<Account>>(serviceProvider =>
                 new Repository<Account>(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>(serviceProvider =>
                 new Repository<RefreshToken>(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    new JwtFactory().GetTokenValidationParameters();
-                });
+                .AddJwtBearer(options => GetTokenValidationParameters());
 
             services.AddMvc().AddJsonOptions(options =>
             {
@@ -169,6 +171,23 @@
             }
 
             return info;
+        }
+
+        private static TokenValidationParameters GetTokenValidationParameters()
+        {
+            return new TokenValidationParameters
+            {
+                ClockSkew = TimeSpan.FromMinutes(5),
+                RequireSignedTokens = true,
+                RequireExpirationTime = true,
+                ValidateLifetime = true,
+                ValidIssuer = Utility.GetSetting<string>(Settings.JwtIssuer),
+                ValidateIssuer = true,
+                ValidAudience = Utility.GetSetting<string>(Settings.JwtAudience),
+                ValidateAudience = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>(Settings.JwtKey))),
+                ValidateIssuerSigningKey = true,
+            };
         }
 
         private static string GetXmlCommentsFilePath()
