@@ -21,15 +21,12 @@ namespace QCVOC.Server.Controllers
     public class SessionsController : Controller
     {
         #region Public Constructors
-
-        public SessionsController(
-            IRepository<Account> accountRepository, 
-            IJwtFactory jwtFactory, 
-            IRepository<RefreshToken> refreshTokenRepository)
+        public SessionsController(IRepository<Account> accountRepository, IJwtFactory jwtFactory, ITokenValidator tokenValidator, IRepository<RefreshToken> refreshTokenRepository)
         {
             AccountRepository = accountRepository;
             JwtFactory = jwtFactory;
             RefreshTokenRepository = refreshTokenRepository;
+            TokenValidator = tokenValidator;
         }
 
         #endregion Public Constructors
@@ -39,6 +36,7 @@ namespace QCVOC.Server.Controllers
         private IRepository<Account> AccountRepository { get; set; }
         private IJwtFactory JwtFactory { get; set; }
         private IRepository<RefreshToken> RefreshTokenRepository { get; set; }
+        private ITokenValidator TokenValidator { get; set; }
 
         #endregion Private Properties
 
@@ -107,7 +105,7 @@ namespace QCVOC.Server.Controllers
             }
             else if (string.IsNullOrEmpty(sessionInfo.RefreshToken))
             {
-                if (!JwtFactory.TryParseAndValidateToken(sessionInfo.RefreshToken, out JwtSecurityToken jwtSecurityToken))
+                if (!TokenValidator.TryParseAndValidateToken(sessionInfo.RefreshToken, out JwtSecurityToken jwtSecurityToken))
                 {
                     return Unauthorized();
                 }
