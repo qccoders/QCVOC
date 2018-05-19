@@ -2,6 +2,7 @@
 {
     using System;
     using System.IO;
+    using System.Reflection;
     using System.Security.Cryptography;
     using System.Text;
     using Microsoft.Extensions.Configuration;
@@ -107,11 +108,21 @@
         /// <exception cref="InvalidOperationException"></exception>
         public static T GetSetting<T>(string settingName)
         {
-            var retVal = GetSetting<T>(settingName, default(T));
+            var defaultValue = default(T);
+
+            try
+            {
+                defaultValue = (T)typeof(Defaults).GetField(settingName).GetValue(null);
+            }
+            catch (Exception)
+            {
+            }
+
+            var retVal = GetSetting<T>(settingName, defaultValue);
 
             if (retVal == null)
             {
-                throw new InvalidOperationException("The specified setting could not be found, and no default value was given.  Check the configuration.");
+                throw new InvalidOperationException("The specified setting could not be found, and a default value was neither given nor could be retrieved from application defaults.  Check the configuration.");
             }
 
             return retVal;

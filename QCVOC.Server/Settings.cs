@@ -4,6 +4,8 @@
     {
         #region Public Fields
 
+        public static readonly string DbConnectionString = "DbConnectionString";
+
         public static readonly string JwtAccessTokenExpiry = "JwtAccessTokenExpiry";
         public static readonly string JwtAudience = "JwtAudience";
         public static readonly string JwtIssuer = "JwtIssuer";
