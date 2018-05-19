@@ -77,30 +77,19 @@
         }
 
         public void ConfigureServices(IServiceCollection services)
-        {            
+        {
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
-                new NpgsqlDbConnectionFactory(Configuration.GetValue<string>("qcvoc_connectionstring")));
-            services.AddScoped<IRepository<Account>, AccountRepository>(serviceProvider => 
-            new AccountRepository(serviceProvider.GetService<IDbConnectionFactory>()));
-
-
-           // TODO: Remove when replaced.
-           // services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>(serviceProvider =>
-           //     new Repository<RefreshToken>(serviceProvider.GetService<IDbConnectionFactory>()));
+                new NpgsqlDbConnectionFactory("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
+            services.AddScoped<IRepository<Account>, AccountRepository>(serviceProvider =>
+                new AccountRepository(serviceProvider.GetService<IDbConnectionFactory>()));
+            services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>(serviceProvider =>
+                new RefreshTokenRepository(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidIssuer = "QCVOC",
-                        ValidateIssuer = true,
-                        ValidAudience = "QCVOC",
-                        ValidateAudience = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>("JwtKey", "EE26B0DD4AF7E749AA1A8EE3C10AE9923F618980772E473F8819A5D4940E0DB27AC185F8A0E1D5F84F88BC887FD67B143732C304CC5FA9AD8E6F57F50028A8FF"))),
-                        ValidateIssuerSigningKey = true,
-                    };
+                    new JwtFactory().GetTokenValidationParameters();
                 });
 
             services.AddMvc().AddJsonOptions(options =>

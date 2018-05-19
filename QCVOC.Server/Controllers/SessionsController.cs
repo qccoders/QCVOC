@@ -82,7 +82,7 @@ namespace QCVOC.Server.Controllers
                     return Unauthorized();
                 }
 
-                var refreshTokenRecord = RefreshTokenRepository.Get(account.Id);
+                RefreshToken refreshTokenRecord = null;
                 var refreshTokenId = Guid.NewGuid();
 
                 if (refreshTokenRecord == null)
@@ -95,7 +95,7 @@ namespace QCVOC.Server.Controllers
                         Expires = DateTime.UtcNow,
                     };
 
-                    RefreshTokenRepository.Create(refreshToken);
+                    //RefreshTokenRepository.Create(refreshToken);
                 }
                 else
                 {
@@ -107,7 +107,7 @@ namespace QCVOC.Server.Controllers
             }
             else if (string.IsNullOrEmpty(sessionInfo.RefreshToken))
             {
-                if (!JwtFactory.TryParseJwtSecurityToken(sessionInfo.RefreshToken, out JwtSecurityToken jwtSecurityToken))
+                if (!JwtFactory.TryParseAndValidateToken(sessionInfo.RefreshToken, out JwtSecurityToken jwtSecurityToken))
                 {
                     return Unauthorized();
                 }

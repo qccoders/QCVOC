@@ -12,6 +12,24 @@
     {
         #region Public Methods
 
+        public JwtSecurityToken GetAccessToken(Account account, Guid refreshTokenId)
+        {
+            var expiry = Utility.GetSetting<int>(Settings.JwtAccessTokenExpiry);
+            var key = Utility.GetSetting<string>(Settings.JwtKey);
+
+            var claims = new Claim[]
+            {
+                new Claim(ClaimTypes.Name, account.Name),
+                new Claim(ClaimTypes.Role, account.Role.ToString()),
+                new Claim("sub", account.Id.ToString()),
+                new Claim("name", account.Name),
+                new Claim("role", account.Role.ToString()),
+                new Claim("jti", refreshTokenId.ToString())
+            };
+
+            return GetJwtSecurityToken(expiry, claims);
+        }
+
         public Jwt GetJwt(Account account)
         {
             return GetJwt(account, Guid.NewGuid());
@@ -22,21 +40,44 @@
             return new Jwt()
             {
                 Account = account,
-                AccessJwtSecurityToken = GetAccessToken(account),
+                AccessJwtSecurityToken = GetAccessToken(account, refreshTokenId),
                 RefreshJwtSecurityToken = GetRefreshToken(refreshTokenId)
             };
         }
 
-        public bool TryParseJwtSecurityToken(string token, out JwtSecurityToken jwtSecurityToken)
+        public JwtSecurityToken GetRefreshToken(Guid id)
+        {
+            var expiry = Utility.GetSetting<int>(Settings.JwtRefreshTokenExpiry);
+
+            var claims = new Claim[]
+            {
+                new Claim("jti", id.ToString())
+            };
+
+            return GetJwtSecurityToken(expiry, claims);
+        }
+
+        public TokenValidationParameters GetTokenValidationParameters()
+        {
+            return new TokenValidationParameters
+            {
+                ValidIssuer = Utility.GetSetting<string>(Settings.JwtIssuer),
+                ValidateIssuer = true,
+                ValidAudience = Utility.GetSetting<string>(Settings.JwtAudience),
+                ValidateAudience = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>(Settings.JwtKey))),
+                ValidateIssuerSigningKey = true,
+            };
+        }
+
+        public bool TryParseAndValidateToken(string token, out JwtSecurityToken jwtSecurityToken)
         {
             jwtSecurityToken = default(JwtSecurityToken);
-
-            var validationParameters = new TokenValidationParametersFactory().GetParameters();
 
             try
             {
                 SecurityToken securityToken;
-                new JwtSecurityTokenHandler().ValidateToken(token, validationParameters, out securityToken);
+                new JwtSecurityTokenHandler().ValidateToken(token, GetTokenValidationParameters(), out securityToken);
 
                 jwtSecurityToken = new JwtSecurityToken(token);
                 return true;
@@ -51,46 +92,21 @@
 
         #region Private Methods
 
-        private JwtSecurityToken GetAccessToken(Account account)
+        private JwtSecurityToken GetJwtSecurityToken(int ttlInMinutes, params Claim[] claims)
         {
-            var expiry = Utility.GetSetting<int>(Settings.JwtAccessTokenExpiry, Constants.JwtAccessTokenExpiryDefault);
-
-            var claims = new Claim[]
-            {
-                new Claim("id", account.Id.ToString()),
-                new Claim(ClaimTypes.Name, account.Name),
-                new Claim(ClaimTypes.Role, account.Role.ToString()),
-            };
-
-            return GetJwtSecurityToken(expiry, claims);
-        }
-
-        private JwtSecurityToken GetJwtSecurityToken(int expires, params Claim[] claims)
-        {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>("JwtKey", Constants.JwtKeyDefault)));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>(Settings.JwtKey)));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
             var token = new JwtSecurityToken(
-                issuer: Utility.GetSetting<string>(Settings.JwtIssuer, Constants.JwtIssuerDefault),
-                audience: Utility.GetSetting<string>(Settings.JwtAudience, Constants.JwtAudienceDefault),
+                issuer: Utility.GetSetting<string>(Settings.JwtIssuer),
+                audience: Utility.GetSetting<string>(Settings.JwtAudience),
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(expires),
+                notBefore: DateTime.Now,
+                expires: DateTime.Now.AddMinutes(ttlInMinutes),
                 signingCredentials: credentials
             );
 
             return token;
-        }
-
-        private JwtSecurityToken GetRefreshToken(Guid id)
-        {
-            var expiry = Utility.GetSetting<int>(Settings.JwtRefreshTokenExpiry, Constants.JwtRefreshTokenExpiryDefault);
-
-            var claims = new Claim[]
-            {
-                new Claim(ClaimTypes.Hash, id.ToString())
-            };
-
-            return GetJwtSecurityToken(expiry, claims);
         }
 
         #endregion Private Methods
