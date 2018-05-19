@@ -9,14 +9,25 @@ using System.Collections.Generic;
 
 namespace QCVOC.Server.Data.Repository
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="Account"></typeparam>
     public class AccountRepository : IRepository<Account>
     {
-        public IDbConnectionFactory ConnectionFactory { get; }
+        private IDbConnectionFactory ConnectionFactory { get; }
+        
         public AccountRepository(IDbConnectionFactory connectionFactory)
         {
             ConnectionFactory = connectionFactory;
         }
 
+        /// <summary>
+        /// Creates a new account.
+        /// </summary>
+        /// <param name="account">The account to create.</param>
+        /// <returns>The created account</returns>
+        /// <exception ref="ArgumentException"></exception>
         public Account Create(Account account)
         {
             // TODO: Move this validation up to a service, but don't put it in the controller.
@@ -30,7 +41,7 @@ namespace QCVOC.Server.Data.Repository
                 throw new ArgumentException("password hash cannot be null", nameof(account));
 
             if (account.Name.Contains("\0"))
-                throw new ArgumentException("null characters are not allowd in an account name.", nameof(account));
+                throw new ArgumentException("null characters are not allowed in an account name.", nameof(account));
 
             if (account.PasswordHash.Contains("\0"))
                 throw new ArgumentException("null characters are not allowed in an password hash.", nameof(account));
@@ -50,6 +61,10 @@ namespace QCVOC.Server.Data.Repository
             }
         }
 
+        /// <summary>
+        /// Deletes an account with the specified Id.
+        /// </summary>
+        /// <param name="id">The Id of the account to delete.</param>
         public void Delete(Guid id)
         {
             using (var db = ConnectionFactory.CreateConnection())
@@ -58,6 +73,11 @@ namespace QCVOC.Server.Data.Repository
             }
         }
 
+        /// <summary>
+        /// Deletes the specified account.
+        /// </summary>
+        /// <param name="account">The account to delete.</param>
+        /// <exception cref="ArgumentException"></exception>
         public void Delete(Account account)
         { 
             if(account == null)
@@ -66,6 +86,11 @@ namespace QCVOC.Server.Data.Repository
             Delete(account.Id);
         }
 
+        /// <summary>
+        /// Retrieves the account with the specified Id.
+        /// </summary>
+        /// <param name="id">The Id of the account to retrieve.</param>
+        /// <returns>The account with the specified Id.</returns>
         public Account Get(Guid id)
         {
             using(var db = ConnectionFactory.CreateConnection())
@@ -74,6 +99,10 @@ namespace QCVOC.Server.Data.Repository
             }
         }
 
+        /// <summary>
+        /// Retrieves all accounts.
+        /// </summary>
+        /// <returns>A list of accounts.</returns>
         public IEnumerable<Account> GetAll()
         {
             //TODO: Add paging when necessary.
@@ -83,6 +112,11 @@ namespace QCVOC.Server.Data.Repository
             }
         }
 
+        /// <summary>
+        /// Updates the specified account.
+        /// </summary>
+        /// <param name="account">The account to update.</param>
+        /// <returns>The updated account.</returns>
         public Account Update(Account account)
         {
             using(var db = ConnectionFactory.CreateConnection())

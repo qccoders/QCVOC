@@ -81,10 +81,11 @@
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
                 new NpgsqlDbConnectionFactory(Configuration.GetValue<string>("qcvoc_connectionstring")));
+            services.AddScoped<IRepository<Account>, AccountRepository>(serviceProvider => 
+            new AccountRepository(serviceProvider.GetService<IDbConnectionFactory>()));
+
 
            // TODO: Remove when replaced.
-           // services.AddScoped<IRepository<Account>, Repository<Account>>(serviceProvider =>
-           //     new Repository<Account>(serviceProvider.GetService<IDbConnectionFactory>()));
            // services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>(serviceProvider =>
            //     new Repository<RefreshToken>(serviceProvider.GetService<IDbConnectionFactory>()));
 

@@ -4,7 +4,7 @@
     using System;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    public class RefreshToken
+    public class RefreshToken : IEquatable<RefreshToken>
     {
         #region Public Properties
 
@@ -21,5 +21,16 @@
         public Guid TokenId { get; set; }
 
         #endregion Public Properties
+
+        public bool Equals(RefreshToken token)
+        {
+            if(token == null)
+                return this == null;
+            
+            return this.TokenId == token.TokenId
+            && this.AccountId == token.AccountId
+            && this.Expires == token.Expires
+            && this.Issued == token.Issued;
+        }
     }
 }
