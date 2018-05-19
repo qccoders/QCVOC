@@ -75,7 +75,7 @@ namespace QCVOC.Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IJwtFactory, JwtFactory>();
+            services.AddSingleton<ITokenFactory, TokenFactory>();
             services.AddSingleton<ITokenValidator, TokenValidator>(serviceProvider =>
                 new TokenValidator(GetTokenValidationParameters()));
 
