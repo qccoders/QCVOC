@@ -1,8 +1,13 @@
-namespace QCVOC.Data.DTO {
+namespace QCVOC.Data.DTO
+{
     public class SessionInfo
     {
-        public string Name { get; set; }
-        public string Password { get; set; }
+        #region Public Properties
+
+        public SessionInfoCredentials Credentials { get; set; }
+
+        public string RefreshToken { get; set; }
+
+        #endregion Public Properties
     }
 }
-
