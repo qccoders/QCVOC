@@ -1,3 +1,8 @@
+// <copyright file="SessionsController.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
 namespace QCVOC.Server.Controllers
 {
     using System;
@@ -8,7 +13,6 @@ namespace QCVOC.Server.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Data.DTO;
-    using QCVOC.Server.Data.DTO;
     using QCVOC.Server.Data.Model.Security;
     using QCVOC.Server.Data.Repository;
     using QCVOC.Server.Security;
@@ -59,91 +63,120 @@ namespace QCVOC.Server.Controllers
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult CreateOrRefreshSession([FromBody]SessionInfo sessionInfo)
         {
+            if (!IsSessionInfoValid(sessionInfo))
+            {
+                return BadRequest("The specified session info is invalid; either credentials or a refresh token is expected.");
+            }
+
             if (sessionInfo.Credentials != default(SessionInfoCredentials))
             {
-                if (string.IsNullOrEmpty(sessionInfo.Credentials.Name) || string.IsNullOrEmpty(sessionInfo.Credentials.Password))
-                {
-                    return BadRequest("The specified session info is invalid; both a user name and password must be supplied.");
-                }
-
-                var account = AccountRepository.GetAll().Where(a => a.Name == sessionInfo.Credentials.Name).FirstOrDefault();
-
-                if (account == default(Account))
-                {
-                    return Unauthorized();
-                }
-
-                string passwordHash = Utility.ComputeSHA512Hash(sessionInfo.Credentials.Password);
-
-                if (passwordHash != account.PasswordHash)
-                {
-                    return Unauthorized();
-                }
-
-                RefreshToken refreshTokenRecord = null;
-                var refreshTokenId = Guid.NewGuid();
-
-                if (refreshTokenRecord == null)
-                {
-                    var refreshToken = new RefreshToken()
-                    {
-                        TokenId = refreshTokenId,
-                        AccountId = account.Id,
-                        Issued = DateTime.UtcNow,
-                        Expires = DateTime.UtcNow,
-                    };
-
-                    //RefreshTokenRepository.Create(refreshToken);
-                }
-                else
-                {
-                    refreshTokenId = refreshTokenRecord.TokenId;
-                }
-
-                var jwt = JwtFactory.GetJwt(account, refreshTokenId);
-                return Ok(jwt);
+                return CreateSession(sessionInfo.Credentials);
             }
             else if (string.IsNullOrEmpty(sessionInfo.RefreshToken))
             {
-                if (!TokenValidator.TryParseAndValidateToken(sessionInfo.RefreshToken, out JwtSecurityToken jwtSecurityToken))
-                {
-                    return Unauthorized();
-                }
-
-                var refreshTokenIdString = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Hash).FirstOrDefault()?.Value;
-
-                if (string.IsNullOrEmpty(refreshTokenIdString))
-                {
-                    return Unauthorized();
-                }
-
-                if (!Guid.TryParse(refreshTokenIdString, out Guid refreshTokenId))
-                {
-                    return Unauthorized();
-                }
-
-                var refreshToken = RefreshTokenRepository.Get(refreshTokenId);
-
-                if (refreshToken == default(RefreshToken) && refreshToken.Expires <= DateTime.UtcNow)
-                {
-                    return Unauthorized();
-                }
-
-                var account = AccountRepository.Get(refreshToken.AccountId);
-
-                if (account == default(Account))
-                {
-                    return Unauthorized();
-                }
-
-                return Ok(JwtFactory.GetJwt(account, refreshToken.TokenId));
+                return RefreshSession(sessionInfo.RefreshToken);
             }
             else
             {
-                return BadRequest("The specified session info is invalid; either credentials or a refresh token is expected.");
+                return BadRequest();
             }
         }
 
         #endregion Public Methods
+
+        #region Private Methods
+
+        private IActionResult CreateSession(SessionInfoCredentials credentials)
+        {
+            if (string.IsNullOrEmpty(credentials.Name) || string.IsNullOrEmpty(credentials.Password))
+            {
+                return BadRequest("The specified session info is invalid; both a user name and password must be supplied.");
+            }
+
+            var account = AccountRepository.GetAll().Where(a => a.Name == credentials.Name).FirstOrDefault();
+
+            if (account == default(Account))
+            {
+                return Unauthorized();
+            }
+
+            string passwordHash = Utility.ComputeSHA512Hash(credentials.Password);
+
+            if (passwordHash != account.PasswordHash)
+            {
+                return Unauthorized();
+            }
+
+            RefreshToken refreshTokenRecord = null;
+            var refreshTokenId = Guid.NewGuid();
+
+            if (refreshTokenRecord == null)
+            {
+                var refreshToken = new RefreshToken()
+                {
+                    TokenId = refreshTokenId,
+                    AccountId = account.Id,
+                    Issued = DateTime.UtcNow,
+                    Expires = DateTime.UtcNow,
+                };
+
+                //RefreshTokenRepository.Create(refreshToken);
+            }
+            else
+            {
+                refreshTokenId = refreshTokenRecord.TokenId;
+            }
+
+            var jwt = JwtFactory.GetJwt(account, refreshTokenId);
+            return Ok(jwt);
+        }
+
+        private bool IsSessionInfoValid(SessionInfo sessionInfo)
+        {
+            if (sessionInfo != default(SessionInfo))
+            {
+                return !(sessionInfo.Credentials == default(SessionInfoCredentials) && string.IsNullOrWhiteSpace(sessionInfo.RefreshToken));
+            }
+
+            return false;
+        }
+
+        private IActionResult RefreshSession(string refreshToken)
+        {
+            if (!TokenValidator.TryParseAndValidateToken(refreshToken, out JwtSecurityToken jwtSecurityToken))
+            {
+                return Unauthorized();
+            }
+
+            var refreshTokenIdString = jwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Hash).FirstOrDefault()?.Value;
+
+            if (string.IsNullOrEmpty(refreshTokenIdString))
+            {
+                return Unauthorized();
+            }
+
+            if (!Guid.TryParse(refreshTokenIdString, out Guid refreshTokenId))
+            {
+                return Unauthorized();
+            }
+
+            var token = RefreshTokenRepository.Get(refreshTokenId);
+
+            if (token == default(RefreshToken) && token.Expires <= DateTime.UtcNow)
+            {
+                return Unauthorized();
+            }
+
+            var account = AccountRepository.Get(token.AccountId);
+
+            if (account == default(Account))
+            {
+                return Unauthorized();
+            }
+
+            return Ok(JwtFactory.GetJwt(account, token.TokenId));
+        }
+
+        #endregion Private Methods
     }
 }
