@@ -1,0 +1,21 @@
+before_script:
+ - dotnet restore
+
+test:
+ image: microsoft/aspnetcore-build:2.0
+ services:
+  - postgres:latest
+ script:
+  - apt-get update
+  - apt-get install -y postgresql postgresql-contrib
+  - psql -h postgres -U qcvoc -d qcvoc -a -f ./QCVOC.Server/Data/Scripts/db.sql
+  - dotnet build
+  - cd QCVOC.Server.Tests
+  - dotnet test
+
+variables:
+  POSTGRES_DB: qcvoc
+  POSTGRES_USER: qcvoc
+  POSTGRES_PASSWORD: "qcvoc"
+  PGPASSWORD: "qcvoc"
+  qcvoc_connectionstring: "Server=postgres;Port=5432;Database=qcvoc;User Id=qcvoc;Password=qcvoc;"
