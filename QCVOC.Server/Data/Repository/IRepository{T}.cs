@@ -20,7 +20,7 @@ namespace QCVOC.Server.Data.Repository
         ///     Creates a new resource from the specified resource.
         /// </summary>
         /// <param name="resource">The resource to create.</param>
-        void Create(T resource);
+        T Create(T resource);
 
         /// <summary>
         ///     Deletes the resource matching the specified <paramref name="id"/>.
@@ -51,7 +51,7 @@ namespace QCVOC.Server.Data.Repository
         ///     Updates the specified <paramref name="resource"/>.
         /// </summary>
         /// <param name="resource">The updated resource.</param>
-        void Update(T resource);
+        T Update(T resource);
 
         #endregion Public Methods
     }

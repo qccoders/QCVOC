@@ -22,7 +22,10 @@ namespace QCVOC.Server.Controllers
     {
         #region Public Constructors
 
-        public SessionsController(IRepository<Account> accountRepository, IJwtFactory jwtFactory, IRepository<RefreshToken> refreshTokenRepository)
+        public SessionsController(
+            IRepository<Account> accountRepository, 
+            IJwtFactory jwtFactory, 
+            IRepository<RefreshToken> refreshTokenRepository)
         {
             AccountRepository = accountRepository;
             JwtFactory = jwtFactory;
@@ -63,6 +66,7 @@ namespace QCVOC.Server.Controllers
                 {
                     return BadRequest("The specified session info is invalid; both a user name and password must be supplied.");
                 }
+
 
                 var account = AccountRepository.GetAll().Where(a => a.Name == sessionInfo.Credentials.Name).FirstOrDefault();
 

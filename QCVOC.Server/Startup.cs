@@ -81,10 +81,10 @@
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
                 new NpgsqlDbConnectionFactory("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
-            services.AddScoped<IRepository<Account>, Repository<Account>>(serviceProvider =>
-                new Repository<Account>(serviceProvider.GetService<IDbConnectionFactory>()));
-            services.AddScoped<IRepository<RefreshToken>, Repository<RefreshToken>>(serviceProvider =>
-                new Repository<RefreshToken>(serviceProvider.GetService<IDbConnectionFactory>()));
+            services.AddScoped<IRepository<Account>, AccountRepository>(serviceProvider =>
+                new AccountRepository(serviceProvider.GetService<IDbConnectionFactory>()));
+            services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>(serviceProvider =>
+                new RefreshTokenRepository(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
