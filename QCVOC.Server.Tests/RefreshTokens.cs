@@ -18,22 +18,21 @@ namespace Server.Tests
           Arb.Register<Generators>();
         }
 
-        [Property(
-            DisplayName = "Given a valid refresh token, it can be created, retrieved, updated and deleted.",
-            Arbitrary = new [] {typeof(Generators)})]
+        [Fact(DisplayName = "Given a valid refresh token, it can be created, retrieved, updated and deleted.")]
         [Trait("Type", "Integration")]
         public void RefreshTokenLifecycle()
             => Prop.ForAll<RefreshToken, RefreshTokenRepository>(
                 Generators.ArbRefreshToken(),
                 Generators.ArbRefreshTokenRepository(),
-                (token, repository) => Lifecycle(token, repository)).QuickCheckThrowOnFailure();
+                (token, repository) => Lifecycle(token, repository))
+                .QuickCheckThrowOnFailure();
 
         private Property Lifecycle(RefreshToken token, RefreshTokenRepository repository)
         {
-            return Insertable(token, repository);
-            //.And(Updateable(token, repository))
-            //.And(Gettable(token, repository))
-            //.And(Deleteable(token, repository));
+            return Insertable(token, repository)
+            .And(Updateable(token, repository))
+            .And(Gettable(token, repository))
+            .And(Deleteable(token, repository));
         }
 
         private Property Insertable(RefreshToken token, RefreshTokenRepository tokens)

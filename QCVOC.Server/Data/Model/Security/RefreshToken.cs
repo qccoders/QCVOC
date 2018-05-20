@@ -29,8 +29,8 @@
             
             return this.TokenId == token.TokenId
             && this.AccountId == token.AccountId
-            && this.Expires == token.Expires
-            && this.Issued == token.Issued;
+            && (this.Expires - token.Expires <= TimeSpan.FromSeconds(1))
+            && (this.Issued - token.Issued <= TimeSpan.FromSeconds(1));
         }
     }
 }
