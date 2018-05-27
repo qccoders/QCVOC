@@ -2,24 +2,23 @@
 {
     using System;
     using System.IdentityModel.Tokens.Jwt;
-    using Microsoft.IdentityModel.Tokens;
     using QCVOC.Server.Data.Model.Security;
 
-    public interface IJwtFactory
+    public interface ITokenFactory
     {
         #region Public Methods
 
         JwtSecurityToken GetAccessToken(Account account, Guid refreshTokenId);
 
-        Jwt GetJwt(Account account);
+        JwtSecurityToken GetAccessToken(Account account, JwtSecurityToken refreshToken);
 
-        Jwt GetJwt(Account account, Guid refreshTokenId);
+        JwtSecurityToken GetRefreshToken();
 
         JwtSecurityToken GetRefreshToken(Guid refreshTokenId);
 
-        TokenValidationParameters GetTokenValidationParameters();
+        JwtSecurityToken GetRefreshToken(Guid refreshTokenId, int ttlInMinutes);
 
-        bool TryParseAndValidateToken(string token, out JwtSecurityToken jwtSecurityToken);
+        JwtSecurityToken GetRefreshToken(Guid refreshTokenId, DateTime expiry);
 
         #endregion Public Methods
     }

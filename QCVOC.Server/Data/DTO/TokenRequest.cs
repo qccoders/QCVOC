@@ -1,6 +1,6 @@
 namespace QCVOC.Data.DTO
 {
-    public class SessionInfoCredentials
+    public class TokenRequest
     {
         #region Public Properties
 

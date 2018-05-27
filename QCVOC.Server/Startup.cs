@@ -1,5 +1,11 @@
-﻿namespace QCVOC.Server
+﻿// <copyright file="Startup.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
+namespace QCVOC.Server
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -10,6 +16,7 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ApiExplorer;
+    using Microsoft.AspNetCore.Mvc.Versioning;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.PlatformAbstractions;
@@ -18,16 +25,13 @@
     using Newtonsoft.Json.Converters;
     using NLog;
     using QCVOC.Server.Data.ConnectionFactory;
-    using QCVOC.Server.Data.Model;
     using QCVOC.Server.Data.Model.Security;
     using QCVOC.Server.Data.Repository;
     using QCVOC.Server.Middleware;
     using QCVOC.Server.Security;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
-    using Dapper;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System;
+    using Swashbuckle.AspNetCore.SwaggerUI;
 
     public class Startup
     {
@@ -61,96 +65,107 @@
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseAuthentication();
             app.UseMiddleware<LoggingMiddleware>();
-
+            app.UseAuthentication();
             app.UseMvc();
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                foreach (var description in provider.ApiVersionDescriptions)
-                {
-                    c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
-                }
-            });
+            app.UseSwaggerUI(options => ConfigureSwaggerUIOptions(options, provider));
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IJwtFactory, JwtFactory>();
+            services.AddSingleton<ITokenFactory, TokenFactory>();
+            services.AddSingleton<ITokenValidator, TokenValidator>(serviceProvider =>
+                new TokenValidator(GetTokenValidationParameters()));
+
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
                 new NpgsqlDbConnectionFactory("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
+
             services.AddScoped<IRepository<Account>, AccountRepository>(serviceProvider =>
                 new AccountRepository(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>(serviceProvider =>
                 new RefreshTokenRepository(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    new JwtFactory().GetTokenValidationParameters();
-                });
+                .AddJwtBearer(options => GetTokenValidationParameters());
 
-            services.AddMvc().AddJsonOptions(options =>
-            {
-                options.SerializerSettings.Converters.Add(new StringEnumConverter());
-                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-            });
+            services.AddMvc()
+                .AddJsonOptions(options => ConfigureJsonOptions(options));
+            services.AddMvcCore()
+                .AddVersionedApiExplorer(options => ConfigureApiExplorerOptions(options));
 
-            services.AddApiVersioning(o =>
-            {
-                o.ReportApiVersions = true;
-                o.AssumeDefaultVersionWhenUnspecified = true;
-                o.DefaultApiVersion = new ApiVersion(2, 0);
-            });
+            services.AddApiVersioning(options => ConfigureApiVersioningOptions(options));
 
-            services.AddMvcCore().AddVersionedApiExplorer(o =>
-            {
-                o.GroupNameFormat = "'v'VVV";
-                o.SubstituteApiVersionInUrl = true;
-            });
-
-            services.AddSwaggerGen(c =>
-            {
-                var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
-
-                foreach (var description in provider.ApiVersionDescriptions)
-                {
-                    c.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
-                }
-
-                c.DocInclusionPredicate((docName, apiDesc) =>
-                {
-                    var versions = apiDesc.ControllerAttributes()
-                        .OfType<ApiVersionAttribute>()
-                        .SelectMany(attr => attr.Versions);
-
-                    return versions.Any(v => $"v{v.ToString()}" == docName);
-                });
-
-                c.IncludeXmlComments(GetXmlCommentsFilePath());
-
-                var apiKeyScheme = new ApiKeyScheme()
-                {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                    Name = "Authorization",
-                    In = "header",
-                    Type = "apiKey",
-                };
-
-                c.AddSecurityDefinition("Bearer", apiKeyScheme);
-
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
-                {
-                    { "Bearer", new string[] { } }
-                });
-            });
+            services.AddSwaggerGen(options => ConfigureSwaggerGenOptions(options, services));
         }
 
         #endregion Public Methods
 
         #region Private Methods
+
+        private static void ConfigureApiExplorerOptions(ApiExplorerOptions options)
+        {
+            options.GroupNameFormat = "'v'VVV";
+            options.SubstituteApiVersionInUrl = true;
+        }
+
+        private static void ConfigureApiVersioningOptions(ApiVersioningOptions options)
+        {
+            options.ReportApiVersions = true;
+            options.AssumeDefaultVersionWhenUnspecified = true;
+            options.DefaultApiVersion = new ApiVersion(2, 0);
+        }
+
+        private static void ConfigureJsonOptions(MvcJsonOptions options)
+        {
+            options.SerializerSettings.Converters.Add(new StringEnumConverter());
+            options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+        }
+
+        private static void ConfigureSwaggerGenOptions(SwaggerGenOptions options, IServiceCollection services)
+        {
+            var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
+
+            foreach (var description in provider.ApiVersionDescriptions)
+            {
+                options.SwaggerDoc(description.GroupName, CreateInfoForApiVersion(description));
+            }
+
+            options.DocInclusionPredicate((docName, apiDesc) =>
+            {
+                var versions = apiDesc.ControllerAttributes()
+                    .OfType<ApiVersionAttribute>()
+                    .SelectMany(attr => attr.Versions);
+
+                return versions.Any(v => $"v{v.ToString()}" == docName);
+            });
+
+            options.IncludeXmlComments(GetXmlCommentsFilePath());
+
+            var apiKeyScheme = new ApiKeyScheme()
+            {
+                Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                Name = "Authorization",
+                In = "header",
+                Type = "apiKey",
+            };
+
+            options.AddSecurityDefinition("Bearer", apiKeyScheme);
+
+            options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                {
+                    { "Bearer", new string[] { } }
+                });
+        }
+
+        private static void ConfigureSwaggerUIOptions(SwaggerUIOptions options, IApiVersionDescriptionProvider provider)
+        {
+            foreach (var description in provider.ApiVersionDescriptions)
+            {
+                options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+            }
+        }
 
         private static Info CreateInfoForApiVersion(ApiVersionDescription description)
         {
@@ -169,6 +184,23 @@
             }
 
             return info;
+        }
+
+        private static TokenValidationParameters GetTokenValidationParameters()
+        {
+            return new TokenValidationParameters
+            {
+                ClockSkew = TimeSpan.FromMinutes(5),
+                RequireSignedTokens = true,
+                RequireExpirationTime = true,
+                ValidateLifetime = true,
+                ValidIssuer = Utility.GetSetting<string>(Settings.JwtIssuer),
+                ValidateIssuer = true,
+                ValidAudience = Utility.GetSetting<string>(Settings.JwtAudience),
+                ValidateAudience = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>(Settings.JwtKey))),
+                ValidateIssuerSigningKey = true,
+            };
         }
 
         private static string GetXmlCommentsFilePath()
