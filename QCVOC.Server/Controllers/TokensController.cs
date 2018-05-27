@@ -1,5 +1,5 @@
-// <copyright file="SessionsController.cs" company="JP Dillingham, Nick Acosta, et. al.">
-//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+// <copyright file="TokensController.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file 
 //     in the project root for full license information.
 // </copyright>
 
@@ -13,6 +13,7 @@ namespace QCVOC.Server.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Data.DTO;
+    using QCVOC.Server.Data.DTO;
     using QCVOC.Server.Data.Model.Security;
     using QCVOC.Server.Data.Repository;
     using QCVOC.Server.Security;
@@ -22,10 +23,10 @@ namespace QCVOC.Server.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     [Consumes("application/json")]
-    public class SessionsController : Controller
+    public class TokensController : Controller
     {
         #region Public Constructors
-        public SessionsController(IRepository<Account> accountRepository, ITokenFactory tokenFactory, ITokenValidator tokenValidator, IRepository<RefreshToken> refreshTokenRepository)
+        public TokensController(IRepository<Account> accountRepository, ITokenFactory tokenFactory, ITokenValidator tokenValidator, IRepository<RefreshToken> refreshTokenRepository)
         {
             AccountRepository = accountRepository;
             TokenFactory = tokenFactory;
@@ -56,36 +57,40 @@ namespace QCVOC.Server.Controllers
         /// <response code="401">Authentication failed.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost]
-        [ProducesResponseType(typeof(JwtSecurityToken), 200)]
+        [ProducesResponseType(typeof(TokenResponse), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult CreateOrRefreshSession([FromBody]SessionInfo sessionInfo)
+        public IActionResult Create([FromBody]TokenRequest credentials)
         {
-            if (!IsSessionInfoValid(sessionInfo))
+            if (!ModelState.IsValid)
             {
-                return BadRequest("The specified session info is invalid; either credentials or a refresh token is expected.");
+                return BadRequest(ModelState);
             }
 
-            if (sessionInfo.Credentials != default(SessionInfoCredentials))
+            return CreateSession(credentials);
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(TokenResponse), 200)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Refresh([FromBody]string refreshToken)
+        {
+            if (string.IsNullOrWhiteSpace(refreshToken) || TokenValidator.TryValidateToken(refreshToken))
             {
-                return CreateSession(sessionInfo.Credentials);
+                return BadRequest("The specified token is invalid.");
             }
-            else if (string.IsNullOrEmpty(sessionInfo.RefreshToken))
-            {
-                return RefreshSession(sessionInfo.RefreshToken);
-            }
-            else
-            {
-                return BadRequest();
-            }
+
+            return GetAccessTokenFromRefreshToken(refreshToken);
         }
 
         #endregion Public Methods
 
         #region Private Methods
 
-        private IActionResult CreateSession(SessionInfoCredentials credentials)
+        private IActionResult CreateSession(TokenRequest credentials)
         {
             if (string.IsNullOrEmpty(credentials.Name) || string.IsNullOrEmpty(credentials.Password))
             {
@@ -130,17 +135,7 @@ namespace QCVOC.Server.Controllers
             return Ok(jwt);
         }
 
-        private bool IsSessionInfoValid(SessionInfo sessionInfo)
-        {
-            if (sessionInfo != default(SessionInfo))
-            {
-                return !(sessionInfo.Credentials == default(SessionInfoCredentials) && string.IsNullOrWhiteSpace(sessionInfo.RefreshToken));
-            }
-
-            return false;
-        }
-
-        private IActionResult RefreshSession(string refreshToken)
+        private IActionResult GetAccessTokenFromRefreshToken(string refreshToken)
         {
             if (!TokenValidator.TryParseAndValidateToken(refreshToken, out JwtSecurityToken jwtSecurityToken))
             {
