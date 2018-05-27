@@ -25,10 +25,10 @@ namespace QCVOC.Server.Controllers
     public class SessionsController : Controller
     {
         #region Public Constructors
-        public SessionsController(IRepository<Account> accountRepository, IJwtFactory jwtFactory, ITokenValidator tokenValidator, IRepository<RefreshToken> refreshTokenRepository)
+        public SessionsController(IRepository<Account> accountRepository, ITokenFactory tokenFactory, ITokenValidator tokenValidator, IRepository<RefreshToken> refreshTokenRepository)
         {
             AccountRepository = accountRepository;
-            JwtFactory = jwtFactory;
+            TokenFactory = tokenFactory;
             RefreshTokenRepository = refreshTokenRepository;
             TokenValidator = tokenValidator;
         }
@@ -38,7 +38,7 @@ namespace QCVOC.Server.Controllers
         #region Private Properties
 
         private IRepository<Account> AccountRepository { get; set; }
-        private IJwtFactory JwtFactory { get; set; }
+        private ITokenFactory TokenFactory { get; set; }
         private IRepository<RefreshToken> RefreshTokenRepository { get; set; }
         private ITokenValidator TokenValidator { get; set; }
 
@@ -126,7 +126,7 @@ namespace QCVOC.Server.Controllers
                 refreshTokenId = refreshTokenRecord.TokenId;
             }
 
-            var jwt = JwtFactory.GetJwt(account, refreshTokenId);
+            var jwt = TokenFactory.GetAccessToken(account, refreshTokenId);
             return Ok(jwt);
         }
 
@@ -173,7 +173,7 @@ namespace QCVOC.Server.Controllers
                 return Unauthorized();
             }
 
-            return Ok(JwtFactory.GetJwt(account, token.TokenId));
+            return Ok(TokenFactory.GetAccessToken(account, token.TokenId));
         }
 
         #endregion Private Methods
