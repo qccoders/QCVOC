@@ -17,6 +17,11 @@
 
         #region Public Methods
 
+        public bool TryValidateToken(string token)
+        {
+            return TryParseAndValidateToken(token, out JwtSecurityToken jwtSecurityToken);
+        }
+
         public bool TryParseAndValidateToken(string token, out JwtSecurityToken jwtSecurityToken)
         {
             jwtSecurityToken = default(JwtSecurityToken);
