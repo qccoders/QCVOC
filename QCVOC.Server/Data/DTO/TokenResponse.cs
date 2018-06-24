@@ -45,12 +45,6 @@ namespace QCVOC.Server.Data.DTO
         public string AccessToken => new JwtSecurityTokenHandler().WriteToken(AccessJwtSecurityToken);
 
         /// <summary>
-        ///     Gets or sets the Account associated with the Tokens.
-        /// </summary>
-        [JsonIgnore]
-        public Account Account { get; set; }
-
-        /// <summary>
         ///     Gets the time at which the Access Token expires.
         /// </summary>
         public DateTime Expires => AccessJwtSecurityToken.ValidTo;
