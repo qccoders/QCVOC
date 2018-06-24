@@ -9,7 +9,6 @@ namespace QCVOC.Server.Data.DTO
     using System.IdentityModel.Tokens.Jwt;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Newtonsoft.Json;
-    using QCVOC.Server.Data.Model.Security;
 
     /// <summary>
     ///     DTO containing Access and Refresh tokens for a Token request response.
