@@ -19,7 +19,6 @@ namespace QCVOC.Data.DTO
         /// </summary>
         [Required]
         [StringLength(256, MinimumLength = 2, ErrorMessage = "Usernames must be between 2 and 256 characters in length.")]
-        [RegularExpression("(?!\0)")]
         public string Name { get; set; }
 
         /// <summary>
@@ -27,7 +26,6 @@ namespace QCVOC.Data.DTO
         /// </summary>
         [Required]
         [StringLength(256, MinimumLength = 6, ErrorMessage = "Passwords must be between 6 and 256 characters in length.")]
-        [RegularExpression("(?!\0)")]
         public string Password { get; set; }
 
         #endregion Public Properties
