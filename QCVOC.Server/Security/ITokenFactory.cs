@@ -18,7 +18,9 @@
 
         JwtSecurityToken GetRefreshToken(Guid refreshTokenId, int ttlInMinutes);
 
-        JwtSecurityToken GetRefreshToken(Guid refreshTokenId, DateTime expiry);
+        JwtSecurityToken GetRefreshToken(Guid refreshTokenId, DateTime expiresUtc);
+
+        JwtSecurityToken GetRefreshToken(Guid refreshTokenId, DateTime expiresUtc, DateTime issuedUtc);
 
         #endregion Public Methods
     }

@@ -40,28 +40,33 @@
         public JwtSecurityToken GetRefreshToken()
         {
             var expiry = Utility.GetSetting<int>(Settings.JwtRefreshTokenExpiry);
-            return GetRefreshToken(Guid.NewGuid(), DateTime.UtcNow.AddMinutes(expiry));
+            return GetRefreshToken(Guid.NewGuid(), DateTime.UtcNow.AddMinutes(expiry), DateTime.UtcNow);
         }
 
         public JwtSecurityToken GetRefreshToken(Guid refreshTokenId)
         {
             var expiry = Utility.GetSetting<int>(Settings.JwtRefreshTokenExpiry);
-            return GetRefreshToken(refreshTokenId, DateTime.UtcNow.AddMinutes(expiry));
+            return GetRefreshToken(refreshTokenId, DateTime.UtcNow.AddMinutes(expiry), DateTime.UtcNow);
         }
 
         public JwtSecurityToken GetRefreshToken(Guid refreshTokenId, int ttlInMinutes)
         {
-            return GetRefreshToken(refreshTokenId, DateTime.UtcNow.AddMinutes(ttlInMinutes));
+            return GetRefreshToken(refreshTokenId, DateTime.UtcNow.AddMinutes(ttlInMinutes), DateTime.UtcNow);
         }
 
-        public JwtSecurityToken GetRefreshToken(Guid refreshTokenId, DateTime expiry)
+        public JwtSecurityToken GetRefreshToken(Guid refreshTokenId, DateTime expiresUtc)
+        {
+            return GetRefreshToken(refreshTokenId, expiresUtc, DateTime.UtcNow);
+        }
+
+        public JwtSecurityToken GetRefreshToken(Guid refreshTokenId, DateTime expiresUtc, DateTime issuedUtc)
         {
             var claims = new Claim[]
             {
                 new Claim("jti", refreshTokenId.ToString())
             };
 
-            return GetJwtSecurityToken(claims, expiry);
+            return GetJwtSecurityToken(claims, expiresUtc, issuedUtc);
         }
 
         #endregion Public Methods
@@ -70,10 +75,15 @@
 
         private JwtSecurityToken GetJwtSecurityToken(Claim[] claims, int ttlInMinuntes)
         {
-            return GetJwtSecurityToken(claims, DateTime.UtcNow.AddMinutes(ttlInMinuntes));
+            return GetJwtSecurityToken(claims, DateTime.UtcNow.AddMinutes(ttlInMinuntes), DateTime.UtcNow);
         }
 
         private JwtSecurityToken GetJwtSecurityToken(Claim[] claims, DateTime expiresUtc)
+        {
+            return GetJwtSecurityToken(claims, expiresUtc, DateTime.UtcNow);
+        }
+
+        private JwtSecurityToken GetJwtSecurityToken(Claim[] claims, DateTime expiresUtc, DateTime issuedUtc)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>(Settings.JwtKey)));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
@@ -82,7 +92,7 @@
                 issuer: Utility.GetSetting<string>(Settings.JwtIssuer),
                 audience: Utility.GetSetting<string>(Settings.JwtAudience),
                 claims: claims,
-                notBefore: DateTime.Now,
+                notBefore: issuedUtc,
                 expires: expiresUtc,
                 signingCredentials: credentials
             );

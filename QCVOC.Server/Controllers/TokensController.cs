@@ -8,7 +8,6 @@ namespace QCVOC.Server.Controllers
     using System;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
-    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -98,23 +97,30 @@ namespace QCVOC.Server.Controllers
                 .Where(r => r.Expires >= DateTime.UtcNow)
                 .FirstOrDefault();
 
+            JwtSecurityToken refreshJwt;
+
             if (refreshTokenRecord == default(RefreshToken))
             {
+                refreshJwt = TokenFactory.GetRefreshToken();
+
                 refreshTokenRecord = new RefreshToken()
                 {
-                    TokenId = Guid.NewGuid(),
+                    TokenId = Guid.Parse(refreshJwt.Claims.Where(c => c.Type == "jti").FirstOrDefault().Value),
                     AccountId = accountRecord.Id,
-                    Issued = DateTime.UtcNow,
-                    Expires = DateTime.UtcNow,
+                    Issued = refreshJwt.ValidFrom,
+                    Expires = refreshJwt.ValidTo,
                 };
 
                 RefreshTokenRepository.Create(refreshTokenRecord);
             }
+            else
+            {
+                refreshJwt = TokenFactory.GetRefreshToken(refreshTokenRecord.TokenId, refreshTokenRecord.Expires, refreshTokenRecord.Issued);
+            }
 
             var accessJwt = TokenFactory.GetAccessToken(accountRecord, refreshTokenRecord.TokenId);
-            var refreshJwt = TokenFactory.GetRefreshToken(refreshTokenRecord.TokenId);
-
             var response = new TokenResponse(accessJwt, refreshJwt);
+
             return Ok(response);
         }
 
@@ -156,21 +162,24 @@ namespace QCVOC.Server.Controllers
                 return Unauthorized();
             }
 
-            var token = RefreshTokenRepository.Get(refreshTokenId);
+            var refreshTokenRecord = RefreshTokenRepository.Get(refreshTokenId);
 
-            if (token == default(RefreshToken) || token.Expires <= DateTime.UtcNow)
+            if (refreshTokenRecord == default(RefreshToken) || refreshTokenRecord.Expires <= DateTime.UtcNow)
             {
                 return Unauthorized();
             }
 
-            var account = AccountRepository.Get(token.AccountId);
+            var account = AccountRepository.Get(refreshTokenRecord.AccountId);
 
             if (account == default(Account))
             {
                 return Unauthorized();
             }
 
-            var response = TokenFactory.GetAccessToken(account, token.TokenId);
+            var accessJwt = TokenFactory.GetAccessToken(account, refreshTokenRecord.TokenId);
+            var refreshJwt = TokenFactory.GetRefreshToken(refreshTokenRecord.TokenId, refreshTokenRecord.Expires, refreshTokenRecord.Issued);
+            var response = new TokenResponse(accessJwt, refreshJwt);
+
             return Ok(response);
         }
 
