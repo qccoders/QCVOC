@@ -38,7 +38,8 @@ namespace Server.Tests
         private Property Insertable(RefreshToken token, RefreshTokenRepository tokens)
         {
             var inserted = tokens.Create(token);
-            return inserted.Equals(token).ToProperty();
+            var equal = inserted.Equals(token);
+            return equal.ToProperty();
         }
 
         private Property Updateable(RefreshToken token, RefreshTokenRepository tokens)
@@ -47,14 +48,16 @@ namespace Server.Tests
             token.Issued = DateTime.Now;
             token.Expires = DateTime.Now;
             var updated = tokens.Update(token);
-            return updated.Equals(token).ToProperty();
+            var equal = updated.Equals(token);
+            return equal.ToProperty();
         }
         private Property Gettable(RefreshToken token, RefreshTokenRepository tokens)
             => (tokens.GetAll().Count() > 0).ToProperty();
         private Property Deleteable(RefreshToken token, RefreshTokenRepository tokens)
         {
             tokens.Delete(token);
-            return (tokens.Get(token.AccountId) == null).ToProperty();
+            var equal = (tokens.Get(token.AccountId) == null);
+            return equal.ToProperty();
         }
     }
 }
