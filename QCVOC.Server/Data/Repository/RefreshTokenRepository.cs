@@ -10,16 +10,26 @@ using System.Collections.Generic;
 namespace QCVOC.Server.Data.Repository
 {
     /// <summary>
-    /// 
     /// </summary>
     /// <typeparam name="RefreshToken"></typeparam>
     public class RefreshTokenRepository : IRepository<RefreshToken>
     {
-        private IDbConnectionFactory ConnectionFactory { get; }
+        #region Public Constructors
+
         public RefreshTokenRepository(IDbConnectionFactory connectionFactory)
         {
             ConnectionFactory = connectionFactory;
         }
+
+        #endregion Public Constructors
+
+        #region Private Properties
+
+        private IDbConnectionFactory ConnectionFactory { get; }
+
+        #endregion Private Properties
+
+        #region Public Methods
 
         public RefreshToken Create(RefreshToken token)
         {
@@ -40,7 +50,7 @@ namespace QCVOC.Server.Data.Repository
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute("DELETE FROM refreshtokens WHERE accountid = @id ", new { id = id });
+                db.Execute("DELETE FROM refreshtokens WHERE tokenid = @id ", new { id = id });
             }
         }
 
@@ -56,7 +66,7 @@ namespace QCVOC.Server.Data.Repository
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.QueryFirstOrDefault<RefreshToken>("SELECT accountid, expires, issued, tokenid FROM refreshtokens WHERE accountid = @accountid ", new { accountid = id });
+                return db.QueryFirstOrDefault<RefreshToken>("SELECT accountid, expires, issued, tokenid FROM refreshtokens WHERE tokenid = @tokenid ", new { tokenid = id });
             }
         }
 
@@ -82,5 +92,7 @@ namespace QCVOC.Server.Data.Repository
                 return Get(token.AccountId);
             }
         }
+
+        #endregion Public Methods
     }
 }
