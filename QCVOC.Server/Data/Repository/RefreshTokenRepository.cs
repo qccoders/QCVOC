@@ -50,7 +50,7 @@ namespace QCVOC.Server.Data.Repository
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute("DELETE FROM refreshtokens WHERE tokenid = @id ", new { id = id });
+                db.Execute("DELETE FROM refreshtokens WHERE accountId = @id ", new { id = id });
             }
         }
 
@@ -66,7 +66,7 @@ namespace QCVOC.Server.Data.Repository
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.QueryFirstOrDefault<RefreshToken>("SELECT accountid, expires, issued, tokenid FROM refreshtokens WHERE tokenid = @tokenid ", new { tokenid = id });
+                return db.QueryFirstOrDefault<RefreshToken>("SELECT accountid, expires, issued, tokenid FROM refreshtokens WHERE accountid = @tokenid ", new { tokenid = id });
             }
         }
 
