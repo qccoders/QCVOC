@@ -145,19 +145,23 @@ namespace QCVOC.Server.Controllers
                 return BadRequest("The specified token is blank.");
             }
 
-            if (!TokenValidator.TryParseAndValidateToken(refreshToken, out JwtSecurityToken jwtSecurityToken))
+            JwtSecurityToken refreshJwt;
+
+            if (!TokenValidator.TryParseAndValidateToken(refreshToken, out refreshJwt))
             {
                 return Unauthorized();
             }
 
-            var refreshTokenIdString = jwtSecurityToken.Claims.Where(c => c.Type == "jti").FirstOrDefault()?.Value;
+            var refreshTokenIdString = refreshJwt.Claims.Where(c => c.Type == "jti").FirstOrDefault()?.Value;
 
             if (string.IsNullOrEmpty(refreshTokenIdString))
             {
                 return Unauthorized();
             }
 
-            if (!Guid.TryParse(refreshTokenIdString, out Guid refreshTokenId))
+            Guid refreshTokenId;
+
+            if (!Guid.TryParse(refreshTokenIdString, out refreshTokenId))
             {
                 return Unauthorized();
             }
@@ -177,7 +181,6 @@ namespace QCVOC.Server.Controllers
             }
 
             var accessJwt = TokenFactory.GetAccessToken(account, refreshTokenRecord.TokenId);
-            var refreshJwt = TokenFactory.GetRefreshToken(refreshTokenRecord.TokenId, refreshTokenRecord.Expires, refreshTokenRecord.Issued);
             var response = new TokenResponse(accessJwt, refreshJwt);
 
             return Ok(response);
