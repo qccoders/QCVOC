@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
+import AppBar from './AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
@@ -22,16 +22,6 @@ import Events from '../events/Events';
 const styles = {
     root: {
         flexGrow: 1,
-    },
-    flex: {
-        flexGrow: 1,
-    },
-    menuButton: {
-        marginLeft: -12,
-        marginRight: 20,
-    },
-    drawer: {
-        width: 500,
     },
 };
 
@@ -53,33 +43,12 @@ class App extends Component {
 
         return (
             <div className={classes.root}>
-                <AppBar position="static" color="primary">
-                    <Toolbar>
-                        <IconButton 
-                            className={classes.menuButton} 
-                            color="inherit" 
-                            aria-label="Menu"
-                            onClick={this.toggleDrawer}
-                        >
-                            <MenuIcon/>
-                        </IconButton>
-                        <Typography variant="title" color="inherit">
-                            QCVOC
-                        </Typography>
-                    </Toolbar>
-                </AppBar>
+                <AppBar title='QCVOC' menu onMenuClick={this.toggleDrawer}/>
                 <Drawer 
                     open={this.state.drawer.open} 
                     onClose={this.toggleDrawer}
-                    className={classes.drawer}
                 >
-                    <AppBar position="static" color="primary">
-                        <Toolbar>
-                            <Typography variant="title" color="inherit">
-                                QCVOC
-                            </Typography>
-                        </Toolbar>
-                    </AppBar>
+                    <AppBar title='QCVOC'/>
                     <List>
                         <Link to='/accounts' icon={<InboxIcon/>}>Accounts</Link>
                         <Link to='/patrons' icon={<InboxIcon/>}>Patrons</Link>
