@@ -19,8 +19,8 @@ const Link = (props) => {
 
 Link.propTypes = {
   icon: PropTypes.object.isRequired,
-  children: PropTypes.string,
-  to: PropTypes.string,
+  children: PropTypes.string.isRequired,
+  to: PropTypes.string.isRequired,
 };
 
 export default Link; 
