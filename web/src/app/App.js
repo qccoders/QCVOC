@@ -13,6 +13,7 @@ import Drawer from '@material-ui/core/Drawer';
 import { List, ListItem, ListItemIcon, ListItemText } from '../../node_modules/@material-ui/core';
 
 import Accounts from '../accounts/Accounts';
+import Patrons from '../patrons/Patrons';
 
 const styles = {
     root: {
