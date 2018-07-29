@@ -4,10 +4,6 @@ import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from './AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import InboxIcon from '@material-ui/icons/Inbox';
 import Drawer from '@material-ui/core/Drawer';
 import { List } from '../../node_modules/@material-ui/core';
