@@ -10,10 +10,14 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import InboxIcon from '@material-ui/icons/Inbox';
 import Drawer from '@material-ui/core/Drawer';
-import { List, ListItem, ListItemIcon, ListItemText } from '../../node_modules/@material-ui/core';
+import { List } from '../../node_modules/@material-ui/core';
+
+import Link from './Link';
 
 import Accounts from '../accounts/Accounts';
 import Patrons from '../patrons/Patrons';
+import Services from '../services/Services';
+import Events from '../events/Events';
 
 const styles = {
     root: {
@@ -77,15 +81,17 @@ class App extends Component {
                         </Toolbar>
                     </AppBar>
                     <List>
-                        <ListItem button>
-                            <ListItemIcon><InboxIcon/></ListItemIcon>
-                            <ListItemText primary="Testas aasdfasdf asdfasd "/>
-                        </ListItem>
+                        <Link to='/accounts' icon={<InboxIcon/>}>Accounts</Link>
+                        <Link to='/patrons' icon={<InboxIcon/>}>Patrons</Link>
+                        <Link to='/services' icon={<InboxIcon/>}>Services</Link>
+                        <Link to='/events' icon={<InboxIcon/>}>Events</Link>
                     </List>                    
                 </Drawer>
                 <Switch>
-                    <Route exact path='/accounts' component={Accounts}/>
-                    <Route exact path='/patrons' component={Patrons}/>
+                    <Route path='/accounts' component={Accounts}/>
+                    <Route path='/patrons' component={Patrons}/>
+                    <Route path='/services' component={Services}/>
+                    <Route path='/events' component={Events}/>
                 </Switch>
             </div>
         );
