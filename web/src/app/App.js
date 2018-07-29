@@ -3,11 +3,11 @@ import { Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
-import AppBar from './AppBar';
 import InboxIcon from '@material-ui/icons/Inbox';
 import Drawer from '@material-ui/core/Drawer';
-import { List } from '../../node_modules/@material-ui/core';
+import List from '@material-ui/core/List';
 
+import AppBar from './AppBar';
 import Link from './Link';
 
 import Accounts from '../accounts/Accounts';
