@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -9,6 +11,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 import InboxIcon from '@material-ui/icons/Inbox';
 import Drawer from '@material-ui/core/Drawer';
 import { List, ListItem, ListItemIcon, ListItemText } from '../../node_modules/@material-ui/core';
+
+import Accounts from '../accounts/Accounts';
 
 const styles = {
     root: {
@@ -78,6 +82,10 @@ class App extends Component {
                         </ListItem>
                     </List>                    
                 </Drawer>
+                <Switch>
+                    <Route exact path='/accounts' component={Accounts}/>
+                    <Route exact path='/patrons' component={Patrons}/>
+                </Switch>
             </div>
         );
     }
