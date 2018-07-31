@@ -1,4 +1,9 @@
-﻿namespace QCVOC.Api.Data.Repository
+﻿// <copyright file="ServiceRepository.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
+namespace QCVOC.Api.Data.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -92,22 +97,23 @@
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute(
-                    @"
-                        UPDATE services
-                        SET
-                            id = @id,
-                            name = @name,
-                            limit = @limit
-                        WHERE id = @id
-                    ",
-                    new
-                    {
-                        id = service.Id,
-                        name = service.Name,
-                        limit = service.Limit
-                    }
-                );
+                var query = @"
+                    UPDATE services
+                    SET
+                        id = @id,
+                        name = @name,
+                        limit = @limit
+                    WHERE id = @id
+                ";
+
+                var param = new
+                {
+                    id = service.Id,
+                    name = service.Name,
+                    limit = service.Limit
+                };
+
+                db.Execute(query, param);
 
                 return Get(service.Id);
             }
