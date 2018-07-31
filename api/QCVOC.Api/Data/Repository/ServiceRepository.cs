@@ -24,19 +24,29 @@ namespace QCVOC.Api.Data.Repository
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute(
-                    @"
-                        INSERT INTO services
-                        (id, name, limit)
-                        VALUES (@id, @name, @limit)
-                    ",
-                    new
-                    {
-                        id = service.Id,
-                        name = service.Name,
-                        limit = service.Limit,
-                    }
-                );
+                var query = @"
+                    INSERT
+                    INTO services
+                    (
+                        id,
+                        name,
+                        limit
+                    )
+                    VALUES(
+                        @id,
+                        @name,
+                        @limit
+                    )
+                ";
+
+                var param = new
+                {
+                    id = service.Id,
+                    name = service.Name,
+                    limit = service.Limit
+                };
+
+                db.Execute(query, param);
 
                 var inserted = Get(service.Id);
                 return inserted;
@@ -47,14 +57,23 @@ namespace QCVOC.Api.Data.Repository
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute("DELETE FROM services WHERE id = @id", new { id = id });
+                var query = @"
+                    DELETE
+                    FROM services
+                    WHERE id = @id;
+                ";
+
+                var param = new { id };
+                db.Execute(query, param);
             }
         }
 
         public void Delete(Service service)
         {
             if (service == null)
+            {
                 throw new ArgumentException("Service cannot be null.", nameof(service));
+            }
 
             Delete(service.Id);
         }
@@ -63,16 +82,18 @@ namespace QCVOC.Api.Data.Repository
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.QueryFirstOrDefault<Service>(
-                    @"
-                        SELECT
-                            id,
-                            name,
-                            limit
-                        FROM services
-                        WHERE id = @id;
-                    ", new { id = id }
-                );
+                var query = @"
+                    SELECT
+                        id,
+                        name,
+                        limit
+                    FROM services
+                    WHERE id = @id;
+                ";
+
+                var param = new { id };
+
+                return db.QueryFirstOrDefault<Service>(query, param);
             }
         }
 
@@ -80,16 +101,16 @@ namespace QCVOC.Api.Data.Repository
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.Query<Service>(
-                    @"
-                        SELECT
-                            id,
-                            name,
-                            limit
-                        FROM services
-                        WHERE id = @id;
-                    "
-                );
+                var query = @"
+                    SELECT
+                        id,
+                        name,
+                        limit
+                    FROM services
+                    WHERE id = @id;
+                ";
+
+                return db.Query<Service>(query);
             }
         }
 
