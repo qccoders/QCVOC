@@ -1,31 +1,31 @@
-
-using System.Data;
-using QCVOC.Api.Data.ConnectionFactory;
-using QCVOC.Api.Data.Model.Security;
-using Dapper.Contrib.Extensions;
-using Dapper;
-using System;
-using System.Text;
-using System.Collections.Generic;
-using QCVOC.Api.Data.Model;
+// <copyright file="PatronRepository.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
 
 namespace QCVOC.Api.Data.Repository
 {
+    using System;
+    using System.Collections.Generic;
+    using Dapper;
+    using QCVOC.Api.Data.ConnectionFactory;
+    using QCVOC.Api.Data.Model;
+
     public class PatronRepository : IRepository<Patron>
     {
-        private IDbConnectionFactory ConnectionFactory { get; }
-        
         public PatronRepository(IDbConnectionFactory connectionFactory)
         {
             ConnectionFactory = connectionFactory;
         }
+
+        private IDbConnectionFactory ConnectionFactory { get; }
 
         public Patron Create(Patron patron)
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
                 db.Execute(@"
-                INSERT INTO patrons 
+                INSERT INTO patrons
                 (id, memberid, firstname, lastname, address, primaryphone, secondaryphone, email, enrollmentdate)
                 VALUES (@id, @memberId, @firstName, @lastName, @address, @primaryPhone, @secondaryPhone, @email, @enrollmentDate)
                 ", new
@@ -55,8 +55,8 @@ namespace QCVOC.Api.Data.Repository
         }
 
         public void Delete(Patron account)
-        { 
-            if(account == null)
+        {
+            if (account == null)
                 throw new ArgumentException("patron cannot be null.", nameof(account));
 
             Delete(account.Id);
@@ -64,7 +64,7 @@ namespace QCVOC.Api.Data.Repository
 
         public Patron Get(Guid id)
         {
-            using(var db = ConnectionFactory.CreateConnection())
+            using (var db = ConnectionFactory.CreateConnection())
             {
                 return db.QueryFirstOrDefault<Patron>(@"
                 SELECT id, memberid, firstname, lastname, address, primaryphone,
@@ -74,17 +74,17 @@ namespace QCVOC.Api.Data.Repository
 
         public IEnumerable<Patron> GetAll()
         {
-            using(var db = ConnectionFactory.CreateConnection())
+            using (var db = ConnectionFactory.CreateConnection())
             {
                 return db.Query<Patron>(@"
-                SELECT id, memberid, firstname, lastname, address, primaryphone, 
+                SELECT id, memberid, firstname, lastname, address, primaryphone,
                 secondaryphone, email, enrollmentdate FROM patrons;");
             }
         }
 
         public Patron Update(Patron patron)
         {
-            using(var db = ConnectionFactory.CreateConnection())
+            using (var db = ConnectionFactory.CreateConnection())
             {
                 db.Execute(@"
                 UPDATE patrons
@@ -96,7 +96,8 @@ namespace QCVOC.Api.Data.Repository
                 secondaryphone = @secondaryPhone,
                 email = @email,
                 enrollmentdate = @enrollmentDate
-                WHERE id = @id", new {
+                WHERE id = @id", new
+                {
                     memberId = patron.MemberId,
                     firstName = patron.FirstName,
                     lastName = patron.LastName,
