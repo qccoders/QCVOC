@@ -13,6 +13,10 @@ namespace QCVOC.Api.Data.Repository
 
     public class ServiceRepository : IRepository<Service>
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ServiceRepository"/> class.
+        /// </summary>
+        /// <param name="connectionFactory"></param>
         public ServiceRepository(IDbConnectionFactory connectionFactory)
         {
             ConnectionFactory = connectionFactory;
