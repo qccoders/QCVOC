@@ -25,6 +25,7 @@ namespace QCVOC.Api
     using Newtonsoft.Json.Converters;
     using NLog;
     using QCVOC.Api.Data.ConnectionFactory;
+    using QCVOC.Api.Data.Model;
     using QCVOC.Api.Data.Model.Security;
     using QCVOC.Api.Data.Repository;
     using QCVOC.Api.Middleware;
@@ -35,28 +36,14 @@ namespace QCVOC.Api
 
     public class Startup
     {
-        #region Private Fields
-
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
-
-        #endregion Private Fields
-
-        #region Public Constructors
 
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        #endregion Public Constructors
-
-        #region Public Properties
-
         public IConfiguration Configuration { get; }
-
-        #endregion Public Properties
-
-        #region Public Methods
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
@@ -86,6 +73,8 @@ namespace QCVOC.Api
                 new AccountRepository(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>(serviceProvider =>
                 new RefreshTokenRepository(serviceProvider.GetService<IDbConnectionFactory>()));
+            services.AddScoped<IRepository<Service>, ServiceRepository>(serviceProvider =>
+                new ServiceRepository(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => GetTokenValidationParameters());
@@ -99,10 +88,6 @@ namespace QCVOC.Api
 
             services.AddSwaggerGen(options => ConfigureSwaggerGenOptions(options, services));
         }
-
-        #endregion Public Methods
-
-        #region Private Methods
 
         private static void ConfigureApiExplorerOptions(ApiExplorerOptions options)
         {
@@ -209,7 +194,5 @@ namespace QCVOC.Api
             var fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
             return Path.Combine(basePath, fileName);
         }
-
-        #endregion Private Methods
     }
 }
