@@ -1,12 +1,70 @@
 import React, { Component } from 'react';
-import './App.css';
+import { Route, Switch } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-class App extends Component {
-  render() {
-    return (
-      <h1>QCVOC</h1>
-    );
-  }
+import { withStyles } from '@material-ui/core/styles';
+import InboxIcon from '@material-ui/icons/Inbox';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+
+import AppBar from './AppBar';
+import Link from './Link';
+
+import Accounts from '../accounts/Accounts';
+import Patrons from '../patrons/Patrons';
+import Services from '../services/Services';
+import Events from '../events/Events';
+
+const styles = {
+    root: {
+        flexGrow: 1,
+    },
+};
+
+const initialState = {
+    drawer: {
+        open: false,
+    },
 }
 
-export default App;
+class App extends Component {
+    state = initialState;
+
+    toggleDrawer = () => { 
+        this.setState({ drawer: { open: !this.state.drawer.open }});
+    }
+
+    render() {
+        let classes = this.props.classes;
+
+        return (
+            <div className={classes.root}>
+                <AppBar title='QCVOC' menu onMenuClick={this.toggleDrawer}/>
+                <Drawer 
+                    open={this.state.drawer.open} 
+                    onClose={this.toggleDrawer}
+                >
+                    <AppBar title='QCVOC'/>
+                    <List>
+                        <Link to='/accounts' icon={<InboxIcon/>}>Accounts</Link>
+                        <Link to='/patrons' icon={<InboxIcon/>}>Patrons</Link>
+                        <Link to='/services' icon={<InboxIcon/>}>Services</Link>
+                        <Link to='/events' icon={<InboxIcon/>}>Events</Link>
+                    </List>                    
+                </Drawer>
+                <Switch>
+                    <Route path='/accounts' component={Accounts}/>
+                    <Route path='/patrons' component={Patrons}/>
+                    <Route path='/services' component={Services}/>
+                    <Route path='/events' component={Events}/>
+                </Switch>
+            </div>
+        );
+    }
+}
+
+App.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles)(App); 
