@@ -73,6 +73,8 @@ namespace QCVOC.Api
                 new AccountRepository(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>(serviceProvider =>
                 new RefreshTokenRepository(serviceProvider.GetService<IDbConnectionFactory>()));
+            services.AddScoped<IRepository<Patron>, PatronRepository>(serviceProvider =>
+                new PatronRepository(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<IRepository<Service>, ServiceRepository>(serviceProvider =>
                 new ServiceRepository(serviceProvider.GetService<IDbConnectionFactory>()));
 
