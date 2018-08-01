@@ -13,6 +13,7 @@ namespace QCVOC.Api
     using System.Text;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Cors.Infrastructure;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -53,7 +54,10 @@ namespace QCVOC.Api
             }
 
             app.UseMiddleware<LoggingMiddleware>();
+
             app.UseAuthentication();
+            app.UseCors("AllowAll");
+
             app.UseMvc();
 
             app.UseSwagger();
@@ -80,6 +84,7 @@ namespace QCVOC.Api
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => GetTokenValidationParameters());
+            services.AddCors(options => ConfigureCorsOptions(options));
 
             services.AddMvc()
                 .AddJsonOptions(options => ConfigureJsonOptions(options));
@@ -102,6 +107,14 @@ namespace QCVOC.Api
             options.ReportApiVersions = true;
             options.AssumeDefaultVersionWhenUnspecified = true;
             options.DefaultApiVersion = new ApiVersion(2, 0);
+        }
+
+        private static void ConfigureCorsOptions(CorsOptions options)
+        {
+            options.AddPolicy("AllowAll", builder =>
+            {
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials();
+            });
         }
 
         private static void ConfigureJsonOptions(MvcJsonOptions options)
