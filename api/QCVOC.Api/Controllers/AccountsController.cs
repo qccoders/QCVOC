@@ -12,7 +12,6 @@ namespace QCVOC.Api.Controllers
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Data.DTO;
-    using QCVOC.Api.Data.Model;
     using QCVOC.Api.Data.Model.Security;
     using QCVOC.Api.Data.Repository;
 
@@ -23,22 +22,12 @@ namespace QCVOC.Api.Controllers
     [Consumes("application/json")]
     public class AccountsController : Controller
     {
-        #region Public Constructors
-
         public AccountsController(IRepository<Account> accountRepository)
         {
             AccountRepository = accountRepository;
         }
 
-        #endregion Public Constructors
-
-        #region Private Properties
-
         private IRepository<Account> AccountRepository { get; set; }
-
-        #endregion Private Properties
-
-        #region Public Methods
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(AccountResponse), 200)]
@@ -83,10 +72,6 @@ namespace QCVOC.Api.Controllers
         {
             return Ok(AccountRepository.GetAll().Select(a => MapAccountResponseFrom(a)));
         }
-        
-        #endregion Public Methods
-
-        #region Private Methods
 
         private AccountResponse MapAccountResponseFrom(Account account)
         {
@@ -97,7 +82,5 @@ namespace QCVOC.Api.Controllers
                 Role = account.Role,
             };
         }
-
-        #endregion Private Methods
     }
 }
