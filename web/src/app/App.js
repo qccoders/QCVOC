@@ -14,6 +14,7 @@ import Accounts from '../accounts/Accounts';
 import Patrons from '../patrons/Patrons';
 import Services from '../services/Services';
 import Events from '../events/Events';
+import Login from './Login';
 
 const styles = {
     root: {
@@ -22,6 +23,13 @@ const styles = {
 };
 
 const initialState = {
+    credentials: {
+        accessToken: undefined,
+        refreshToken: undefined,
+        expires: undefined,
+        issued: undefined,
+        tokenType: undefined,
+    },
     drawer: {
         open: false,
     },
@@ -34,11 +42,17 @@ class App extends Component {
         this.setState({ drawer: { open: !this.state.drawer.open }});
     }
 
+    handleLogin = (credentials) => {
+        this.setState({ credentials: credentials });
+    }
+
     render() {
         let classes = this.props.classes;
 
         return (
             <div className={classes.root}>
+                {this.state.credentials.accessToken ? 
+                <div>
                 <AppBar title='QCVOC' menu onMenuClick={this.toggleDrawer}/>
                 <Drawer 
                     open={this.state.drawer.open} 
@@ -57,7 +71,9 @@ class App extends Component {
                     <Route path='/patrons' component={Patrons}/>
                     <Route path='/services' component={Services}/>
                     <Route path='/events' component={Events}/>
-                </Switch>
+                </Switch></div> :
+                <Login onLogin={this.handleLogin}/>
+                }
             </div>
         );
     }
