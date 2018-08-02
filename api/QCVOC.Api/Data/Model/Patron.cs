@@ -55,7 +55,9 @@ namespace QCVOC.Api.Data.Model
         public bool Equals(Patron patron)
         {
             if (patron == null)
+            {
                 return this == null;
+            }
 
             return this.Id == patron.Id
             && this.MemberId == patron.MemberId

@@ -1,15 +1,16 @@
-using System;
+// <copyright file="Service.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
 
 namespace QCVOC.Api.Data.Model
 {
+    using System;
+
     public class Service
     {
-        #region Public Properties
-
         public Guid Id { get; set; }
-        public string Name { get; set; }
         public int Limit { get; set; }
-
-        #endregion Public Properties
+        public string Name { get; set; }
     }
 }
