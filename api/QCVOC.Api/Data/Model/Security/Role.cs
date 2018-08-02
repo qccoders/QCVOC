@@ -5,10 +5,24 @@
 
 namespace QCVOC.Api.Data.Model.Security
 {
+    /// <summary>
+    ///     Defines application User Roles.
+    /// </summary>
     public enum Role
     {
+        /// <summary>
+        ///     The default User Role.
+        /// </summary>
         User = 0,
+
+        /// <summary>
+        ///     The supervisory User Role.
+        /// </summary>
         Supervisor = 1,
+
+        /// <summary>
+        ///     The administrative User Role.
+        /// </summary>
         Administrator = 2,
     }
 }
