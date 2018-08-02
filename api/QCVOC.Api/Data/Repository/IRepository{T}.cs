@@ -14,12 +14,11 @@ namespace QCVOC.Api.Data.Repository
     /// <typeparam name="T">The Type of resource collection.</typeparam>
     public interface IRepository<T>
     {
-        #region Public Methods
-
         /// <summary>
         ///     Creates a new resource from the specified resource.
         /// </summary>
         /// <param name="resource">The resource to create.</param>
+        /// <returns>The created resource.</returns>
         T Create(T resource);
 
         /// <summary>
@@ -50,9 +49,8 @@ namespace QCVOC.Api.Data.Repository
         /// <summary>
         ///     Updates the specified <paramref name="resource"/>.
         /// </summary>
-        /// <param name="resource">The updated resource.</param>
+        /// <param name="resource">The resource to update.</param>
+        /// <returns>The updated resource.</returns>
         T Update(T resource);
-
-        #endregion Public Methods
     }
 }

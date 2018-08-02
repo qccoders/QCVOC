@@ -1,13 +1,16 @@
-﻿namespace QCVOC.Api.Data.Model.Security
+﻿// <copyright file="RefreshToken.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
+namespace QCVOC.Api.Data.Model.Security
 {
-    using Dapper.Contrib.Extensions;
     using System;
     using System.ComponentModel.DataAnnotations.Schema;
+    using Dapper.Contrib.Extensions;
 
     public class RefreshToken : IEquatable<RefreshToken>
     {
-        #region Public Properties
-
         [ExplicitKey]
         public Guid AccountId { get; set; }
 
@@ -20,13 +23,13 @@
         [Column("tokenid")]
         public Guid TokenId { get; set; }
 
-        #endregion Public Properties
-
         public bool Equals(RefreshToken token)
         {
-            if(token == null)
+            if (token == null)
+            {
                 return this == null;
-            
+            }
+
             return this.TokenId == token.TokenId
             && this.AccountId == token.AccountId
             && (this.Expires - token.Expires <= TimeSpan.FromSeconds(1))

@@ -10,10 +10,9 @@ namespace QCVOC.Api.Data.Model.Security
 
     public class Account : IEquatable<Account>
     {
-        #region Public Properties
-
         [ExplicitKey]
         public Guid Id { get; set; }
+
         public string Name { get; set; }
         public string PasswordHash { get; set; }
         public Role Role { get; set; }
@@ -21,14 +20,14 @@ namespace QCVOC.Api.Data.Model.Security
         public bool Equals(Account other)
         {
             if (other == null)
-                return (this == null);
-            
-            return this.Id == other.Id 
+            {
+                return this == null;
+            }
+
+            return this.Id == other.Id
             && this.Name == other.Name
             && this.PasswordHash == other.PasswordHash
             && this.Role == other.Role;
         }
-
-        #endregion Public Properties
     }
 }
