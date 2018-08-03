@@ -54,7 +54,7 @@ class Login extends Component {
             <div className={classes.root}>
                 <Card className={classes.card}>
                     <CardContent>
-                        <img src={logo}/>
+                        <img src={logo} alt="logo"/>
                         <TextField
                             id="name"
                             label="Name"
