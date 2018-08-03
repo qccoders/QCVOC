@@ -9,15 +9,27 @@ import { Card, CardContent, CardActions } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 
+import logo from '../assets/qcvo.png';
+
 const styles = {
     root: {
         flexGrow: 1,
+        backgroundColor: '#3f51b5',
+        display: 'grid',
+        height: '100vh',
     },
     card: {
         width: 400,
         margin: 'auto',
         marginTop: 30,
     },
+    textField: {
+        width: '100%',
+    },
+    button: {
+        width: '100%',
+        margin: 20
+    }
 };
 
 class Login extends Component {
@@ -42,6 +54,7 @@ class Login extends Component {
             <div className={classes.root}>
                 <Card className={classes.card}>
                     <CardContent>
+                        <img src={logo}/>
                         <TextField
                             id="name"
                             label="Name"
@@ -61,7 +74,14 @@ class Login extends Component {
                         />
                     </CardContent>
                     <CardActions>
-                        <Button size="small" onClick={this.handleLoginClick}>Log In</Button>
+                        <Button 
+                            variant='contained'
+                            color='secondary'
+                            className={classes.button}
+                            onClick={this.handleLoginClick}
+                        >
+                            Log In
+                        </Button>
                     </CardActions>
                 </Card>
             </div>
