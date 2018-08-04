@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'proptypes';
 
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -29,12 +30,12 @@ class LogoutButton extends Component {
         this.setState({ confirmDialog: { open: true }});
     }
 
+    handleLogout = () => {
+        return this.props.onLogout();
+    }
+
     handleDialogClose = (result) => {
-        this.setState({ confirmDialog: { open: false }}, () => {
-            if (result && result.confirmed) {
-                this.props.onLogout();
-            }
-        });
+        this.setState({ confirmDialog: { open: false }});
     }
 
     render() {
@@ -43,21 +44,27 @@ class LogoutButton extends Component {
                 <Typography color="inherit" style={styles.caption}>Log Out</Typography>
                 <IconButton
                     color="inherit"
-                    // onClick={this.props.onLogout}
                     onClick={this.handleLogoutClick}
                 >
                     <ExitToAppIcon/>
                 </IconButton>
                 <ConfirmDialog
                     title={'Confirm Log Out'}
+                    prompt={'Log Out'}
                     open={this.state.confirmDialog.open}
+                    onConfirm={this.handleLogout}
                     onClose={this.handleDialogClose}
+                    suppressCloseOnConfirm
                 >
                     <p>Are you sure you want to log out?</p>
                 </ConfirmDialog>
             </div>
         );
     }
+}
+
+LogoutButton.propTypes = {
+    onLogout: PropTypes.func.isRequired,
 }
 
 export default LogoutButton; 
