@@ -90,8 +90,7 @@ class App extends Component {
                                 <Link to='/accounts' icon={<InboxIcon/>}>Accounts</Link>
                                 <Link to='/patrons' icon={<InboxIcon/>}>Patrons</Link>
                                 <Link to='/services' icon={<InboxIcon/>}>Services</Link>
-                                <Link to='/events' icon={<InboxIcon/>}>Events</Link>
-                                
+                                <Link to='/events' icon={<InboxIcon/>}>Events</Link>                                
                             </List>                    
                         </Drawer>
                         <Switch>
