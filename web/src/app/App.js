@@ -52,9 +52,15 @@ class App extends Component {
         this.setState({ drawer: { open: !this.state.drawer.open }});
     }
 
-    handleLogin = (credentials) => {
+    setCredentials = (credentials) => {
         this.setState({ credentials: credentials }, () => {
             localStorage.setItem("credentials", JSON.stringify(this.state.credentials));
+        });
+    }
+
+    clearCredentials = () => {
+        this.setState({ credentials: initialState.credentials }, () => {
+            localStorage.removeItem("credentials");
         });
     }
 
@@ -69,7 +75,7 @@ class App extends Component {
                             title='QCVOC' 
                             drawerToggleButton={<DrawerToggleButton onToggleClick={this.toggleDrawer}/>}
                         >
-                            <LogoutButton/>
+                            <LogoutButton onLogout={this.clearCredentials}/>
                         </AppBar>
                         <Drawer 
                             open={this.state.drawer.open} 
@@ -91,7 +97,7 @@ class App extends Component {
                             <Route path='/events' component={Events}/>
                         </Switch>
                     </div> :
-                    <LoginForm onLogin={this.handleLogin}/>
+                    <LoginForm onLogin={this.setCredentials}/>
                 }
             </div>
         );

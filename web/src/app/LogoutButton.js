@@ -19,6 +19,7 @@ const LogoutButton = (props) => {
         <div style={styles.container}>
             <IconButton
                 color="inherit"
+                onClick={props.onLogout}
             >
                 <Typography color="inherit" style={styles.caption}>Log Out</Typography>
                 <ExitToAppIcon/>
