@@ -57,6 +57,7 @@ namespace QCVOC.Api.Controllers
         /// <response code="401">Authentication failed.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost]
+        [Route("")]
         [ProducesResponseType(typeof(TokenResponse), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
@@ -123,7 +124,8 @@ namespace QCVOC.Api.Controllers
         /// <response code="400">The specified Refresh Token was blank.</response>
         /// <response code="401">The specified Refresh Token was invalid.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
-        [HttpPut]
+        [HttpPost]
+        [Route("refresh")]
         [ProducesResponseType(typeof(TokenResponse), 200)]
         [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]

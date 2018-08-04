@@ -19,7 +19,7 @@ namespace QCVOC.Api.Data.Repository
         /// <summary>
         ///     Initializes a new instance of the <see cref="PatronRepository"/> class.
         /// </summary>
-        /// <param name="connectionFactory">The database connection factory to use.</param>
+        /// <param name="connectionFactory">The database connection factory used for data access.</param>
         public PatronRepository(IDbConnectionFactory connectionFactory)
         {
             ConnectionFactory = connectionFactory;
