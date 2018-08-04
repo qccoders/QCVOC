@@ -6,11 +6,27 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
+import { CircularProgress } from '../../node_modules/@material-ui/core';
+import grey from '@material-ui/core/colors/grey';
 
 const initialState = {
     api: {
         isExecuting: false,
         isErrored: false,
+    }
+}
+
+const styles = {
+    spinner: {
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: 'auto',
+        marginBottom: 'auto',
     }
 }
 
@@ -46,21 +62,28 @@ class ConfirmDialog extends Component {
 
         return (
             <Dialog
-                aria-labelledby="confirmation-dialog-title"
+                PaperProps={{style: this.state.api.isExecuting ? { backgroundColor: grey[400] } : {}}}
                 {...additionalProps}
             >
-                <DialogTitle id="confirmation-dialog-title">{this.props.title}</DialogTitle>
+                <DialogTitle>{this.props.title}</DialogTitle>
                 <DialogContent>
                     {this.props.children}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.handleCancelClick} color="primary">
+                    <Button 
+                        disabled={this.state.api.isExecuting} 
+                        onClick={this.handleCancelClick} color="primary"
+                    >
                         Cancel
                     </Button>
-                    <Button onClick={this.handleConfirmClick} color="primary">
+                    <Button 
+                        disabled={this.state.api.isExecuting}
+                        onClick={this.handleConfirmClick} color="primary"
+                    >
                         {this.props.prompt}
                     </Button>
                 </DialogActions>
+                {!this.state.api.isExecuting ? '' : <CircularProgress style={styles.spinner}/>}
             </Dialog>
         );
     }
