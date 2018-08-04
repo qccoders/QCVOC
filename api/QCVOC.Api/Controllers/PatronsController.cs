@@ -23,22 +23,41 @@ namespace QCVOC.Api.Controllers
     [Consumes("application/json")]
     public class PatronsController : Controller
     {
-        #region Public Constructors
-
         public PatronsController(IRepository<Patron> patronRepository)
         {
             PatronRepository = patronRepository;
         }
 
-        #endregion Public Constructors
-
-        #region Private Properties
-
         private IRepository<Patron> PatronRepository { get; set; }
 
-        #endregion Private Properties
+        [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(OkResult), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Delete(string id)
+        {
+            Guid guid;
 
-        #region Public Methods
+            if (!Guid.TryParse(id, out guid))
+            {
+                var err = new ModelStateDictionary();
+                err.AddModelError("id", "The requested Id must be a valid Guid.");
+
+                return BadRequest(err);
+            }
+
+            try
+            {
+                PatronRepository.Delete(guid);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Exception("Error retrieving the specified Patron. See inner exception for details.", ex));
+            }
+
+            return Ok();
+        }
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(PatronResponse), 200)]
@@ -75,66 +94,13 @@ namespace QCVOC.Api.Controllers
 
             return Ok(MapPatronResponseFrom(patron));
         }
-        [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(OkResult), 200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+
+        [HttpGet("")]
+        [ProducesResponseType(typeof(IEnumerable<PatronResponse>), 200)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Delete(string id)
+        public IActionResult GetAll()
         {
-            Guid guid;
-
-            if (!Guid.TryParse(id, out guid))
-            {
-                var err = new ModelStateDictionary();
-                err.AddModelError("id", "The requested Id must be a valid Guid.");
-
-                return BadRequest(err);
-            }
-
-            try
-            {
-                PatronRepository.Delete(guid);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new Exception("Error retrieving the specified Patron. See inner exception for details.", ex));
-            }
-
-            return Ok();
-        }
-
-        public ModelStateDictionary ValidatePatron(Patron patron)
-        {
-            var err = new ModelStateDictionary();
-
-            if (patron.MemberId <= 0)
-                err.AddModelError("memberId", "The patron's memberId must be a positive number.");
-
-            if (string.IsNullOrWhiteSpace(patron.FirstName))
-                err.AddModelError("firstName", "The patron's first name must be alphanumeric.");
-
-            if (string.IsNullOrWhiteSpace(patron.LastName))
-                err.AddModelError("lastName", "The patron's last name must be alphanumeric.");
-
-            if (string.IsNullOrWhiteSpace(patron.Address))
-                err.AddModelError("address", "The patron's address must be alphanumeric.");
-
-            // TODO: Better phone number validation.
-            if (string.IsNullOrWhiteSpace(patron.PrimaryPhone))
-                err.AddModelError("primaryPhone", "The patron's primary phone number must be a valid phone number.");
-
-            // TODO: Better phone number validation.
-            if (patron.SecondaryPhone != null && patron.SecondaryPhone.All(p => char.IsWhiteSpace(p)))
-                err.AddModelError("secondayPhone", "The patron's secondary phone number must be a valid phone number.");
-
-            if (string.IsNullOrWhiteSpace(patron.Email))
-                err.AddModelError("email", "The patron's email must be alphanumeric.");
-
-            if (patron.EnrollmentDate == null)
-                err.AddModelError("enrollmentDate", "The patron's enrollment date must be a valid date.");
-
-            return err;
+            return Ok(PatronRepository.GetAll().Select(a => MapPatronResponseFrom(a)));
         }
 
         [HttpPost("{id}")]
@@ -144,13 +110,17 @@ namespace QCVOC.Api.Controllers
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Post(Patron patron)
         {
-            if(patron == null)
+            if (patron == null)
+            {
                 return BadRequest("Patron cannot be null.");
-            
+            }
+
             ModelStateDictionary err = ValidatePatron(patron);
 
             if (err.Keys.Any())
+            {
                 return BadRequest(err);
+            }
 
             Patron patronResponse = default(Patron);
 
@@ -173,13 +143,17 @@ namespace QCVOC.Api.Controllers
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Put(Patron patron)
         {
-            if(patron == null)
+            if (patron == null)
+            {
                 return BadRequest("Patron cannot be null.");
+            }
 
             ModelStateDictionary err = ValidatePatron(patron);
 
             if (err.Keys.Any())
+            {
                 return BadRequest(err);
+            }
 
             Patron patronResponse = default(Patron);
 
@@ -195,19 +169,54 @@ namespace QCVOC.Api.Controllers
             return Ok(MapPatronResponseFrom(patronResponse));
         }
 
-
-
-        [HttpGet("")]
-        [ProducesResponseType(typeof(IEnumerable<PatronResponse>), 200)]
-        [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult GetAll()
+        public ModelStateDictionary ValidatePatron(Patron patron)
         {
-            return Ok(PatronRepository.GetAll().Select(a => MapPatronResponseFrom(a)));
+            var err = new ModelStateDictionary();
+
+            if (patron.MemberId <= 0)
+            {
+                err.AddModelError("memberId", "The patron's memberId must be a positive number.");
+            }
+
+            if (string.IsNullOrWhiteSpace(patron.FirstName))
+            {
+                err.AddModelError("firstName", "The patron's first name must be alphanumeric.");
+            }
+
+            if (string.IsNullOrWhiteSpace(patron.LastName))
+            {
+                err.AddModelError("lastName", "The patron's last name must be alphanumeric.");
+            }
+
+            if (string.IsNullOrWhiteSpace(patron.Address))
+            {
+                err.AddModelError("address", "The patron's address must be alphanumeric.");
+            }
+
+            // TODO: Better phone number validation.
+            if (string.IsNullOrWhiteSpace(patron.PrimaryPhone))
+            {
+                err.AddModelError("primaryPhone", "The patron's primary phone number must be a valid phone number.");
+            }
+
+            // TODO: Better phone number validation.
+            if (patron.SecondaryPhone != null && patron.SecondaryPhone.All(p => char.IsWhiteSpace(p)))
+            {
+                err.AddModelError("secondayPhone", "The patron's secondary phone number must be a valid phone number.");
+            }
+
+            if (string.IsNullOrWhiteSpace(patron.Email))
+            {
+                err.AddModelError("email", "The patron's email must be alphanumeric.");
+            }
+
+            if (patron.EnrollmentDate == null)
+            {
+                err.AddModelError("enrollmentDate", "The patron's enrollment date must be a valid date.");
+            }
+
+            return err;
         }
-
-        #endregion Public Methods
-
-        #region Private Methods
 
         private PatronResponse MapPatronResponseFrom(Patron patron)
         {
@@ -215,7 +224,5 @@ namespace QCVOC.Api.Controllers
             patron.LastName, patron.Address, patron.PrimaryPhone, patron.SecondaryPhone,
             patron.Email, patron.EnrollmentDate);
         }
-
-        #endregion Private Methods
     }
 }

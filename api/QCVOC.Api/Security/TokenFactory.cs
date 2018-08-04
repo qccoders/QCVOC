@@ -1,4 +1,9 @@
-﻿namespace QCVOC.Api.Security
+﻿// <copyright file="TokenFactory.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
+namespace QCVOC.Api.Security
 {
     using System;
     using System.IdentityModel.Tokens.Jwt;
@@ -11,8 +16,6 @@
 
     public class TokenFactory : ITokenFactory
     {
-        #region Public Methods
-
         public JwtSecurityToken GetAccessToken(Account account, JwtSecurityToken refreshToken)
         {
             var jti = refreshToken.Claims.Where(c => c.Type == "jti").FirstOrDefault().Value;
@@ -69,10 +72,6 @@
             return GetJwtSecurityToken(claims, expiresUtc, issuedUtc);
         }
 
-        #endregion Public Methods
-
-        #region Private Methods
-
         private JwtSecurityToken GetJwtSecurityToken(Claim[] claims, int ttlInMinuntes)
         {
             return GetJwtSecurityToken(claims, DateTime.UtcNow.AddMinutes(ttlInMinuntes), DateTime.UtcNow);
@@ -94,12 +93,9 @@
                 claims: claims,
                 notBefore: issuedUtc,
                 expires: expiresUtc,
-                signingCredentials: credentials
-            );
+                signingCredentials: credentials);
 
             return token;
         }
-
-        #endregion Private Methods
     }
 }

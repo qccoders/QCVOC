@@ -1,4 +1,9 @@
-﻿namespace QCVOC.Api.Security
+﻿// <copyright file="TokenValidator.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
+namespace QCVOC.Api.Security
 {
     using System;
     using System.IdentityModel.Tokens.Jwt;
@@ -6,21 +11,12 @@
 
     public class TokenValidator : ITokenValidator
     {
-        #region Public Constructors
-
         public TokenValidator(TokenValidationParameters tokenValidationParameters)
         {
             TokenValidationParameters = tokenValidationParameters;
         }
 
-        #endregion Public Constructors
-
-        #region Public Methods
-
-        public bool TryValidateToken(string token)
-        {
-            return TryParseAndValidateToken(token, out JwtSecurityToken jwtSecurityToken);
-        }
+        private TokenValidationParameters TokenValidationParameters { get; set; }
 
         public bool TryParseAndValidateToken(string token, out JwtSecurityToken jwtSecurityToken)
         {
@@ -40,12 +36,9 @@
             }
         }
 
-        #endregion Public Methods
-
-        #region Private Properties
-
-        private TokenValidationParameters TokenValidationParameters { get; set; }
-
-        #endregion Private Properties
+        public bool TryValidateToken(string token)
+        {
+            return TryParseAndValidateToken(token, out JwtSecurityToken jwtSecurityToken);
+        }
     }
 }
