@@ -67,11 +67,11 @@ class ConfirmDialog extends Component {
 }
 
 ConfirmDialog.propTypes = {
-    title: PropTypes.string,
-    onClose: PropTypes.func,
-    onConfirm: PropTypes.func,
-    children: PropTypes.object,
-    prompt: PropTypes.string,
+    title: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onConfirm: PropTypes.func.isRequired,
+    children: PropTypes.object.isRequired,
+    prompt: PropTypes.string.isRequired,
     suppressCloseOnConfirm: PropTypes.bool,
 };
 
