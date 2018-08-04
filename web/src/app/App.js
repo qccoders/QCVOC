@@ -56,9 +56,11 @@ class App extends Component {
         }
     }
 
-    setCredentials = (credentials) => {
+    setCredentials = (credentials, persistCredentials) => {
         this.setState({ credentials: credentials }, () => {
-            localStorage.setItem("credentials", JSON.stringify(this.state.credentials));
+            if (persistCredentials) {
+                localStorage.setItem("credentials", JSON.stringify(this.state.credentials));
+            }
         });
     }
 
@@ -70,6 +72,10 @@ class App extends Component {
                 });
             }, 500);
         });
+    }
+
+    handleLogin = (credentials, persistCredentials) => {
+        this.setCredentials(credentials, persistCredentials);
     }
 
     render() {
@@ -104,7 +110,7 @@ class App extends Component {
                             <Route path='/events' component={Events}/>
                         </Switch>
                     </div> :
-                    <LoginForm onLogin={this.setCredentials}/>
+                    <LoginForm onLogin={this.handleLogin}/>
                 }
             </div>
         );
