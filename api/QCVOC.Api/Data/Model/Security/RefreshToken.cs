@@ -6,21 +6,12 @@
 namespace QCVOC.Api.Data.Model.Security
 {
     using System;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using Dapper.Contrib.Extensions;
 
     public class RefreshToken : IEquatable<RefreshToken>
     {
-        [ExplicitKey]
         public Guid AccountId { get; set; }
-
-        [Column("expires")]
         public DateTime Expires { get; set; }
-
-        [Column("issued")]
         public DateTime Issued { get; set; }
-
-        [Column("tokenid")]
         public Guid TokenId { get; set; }
 
         public bool Equals(RefreshToken token)
