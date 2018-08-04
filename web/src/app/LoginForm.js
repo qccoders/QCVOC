@@ -37,6 +37,10 @@ const styles = {
         marginTop: 10,
         width: '100%',
     },
+    logo: {
+        width: 339,
+        height: 158,
+    },
 };
 
 class LoginForm extends Component {
@@ -61,7 +65,7 @@ class LoginForm extends Component {
             <div className={classes.root}>
                 <Card className={classes.card}>
                     <CardContent>
-                        <img src={logo} alt="logo"/>
+                        <img className={classes.logo} src={logo} alt="logo"/>
                         <TextField
                             id="name"
                             label="Name"
