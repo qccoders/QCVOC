@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { getCredentials, saveCredentials, deleteCredentials } from '../credentialStore';
 
 import { withStyles } from '@material-ui/core/styles';
 import InboxIcon from '@material-ui/icons/Inbox';
@@ -41,41 +42,33 @@ class App extends Component {
     state = initialState;
 
     componentDidMount = () => {
-        this.getCredentials();
-    }
-
-    toggleDrawer = () => { 
-        this.setState({ drawer: { open: !this.state.drawer.open }});
-    }
-
-    getCredentials = () => {
-        let credentials = JSON.parse(localStorage.getItem("credentials"));
+        let credentials = getCredentials();
 
         if (credentials) {
-            this.setState({ credentials: credentials });
+            this.setState({ credentials: getCredentials() });
         }
     }
 
-    setCredentials = (credentials, persistCredentials) => {
+    handleToggleDrawer = () => { 
+        this.setState({ drawer: { open: !this.state.drawer.open }});
+    }
+
+    handleLogin = (credentials, persistCredentials) => {
         this.setState({ credentials: credentials }, () => {
             if (persistCredentials) {
-                localStorage.setItem("credentials", JSON.stringify(this.state.credentials));
+                saveCredentials(this.state.credentials);
             }
         });
     }
 
-    clearCredentials = () => {
+    handleLogout = () => {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 this.setState({ credentials: initialState.credentials }, () => {
-                    localStorage.removeItem("credentials");
+                    deleteCredentials();
                 });
             }, 500);
         });
-    }
-
-    handleLogin = (credentials, persistCredentials) => {
-        this.setCredentials(credentials, persistCredentials);
     }
 
     render() {
@@ -87,13 +80,13 @@ class App extends Component {
                     <div>
                         <AppBar 
                             title='QCVOC' 
-                            drawerToggleButton={<DrawerToggleButton onToggleClick={this.toggleDrawer}/>}
+                            drawerToggleButton={<DrawerToggleButton onToggleClick={this.handleToggleDrawer}/>}
                         >
-                            <LogoutButton onLogout={this.clearCredentials}/>
+                            <LogoutButton onLogout={this.handleLogout}/>
                         </AppBar>
                         <Drawer 
                             open={this.state.drawer.open} 
-                            onClose={this.toggleDrawer}
+                            onClose={this.handleToggleDrawer}
                         >
                             <AppBar title='QCVOC'/>
                             <List>
