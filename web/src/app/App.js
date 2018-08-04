@@ -59,8 +59,12 @@ class App extends Component {
     }
 
     clearCredentials = () => {
-        this.setState({ credentials: initialState.credentials }, () => {
-            localStorage.removeItem("credentials");
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                this.setState({ credentials: initialState.credentials }, () => {
+                    localStorage.removeItem("credentials");
+                });
+            }, 500);
         });
     }
 
