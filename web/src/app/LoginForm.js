@@ -8,6 +8,8 @@ import { withStyles } from '@material-ui/core/styles';
 import { Card, CardContent, CardActions } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 
 import logo from '../assets/qcvo.png';
 
@@ -17,6 +19,7 @@ const styles = {
         backgroundColor: '#3f51b5',
         display: 'grid',
         height: '100vh',
+        textAlign: 'center',
     },
     card: {
         width: 400,
@@ -28,12 +31,16 @@ const styles = {
     },
     button: {
         width: '100%',
-        margin: 20
-    }
+        margin: 10,
+    },
+    checkbox:{
+        marginTop: 10,
+        width: '100%',
+    },
 };
 
 class LoginForm extends Component {
-    state = { name: '', password: '' }
+    state = { name: '', password: '', rememberMe: true }
 
     handleChange = (field, event) => {
         this.setState({ [field]: event.target.value });
@@ -42,7 +49,7 @@ class LoginForm extends Component {
     handleLoginClick = () => {
         axios.post(API_ROOT + '/v1/tokens', this.state)
         .then(
-            response => this.props.onLogin(response.data), 
+            response => this.props.onLogin(response.data, this.state.rememberMe), 
             error => console.log(error.response)
         );
     }
@@ -71,6 +78,17 @@ class LoginForm extends Component {
                             autoComplete="current-password"
                             margin="normal"
                             onChange={(event) => this.handleChange('password', event)}
+                        />
+                        <FormControlLabel
+                            className={classes.checkbox}
+                            label="Remember Me"
+                            control={
+                                <Checkbox
+                                    checked={this.state.rememberMe}
+                                    onChange={(event) => this.handleChange('rememberMe', event)}
+                                    color="primary"
+                                />
+                            }
                         />
                     </CardContent>
                     <CardActions>
