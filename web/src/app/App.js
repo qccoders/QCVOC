@@ -40,12 +40,22 @@ const initialState = {
 class App extends Component {
     state = initialState;
 
+    componentDidMount = () => {
+        let credentials = JSON.parse(localStorage.getItem("credentials"));
+
+        if (credentials) {
+            this.setState({ credentials: credentials });
+        }
+    }
+
     toggleDrawer = () => { 
         this.setState({ drawer: { open: !this.state.drawer.open }});
     }
 
     handleLogin = (credentials) => {
-        this.setState({ credentials: credentials });
+        this.setState({ credentials: credentials }, () => {
+            localStorage.setItem("credentials", JSON.stringify(this.state.credentials));
+        });
     }
 
     render() {
@@ -53,7 +63,7 @@ class App extends Component {
 
         return (
             <div className={classes.root}>
-                {!this.state.credentials.accessToken ? 
+                {this.state.credentials.accessToken ? 
                     <div>
                         <AppBar 
                             title='QCVOC' 
