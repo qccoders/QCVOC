@@ -41,15 +41,19 @@ class App extends Component {
     state = initialState;
 
     componentDidMount = () => {
+        this.getCredentials();
+    }
+
+    toggleDrawer = () => { 
+        this.setState({ drawer: { open: !this.state.drawer.open }});
+    }
+
+    getCredentials = () => {
         let credentials = JSON.parse(localStorage.getItem("credentials"));
 
         if (credentials) {
             this.setState({ credentials: credentials });
         }
-    }
-
-    toggleDrawer = () => { 
-        this.setState({ drawer: { open: !this.state.drawer.open }});
     }
 
     setCredentials = (credentials) => {
