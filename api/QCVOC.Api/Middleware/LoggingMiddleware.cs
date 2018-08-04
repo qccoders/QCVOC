@@ -1,6 +1,10 @@
-﻿namespace QCVOC.Api.Middleware
+﻿// <copyright file="LoggingMiddleware.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
+namespace QCVOC.Api.Middleware
 {
-    using System.Linq;
     using System;
     using System.Diagnostics;
     using System.Text;
@@ -8,12 +12,18 @@
     using Microsoft.AspNetCore.Http;
     using NLog;
 
+    /// <summary>
+    ///     Provides logging for HTTP requests.
+    /// </summary>
     public class LoggingMiddleware
     {
-
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
         private readonly RequestDelegate next;
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="LoggingMiddleware"/> class.
+        /// </summary>
+        /// <param name="next">The next middleware in the chain.</param>
         public LoggingMiddleware(RequestDelegate next)
         {
             this.next = next;
@@ -73,6 +83,5 @@
 
             return message.ToString();
         }
-
     }
 }
