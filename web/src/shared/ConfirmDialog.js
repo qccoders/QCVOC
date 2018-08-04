@@ -16,38 +16,49 @@ const initialState = {
 
 class ConfirmDialog extends Component {
     state = initialState;
-    
-    componentWillReceiveProps(nextProps) {
-        if (nextProps.value !== this.props.value) {
-            this.setState({ value: nextProps.value });
+
+    componentWillReceiveProps = (nextProps) => {
+        if (!this.props.open && nextProps.open) {
+            this.setState(initialState);
         }
     }
 
-    handleCancel = () => {
-        this.props.onClose({ confirmed: false });
-    };
+    handleConfirmClick = () => {
+        this.setState({ api: { ...this.state.api, isExecuting: true }}, () => {
+            this.props.onConfirm()
+            .then(response => {
+                if (!this.props.suppressCloseOnConfirm) {
+                    this.setState({ api: { isExecuting: false, isErrored: true }});
+                    this.props.onClose({ cancelled: false }) 
+                }
+            }, error => { });
+        })
+    }
 
-    handleOk = () => {
-        this.props.onClose({ confirmed: true });
-    };
+    handleCancelClick = () => {
+        this.setState(initialState, () => this.props.onClose({ cancelled: true }))
+    }
 
     render() {
+        let additionalProps = { ...this.props };
+        delete additionalProps.onConfirm;
+        delete additionalProps.suppressCloseOnConfirm;
+
         return (
             <Dialog
-                onEntering={this.handleEntering}
                 aria-labelledby="confirmation-dialog-title"
-                {...this.props}
+                {...additionalProps}
             >
                 <DialogTitle id="confirmation-dialog-title">{this.props.title}</DialogTitle>
                 <DialogContent>
                     {this.props.children}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.handleCancel} color="primary">
+                    <Button onClick={this.handleCancelClick} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={this.handleOk} color="primary">
-                        Ok
+                    <Button onClick={this.handleConfirmClick} color="primary">
+                        {this.props.prompt}
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -58,8 +69,10 @@ class ConfirmDialog extends Component {
 ConfirmDialog.propTypes = {
     title: PropTypes.string,
     onClose: PropTypes.func,
-    value: PropTypes.string,
+    onConfirm: PropTypes.func,
     children: PropTypes.object,
+    prompt: PropTypes.string,
+    suppressCloseOnConfirm: PropTypes.bool,
 };
 
 export default ConfirmDialog;
