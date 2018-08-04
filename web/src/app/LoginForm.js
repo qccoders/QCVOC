@@ -32,7 +32,7 @@ const styles = {
     }
 };
 
-class Login extends Component {
+class LoginForm extends Component {
     state = { name: '', password: '' }
 
     handleChange = (field, event) => {
@@ -89,8 +89,8 @@ class Login extends Component {
     }
 }
 
-Login.propTypes = {
+LoginForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Login); 
+export default withStyles(styles)(LoginForm); 
