@@ -1,98 +1,169 @@
-using System.Data;
-using QCVOC.Api.Data.ConnectionFactory;
-using QCVOC.Api.Data.Model.Security;
-using Dapper.Contrib.Extensions;
-using Dapper;
-using System;
-using System.Text;
-using System.Collections.Generic;
-
 namespace QCVOC.Api.Data.Repository
 {
+    using System;
+    using System.Collections.Generic;
+    using Dapper;
+    using QCVOC.Api.Data.ConnectionFactory;
+    using QCVOC.Api.Data.Model.Security;
+
     /// <summary>
+    ///     Provides data access for <see cref="RefreshToken"/>.
     /// </summary>
-    /// <typeparam name="RefreshToken"></typeparam>
     public class RefreshTokenRepository : IRepository<RefreshToken>
     {
-        #region Public Constructors
-
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="RefreshTokenRepository"/> class.
+        /// </summary>
+        /// <param name="connectionFactory">The database connection factory used for data access.</param>
         public RefreshTokenRepository(IDbConnectionFactory connectionFactory)
         {
             ConnectionFactory = connectionFactory;
         }
 
-        #endregion Public Constructors
-
-        #region Private Properties
-
         private IDbConnectionFactory ConnectionFactory { get; }
 
-        #endregion Private Properties
-
-        #region Public Methods
-
-        public RefreshToken Create(RefreshToken token)
+        /// <summary>
+        ///     Creates a new <see cref="RefreshToken"/> from the specified <paramref name="refreshToken"/>.
+        /// </summary>
+        /// <param name="refreshToken">The RefreshToken to create.</param>
+        /// <returns>The created RefreshToken.</returns>
+        public RefreshToken Create(RefreshToken refreshToken)
         {
+            var query = @"
+                INSERT INTO refreshtokens (
+                    tokenid,
+                    issued,
+                    expires,
+                    accountid
+                )
+                VALUES (
+                    @tokenid,
+                    @issued,
+                    @expires,
+                    @accountid
+                );
+            ";
+
+            var param = new
+            {
+                tokenid = refreshToken.TokenId,
+                issued = refreshToken.Issued,
+                expires = refreshToken.Expires,
+                accountid = refreshToken.AccountId
+            };
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute("INSERT INTO refreshtokens(tokenid, issued, expires, accountid) VALUES(@tokenid, @issued, @expires, @accountid);", new
-                {
-                    tokenid = token.TokenId,
-                    issued = token.Issued,
-                    expires = token.Expires,
-                    accountid = token.AccountId
-                });
-                return Get(token.AccountId);
+                db.Execute(query, param);
+                return Get(refreshToken.AccountId);
             }
         }
 
+        /// <summary>
+        ///     Deletes the <see cref="RefreshToken"/> matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="RefreshToken"/> to delete.</param>
         public void Delete(Guid id)
         {
+            var query = @"
+                DELETE FROM refreshtokens
+                WHERE accountId = @id
+            ";
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute("DELETE FROM refreshtokens WHERE accountId = @id ", new { id = id });
+                db.Execute(query, new { id });
             }
         }
 
-        public void Delete(RefreshToken token)
+        /// <summary>
+        ///     Deletes the specified <paramref name="refreshToken"/>
+        /// </summary>
+        /// <param name="refreshToken">The RefreshToken to delete.</param>
+        public void Delete(RefreshToken refreshToken)
         {
-            if (token == null)
-                throw new ArgumentException("token cannot be null.", nameof(token));
+            if (refreshToken == null)
+            {
+                throw new ArgumentException("token cannot be null.", nameof(refreshToken));
+            }
 
-            Delete(token.AccountId);
+            Delete(refreshToken.AccountId);
         }
 
+        /// <summary>
+        ///     Retrieves the <see cref="RefreshToken"/> matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="RefreshToken"/> to retrieve.</param>
+        /// <returns>The RefreshToken matching the specified id.</returns>
         public RefreshToken Get(Guid id)
         {
+            var query = @"
+                SELECT
+                    accountid AS AccountID,
+                    expires AS Expires,
+                    issued AS Issued,
+                    tokenid AS TokenId
+                FROM refreshtokens
+                WHERE accountid = @tokenid
+            ";
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.QueryFirstOrDefault<RefreshToken>("SELECT accountid, expires, issued, tokenid FROM refreshtokens WHERE accountid = @tokenid ", new { tokenid = id });
+                return db.QueryFirstOrDefault<RefreshToken>(query, new { tokenid = id });
             }
         }
 
+        /// <summary>
+        ///     Retrieves a lisst of all <see cref="RefreshToken"/> objects in the collection.
+        /// </summary>
+        /// <returns>A list of all <see cref="RefreshToken"/> objects in the collection.</returns>
         public IEnumerable<RefreshToken> GetAll()
         {
+            var query = @"
+                SELECT
+                    accountid AS AccountID,
+                    expires AS Expires,
+                    issued AS Issued,
+                    tokenid AS TokenId
+                FROM refreshtokens
+                WHERE accountid = @tokenid
+            ";
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.Query<RefreshToken>("SELECT accountid, expires, issued, tokenid FROM refreshtokens;");
+                return db.Query<RefreshToken>(query);
             }
         }
 
-        public RefreshToken Update(RefreshToken token)
+        /// <summary>
+        ///     Updates the specified <paramref name="refreshToken"/>
+        /// </summary>
+        /// <param name="refreshToken">The RefreshToken to update.</param>
+        /// <returns>The updated RefreshToken.</returns>
+        public RefreshToken Update(RefreshToken refreshToken)
         {
+            var query = @"
+                UPDATE refreshtokens
+                SET
+                    expires = @expires,
+                    issued = @issued,
+                    tokenid = @tokenid
+                WHERE accountid = @id;
+            ";
+
+            var param = new
+            {
+                id = refreshToken.AccountId,
+                expires = refreshToken.Expires,
+                issued = refreshToken.Issued,
+                tokenid = refreshToken.TokenId
+            };
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute("UPDATE refreshtokens SET expires = @expires, issued = @issued, tokenid = @tokenid where accountid = @id;", new
-                {
-                    id = token.AccountId,
-                    expires = token.Expires,
-                    issued = token.Issued,
-                    tokenid = token.TokenId
-                });
-                return Get(token.AccountId);
+                db.Execute(query, param);
+                return Get(refreshToken.AccountId);
             }
         }
-
-        #endregion Public Methods
     }
 }
