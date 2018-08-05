@@ -75,7 +75,11 @@ class LoginForm extends Component {
     }
 
     handleLoginClick = () => {
-        this.setState({ api: { isExecuting: true }}, () => {
+        this.setState({ 
+            api: { isExecuting: true },
+            validation: { name: undefined, password: undefined },
+            
+        }, () => {
             axios.post(API_ROOT + '/v1/tokens', this.state)
             .then(
                 response => {
@@ -112,7 +116,7 @@ class LoginForm extends Component {
             <div className={classes.root}>
                 <Card className={classes.card}>
                     <CardContent>
-                        <img className={classes.logo} src={logo} alt="logo"/>
+                        <img className={classes.logo} src={logo} alt="logo" style={isExecuting ? {filter: 'grayscale(100%)', opacity: 0.5} : {}}/>
                         <TextField
                             id="name"
                             label="Name"
