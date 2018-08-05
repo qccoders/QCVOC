@@ -10,6 +10,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
+import Snackbar from '@material-ui/core/Snackbar';
 
 import logo from '../assets/qcvo.png';
 
@@ -57,11 +58,18 @@ const initialState = {
     validation: {
         name: undefined,
         password: undefined,
-    }
+    },
+    snackbar: {
+        message: '',
+        open: false,
+    },
 }
 
 class LoginForm extends Component {
     state = initialState;
+
+    nameInput = React.createRef();
+    passwordInput = React.createRef();
 
     handleChange = (field, event) => {
         this.setState({ 
@@ -72,6 +80,10 @@ class LoginForm extends Component {
                 [field]: undefined,
             },
         });
+    }
+
+    handleSnackbarClose = () => {
+        this.setState({ snackbar: { open: false }});
     }
 
     handleLoginClick = () => {
@@ -86,22 +98,42 @@ class LoginForm extends Component {
                     this.props.onLogin(response.data, this.state.rememberMe);
                 }, 
                 error => {
-                    console.log(error.response)
-
                     this.setState({ api: { isExecuting: false, isErrored: true }}, () => {
-                        if (error.response.data) {
-                            let validation = { ... this.state.validation };
+                        if (error.response && error.response.status === 400) {
+                            if (error.response.data) {
+                                let validation = this.state.validation;
 
-                            if (error.response.data.Name && error.response.data.Name.length > 0) {
-                                validation.name = error.response.data.Name[0];
-                            }
-                            if (error.response.data.Password && error.response.data.Password.length > 0) {
-                                validation.password = error.response.data.Password[0];
-                            }
+                                if (error.response.data.Name && error.response.data.Name.length > 0) {
+                                    validation.name = error.response.data.Name[0];
+                                }
+                                if (error.response.data.Password && error.response.data.Password.length > 0) {
+                                    validation.password = error.response.data.Password[0];
+                                }
 
-                            this.setState({ ...this.state, validation: validation });
+                                this.setState({ validation: validation });
+                            }
                         }
-                    })
+                        else if (error.response && error.response.status === 401) {
+                            this.setState({ 
+                                password: '', 
+                                snackbar: { 
+                                    message: 'Login failed.',
+                                    open: true,
+                                }
+                            }, () => {
+                                this.passwordInput.focus();
+                            });
+                        }
+                        else {
+                            console.log(error)
+                            this.setState({ 
+                                snackbar: { 
+                                    message: 'Error: ' + error.message,
+                                    open: true 
+                                }
+                            });
+                        }
+                    });
                 }
             );
         })
@@ -111,7 +143,6 @@ class LoginForm extends Component {
         let classes = this.props.classes;
         let isExecuting = this.state.api.isExecuting;
 
-        console.log(this.state);
         return (
             <div className={classes.root}>
                 <Card className={classes.card}>
@@ -127,11 +158,13 @@ class LoginForm extends Component {
                             margin="normal"
                             disabled={isExecuting}
                             onChange={(event) => this.handleChange('name', event)}
+                            inputRef={ref => this.nameInput = ref}
                         />
                         <TextField
                             id="password-input"
                             label="Password"
                             className={classes.textField}
+                            value={this.state.password}
                             type="password"
                             autoComplete="current-password"
                             margin="normal"
@@ -139,6 +172,7 @@ class LoginForm extends Component {
                             error={this.state.validation.password !== undefined}
                             helperText={this.state.validation.password}
                             onChange={(event) => this.handleChange('password', event)}
+                            inputRef={ref => this.passwordInput = ref}
                         />
                         <FormControlLabel
                             className={classes.checkbox}
@@ -166,13 +200,21 @@ class LoginForm extends Component {
                         </Button>
                     </CardActions>
                 </Card>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
+                    open={this.state.snackbar.open}
+                    onClose={this.handleSnackbarClose}
+                    autoHideDuration={3000}
+                    message={<span id="message-id">{this.state.snackbar.message}</span>}
+                />
             </div>
         );
     }
 }
 
 LoginForm.propTypes = {
-  classes: PropTypes.object.isRequired,
+    onLogin: PropTypes.func.isRequired,
+    classes: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles)(LoginForm); 
