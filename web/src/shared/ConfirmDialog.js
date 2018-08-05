@@ -6,8 +6,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
-import { CircularProgress } from '../../node_modules/@material-ui/core';
-import grey from '@material-ui/core/colors/grey';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const initialState = {
     api: {
@@ -19,14 +18,6 @@ const initialState = {
 const styles = {
     spinner: {
         position: 'fixed',
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        marginTop: 'auto',
-        marginBottom: 'auto',
     }
 }
 
@@ -62,7 +53,6 @@ class ConfirmDialog extends Component {
 
         return (
             <Dialog
-                PaperProps={{style: this.state.api.isExecuting ? { backgroundColor: grey[400] } : {}}}
                 {...additionalProps}
             >
                 <DialogTitle>{this.props.title}</DialogTitle>
@@ -80,10 +70,10 @@ class ConfirmDialog extends Component {
                         disabled={this.state.api.isExecuting}
                         onClick={this.handleConfirmClick} color="primary"
                     >
+                        {this.state.api.isExecuting && <CircularProgress size={20} style={styles.spinner}/>}
                         {this.props.prompt}
                     </Button>
                 </DialogActions>
-                {!this.state.api.isExecuting ? '' : <CircularProgress style={styles.spinner}/>}
             </Dialog>
         );
     }
