@@ -195,7 +195,7 @@ class LoginForm extends Component {
                             onClick={this.handleLoginClick}
                             disabled={isExecuting}
                         >
-                            {isExecuting ? <CircularProgress size={20} style={styles.spinner}/> : ''}
+                            {isExecuting && <CircularProgress size={20} style={styles.spinner}/>}
                             Log In
                         </Button>
                     </CardActions>
