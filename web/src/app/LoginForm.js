@@ -70,6 +70,11 @@ class LoginForm extends Component {
 
     nameInput = React.createRef();
     passwordInput = React.createRef();
+    loginButton = React.createRef();
+
+    componentDidMount = () => {
+        this.nameInput.focus();
+    }
 
     handleChange = (field, event) => {
         this.setState({ 
@@ -139,13 +144,19 @@ class LoginForm extends Component {
         })
     }
 
+    handleKeyPress = (event) => {
+        if (event.charCode === 13) {
+            this.loginButton.click();
+        }
+    }
+
     render() {
         let classes = this.props.classes;
         let isExecuting = this.state.api.isExecuting;
 
         return (
             <div className={classes.root}>
-                <Card className={classes.card}>
+                <Card className={classes.card} onKeyPress={(event) => this.handleKeyPress(event)}>
                     <CardContent>
                         <img className={classes.logo} src={logo} alt="logo" style={isExecuting ? {filter: 'grayscale(100%)', opacity: 0.5} : {}}/>
                         <TextField
@@ -194,6 +205,7 @@ class LoginForm extends Component {
                             className={classes.button}
                             onClick={this.handleLoginClick}
                             disabled={isExecuting}
+                            buttonRef={ref => this.loginButton = ref}
                         >
                             {isExecuting && <CircularProgress size={20} style={styles.spinner}/>}
                             Log In
