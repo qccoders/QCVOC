@@ -108,11 +108,13 @@ class LoginForm extends Component {
                             if (error.response.data) {
                                 let validation = this.state.validation;
 
-                                if (error.response.data.Name && error.response.data.Name.length > 0) {
-                                    validation.name = error.response.data.Name[0];
-                                }
                                 if (error.response.data.Password && error.response.data.Password.length > 0) {
                                     validation.password = error.response.data.Password[0];
+                                    this.passwordInput.focus();
+                                }
+                                if (error.response.data.Name && error.response.data.Name.length > 0) {
+                                    validation.name = error.response.data.Name[0];
+                                    this.nameInput.focus();
                                 }
 
                                 this.setState({ validation: validation });
