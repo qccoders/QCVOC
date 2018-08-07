@@ -14,14 +14,17 @@ namespace QCVOC.Api.Security
     using QCVOC.Api.Data.Model.Security;
     using Utility = Utility;
 
+    /// <summary>
+    ///     Creates <see cref="JwtSecurityToken"/> instances.
+    /// </summary>
     public class TokenFactory : ITokenFactory
     {
-        public JwtSecurityToken GetAccessToken(Account account, JwtSecurityToken refreshToken)
-        {
-            var jti = refreshToken.Claims.Where(c => c.Type == "jti").FirstOrDefault().Value;
-            return GetAccessToken(account, Guid.Parse(jti));
-        }
-
+        /// <summary>
+        ///     Creates an access JwtSecurityToken given an <paramref name="account"/> and <paramref name="refreshTokenId"/>.
+        /// </summary>
+        /// <param name="account">The Account from which to retrieve user claims.</param>
+        /// <param name="refreshTokenId">The refresh token id to use for the jti claim.</param>
+        /// <returns>The created JwtSecurityToken.</returns>
         public JwtSecurityToken GetAccessToken(Account account, Guid refreshTokenId)
         {
             var expiry = Utility.GetSetting<int>(Settings.JwtAccessTokenExpiry);
@@ -40,28 +43,70 @@ namespace QCVOC.Api.Security
             return GetJwtSecurityToken(claims, expiry);
         }
 
+        /// <summary>
+        ///     Creates an access JwtSecurityToken given an <paramref name="account"/> and <paramref name="refreshToken"/>.
+        /// </summary>
+        /// <param name="account">The Account from which to retrieve user claims.</param>
+        /// <param name="refreshToken">The JwtSecurityToken from which to retrieve the refresh token id.</param>
+        /// <returns>The created JwtSecurityToken.</returns>
+        public JwtSecurityToken GetAccessToken(Account account, JwtSecurityToken refreshToken)
+        {
+            var jti = refreshToken.Claims.Where(c => c.Type == "jti").FirstOrDefault().Value;
+            return GetAccessToken(account, Guid.Parse(jti));
+        }
+
+        /// <summary>
+        ///     Creates a refresh JwtSecurityToken with a generated id and expiry.
+        /// </summary>
+        /// <returns>The created JwtSecurityToken.</returns>
         public JwtSecurityToken GetRefreshToken()
         {
             var expiry = Utility.GetSetting<int>(Settings.JwtRefreshTokenExpiry);
             return GetRefreshToken(Guid.NewGuid(), DateTime.UtcNow.AddMinutes(expiry), DateTime.UtcNow);
         }
 
+        /// <summary>
+        ///     Creates a refresh JwtSecurityToken with the specified <paramref name="refreshTokenId"/> and default expiry.
+        /// </summary>
+        /// <param name="refreshTokenId">The token id.</param>
+        /// <returns>The created JwtSecurityToken.</returns>
         public JwtSecurityToken GetRefreshToken(Guid refreshTokenId)
         {
             var expiry = Utility.GetSetting<int>(Settings.JwtRefreshTokenExpiry);
             return GetRefreshToken(refreshTokenId, DateTime.UtcNow.AddMinutes(expiry), DateTime.UtcNow);
         }
 
+        /// <summary>
+        ///     Creates a refresh JwtSecurityToken with the specified <paramref name="refreshTokenId"/> and expiry set to the
+        ///     current time plus the specified <paramref name="ttlInMinutes"/>.
+        /// </summary>
+        /// <param name="refreshTokenId">The token id.</param>
+        /// <param name="ttlInMinutes">The ttl for the token, in minutes.</param>
+        /// <returns>The created JwtSecurityToken.</returns>
         public JwtSecurityToken GetRefreshToken(Guid refreshTokenId, int ttlInMinutes)
         {
             return GetRefreshToken(refreshTokenId, DateTime.UtcNow.AddMinutes(ttlInMinutes), DateTime.UtcNow);
         }
 
+        /// <summary>
+        ///     Creates a refresh JwtSecurityToken with the specified <paramref name="refreshTokenId"/> and expiry <paramref name="expiresUtc"/>.
+        /// </summary>
+        /// <param name="refreshTokenId">The token id.</param>
+        /// <param name="expiresUtc">The time at which the token expires.</param>
+        /// <returns>The created JwtSecurityToken.</returns>
         public JwtSecurityToken GetRefreshToken(Guid refreshTokenId, DateTime expiresUtc)
         {
             return GetRefreshToken(refreshTokenId, expiresUtc, DateTime.UtcNow);
         }
 
+        /// <summary>
+        ///     Creates a refresh JwtSecurityToken with the specified <paramref name="refreshTokenId"/>, expiry
+        ///     <paramref name="expiresUtc"/>, and issued time <paramref name="issuedUtc"/>.
+        /// </summary>
+        /// <param name="refreshTokenId">The token id.</param>
+        /// <param name="expiresUtc">The time at which the token expires.</param>
+        /// <param name="issuedUtc">The time at which the token was issued.</param>
+        /// <returns>The created JwtSecurityToken.</returns>
         public JwtSecurityToken GetRefreshToken(Guid refreshTokenId, DateTime expiresUtc, DateTime issuedUtc)
         {
             var claims = new Claim[]
