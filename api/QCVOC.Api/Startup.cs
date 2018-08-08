@@ -20,7 +20,6 @@ namespace QCVOC.Api
     using Microsoft.AspNetCore.Mvc.Versioning;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.PlatformAbstractions;
     using Microsoft.IdentityModel.Tokens;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
@@ -205,7 +204,7 @@ namespace QCVOC.Api
 
         private static string GetXmlCommentsFilePath()
         {
-            var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+            var basePath = AppContext.BaseDirectory;
             var fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
             return Path.Combine(basePath, fileName);
         }
