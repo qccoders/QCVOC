@@ -160,9 +160,11 @@ namespace QCVOC.Api
 
         private static void ConfigureSwaggerUIOptions(SwaggerUIOptions options, IApiVersionDescriptionProvider provider)
         {
+            var root = Utility.GetEnvironmentVariable("APP_ROOT");
+
             foreach (var description in provider.ApiVersionDescriptions)
             {
-                options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                options.SwaggerEndpoint($"{root}/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
             }
         }
 
