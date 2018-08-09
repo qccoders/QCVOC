@@ -6,7 +6,6 @@
 namespace QCVOC.Api.Data.Model
 {
     using System;
-    using Dapper.Contrib.Extensions;
 
     public class Patron : IEquatable<Patron>
     {
@@ -44,7 +43,6 @@ namespace QCVOC.Api.Data.Model
 
         public string FirstName { get; set; }
 
-        [ExplicitKey]
         public Guid Id { get; set; }
 
         public string LastName { get; set; }
