@@ -6,11 +6,9 @@
 namespace QCVOC.Api.Data.Model.Security
 {
     using System;
-    using Dapper.Contrib.Extensions;
 
     public class Account : IEquatable<Account>
     {
-        [ExplicitKey]
         public Guid Id { get; set; }
 
         public string Name { get; set; }
