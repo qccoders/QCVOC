@@ -1,0 +1,25 @@
+matrix:
+  include:
+  - language: node_js
+    stage: Web
+    node_js:
+    - stable
+    before_script:
+    - cd web
+    - npm install
+    cache:
+      directories:
+      - web/node_modules
+    script:
+    - npm test
+    - npm run build
+  - language: csharp
+    stage: Api
+    mono: none
+    dotnet: 2.1
+    before_script:
+    - cd api
+    script:
+    - dotnet restore
+    - dotnet build --no-restore --no-incremental
+    - dotnet test
