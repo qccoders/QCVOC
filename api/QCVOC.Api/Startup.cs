@@ -47,11 +47,7 @@ namespace QCVOC.Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseMiddleware<LoggingMiddleware>();
 
             app.UseAuthentication();
@@ -68,9 +64,12 @@ namespace QCVOC.Api
             services.AddSingleton<ITokenFactory, TokenFactory>();
             services.AddSingleton<ITokenValidator, TokenValidator>(serviceProvider =>
                 new TokenValidator(GetTokenValidationParameters()));
+            
+            var connectionString = Utility.GetEnvironmentVariable("QCVOC_CONNECTION_STRING");
+            //connectionString = "User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;";
 
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
-                new NpgsqlDbConnectionFactory("User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;"));
+                new NpgsqlDbConnectionFactory(connectionString));
 
             services.AddScoped<IRepository<Account>, AccountRepository>(serviceProvider =>
                 new AccountRepository(serviceProvider.GetService<IDbConnectionFactory>()));
@@ -160,7 +159,7 @@ namespace QCVOC.Api
 
         private static void ConfigureSwaggerUIOptions(SwaggerUIOptions options, IApiVersionDescriptionProvider provider)
         {
-            var root = Utility.GetEnvironmentVariable("APP_ROOT");
+            var root = Utility.GetEnvironmentVariable("QCVOC_APP_ROOT");
 
             foreach (var description in provider.ApiVersionDescriptions)
             {
