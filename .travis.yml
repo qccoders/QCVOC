@@ -36,6 +36,9 @@ matrix:
     script:
     - dotnet build --no-restore --no-incremental
     - dotnet test QCVOC.Api.Tests.Unit/QCVOC.Api.Tests.Unit.csproj
+    before_deploy:
+    - dotnet publish --configuration Release
+    - cd QCVOC.Api/bin/Release/netcoreapp2.1/publish
     deploy:
       provider: lambda
       function_name: QCVOC
