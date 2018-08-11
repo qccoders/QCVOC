@@ -64,7 +64,7 @@ namespace QCVOC.Api
             services.AddSingleton<ITokenFactory, TokenFactory>();
             services.AddSingleton<ITokenValidator, TokenValidator>(serviceProvider =>
                 new TokenValidator(GetTokenValidationParameters()));
-            
+
             var connectionString = Utility.GetEnvironmentVariable("QCVOC_CONNECTION_STRING");
             //connectionString = "User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;";
 
@@ -205,9 +205,17 @@ namespace QCVOC.Api
 
         private static string GetXmlCommentsFilePath()
         {
-            var basePath = AppContext.BaseDirectory;
             var fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
-            return Path.Combine(basePath, fileName);
+
+            var basePath = AppContext.BaseDirectory;
+            var fullFileName = Path.Combine(basePath, fileName);
+
+            if (File.Exists(fullFileName))
+            {
+                return fullFileName;
+            }
+
+            return fileName;
         }
     }
 }

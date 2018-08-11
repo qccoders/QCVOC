@@ -8,6 +8,15 @@
     <DocumentationFile>bin\Debug\netcoreapp2.1\QCVOC.Api.xml</DocumentationFile>
 	<CodeAnalysisRuleSet>Analysis.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DocumentationFile>bin\Release\netcoreapp2.1\QCVOC.Api.xml</DocumentationFile>
+  </PropertyGroup>
+  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+    <ItemGroup>
+      <DocFile Include="bin\$(Configuration)\$(TargetFramework)\*.xml" />
+    </ItemGroup>
+    <Copy SourceFiles="@(DocFile)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
+  </Target>
   <ItemGroup>
     <Compile Remove="Data\DbConnectionFactory.cs" />
     <Compile Remove="Data\DbConnectionType.cs" />
