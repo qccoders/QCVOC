@@ -13,6 +13,19 @@ matrix:
     script:
     - npm test
     - npm run build
+    deploy:
+      provider: s3
+      access_key_id: AKIAJBCKS3W7CTXWCMYA
+      secret_access_key:
+        secure: IovlgYx1rvUJZ9sFfSIjlT+lGrIugafYaqq25uhXfFVBXQoCHEl9VSBHPskHCsvB6WEMgQ7v9ixn4BfNScdOg/yYNxbfHtpEjO6PC4hXeePOVPmSjTGy/NZ89HnQNFy0saEK4bryV0TR3I9aPTQ5sfw/mLNbbjlGb4GTO70/W7LaE1jYS8W91TOux2wiC97wHq561Wh9TrSTpYq9JNVkJSlbo4N6CuFKwSc7oQI+O+9T/CcnJ7MiLzyPbrw1eprWP/zb/ACOPJ6FdtjaYO52DIHyA7tWoKdyBz2V0UVpV01Mt6OrTNXhe10r28hvmwGLLcGI3LJ9th84cPh/2APslpwRTdV1g9dURnDUommsfE2/thfcHmllYJB3Rc4J4HlluzvqnGh1GgFNX7R4fXxqk/Z3AahJtYIurKKHV5WLselpJXDIJMFzFo+rKLd3gk+JkRU2oGpF2QZmySLuLEVggV/Irla9e8gj309FZq5arcB1JeB84TIzKglYqd+ceojWh4bKCuBhP9q+l+llNgNOkI4PGzhf/cYLBqz3CCdbv4ITyiYyFkT4OGhCqAZYQ6akAG4GPIqNdNvkkewId3CBJNiMvNKq7GVdJaM1ShOug6nofzC0Lt41TmrH4q3UhtfKLYMbVn+PbJKcCMAVHT7bxPQCE6+vkb5qKkBzpE4Y/J0=
+      bucket: qcvoc-content
+      skip_cleanup: true
+      local_dir: build
+      region: us-east-1
+      acl: public_read
+      on:
+        repo: qccoders/QCVOC
+        branch: master
   - language: csharp
     stage: Api
     mono: none
