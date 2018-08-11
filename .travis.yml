@@ -19,7 +19,7 @@ matrix:
     dotnet: 2.1
     before_script:
     - cd api
-    script:
     - dotnet restore
+    script:
     - dotnet build --no-restore --no-incremental
-    - dotnet test
+    - dotnet test QCVOC.Api.Tests.Unit/QCVOC.Api.Tests.Unit.csproj
