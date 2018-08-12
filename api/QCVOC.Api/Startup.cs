@@ -206,16 +206,9 @@ namespace QCVOC.Api
         private static string GetXmlCommentsFilePath()
         {
             var fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
-
             var basePath = AppContext.BaseDirectory;
-            var fullFileName = Path.Combine(basePath, fileName);
 
-            if (File.Exists(fullFileName))
-            {
-                return fullFileName;
-            }
-
-            return fileName;
+            return Path.Combine(basePath, fileName);
         }
     }
 }
