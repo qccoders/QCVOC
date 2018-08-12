@@ -66,7 +66,6 @@ namespace QCVOC.Api
                 new TokenValidator(GetTokenValidationParameters()));
 
             var connectionString = Utility.GetEnvironmentVariable("QCVOC_CONNECTION_STRING");
-            //connectionString = "User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;";
 
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
                 new NpgsqlDbConnectionFactory(connectionString));
