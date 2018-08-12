@@ -45,6 +45,7 @@ matrix:
       region: us-east-1
       role: arn:aws:iam::578324725290:role/service-role/lambdarole
       runtime: dotnetcore2.1
+      timeout: 90
       module_name: QCVOC.Api::QCVOC.Api
       handler_name: LambdaEntryPoint::FunctionHandlerAsync
       access_key_id: AKIAJBCKS3W7CTXWCMYA
