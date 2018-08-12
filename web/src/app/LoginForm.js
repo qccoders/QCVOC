@@ -23,7 +23,8 @@ const styles = {
         textAlign: 'center',
     },
     card: {
-        width: 400,
+        minWidth: 180,
+        maxWidth: 400,
         margin: 'auto',
         marginTop: 30,
     },
@@ -39,8 +40,8 @@ const styles = {
         width: '100%',
     },
     logo: {
-        width: 339,
-        height: 158,
+        maxWidth: '100%',
+        maxHeight: '100%',
     },
     spinner: {
         position: 'fixed',
