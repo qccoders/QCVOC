@@ -17,16 +17,21 @@ import logo from '../assets/qcvo.png';
 const styles = {
     root: {
         flexGrow: 1,
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
         backgroundColor: '#3f51b5',
         display: 'grid',
-        height: '100vh',
         textAlign: 'center',
+        padding: 20,
     },
     card: {
         minWidth: 180,
         maxWidth: 400,
         margin: 'auto',
-        marginTop: 30,
+        marginTop: 0,
     },
     textField: {
         width: '100%',
