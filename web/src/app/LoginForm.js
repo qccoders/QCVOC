@@ -26,6 +26,7 @@ const styles = {
         display: 'grid',
         textAlign: 'center',
         padding: 20,
+        minHeight: 470
     },
     card: {
         minWidth: 180,
