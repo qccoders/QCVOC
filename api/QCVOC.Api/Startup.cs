@@ -80,7 +80,7 @@ namespace QCVOC.Api
                 new ServiceRepository(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => GetTokenValidationParameters());
+                .AddJwtBearer(options => ConfigureJwtBearerOptions(options));
             services.AddCors(options => ConfigureCorsOptions(options));
 
             services.AddMvc()
@@ -183,6 +183,11 @@ namespace QCVOC.Api
             }
 
             return info;
+        }
+
+        private static void ConfigureJwtBearerOptions(JwtBearerOptions options)
+        {
+            options.TokenValidationParameters = GetTokenValidationParameters();
         }
 
         private static TokenValidationParameters GetTokenValidationParameters()
