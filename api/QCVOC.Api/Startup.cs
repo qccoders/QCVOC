@@ -65,7 +65,7 @@ namespace QCVOC.Api
             services.AddSingleton<ITokenValidator, TokenValidator>(serviceProvider =>
                 new TokenValidator(GetTokenValidationParameters()));
 
-            var connectionString = Utility.GetEnvironmentVariable("QCVOC_CONNECTION_STRING");
+            var connectionString = Utility.GetSetting<string>(Settings.DbConnectionString);
 
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
                 new NpgsqlDbConnectionFactory(connectionString));
@@ -158,7 +158,7 @@ namespace QCVOC.Api
 
         private static void ConfigureSwaggerUIOptions(SwaggerUIOptions options, IApiVersionDescriptionProvider provider)
         {
-            var root = Utility.GetEnvironmentVariable("QCVOC_APP_ROOT");
+            var root = Utility.GetSetting<string>(Settings.AppRoot);
 
             foreach (var description in provider.ApiVersionDescriptions)
             {

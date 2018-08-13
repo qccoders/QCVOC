@@ -7,8 +7,8 @@ namespace QCVOC.Api
 {
     public static class Defaults
     {
+        public static readonly string AppRoot = string.Empty;
         public static readonly string DbConnectionString = "User ID=QCVOC;Password=QCVOC;Host=SQL;Port=5432;Database=QCVOC;Pooling = true;";
-
         public static readonly int JwtAccessTokenExpiry = 30;
         public static readonly string JwtAudience = "QCVOC";
         public static readonly string JwtIssuer = "QCVOC";

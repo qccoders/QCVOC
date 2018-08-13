@@ -7,12 +7,12 @@ namespace QCVOC.Api
 {
     public static class Settings
     {
-        public static readonly string DbConnectionString = "DbConnectionString";
-
-        public static readonly string JwtAccessTokenExpiry = "JwtAccessTokenExpiry";
-        public static readonly string JwtAudience = "JwtAudience";
-        public static readonly string JwtIssuer = "JwtIssuer";
-        public static readonly string JwtKey = "JwtKey";
-        public static readonly string JwtRefreshTokenExpiry = "JwtRefreshTokenExpiry";
+        public static readonly string AppRoot = "QCVOC_AppRoot";
+        public static readonly string DbConnectionString = "QCVOC_DbConnectionString";
+        public static readonly string JwtAccessTokenExpiry = "QCVOC_JwtAccessTokenExpiry";
+        public static readonly string JwtAudience = "QCVOC_JwtAudience";
+        public static readonly string JwtIssuer = "QCVOC_JwtIssuer";
+        public static readonly string JwtKey = "QCVOC_JwtKey";
+        public static readonly string JwtRefreshTokenExpiry = "QCVOC_JwtRefreshTokenExpiry";
     }
 }
