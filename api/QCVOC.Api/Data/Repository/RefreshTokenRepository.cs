@@ -109,7 +109,7 @@ namespace QCVOC.Api.Data.Repository
                     issued AS Issued,
                     tokenid AS TokenId
                 FROM refreshtokens
-                WHERE accountid = @tokenid
+                WHERE tokenid = @tokenid
             ";
 
             using (var db = ConnectionFactory.CreateConnection())
