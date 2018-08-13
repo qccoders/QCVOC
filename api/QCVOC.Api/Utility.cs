@@ -118,7 +118,7 @@ namespace QCVOC.Api
 
             try
             {
-                defaultValue = (T)typeof(Defaults).GetField(settingName).GetValue(null);
+                defaultValue = (T)typeof(Defaults).GetField(settingName.Split('_')[1]).GetValue(null);
             }
             catch (Exception)
             {
