@@ -45,7 +45,9 @@ matrix:
       region: us-east-1
       role: arn:aws:iam::578324725290:role/service-role/lambdarole
       runtime: dotnetcore2.1
-      timeout: 90
+      timeout: 30
+      memory_size: 256
+      description: 'Travis Deploy build #{context.env['TRAVIS_BUILD_NUMBER']}, PR {context.env['TRAVIS_PULL_REQUEST']}, commit {context.env['TRAVIS_COMMIT']}
       module_name: QCVOC.Api::QCVOC.Api
       handler_name: LambdaEntryPoint::FunctionHandlerAsync
       access_key_id: AKIAJBCKS3W7CTXWCMYA
