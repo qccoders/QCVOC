@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-
-import { API_ROOT } from '../constants';
+import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -15,10 +14,12 @@ class Accounts extends Component {
     state = { accounts: [] };
 
     componentWillMount = () => {
-        fetch(API_ROOT + '/v1/accounts')
-        .then(response => response.json())
+        api.get('/v1/accounts')
         .then(data => {
+            console.log(data);
             this.setState({ accounts: data });
+        }, error => {
+            console.log('error!', error)
         });
     }
 
