@@ -1,0 +1,48 @@
+import axios from 'axios';
+import { getCredentials, saveCredentials, deleteCredentials } from './credentialStore';
+import { API_ROOT } from './constants';
+
+axios.defaults.baseURL = API_ROOT;
+
+const api = axios.create();
+
+api.interceptors.request.use(config => {
+    let creds = getCredentials();
+
+    config.headers['Content-Type'] = 'application/json';
+
+    if (creds && creds.accessToken) {
+        config.headers.Authorization = creds.tokenType + ' ' + creds.accessToken;
+    }
+
+    return config;
+});
+
+api.interceptors.response.use(config => {
+    return config;
+}, error => {
+    let request = error.config;
+    let creds = getCredentials();
+
+    if (error.response.status === 401 && creds && creds.refreshToken) {
+        let data = JSON.stringify(creds.refreshToken);
+        let headers = { headers: { 'Content-Type': 'application/json' }};
+
+        return axios.post('/v1/tokens/refresh', data, headers)
+            .then(response => {
+                saveCredentials(response.data);
+                request.headers.Authorization = response.data.tokenType + ' ' + response.data.accessToken;
+                return axios(request);
+            }, error => {
+                deleteCredentials();
+                window.location.reload(true);
+                return Promise.reject(error);
+            }
+        );
+    } 
+    else {
+        return Promise.reject(error);
+    }
+})
+
+export default api;
