@@ -28,6 +28,8 @@ api.interceptors.response.use(config => {
         let data = JSON.stringify(creds.refreshToken);
         let headers = { headers: { 'Content-Type': 'application/json' }};
 
+        // use 'axios' here instead of the 'api' instance we created to bypass our interceptors
+        // and avoid an endless loop should either of these two calls result in a 401.
         return axios.post('/v1/tokens/refresh', data, headers)
             .then(response => {
                 saveCredentials(response.data);
