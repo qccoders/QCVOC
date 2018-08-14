@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import api from '../api';
 
-import { API_ROOT } from '../constants';
-
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = {
