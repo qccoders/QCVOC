@@ -14,10 +14,13 @@ class Accounts extends Component {
     state = { accounts: [] };
 
     componentWillMount = () => {
+        this.refresh();
+    }
+
+    refresh = () => {
         api.get('/v1/accounts')
-        .then(data => {
-            console.log(data);
-            this.setState({ accounts: data });
+        .then(response => {
+            this.setState({ accounts: response.data });
         }, error => {
             console.log('error!', error)
         });
@@ -25,12 +28,14 @@ class Accounts extends Component {
 
     render() {
         let classes = this.props.classes;
-
-        console.log(this.state.accounts);
+        let { accounts } = this.state;
 
         return (
             <div className={classes.root}>
-                Accounts
+                <h1>Accounts</h1>
+                <ul>
+                    {accounts.map(a => <li key={a.id}>{a.id + ' - ' + a.name + ' (' + a.role + ')'}</li>)}
+                </ul>
             </div>
         );
     }
