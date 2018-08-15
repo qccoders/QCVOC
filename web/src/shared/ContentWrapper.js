@@ -18,13 +18,16 @@ const styles = {
         marginTop: 'auto',
         marginBottom: 'auto',
     },
+    container: {
+        padding: 20,
+    },
 }
 
 const ContentWrapper = (props) => {
     let { isExecuting, isErrored } = props.api;
 
     return (
-        <div>
+        <div style={styles.container}>
             {isErrored && <Error style={{ ...styles.icon, color: 'red' }}/>}
             {!isErrored && isExecuting && <CircularProgress size={20} style={styles.icon}/>}
             {!isErrored && !isExecuting && props.children}
