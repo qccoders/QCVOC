@@ -2,41 +2,50 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import api from '../api';
 
+import ContentWrapper from '../shared/ContentWrapper';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = {
-    root: {
-        flexGrow: 1,
-    },
 };
 
 class Accounts extends Component {
-    state = { accounts: [] };
+    state = { 
+        accounts: [],
+        api: {
+            isExecuting: false,
+            isErrored: false,
+        },
+    };
 
     componentWillMount = () => {
         this.refresh();
     }
 
     refresh = () => {
-        api.get('/v1/accounts')
-        .then(response => {
-            this.setState({ accounts: response.data });
-        }, error => {
-            console.log('error!', error)
-        });
+        this.setState({ ...this.state, api: { ...this.state.api, isExecuting: true }}, () => {
+            api.get('/v1/accounts')
+            .then(response => {
+                this.setState({ 
+                    accounts: response.data,
+                    api: { isExecuting: false, isErrored: false },
+                });
+            }, error => {
+                this.setState({ ...this.state, api: { isExecuting: false, isErrored: true }});
+                console.log(error);
+            });
+        })
     }
 
     render() {
-        let classes = this.props.classes;
         let { accounts } = this.state;
 
         return (
-            <div className={classes.root}>
+            <ContentWrapper api={this.state.api}>
                 <h1>Accounts</h1>
                 <ul>
                     {accounts.map(a => <li key={a.id}>{a.id + ' - ' + a.name + ' (' + a.role + ')'}</li>)}
                 </ul>
-            </div>
+            </ContentWrapper>
         );
     }
 }
