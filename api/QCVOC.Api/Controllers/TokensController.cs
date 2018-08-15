@@ -137,14 +137,14 @@ namespace QCVOC.Api.Controllers
                 return BadRequest("The specified token is blank.");
             }
 
-            JwtSecurityToken refreshJwt;
+            JwtSecurityToken parsedRefreshJwt;
 
-            if (!TokenValidator.TryParseAndValidateToken(refreshToken, out refreshJwt))
+            if (!TokenValidator.TryParseAndValidateToken(refreshToken, out parsedRefreshJwt))
             {
                 return Unauthorized();
             }
 
-            var refreshTokenIdString = refreshJwt.Claims.Where(c => c.Type == "jti").FirstOrDefault()?.Value;
+            var refreshTokenIdString = parsedRefreshJwt.Claims.Where(c => c.Type == "jti").FirstOrDefault()?.Value;
 
             if (string.IsNullOrEmpty(refreshTokenIdString))
             {
@@ -173,6 +173,7 @@ namespace QCVOC.Api.Controllers
             }
 
             var accessJwt = TokenFactory.GetAccessToken(account, refreshTokenRecord.TokenId);
+            var refreshJwt = TokenFactory.GetRefreshToken(refreshTokenId, refreshTokenRecord.Expires, refreshTokenRecord.Issued);
             var response = new TokenResponse(accessJwt, refreshJwt);
 
             return Ok(response);
