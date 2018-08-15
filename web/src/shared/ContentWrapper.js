@@ -22,8 +22,6 @@ const styles = {
 
 const ContentWrapper = (props) => {
     let { isExecuting, isErrored } = props.api;
-    isExecuting = true;
-    isErrored = true;
 
     return (
         <div>
