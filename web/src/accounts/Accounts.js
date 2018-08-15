@@ -4,6 +4,8 @@ import api from '../api';
 
 import ContentWrapper from '../shared/ContentWrapper';
 import { withStyles } from '@material-ui/core/styles';
+import { Typography, List, ListItem, ListItemIcon, ListItemText, Card, CardContent } from '@material-ui/core';
+import { Person, Star } from '@material-ui/icons'
 
 const styles = {
 };
@@ -37,14 +39,30 @@ class Accounts extends Component {
     }
 
     render() {
-        let { accounts } = this.state;
+        let { accounts, api } = this.state;
 
         return (
-            <ContentWrapper api={this.state.api}>
-                <h1>Accounts</h1>
-                <ul>
-                    {accounts.map(a => <li key={a.id}>{a.id + ' - ' + a.name + ' (' + a.role + ')'}</li>)}
-                </ul>
+            <ContentWrapper api={api}>
+                <Card>
+                    <CardContent>
+                        <Typography gutterBottom variant="headline" component="h2">
+                            Accounts
+                        </Typography>
+                        <List>
+                            {accounts.map(a => 
+                                <ListItem key={a.id}>
+                                    <ListItemIcon>
+                                        {a.role === 'Administrator' ? <Star/> : <Person/>}
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={a.name}
+                                        secondary={a.role}
+                                    />
+                                </ListItem>
+                            )}
+                        </List>
+                    </CardContent>
+                </Card>
             </ContentWrapper>
         );
     }
