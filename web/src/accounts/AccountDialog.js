@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import { getGuid } from '../util';
+
 import { withStyles } from '@material-ui/core/styles';
 import { 
     Dialog,
@@ -21,15 +23,30 @@ const styles = {
     },
 };
 
+const initialState = {
+    account: {
+        id: '',
+        name: '',
+        role: '',
+        password: '',
+        password2: '',
+    },
+}
+
 class AccountDialog extends Component {
-    state = { 
-        account: {
-            name: '',
-            role: '',
-            password: '',
-            password2: '',
-        },
-    };
+    state = initialState;
+
+    componentWillReceiveProps = (nextProps) => {
+        if (nextProps.open && !this.props.open) {
+            this.setState({ 
+                ...initialState, 
+                account: { 
+                    ...initialState.account, 
+                    id: getGuid()
+                }
+            });
+        }
+    }
 
     handleChange = (prop, event) => {
         this.setState({ 
