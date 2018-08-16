@@ -19,7 +19,6 @@ import {
 
 const styles = {
     dialog: {
-    
     },
 };
 
@@ -31,6 +30,12 @@ const initialState = {
         password: '',
         password2: '',
     },
+    validation: {
+        name: undefined,
+        role: undefined,
+        password: undefined,
+        password2: undefined,
+    },
 }
 
 class AccountDialog extends Component {
@@ -38,51 +43,52 @@ class AccountDialog extends Component {
 
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
-            if (nextProps.account) {
-                this.setState({ 
-                    account: nextProps.account,
-                })
-            }
-            else {
-                this.setState({ 
-                    ...initialState, 
-                    account: { 
-                        ...initialState.account, 
-                        id: nextProps.id ? nextProps.id : getGuid(),
-                    }
-                });
-            }
+            this.setState({ 
+                ...initialState, 
+                account: nextProps.account ? nextProps.account : { 
+                    ...initialState.account, 
+                    id: nextProps.id ? nextProps.id : getGuid(),
+                }
+            });
         }
     }
 
-    handleChange = (prop, event) => {
+    handleChange = (field, event) => {
         this.setState({ 
             account: {
                 ...this.state.account,
-                [prop]: event.target.value,
+                [field]: event.target.value,
             },
-        }, () => {
-            console.log(this.state);
-        })
+            validation: {
+                ...this.state.validation,
+                [field]: undefined,
+            },
+        });
     }
 
     handleCancel = () => {
         this.props.onClose();
     }
 
-    handleOk = () => {
+    handleSave = () => {
         this.props.onClose(this.state.account);
+    }
+
+    validate = () => {
+        
     }
 
     render() {
         let { classes, intent, open } = this.props;
         let { name, role } = this.state.account;
+        let validation = this.state.validation;
 
         return (
             <Dialog 
                 open={open}
                 onClose={this.handleCancel} 
                 className={classes.dialog}
+                maxWidth={'xs'}
             >
                 <DialogTitle>{(intent === 'add' ? 'Add' : 'Edit')} Account</DialogTitle>
                 <DialogContent>
@@ -94,6 +100,8 @@ class AccountDialog extends Component {
                         type="text"
                         fullWidth
                         onChange={(event) => this.handleChange('name', event)}
+                        helperText={validation.name}
+                        error={validation.name !== undefined}
                     />
                     <FormControl 
                         style={{marginTop: 15}}
@@ -128,7 +136,7 @@ class AccountDialog extends Component {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.handleCancel} color="primary">Cancel</Button>
-                    <Button onClick={this.handleOk} color="primary">Ok</Button>
+                    <Button onClick={this.handleSave} color="primary">Save</Button>
                 </DialogActions>
             </Dialog>
         );
