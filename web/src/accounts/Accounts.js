@@ -131,6 +131,7 @@ class Accounts extends Component {
                     open={dialog.open}
                     intent={dialog.intent} 
                     onClose={this.handleDialogClose}
+                    account={dialog.account}
                 />
             </ContentWrapper>
         );
