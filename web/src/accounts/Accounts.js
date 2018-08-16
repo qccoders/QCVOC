@@ -79,6 +79,10 @@ class Accounts extends Component {
         });
     }
 
+    handleDeleteClick = (account) => {
+        this.deleteAccount(account);
+    }
+
     handleDialogClose = (result) => {
         this.setState({ 
             dialog: {
@@ -89,20 +93,24 @@ class Accounts extends Component {
             if (!result) return;
 
             if (this.state.dialog.intent === 'add') {
-                this.handleAddAccount(result);
+                this.addAccount(result);
             }
             else {
-                this.handleEditAccount(result);
+                this.editAccount(result);
             }
         })
     }
 
-    handleAddAccount = (account) => {
+    addAccount = (account) => {
         console.log('add', account);
     }
 
-    handleEditAccount = (account) => { 
+    editAccount = (account) => { 
         console.log('edit', account);
+    }
+
+    deleteAccount = (account) => {
+        console.log('delete', account);
     }
 
     render() {
@@ -116,7 +124,11 @@ class Accounts extends Component {
                         <Typography gutterBottom variant="headline" component="h2">
                             Accounts
                         </Typography>
-                        <AccountList accounts={accounts} onItemClick={this.handleEditClick}/>
+                        <AccountList 
+                            accounts={accounts} 
+                            onItemClick={this.handleEditClick} 
+                            onItemDeleteClick={this.handleDeleteClick}
+                        />
                     </CardContent>
                 </Card>
                 <Button 
