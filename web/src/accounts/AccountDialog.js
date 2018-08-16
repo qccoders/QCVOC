@@ -71,7 +71,11 @@ class AccountDialog extends Component {
         let { classes, intent, onClose, open, account } = this.props;
 
         return (
-            <Dialog open={open} onClose={onClose} className={classes.dialog}>
+            <Dialog 
+                open={open}
+                onClose={this.handleCancel} 
+                className={classes.dialog}
+            >
                 <DialogTitle>{(intent === 'add' ? 'Add' : 'Edit')} Account</DialogTitle>
                 <DialogContent>
                     <TextField
