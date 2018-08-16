@@ -48,7 +48,8 @@ class AccountDialog extends Component {
                 account: nextProps.account ? nextProps.account : { 
                     ...initialState.account, 
                     id: nextProps.id ? nextProps.id : getGuid(),
-                }
+                },
+                validation: initialState.validation,
             });
         }
     }
@@ -71,11 +72,31 @@ class AccountDialog extends Component {
     }
 
     handleSave = () => {
-        this.props.onClose(this.state.account);
+        this.validate().then(result => {
+            if (result.isValid) {
+                this.props.onClose(this.state.account);
+            }
+        });
     }
 
     validate = () => {
-        
+        let { name, role, password, password2 } = this.state.account;
+        let result = { ...initialState.validation };
+
+        if (name === '') {
+            result.name = 'The Name field is required.';
+        }
+
+        if (role === '') {
+            result.role = 'Select a Role.';
+        }
+
+        return new Promise(resolve => {
+            this.setState({ validation: result }, () => {
+                result.isValid = result === initialState.validation;
+                resolve(result);
+            });                
+        })
     }
 
     render() {
