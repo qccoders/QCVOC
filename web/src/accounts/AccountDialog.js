@@ -26,7 +26,7 @@ const initialState = {
     account: {
         id: '',
         name: '',
-        role: '',
+        role: 'User',
         password: '',
         password2: '',
     },
@@ -36,6 +36,7 @@ const initialState = {
         password: undefined,
         password2: undefined,
     },
+    resetPassword: false,
 }
 
 class AccountDialog extends Component {
@@ -91,6 +92,20 @@ class AccountDialog extends Component {
             result.role = 'Select a Role.';
         }
 
+        if (this.props.intent === 'add' || this.state.resetPassword) {
+            if (password === '') {
+                result.password = 'The Password field is required.';
+            }
+
+            if (password2 === '') {
+                result.password2 = 'The Confirm Password field is required.';
+            }
+
+            if (password !== '' && password2 !== '' && password !== password2) {
+                result.password = result.password2 = 'The Password fields must match.';
+            }
+        }
+
         return new Promise(resolve => {
             this.setState({ validation: result }, () => {
                 result.isValid = result === initialState.validation;
@@ -143,6 +158,8 @@ class AccountDialog extends Component {
                         id="password"
                         label="Password"
                         type="password"
+                        error={validation.password !== undefined}
+                        helperText={validation.password}
                         fullWidth
                         onChange={(event) => this.handleChange('password', event)}
                     />
@@ -151,6 +168,8 @@ class AccountDialog extends Component {
                         id="password2"
                         label="Confirm Password"
                         type="password"
+                        error={validation.password2 !== undefined}
+                        helperText={validation.password2}
                         fullWidth
                         onChange={(event) => this.handleChange('password2', event)}
                     />
