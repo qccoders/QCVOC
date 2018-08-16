@@ -75,8 +75,8 @@ class AccountDialog extends Component {
     }
 
     render() {
-        let { classes, intent, onClose, open, account } = this.props;
-        let { id, name, role } = this.state.account;
+        let { classes, intent, open } = this.props;
+        let { name, role } = this.state.account;
 
         return (
             <Dialog 
@@ -101,7 +101,7 @@ class AccountDialog extends Component {
                     >
                         <InputLabel>Role</InputLabel>
                         <Select
-                            value={this.state.account.role}
+                            value={role}
                             onChange={(event) => this.handleChange('role', event)}
                         >
                             <MenuItem value={'User'}>User</MenuItem>
