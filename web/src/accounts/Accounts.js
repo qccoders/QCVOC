@@ -1,21 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import api from '../api';
-import { sortByProp } from '../util';
 
+import AccountList from './AccountList';
 import ContentWrapper from '../shared/ContentWrapper';
 import { withStyles } from '@material-ui/core/styles';
 import { 
     Typography, 
-    List, 
-    ListItem, 
-    ListItemIcon, 
-    ListItemText, 
     Card, 
     CardContent,
     Button,
 } from '@material-ui/core';
-import { Person, Star, SupervisorAccount, Add } from '@material-ui/icons'
+import { Add } from '@material-ui/icons'
 
 const styles = {
     fab: {
@@ -57,17 +53,6 @@ class Accounts extends Component {
         })
     }
 
-    getUserIcon = (role) => {
-        switch (role) {
-            case 'Administrator':
-                return <Star/>;
-            case 'Supervisor':
-                return <SupervisorAccount/>;
-            default:
-                return <Person/>;
-        }
-    }
-
     render() {
         let { accounts, api } = this.state;
         let { classes } = this.props;
@@ -79,19 +64,7 @@ class Accounts extends Component {
                         <Typography gutterBottom variant="headline" component="h2">
                             Accounts
                         </Typography>
-                        <List>
-                            {accounts.sort(sortByProp('name')).map(a => 
-                                <ListItem key={a.id} button>
-                                    <ListItemIcon>
-                                        {this.getUserIcon(a.role)}
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary={a.name}
-                                        secondary={a.role}
-                                    />
-                                </ListItem>
-                            )}
-                        </List>
+                        <AccountList accounts={accounts}/>
                     </CardContent>
                 </Card>
                 <Button variant="fab" color="secondary" className={classes.fab}>
