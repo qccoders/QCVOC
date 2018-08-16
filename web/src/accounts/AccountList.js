@@ -25,7 +25,7 @@ const AccountList = (props) => {
                 <ListItem 
                     key={a.id}
                     button
-                    onClick={(a) => onItemClick(a)}
+                    onClick={() => onItemClick(a)}
                 >
                     <ListItemIcon>
                         {getUserIcon(a.role)}
