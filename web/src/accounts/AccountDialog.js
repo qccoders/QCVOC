@@ -38,13 +38,20 @@ class AccountDialog extends Component {
 
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
-            this.setState({ 
-                ...initialState, 
-                account: { 
-                    ...initialState.account, 
-                    id: getGuid()
-                }
-            });
+            if (nextProps.account) {
+                this.setState({ 
+                    account: nextProps.account,
+                })
+            }
+            else {
+                this.setState({ 
+                    ...initialState, 
+                    account: { 
+                        ...initialState.account, 
+                        id: nextProps.id ? nextProps.id : getGuid(),
+                    }
+                });
+            }
         }
     }
 
@@ -69,6 +76,7 @@ class AccountDialog extends Component {
 
     render() {
         let { classes, intent, onClose, open, account } = this.props;
+        let { id, name, role } = this.state.account;
 
         return (
             <Dialog 
@@ -82,6 +90,7 @@ class AccountDialog extends Component {
                         autoFocus
                         id="name"
                         label="Name"
+                        value={name}
                         type="text"
                         fullWidth
                         onChange={(event) => this.handleChange('name', event)}
