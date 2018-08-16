@@ -17,12 +17,16 @@ const getUserIcon = (role) => {
 }
 
 const AccountList = (props) => {
-    let { accounts } = props;
+    let { accounts, onItemClick } = props;
 
     return (
         <List>
             {accounts.sort(sortByProp('name')).map(a => 
-                <ListItem key={a.id} button>
+                <ListItem 
+                    key={a.id}
+                    button
+                    onClick={(a) => onItemClick(a)}
+                >
                     <ListItemIcon>
                         {getUserIcon(a.role)}
                     </ListItemIcon>
@@ -38,6 +42,7 @@ const AccountList = (props) => {
 
 AccountList.propTypes = {
     accounts: PropTypes.array.isRequired,
+    onItemClick: PropTypes.func.isRequired,
 };
 
 export default AccountList; 
