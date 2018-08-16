@@ -13,10 +13,20 @@ import {
     ListItemText, 
     Card, 
     CardContent,
+    Button,
 } from '@material-ui/core';
-import { Person, Star, SupervisorAccount } from '@material-ui/icons'
+import { Person, Star, SupervisorAccount, Add } from '@material-ui/icons'
 
 const styles = {
+    fab: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 20,
+        left: 'auto',
+        position: 'fixed',
+        zIndex: 1000
+    },
 };
 
 class Accounts extends Component {
@@ -60,6 +70,7 @@ class Accounts extends Component {
 
     render() {
         let { accounts, api } = this.state;
+        let { classes } = this.props;
 
         return (
             <ContentWrapper api={api}>
@@ -83,6 +94,9 @@ class Accounts extends Component {
                         </List>
                     </CardContent>
                 </Card>
+                <Button variant="fab" color="secondary" className={classes.fab}>
+                    <Add />
+                </Button>
             </ContentWrapper>
         );
     }
