@@ -1,11 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import api from '../api';
+import { sortByProp } from '../util';
 
 import ContentWrapper from '../shared/ContentWrapper';
 import { withStyles } from '@material-ui/core/styles';
-import { Typography, List, ListItem, ListItemIcon, ListItemText, Card, CardContent } from '@material-ui/core';
-import { Person, Star } from '@material-ui/icons'
+import { 
+    Typography, 
+    List, 
+    ListItem, 
+    ListItemIcon, 
+    ListItemText, 
+    Card, 
+    CardContent,
+} from '@material-ui/core';
+import { Person, Star, SupervisorAccount } from '@material-ui/icons'
 
 const styles = {
 };
@@ -38,6 +47,17 @@ class Accounts extends Component {
         })
     }
 
+    getUserIcon = (role) => {
+        switch (role) {
+            case 'Administrator':
+                return <Star/>;
+            case 'Supervisor':
+                return <SupervisorAccount/>;
+            default:
+                return <Person/>;
+        }
+    }
+
     render() {
         let { accounts, api } = this.state;
 
@@ -49,10 +69,10 @@ class Accounts extends Component {
                             Accounts
                         </Typography>
                         <List>
-                            {accounts.map(a => 
-                                <ListItem key={a.id}>
+                            {accounts.sort(sortByProp('name')).map(a => 
+                                <ListItem key={a.id} button>
                                     <ListItemIcon>
-                                        {a.role === 'Administrator' ? <Star/> : <Person/>}
+                                        {this.getUserIcon(a.role)}
                                     </ListItemIcon>
                                     <ListItemText
                                         primary={a.name}
