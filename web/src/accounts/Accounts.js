@@ -37,6 +37,7 @@ class Accounts extends Component {
         dialog: {
             open: false,
             intent: 'add',
+            account: undefined,
         },
     };
 
@@ -60,11 +61,20 @@ class Accounts extends Component {
     }
 
     handleAddClick = () => {
-        console.log('add...')
         this.setState({ 
             dialog: {
                 open: true,
                 intent: 'add',
+            },
+        });
+    }
+
+    handleEditClick = (account) => {
+        this.setState({
+            dialog: {
+                open: true,
+                intent: 'edit',
+                account: account,
             },
         });
     }
@@ -76,8 +86,23 @@ class Accounts extends Component {
                 open: false,
             }
         }, () => {
-            console.log(result);
+            if (!result) return;
+
+            if (this.state.dialog.intent === 'add') {
+                this.handleAddAccount(result);
+            }
+            else {
+                this.handleEditAccount(result);
+            }
         })
+    }
+
+    handleAddAccount = (account) => {
+        console.log('add', account);
+    }
+
+    handleEditAccount = (account) => { 
+        console.log('edit', account);
     }
 
     render() {
@@ -91,7 +116,7 @@ class Accounts extends Component {
                         <Typography gutterBottom variant="headline" component="h2">
                             Accounts
                         </Typography>
-                        <AccountList accounts={accounts}/>
+                        <AccountList accounts={accounts} onItemClick={this.handleEditClick}/>
                     </CardContent>
                 </Card>
                 <Button 
