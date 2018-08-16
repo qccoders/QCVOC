@@ -4,6 +4,8 @@ import api from '../api';
 
 import AccountList from './AccountList';
 import ContentWrapper from '../shared/ContentWrapper';
+import AccountDialog from './AccountDialog';
+
 import { withStyles } from '@material-ui/core/styles';
 import { 
     Typography, 
@@ -32,6 +34,10 @@ class Accounts extends Component {
             isExecuting: false,
             isErrored: false,
         },
+        dialog: {
+            open: false,
+            intent: 'add',
+        },
     };
 
     componentWillMount = () => {
@@ -53,8 +59,29 @@ class Accounts extends Component {
         })
     }
 
+    handleAddClick = () => {
+        console.log('add...')
+        this.setState({ 
+            dialog: {
+                open: true,
+                intent: 'add',
+            },
+        });
+    }
+
+    handleDialogClose = (result) => {
+        this.setState({ 
+            dialog: {
+                ...this.state.dialog,
+                open: false,
+            }
+        }, () => {
+            console.log(result);
+        })
+    }
+
     render() {
-        let { accounts, api } = this.state;
+        let { accounts, api, dialog } = this.state;
         let { classes } = this.props;
 
         return (
@@ -67,9 +94,19 @@ class Accounts extends Component {
                         <AccountList accounts={accounts}/>
                     </CardContent>
                 </Card>
-                <Button variant="fab" color="secondary" className={classes.fab}>
-                    <Add />
+                <Button 
+                    variant="fab" 
+                    color="secondary" 
+                    className={classes.fab}
+                    onClick={this.handleAddClick}
+                >
+                    <Add/>
                 </Button>
+                <AccountDialog
+                    open={dialog.open}
+                    intent={dialog.intent} 
+                    onClose={this.handleDialogClose}
+                />
             </ContentWrapper>
         );
     }
