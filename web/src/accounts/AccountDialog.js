@@ -19,6 +19,13 @@ import {
 
 const styles = {
     dialog: {
+        width: 320,
+    },
+    deleteButton: {
+        marginRight: 'auto',
+    },
+    roleSelect: {
+        marginTop: 15,
     },
 };
 
@@ -121,9 +128,8 @@ class AccountDialog extends Component {
         return (
             <Dialog 
                 open={open}
-                onClose={this.handleCancel} 
-                className={classes.dialog}
-                maxWidth={'xs'}
+                onClose={this.handleCancel}
+                PaperProps={{ className: classes.dialog }}
             >
                 <DialogTitle>{(intent === 'add' ? 'Add' : 'Edit')} Account</DialogTitle>
                 <DialogContent>
@@ -139,13 +145,14 @@ class AccountDialog extends Component {
                         error={validation.name !== undefined}
                     />
                     <FormControl 
-                        style={{marginTop: 15}}
+                        className={classes.roleSelect}
                         fullWidth
                     >
                         <InputLabel>Role</InputLabel>
                         <Select
                             value={role}
                             onChange={(event) => this.handleChange('role', event)}
+                            fullWidth
                         >
                             <MenuItem value={'User'}>User</MenuItem>
                             <MenuItem value={'Supervisor'}>Supervisor</MenuItem>
@@ -178,6 +185,7 @@ class AccountDialog extends Component {
                     }
                 </DialogContent>
                 <DialogActions>
+                    <Button onClick={this.handleDelete} color="primary" className={classes.deleteButton}>Delete</Button>
                     <Button onClick={this.handleCancel} color="primary">Cancel</Button>
                     <Button onClick={this.handleSave} color="primary">Save</Button>
                 </DialogActions>
