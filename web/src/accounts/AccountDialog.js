@@ -152,28 +152,30 @@ class AccountDialog extends Component {
                             <MenuItem value={'Administrator'}>Administrator</MenuItem>
                         </Select>
                     </FormControl>
-                    {intent === 'add' ? 
-                    <div>
-                    <TextField
-                        style={{marginTop: 30}}
-                        id="password"
-                        label="Password"
-                        type="password"
-                        error={validation.password !== undefined}
-                        helperText={validation.password}
-                        fullWidth
-                        onChange={(event) => this.handleChange('password', event)}
-                    />
-                    <TextField
-                        style={{marginTop: 15}}
-                        id="password2"
-                        label="Confirm Password"
-                        type="password"
-                        error={validation.password2 !== undefined}
-                        helperText={validation.password2}
-                        fullWidth
-                        onChange={(event) => this.handleChange('password2', event)}
-                    /></div> : ''}
+                    {intent !== 'add' ? '' : 
+                        <div>
+                            <TextField
+                                style={{marginTop: 30}}
+                                id="password"
+                                label="Password"
+                                type="password"
+                                error={validation.password !== undefined}
+                                helperText={validation.password}
+                                fullWidth
+                                onChange={(event) => this.handleChange('password', event)}
+                            />
+                            <TextField
+                                style={{marginTop: 15}}
+                                id="password2"
+                                label="Confirm Password"
+                                type="password"
+                                error={validation.password2 !== undefined}
+                                helperText={validation.password2}
+                                fullWidth
+                                onChange={(event) => this.handleChange('password2', event)}
+                            />
+                        </div>
+                    }
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.handleCancel} color="primary">Cancel</Button>
