@@ -79,8 +79,8 @@ class Accounts extends Component {
         });
     }
 
-    handleDeleteClick = (account) => {
-        this.deleteAccount(account);
+    handleResetClick = (account) => {
+        this.editAccount(account);
     }
 
     handleDialogClose = (result) => {
@@ -127,7 +127,7 @@ class Accounts extends Component {
                         <AccountList 
                             accounts={accounts} 
                             onItemClick={this.handleEditClick} 
-                            onItemDeleteClick={this.handleDeleteClick}
+                            onItemResetClick={this.handleResetClick}
                         />
                     </CardContent>
                 </Card>

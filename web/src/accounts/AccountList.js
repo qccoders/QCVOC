@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { sortByProp } from '../util';
 
 import { List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, IconButton } from '@material-ui/core';
-import { Person, Star, SupervisorAccount, Delete } from '@material-ui/icons'
+import { Person, Star, SupervisorAccount, LockOpen } from '@material-ui/icons'
 
 const getUserIcon = (role) => {
     switch (role) {
@@ -17,7 +17,7 @@ const getUserIcon = (role) => {
 }
 
 const AccountList = (props) => {
-    let { accounts, onItemClick, onItemDeleteClick } = props;
+    let { accounts, onItemClick, onItemResetClick } = props;
 
     return (
         <List>
@@ -35,8 +35,8 @@ const AccountList = (props) => {
                         secondary={a.role}
                     />
                     <ListItemSecondaryAction>
-                        <IconButton onClick={() => onItemDeleteClick(a)}>
-                            <Delete/>
+                        <IconButton onClick={() => onItemResetClick(a)}>
+                            <LockOpen/>
                         </IconButton>
                     </ListItemSecondaryAction>
                 </ListItem>
