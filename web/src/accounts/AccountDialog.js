@@ -36,7 +36,6 @@ const initialState = {
         password: undefined,
         password2: undefined,
     },
-    resetPassword: false,
 }
 
 class AccountDialog extends Component {
@@ -92,7 +91,7 @@ class AccountDialog extends Component {
             result.role = 'Select a Role.';
         }
 
-        if (this.props.intent === 'add' || this.state.resetPassword) {
+        if (this.props.intent === 'add') {
             if (password === '') {
                 result.password = 'The Password field is required.';
             }
