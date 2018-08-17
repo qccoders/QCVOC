@@ -153,6 +153,8 @@ class AccountDialog extends Component {
                             <MenuItem value={'Administrator'}>Administrator</MenuItem>
                         </Select>
                     </FormControl>
+                    {intent === 'add' ? 
+                    <div>
                     <TextField
                         style={{marginTop: 30}}
                         id="password"
@@ -172,7 +174,7 @@ class AccountDialog extends Component {
                         helperText={validation.password2}
                         fullWidth
                         onChange={(event) => this.handleChange('password2', event)}
-                    />
+                    /></div> : ''}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={this.handleCancel} color="primary">Cancel</Button>
