@@ -124,7 +124,7 @@ class AccountDialog extends Component {
         let { classes, intent, open } = this.props;
         let { name, role } = this.state.account;
         let validation = this.state.validation;
-
+        
         return (
             <Dialog 
                 open={open}
@@ -185,7 +185,7 @@ class AccountDialog extends Component {
                     }
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={this.handleDelete} color="primary" className={classes.deleteButton}>Delete</Button>
+                    {intent === 'edit' && <Button onClick={this.handleDelete} color="primary" className={classes.deleteButton}>Delete</Button>}
                     <Button onClick={this.handleCancel} color="primary">Cancel</Button>
                     <Button onClick={this.handleSave} color="primary">Save</Button>
                 </DialogActions>
