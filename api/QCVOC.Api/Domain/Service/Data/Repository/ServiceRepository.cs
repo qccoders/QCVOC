@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Data.Repository
+namespace QCVOC.Api.Domain.Service.Data.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace QCVOC.Api.Data.Repository
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Data.Model;
+    using QCVOC.Api.Domain.Service.Data.Model;
 
     public class ServiceRepository : IRepository<Service>
     {

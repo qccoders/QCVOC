@@ -26,10 +26,10 @@ namespace QCVOC.Api
     using NLog;
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Data.Model;
-    using QCVOC.Api.Data.Repository;
     using QCVOC.Api.Domain.Patrons.Data.Model;
     using QCVOC.Api.Domain.Patrons.Data.Repository;
+    using QCVOC.Api.Domain.Service.Data.Model;
+    using QCVOC.Api.Domain.Service.Data.Repository;
     using QCVOC.Api.Middleware;
     using QCVOC.Api.Security;
     using QCVOC.Api.Security.Data.Model;

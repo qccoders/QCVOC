@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Data.Model
+namespace QCVOC.Api.Domain.Service.Data.Model
 {
     using System;
 
