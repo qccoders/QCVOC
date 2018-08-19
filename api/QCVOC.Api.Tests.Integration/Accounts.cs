@@ -4,9 +4,9 @@ namespace Server.Tests
     using FsCheck;
     using FsCheck.Experimental;
     using FsCheck.Xunit;
-    using QCVOC.Api.Data.Repository;
-    using QCVOC.Api.Domain.Accounts.Data.Model;
     using QCVOC.Api.Security;
+    using QCVOC.Api.Security.Data.Model;
+    using QCVOC.Api.Security.Data.Repository;
     using Xunit;
 
     public class Accounts

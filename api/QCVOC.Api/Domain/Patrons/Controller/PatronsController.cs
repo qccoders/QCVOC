@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Controllers
+namespace QCVOC.Api.Domain.Patrons.Controller
 {
     using System;
     using System.Collections.Generic;
@@ -11,10 +11,10 @@ namespace QCVOC.Api.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using QCVOC.Api.Data.DTO;
-    using QCVOC.Api.Data.Model;
-    using QCVOC.Api.Data.Model.Security;
-    using QCVOC.Api.Data.Repository;
+    using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Domain.Patrons.Data.DTO;
+    using QCVOC.Api.Domain.Patrons.Data.Model;
+    using QCVOC.Api.Security;
 
     [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
     [ApiVersion("1")]
@@ -37,9 +37,7 @@ namespace QCVOC.Api.Controllers
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Delete(string id)
         {
-            Guid guid;
-
-            if (!Guid.TryParse(id, out guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 var err = new ModelStateDictionary();
                 err.AddModelError("id", "The requested Id must be a valid Guid.");
@@ -66,9 +64,7 @@ namespace QCVOC.Api.Controllers
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Get(string id)
         {
-            Guid guid;
-
-            if (!Guid.TryParse(id, out guid))
+            if (!Guid.TryParse(id, out Guid guid))
             {
                 var err = new ModelStateDictionary();
                 err.AddModelError("id", "The requested Id must be a valid Guid.");

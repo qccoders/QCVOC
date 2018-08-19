@@ -24,12 +24,16 @@ namespace QCVOC.Api
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using NLog;
-    using QCVOC.Api.Data.ConnectionFactory;
+    using QCVOC.Api.Common.Data.ConnectionFactory;
+    using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Data.Model;
-    using QCVOC.Api.Data.Model.Security;
     using QCVOC.Api.Data.Repository;
+    using QCVOC.Api.Domain.Patrons.Data.Model;
+    using QCVOC.Api.Domain.Patrons.Data.Repository;
     using QCVOC.Api.Middleware;
     using QCVOC.Api.Security;
+    using QCVOC.Api.Security.Data.Model;
+    using QCVOC.Api.Security.Data.Repository;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
     using Swashbuckle.AspNetCore.SwaggerUI;

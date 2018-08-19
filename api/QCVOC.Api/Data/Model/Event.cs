@@ -8,7 +8,7 @@ namespace QCVOC.Api.Data.Model
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    using QCVOC.Api.Data.Model.Security;
+    using QCVOC.Api.Security.Data.Model;
 
     public class Event
     {

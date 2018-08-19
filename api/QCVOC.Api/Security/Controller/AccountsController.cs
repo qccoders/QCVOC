@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Domain.Accounts.Controller
+namespace QCVOC.Api.Security.Controller
 {
     using System;
     using System.Collections.Generic;
@@ -13,8 +13,9 @@ namespace QCVOC.Api.Domain.Accounts.Controller
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Domain.Accounts.Model;
     using QCVOC.Api.Security;
+    using QCVOC.Api.Security.Data.DTO;
+    using QCVOC.Api.Security.Data.Model;
 
     [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
     [ApiVersion("1")]

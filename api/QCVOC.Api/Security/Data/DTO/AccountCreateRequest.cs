@@ -1,4 +1,4 @@
-﻿namespace QCVOC.Api.Domain.Accounts.Data.DTO
+﻿namespace QCVOC.Api.Security.Data.DTO
 {
     using System.ComponentModel.DataAnnotations;
     using QCVOC.Api.Security;

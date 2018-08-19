@@ -3,14 +3,15 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Data.Repository
+namespace QCVOC.Api.Domain.Patrons.Data.Repository
 {
     using System;
     using System.Collections.Generic;
     using Dapper;
-    using QCVOC.Api.Data.ConnectionFactory;
-    using QCVOC.Api.Data.Model;
-    using static QCVOC.Api.Controllers.AccountsController;
+    using QCVOC.Api.Common;
+    using QCVOC.Api.Common.Data.ConnectionFactory;
+    using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Domain.Patrons.Data.Model;
 
     /// <summary>
     ///     Provides data access for <see cref="Patron"/>.
@@ -96,7 +97,7 @@ namespace QCVOC.Api.Data.Repository
                     WHERE id = @id
                 ";
 
-                db.Execute(query, new { id = id });
+                db.Execute(query, new { id });
             }
         }
 
@@ -138,7 +139,7 @@ namespace QCVOC.Api.Data.Repository
                     WHERE id = @id;
                 ";
 
-                return db.QueryFirstOrDefault<Patron>(query, new { id = id });
+                return db.QueryFirstOrDefault<Patron>(query, new { id });
             }
         }
 

@@ -3,15 +3,15 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Data.Repository
+namespace QCVOC.Api.Security.Data.Repository
 {
     using System;
     using System.Collections.Generic;
     using Dapper;
     using QCVOC.Api.Common;
+    using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Data.ConnectionFactory;
-    using QCVOC.Api.Domain.Accounts.Data.Model;
+    using QCVOC.Api.Security.Data.Model;
 
     /// <summary>
     /// </summary>

@@ -7,7 +7,7 @@ namespace QCVOC.Api.Security
 {
     using System;
     using System.IdentityModel.Tokens.Jwt;
-    using QCVOC.Api.Domain.Accounts.Model;
+    using QCVOC.Api.Security.Data.Model;
 
     /// <summary>
     ///     Creates <see cref="JwtSecurityToken"/> instances.
