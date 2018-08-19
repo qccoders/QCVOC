@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Security.Repositories
+namespace QCVOC.Api.Security.Data.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace QCVOC.Api.Security.Repositories
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data;
     using QCVOC.Api.Data.ConnectionFactory;
-    using QCVOC.Api.Security.Model;
+    using QCVOC.Api.Security.Data.Model;
 
     /// <summary>
     ///     Provides data access for <see cref="RefreshToken"/>.

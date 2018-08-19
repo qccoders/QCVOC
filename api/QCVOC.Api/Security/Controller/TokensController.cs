@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Security.Controllers
+namespace QCVOC.Api.Security.Controller
 {
     using System;
     using System.IdentityModel.Tokens.Jwt;
@@ -11,12 +11,11 @@ namespace QCVOC.Api.Security.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using QCVOC.Data.DTO;
-    using QCVOC.Api.Data.DTO;
-    using QCVOC.Api.Security;
     using QCVOC.Api.Common.Data;
     using QCVOC.Api.Domain.Accounts.Model;
-    using QCVOC.Api.Security.Model;
+    using QCVOC.Api.Security;
+    using QCVOC.Api.Security.Data.DTO;
+    using QCVOC.Api.Security.Data.Model;
 
     /// <summary>
     ///     Provides endpoints for manipulation of API authentication Access and Refresh Tokens.
@@ -138,9 +137,7 @@ namespace QCVOC.Api.Security.Controllers
                 return BadRequest("The specified token is blank.");
             }
 
-            JwtSecurityToken parsedRefreshJwt;
-
-            if (!TokenValidator.TryParseAndValidateToken(refreshToken, out parsedRefreshJwt))
+            if (!TokenValidator.TryParseAndValidateToken(refreshToken, out JwtSecurityToken parsedRefreshJwt))
             {
                 return Unauthorized();
             }
@@ -152,9 +149,7 @@ namespace QCVOC.Api.Security.Controllers
                 return Unauthorized();
             }
 
-            Guid refreshTokenId;
-
-            if (!Guid.TryParse(refreshTokenIdString, out refreshTokenId))
+            if (!Guid.TryParse(refreshTokenIdString, out Guid refreshTokenId))
             {
                 return Unauthorized();
             }
