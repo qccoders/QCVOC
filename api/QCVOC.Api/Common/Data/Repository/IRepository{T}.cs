@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Common.Data
+namespace QCVOC.Api.Common.Data.Repository
 {
     using System;
     using System.Collections.Generic;
