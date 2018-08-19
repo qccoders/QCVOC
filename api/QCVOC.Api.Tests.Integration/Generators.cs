@@ -1,24 +1,31 @@
-using System;
-using Xunit;
-using QCVOC.Api.Data;
-using QCVOC.Api.Data.ConnectionFactory;
-using QCVOC.Api.Data.Model.Security;
-using QCVOC.Api;
-using QCVOC.Api.Data.Model;
-using FsCheck;
-using FsCheck.Experimental;
-using QCVOC.Api.Data.Repository;
-
 namespace Server.Tests
 {
+    using System;
+    using FsCheck;
+    using QCVOC.Api;
+    using QCVOC.Api.Common.Data.ConnectionFactory;
+    using QCVOC.Api.Data.Repository;
+    using QCVOC.Api.Domain.Accounts.Data.Model;
+    using QCVOC.Api.Domain.Patrons.Data.Model;
+    using QCVOC.Api.Domain.Patrons.Data.Repository;
+    using QCVOC.Api.Security;
+    using QCVOC.Api.Security.Data.Model;
+    using QCVOC.Api.Security.Data.Repository;
+
     public class Generators
     {
         public static Arbitrary<Patron> ArbPatron() => Arb.From(GenPatron());
+
         public static Arbitrary<Role> ArbRole() => Arb.From(GenRole());
+
         public static Arbitrary<Account> ArbAccount() => Arb.From(GenAccount());
+
         public static Arbitrary<RefreshToken> ArbRefreshToken() => Arb.From(GenRefreshToken());
+
         public static Arbitrary<PatronRepository> ArbPatronRepository() => Arb.From(GenPatronRepository());
+
         public static Arbitrary<AccountRepository> ArbAccountRepository() => Arb.From(GenAccountRepository());
+
         public static Arbitrary<RefreshTokenRepository> ArbRefreshTokenRepository() => Arb.From(GenRefreshTokenRepository());
 
         public static Gen<RefreshTokenRepository> GenRefreshTokenRepository()

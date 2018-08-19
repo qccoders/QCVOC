@@ -1,16 +1,14 @@
-using System;
-using Xunit;
-using QCVOC.Api.Data.Repository;
-using QCVOC.Api.Data.ConnectionFactory;
-using QCVOC.Api.Data.Model.Security;
-using QCVOC.Api;
-using FsCheck;
-using FsCheck.Experimental;
-using FsCheck.Xunit;
-using System.Linq;
-
 namespace Server.Tests
 {
+    using System.Linq;
+    using FsCheck;
+    using FsCheck.Experimental;
+    using FsCheck.Xunit;
+    using QCVOC.Api.Data.Repository;
+    using QCVOC.Api.Domain.Accounts.Data.Model;
+    using QCVOC.Api.Security;
+    using Xunit;
+
     public class Accounts
     {
         public Accounts()
