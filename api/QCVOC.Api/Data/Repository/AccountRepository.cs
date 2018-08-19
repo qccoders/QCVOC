@@ -1,3 +1,8 @@
+// <copyright file="AccountRepository.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
 namespace QCVOC.Api.Data.Repository
 {
     using System;
@@ -23,34 +28,26 @@ namespace QCVOC.Api.Data.Repository
         /// </summary>
         /// <param name="account">The account to create.</param>
         /// <returns>The created account</returns>
-        /// <exception ref="ArgumentException"></exception>
         public Account Create(Account account)
         {
-            // TODO: Move this validation up to a service, but don't put it in the controller.
-            if (account == null)
-                throw new ArgumentException("account cannot be null", nameof(account));
-
-            if (string.IsNullOrWhiteSpace(account.Name))
-                throw new ArgumentException("name cannot be null", nameof(account));
-
-            if (string.IsNullOrWhiteSpace(account.PasswordHash))
-                throw new ArgumentException("password hash cannot be null", nameof(account));
-
-            if (account.Name.Contains("\0"))
-                throw new ArgumentException("null characters are not allowed in an account name.", nameof(account));
-
-            if (account.PasswordHash.Contains("\0"))
-                throw new ArgumentException("null characters are not allowed in an password hash.", nameof(account));
-
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute("INSERT into accounts(id, name, passwordhash, role) VALUES(@Id, @Name, @PasswordHash, @Role);", new
+                var command = @"
+                    INSERT INTO accounts
+                        (id, name, passwordhash, role)
+                    VALUES
+                        (@id, @name, @passwordhash, @role);
+                ";
+
+                var param = new
                 {
                     id = account.Id,
                     name = account.Name,
                     passwordhash = account.PasswordHash,
-                    role = account.Role
-                });
+                    role = account.Role,
+                };
+
+                db.Execute(command, param);
 
                 var inserted = Get(account.Id);
                 return inserted;
