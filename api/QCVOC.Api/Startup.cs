@@ -11,6 +11,8 @@ namespace QCVOC.Api
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using Microsoft.AspNet.OData.Extensions;
+    using Microsoft.AspNet.OData.Formatter;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -21,9 +23,11 @@ namespace QCVOC.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.IdentityModel.Tokens;
+    using Microsoft.Net.Http.Headers;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using NLog;
+    using QCVOC.Api.Data;
     using QCVOC.Api.Data.ConnectionFactory;
     using QCVOC.Api.Data.Model;
     using QCVOC.Api.Data.Model.Security;
@@ -45,7 +49,7 @@ namespace QCVOC.Api
 
         public IConfiguration Configuration { get; }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider, ODataModelBuilder odataModelBuilder)
         {
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseMiddleware<LoggingMiddleware>();
@@ -53,7 +57,9 @@ namespace QCVOC.Api
             app.UseAuthentication();
             app.UseCors("AllowAll");
 
-            app.UseMvc();
+            app.UseMvc(routeBuilder => {
+                routeBuilder.MapODataServiceRoute("ODataRoutes", "odata", odataModelBuilder.GetEdmModel(app.ApplicationServices));
+            });
 
             app.UseSwagger();
             app.UseSwaggerUI(options => ConfigureSwaggerUIOptions(options, provider));
@@ -83,7 +89,20 @@ namespace QCVOC.Api
                 .AddJwtBearer(options => ConfigureJwtBearerOptions(options));
             services.AddCors(options => ConfigureCorsOptions(options));
 
-            services.AddMvc()
+            services.AddOData();
+            services.AddTransient<ODataModelBuilder>();
+
+            services.AddMvc(options =>
+            {
+                foreach (var outputFormatter in options.OutputFormatters.OfType<ODataOutputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                {
+                    outputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+                foreach (var inputFormatter in options.InputFormatters.OfType<ODataInputFormatter>().Where(_ => _.SupportedMediaTypes.Count == 0))
+                {
+                    inputFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/prs.odatatestxx-odata"));
+                }
+            })
                 .AddJsonOptions(options => ConfigureJsonOptions(options));
             services.AddMvcCore()
                 .AddVersionedApiExplorer(options => ConfigureApiExplorerOptions(options));

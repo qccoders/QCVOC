@@ -8,6 +8,7 @@ namespace QCVOC.Api.Controllers
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Microsoft.AspNet.OData;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -20,7 +21,8 @@ namespace QCVOC.Api.Controllers
     [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     [Consumes("application/json")]
-    public class AccountsController : Controller
+    [ApiExplorerSettings(IgnoreApi = false)]
+    public class AccountsController : ODataController
     {
         public AccountsController(IRepository<Account> accountRepository)
         {
@@ -172,11 +174,12 @@ namespace QCVOC.Api.Controllers
         }
 
         [HttpGet("")]
+        [EnableQuery]
         [ProducesResponseType(typeof(IEnumerable<AccountResponse>), 200)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult GetAll()
         {
-            return Ok(AccountRepository.GetAll().Select(a => MapAccountResponseFrom(a)));
+            return Ok(AccountRepository.GetAll().Select(a => MapAccountResponseFrom(a)).AsQueryable());
         }
 
         private AccountResponse MapAccountResponseFrom(Account account)
