@@ -174,9 +174,9 @@ namespace QCVOC.Api.Controllers
         [HttpGet("")]
         [ProducesResponseType(typeof(IEnumerable<AccountResponse>), 200)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery]QueryParameters queryParams)
         {
-            return Ok(AccountRepository.GetAll().Select(a => MapAccountResponseFrom(a)));
+            return Ok(AccountRepository.GetAll(queryParams).Select(a => MapAccountResponseFrom(a)));
         }
 
         private AccountResponse MapAccountResponseFrom(Account account)
@@ -187,6 +187,29 @@ namespace QCVOC.Api.Controllers
                 Name = account.Name,
                 Role = account.Role,
             };
+        }
+
+        public class QueryParameters
+        {
+            public int Offset { get; set; }
+            public int Limit { get; set; }
+
+            public SortOrder OrderBy { get; set; }
+            public string Where { get; set; }
+
+            public QueryParameters()
+            {
+                Offset = 0;
+                Limit = 100;
+                OrderBy = SortOrder.ASC;
+                Where = "1 = 1";
+            }
+        }
+
+        public enum SortOrder
+        {
+            ASC,
+            DESC,
         }
     }
 }

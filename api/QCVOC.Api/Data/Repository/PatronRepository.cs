@@ -10,6 +10,7 @@ namespace QCVOC.Api.Data.Repository
     using Dapper;
     using QCVOC.Api.Data.ConnectionFactory;
     using QCVOC.Api.Data.Model;
+    using static QCVOC.Api.Controllers.AccountsController;
 
     /// <summary>
     ///     Provides data access for <see cref="Patron"/>.
@@ -145,7 +146,7 @@ namespace QCVOC.Api.Data.Repository
         ///     Retrieves a list of all <see cref="Patron"/> objects in the collection.
         /// </summary>
         /// <returns>A list of all <see cref="Patron"/> objects in the collection.</returns>
-        public IEnumerable<Patron> GetAll()
+        public IEnumerable<Patron> GetAll(QueryParameters queryParameters = null)
         {
             using (var db = ConnectionFactory.CreateConnection())
             {

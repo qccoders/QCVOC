@@ -10,6 +10,7 @@ namespace QCVOC.Api.Data.Repository
     using Dapper;
     using QCVOC.Api.Data.ConnectionFactory;
     using QCVOC.Api.Data.Model;
+    using static QCVOC.Api.Controllers.AccountsController;
 
     public class ServiceRepository : IRepository<Service>
     {
@@ -101,7 +102,7 @@ namespace QCVOC.Api.Data.Repository
             }
         }
 
-        public IEnumerable<Service> GetAll()
+        public IEnumerable<Service> GetAll(QueryParameters queryParameters = null)
         {
             using (var db = ConnectionFactory.CreateConnection())
             {

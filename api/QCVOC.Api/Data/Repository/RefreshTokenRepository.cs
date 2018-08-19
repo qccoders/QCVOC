@@ -10,6 +10,7 @@ namespace QCVOC.Api.Data.Repository
     using Dapper;
     using QCVOC.Api.Data.ConnectionFactory;
     using QCVOC.Api.Data.Model.Security;
+    using static QCVOC.Api.Controllers.AccountsController;
 
     /// <summary>
     ///     Provides data access for <see cref="RefreshToken"/>.
@@ -122,7 +123,7 @@ namespace QCVOC.Api.Data.Repository
         ///     Retrieves a lisst of all <see cref="RefreshToken"/> objects in the collection.
         /// </summary>
         /// <returns>A list of all <see cref="RefreshToken"/> objects in the collection.</returns>
-        public IEnumerable<RefreshToken> GetAll()
+        public IEnumerable<RefreshToken> GetAll(QueryParameters queryParameters = null)
         {
             var query = @"
                 SELECT

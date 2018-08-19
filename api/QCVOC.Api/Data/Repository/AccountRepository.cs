@@ -10,6 +10,7 @@ namespace QCVOC.Api.Data.Repository
     using Dapper;
     using QCVOC.Api.Data.ConnectionFactory;
     using QCVOC.Api.Data.Model.Security;
+    using static QCVOC.Api.Controllers.AccountsController;
 
     /// <summary>
     /// </summary>
@@ -107,8 +108,10 @@ namespace QCVOC.Api.Data.Repository
         ///     Retrieves all accounts.
         /// </summary>
         /// <returns>A list of accounts.</returns>
-        public IEnumerable<Account> GetAll()
+        public IEnumerable<Account> GetAll(QueryParameters queryParameters = null)
         {
+            queryParameters = queryParameters ?? new QueryParameters();
+
             var query = @"
                 SELECT
                     id,
@@ -118,9 +121,19 @@ namespace QCVOC.Api.Data.Repository
                 FROM accounts
             ";
 
+            query += $"\nORDER BY name {queryParameters.OrderBy.ToString()}";
+            query += "\nLIMIT @limit OFFSET @offset";
+
+            var param = new
+            {
+                limit = queryParameters.Limit,
+                offset = queryParameters.Offset,
+                orderby = queryParameters.OrderBy.ToString(),
+            };
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.Query<Account>(query);
+                return db.Query<Account>(query, param);
             }
         }
 

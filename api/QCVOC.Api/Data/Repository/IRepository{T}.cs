@@ -7,6 +7,7 @@ namespace QCVOC.Api.Data.Repository
 {
     using System;
     using System.Collections.Generic;
+    using static QCVOC.Api.Controllers.AccountsController;
 
     /// <summary>
     ///     A generic repository for application resource collections.
@@ -44,7 +45,7 @@ namespace QCVOC.Api.Data.Repository
         ///     Retrieves a list of all resources in the collection.
         /// </summary>
         /// <returns>A list of all resources in the collection.</returns>
-        IEnumerable<T> GetAll();
+        IEnumerable<T> GetAll(QueryParameters queryParameters = null);
 
         /// <summary>
         ///     Updates the specified <paramref name="resource"/>.
