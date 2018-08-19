@@ -144,9 +144,7 @@ namespace QCVOC.Api.Controllers
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Get(string id)
         {
-            Guid guid;
-
-            if (!Guid.TryParse(id, out guid))
+            if (!Guid.TryParse(id, out var guid))
             {
                 var err = new ModelStateDictionary();
                 err.AddModelError("id", "The requested Id must be a valid Guid.");
