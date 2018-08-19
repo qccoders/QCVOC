@@ -1,7 +1,7 @@
-﻿namespace QCVOC.Api.Data.DTO
+﻿namespace QCVOC.Api.Domain.Accounts.Data.DTO
 {
     using System.ComponentModel.DataAnnotations;
-    using QCVOC.Api.Data.Model.Security;
+    using QCVOC.Api.Security;
 
     public class AccountCreateRequest
     {

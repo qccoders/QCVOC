@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Controllers
+namespace QCVOC.Api.Domain.Accounts.Controller
 {
     using System;
     using System.Collections.Generic;
@@ -11,9 +11,10 @@ namespace QCVOC.Api.Controllers
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
-    using QCVOC.Api.Data.DTO;
-    using QCVOC.Api.Data.Model.Security;
-    using QCVOC.Api.Data.Repository;
+    using QCVOC.Api.Common;
+    using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Domain.Accounts.Model;
+    using QCVOC.Api.Security;
 
     [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
     [ApiVersion("1")]
@@ -187,29 +188,6 @@ namespace QCVOC.Api.Controllers
                 Name = account.Name,
                 Role = account.Role,
             };
-        }
-
-        public class QueryParameters
-        {
-            public int Offset { get; set; }
-            public int Limit { get; set; }
-
-            public SortOrder OrderBy { get; set; }
-            public string Where { get; set; }
-
-            public QueryParameters()
-            {
-                Offset = 0;
-                Limit = 100;
-                OrderBy = SortOrder.ASC;
-                Where = "1 = 1";
-            }
-        }
-
-        public enum SortOrder
-        {
-            ASC,
-            DESC,
         }
     }
 }

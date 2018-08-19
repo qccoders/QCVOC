@@ -3,9 +3,10 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Data.Model.Security
+namespace QCVOC.Api.Domain.Accounts.Data.Model
 {
     using System;
+    using QCVOC.Api.Security;
 
     public class Account : IEquatable<Account>
     {

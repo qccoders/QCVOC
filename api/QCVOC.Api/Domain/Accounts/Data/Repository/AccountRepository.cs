@@ -8,9 +8,10 @@ namespace QCVOC.Api.Data.Repository
     using System;
     using System.Collections.Generic;
     using Dapper;
+    using QCVOC.Api.Common;
+    using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Data.ConnectionFactory;
-    using QCVOC.Api.Data.Model.Security;
-    using static QCVOC.Api.Controllers.AccountsController;
+    using QCVOC.Api.Domain.Accounts.Data.Model;
 
     /// <summary>
     /// </summary>

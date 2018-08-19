@@ -3,11 +3,10 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Data.DTO
+namespace QCVOC.Api.Domain.Accounts.Data.DTO
 {
     using System;
-    using QCVOC.Api.Data.Model;
-    using QCVOC.Api.Data.Model.Security;
+    using QCVOC.Api.Security;
 
     public class AccountResponse
     {

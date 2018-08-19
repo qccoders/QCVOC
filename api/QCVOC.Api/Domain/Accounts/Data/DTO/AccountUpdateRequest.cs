@@ -1,15 +1,16 @@
-﻿namespace QCVOC.Api.Data.DTO
+﻿namespace QCVOC.Api.Domain.Accounts.Data.DTO
 {
     using System.ComponentModel.DataAnnotations;
-    using QCVOC.Api.Data.Model.Security;
+    using QCVOC.Api.Security;
 
     public class AccountUpdateRequest
     {
-
+        [StringLength(maximumLength: 256, MinimumLength = 2)]
         public string Name { get; set; }
 
         public Role? Role { get; set; }
 
+        [StringLength(maximumLength: 256, MinimumLength = 6)]
         public string Password { get; set; }
     }
 }
