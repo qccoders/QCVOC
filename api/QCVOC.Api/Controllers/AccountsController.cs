@@ -29,6 +29,114 @@ namespace QCVOC.Api.Controllers
 
         private IRepository<Account> AccountRepository { get; set; }
 
+        [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Delete(Guid id)
+        {
+            var account = AccountRepository.Get(id);
+
+            if (account == default(Account))
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                AccountRepository.Delete(account);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting account for '{account.Name ?? id.ToString()}': {ex.Message}", ex);
+            }
+        }
+
+        [HttpPut("{id}")]
+        [ProducesResponseType(typeof(AccountResponse), 200)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(string), 409)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Update(Guid id, [FromBody]AccountUpdateRequest account)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingAccounts = AccountRepository.GetAll();
+            var existingAccountRecord = existingAccounts.Where(a => a.Id == id).FirstOrDefault();
+
+            if (existingAccountRecord == default(Account))
+            {
+                return NotFound();
+            }
+
+            if (existingAccounts.Any(a => a.Id != id && a.Name == account.Name))
+            {
+                return Conflict($"A user named '{account.Name}' already exists.");
+            }
+
+            var accountRecord = new Account()
+            {
+                Id = existingAccountRecord.Id,
+                Name = account.Name ?? existingAccountRecord.Name,
+                Role = account.Role ?? existingAccountRecord.Role,
+                PasswordHash = account.Password == null ? existingAccountRecord.PasswordHash :
+                    Utility.ComputeSHA512Hash(account.Password),
+            };
+
+            try
+            {
+                var updatedAccount = AccountRepository.Update(accountRecord);
+                return Ok(MapAccountResponseFrom(updatedAccount));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error updating account for '{account.Name ?? id.ToString()}': {ex.Message}", ex);
+            }
+        }
+
+        [HttpPost("")]
+        [ProducesResponseType(typeof(AccountResponse), 201)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 409)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Create([FromBody]AccountCreateRequest account)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingAccounts = AccountRepository.GetAll();
+
+            if (existingAccounts.Any(a => a.Name == account.Name))
+            {
+                return Conflict($"A user named '{account.Name}' already exists.");
+            }
+
+            var accountRecord = new Account()
+            {
+                Id = Guid.NewGuid(),
+                Name = account.Name,
+                Role = account.Role,
+                PasswordHash = Utility.ComputeSHA512Hash(account.Password),
+            };
+
+            try
+            {
+                var createdAccount = AccountRepository.Create(accountRecord);
+                return Ok(MapAccountResponseFrom(createdAccount));
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error creating account for {account.Name}: {ex.Message}", ex);
+            }
+        }
+
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(AccountResponse), 200)]
         [ProducesResponseType(404)]
