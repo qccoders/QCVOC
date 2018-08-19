@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Data.ConnectionFactory
+namespace QCVOC.Api.Common.Data.ConnectionFactory
 {
     using System.Data;
     using Npgsql;
