@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Common
+namespace QCVOC.Api.Security
 {
     /// <summary>
     ///     Defines application User Roles.
