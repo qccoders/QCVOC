@@ -176,7 +176,7 @@ namespace QCVOC.Api.Security.Controller
         [HttpGet("")]
         [ProducesResponseType(typeof(IEnumerable<AccountResponse>), 200)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult GetAll([FromQuery]QueryParameters queryParams)
+        public IActionResult GetAll([FromQuery]AccountQueryParameters queryParams)
         {
             return Ok(AccountRepository.GetAll(queryParams).Select(a => MapAccountResponseFrom(a)));
         }

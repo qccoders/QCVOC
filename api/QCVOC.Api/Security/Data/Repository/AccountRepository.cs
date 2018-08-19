@@ -122,6 +122,12 @@ namespace QCVOC.Api.Security.Data.Repository
                 FROM accounts
             ";
 
+            if (queryParameters is AccountQueryParameters)
+            {
+                var role = ((AccountQueryParameters)queryParameters).Role;
+                query += role != null ? $"\nWHERE role = '{role.ToString()}'" : string.Empty;
+            }
+
             query += $"\nORDER BY name {queryParameters.OrderBy.ToString()}";
             query += "\nLIMIT @limit OFFSET @offset";
 
