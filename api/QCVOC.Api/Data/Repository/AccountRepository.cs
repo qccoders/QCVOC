@@ -60,9 +60,14 @@ namespace QCVOC.Api.Data.Repository
         /// <param name="id">The Id of the account to delete.</param>
         public void Delete(Guid id)
         {
+            var command = @"
+                DELETE FROM accounts
+                WHERE id = @id;
+            ";
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute("DELETE FROM accounts WHERE id = @id", new { id = id });
+                db.Execute(command, new { id });
             }
         }
 
@@ -70,12 +75,8 @@ namespace QCVOC.Api.Data.Repository
         ///     Deletes the specified account.
         /// </summary>
         /// <param name="account">The account to delete.</param>
-        /// <exception cref="ArgumentException"></exception>
         public void Delete(Account account)
         {
-            if (account == null)
-                throw new ArgumentException("account cannot be null.", nameof(account));
-
             Delete(account.Id);
         }
 
@@ -86,9 +87,19 @@ namespace QCVOC.Api.Data.Repository
         /// <returns>The account with the specified Id.</returns>
         public Account Get(Guid id)
         {
+            var query = @"
+                SELECT
+                    id,
+                    name,
+                    passwordhash,
+                    role
+                FROM accounts
+                WHERE id = @id;
+            ";
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.QueryFirstOrDefault<Account>("SELECT id, name, passwordhash, role FROM accounts where id = @id;", new { id = id });
+                return db.QueryFirstOrDefault<Account>(query, new { id });
             }
         }
 
@@ -98,10 +109,18 @@ namespace QCVOC.Api.Data.Repository
         /// <returns>A list of accounts.</returns>
         public IEnumerable<Account> GetAll()
         {
-            //TODO: Add paging when necessary.
+            var query = @"
+                SELECT
+                    id,
+                    name,
+                    passwordhash,
+                    role
+                FROM accounts
+            ";
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.Query<Account>("SELECT id, name, passwordhash, role FROM accounts;");
+                return db.Query<Account>(query);
             }
         }
 
@@ -112,15 +131,26 @@ namespace QCVOC.Api.Data.Repository
         /// <returns>The updated account.</returns>
         public Account Update(Account account)
         {
+            var command = @"
+                UPDATE accounts
+                SET 
+                    name = @name,
+                    passwordhash = @passwordhash,
+                    role = @role
+                WHERE id = @id;
+            ";
+
+            var param = new
+            {
+                name = account.Name,
+                passwordhash = account.PasswordHash,
+                role = account.Role,
+                id = account.Id,
+            };
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute("UPDATE accounts set name = @name, passwordhash = @passwordhash, role = @role WHERE id = @id;", new
-                {
-                    name = account.Name,
-                    passwordhash = account.PasswordHash,
-                    role = account.Role,
-                    id = account.Id
-                });
+                db.Execute(command, param);
 
                 return Get(account.Id);
             }
