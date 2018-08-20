@@ -148,28 +148,7 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The updated RefreshToken.</returns>
         public RefreshToken Update(RefreshToken refreshToken)
         {
-            var query = @"
-                UPDATE refreshtokens
-                SET
-                    expires = @expires,
-                    issued = @issued,
-                    id = @tokenid
-                WHERE accountid = @id;
-            ";
-
-            var param = new
-            {
-                id = refreshToken.AccountId,
-                expires = refreshToken.Expires,
-                issued = refreshToken.Issued,
-                tokenid = refreshToken.TokenId
-            };
-
-            using (var db = ConnectionFactory.CreateConnection())
-            {
-                db.Execute(query, param);
-                return Get(refreshToken.AccountId);
-            }
+            throw new NotImplementedException("Refresh tokens are immutable.");
         }
     }
 }
