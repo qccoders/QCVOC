@@ -6,15 +6,24 @@
     using Newtonsoft.Json;
     using NLog;
 
+    public enum ExceptionMiddlwareVerbosity
+    {
+        Terse,
+        Verbose,
+    }
+
     public class ExceptionMiddleware
     {
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
         private readonly RequestDelegate next;
 
-        public ExceptionMiddleware(RequestDelegate next)
+        public ExceptionMiddleware(RequestDelegate next, ExceptionMiddlewareOptions options = null)
         {
             this.next = next;
+            Options = options ?? new ExceptionMiddlewareOptions();
         }
+
+        private ExceptionMiddlewareOptions Options { get; set; }
 
         public async Task InvokeAsync(HttpContext context)
         {
@@ -29,7 +38,7 @@
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             if (context.Response.HasStarted)
             {
@@ -38,7 +47,16 @@
 
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
-            return context.Response.WriteAsync(JsonConvert.SerializeObject(exception));
+
+            var response = Options.Verbosity == ExceptionMiddlwareVerbosity.Terse ? JsonConvert.SerializeObject(exception.Message) :
+                JsonConvert.SerializeObject(exception);
+
+            return context.Response.WriteAsync(response);
         }
+    }
+
+    public class ExceptionMiddlewareOptions
+    {
+        public ExceptionMiddlwareVerbosity Verbosity { get; set; }
     }
 }

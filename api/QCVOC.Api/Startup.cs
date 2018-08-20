@@ -51,7 +51,8 @@ namespace QCVOC.Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            app.UseExceptionMiddleware();
+            app.UseExceptionMiddleware(options => options.Verbosity = ExceptionMiddlwareVerbosity.Verbose);
+
             app.UseLogger();
 
             app.UseAuthentication();
