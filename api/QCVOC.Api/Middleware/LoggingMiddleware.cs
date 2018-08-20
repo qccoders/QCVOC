@@ -9,8 +9,17 @@ namespace QCVOC.Api.Middleware
     using System.Diagnostics;
     using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using NLog;
+
+    public static class LoggingMiddlewareExtensions
+    {
+        public static IApplicationBuilder UseLogger(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<LoggingMiddleware>();
+        }
+    }
 
     /// <summary>
     ///     Provides logging for HTTP requests.
