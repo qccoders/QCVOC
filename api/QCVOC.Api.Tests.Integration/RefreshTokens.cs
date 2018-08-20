@@ -42,7 +42,7 @@ namespace Server.Tests
 
         private Property Updateable(RefreshToken token, RefreshTokenRepository tokens)
         {
-            token.TokenId = Guid.NewGuid();
+            token.Id = Guid.NewGuid();
             token.Issued = DateTime.Now;
             token.Expires = DateTime.Now;
             var updated = tokens.Update(token);
