@@ -34,7 +34,7 @@ namespace QCVOC.Api.Middleware
         /// </summary>
         /// <param name="context">The context within which the middleware is to execute</param>
         /// <returns>The result of the asynchronous middleware function.</returns>
-        public async Task Invoke(HttpContext context)
+        public async Task InvokeAsync(HttpContext context)
         {
             Stopwatch benchmark = new Stopwatch();
             benchmark.Start();
