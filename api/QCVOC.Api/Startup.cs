@@ -58,6 +58,7 @@ namespace QCVOC.Api
             app.UseAuthentication();
             app.UseCors("AllowAll");
 
+            app.UseJsonRpc();
             app.UseMvc();
 
             app.UseSwagger();
