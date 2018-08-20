@@ -1,10 +1,10 @@
 ﻿namespace QCVOC.Api.Middleware
 {
+    using System;
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
     using NLog;
-    using System;
-    using System.Threading.Tasks;
 
     public class ExceptionMiddleware
     {
