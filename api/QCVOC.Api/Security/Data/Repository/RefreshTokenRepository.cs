@@ -135,9 +135,19 @@ namespace QCVOC.Api.Security.Data.Repository
                 FROM refreshtokens
             ";
 
+            query += $"\nORDER BY issued DESC";
+            query += $"\nLIMIT @limit OFFSET @offset";
+
+            var param = new
+            {
+                limit = queryParameters.Limit,
+                offset = queryParameters.Offset,
+                orderby = queryParameters.OrderBy.ToString(),
+            };
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.Query<RefreshToken>(query);
+                return db.Query<RefreshToken>(query, param);
             }
         }
 
