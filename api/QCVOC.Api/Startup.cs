@@ -51,8 +51,8 @@ namespace QCVOC.Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            app.UseMiddleware<ExceptionMiddleware>();
-            app.UseMiddleware<LoggingMiddleware>();
+            app.UseExceptionMiddleware();
+            app.UseLogger();
 
             app.UseAuthentication();
             app.UseCors("AllowAll");
@@ -124,6 +124,11 @@ namespace QCVOC.Api
             options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
         }
 
+        private static void ConfigureJwtBearerOptions(JwtBearerOptions options)
+        {
+            options.TokenValidationParameters = GetTokenValidationParameters();
+        }
+
         private static void ConfigureSwaggerGenOptions(SwaggerGenOptions options, IServiceCollection services)
         {
             var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
@@ -187,11 +192,6 @@ namespace QCVOC.Api
             }
 
             return info;
-        }
-
-        private static void ConfigureJwtBearerOptions(JwtBearerOptions options)
-        {
-            options.TokenValidationParameters = GetTokenValidationParameters();
         }
 
         private static TokenValidationParameters GetTokenValidationParameters()
