@@ -82,10 +82,9 @@ namespace QCVOC.Api.Security.Controller
                 return Unauthorized();
             }
 
-            var refreshTokenRecord = RefreshTokenRepository.GetAll()
-                .Where(r => r.AccountId == accountRecord.Id)
-                .Where(r => r.Expires >= DateTime.UtcNow)
-                .FirstOrDefault();
+            PurgeExpiredRefreshTokensFor(accountRecord.Id);
+
+            var refreshTokenRecord = GetCurrentRefreshTokenRecordFor(accountRecord.Id);
 
             JwtSecurityToken refreshJwt;
 
@@ -112,6 +111,24 @@ namespace QCVOC.Api.Security.Controller
             var response = new TokenResponse(accessJwt, refreshJwt);
 
             return Ok(response);
+        }
+
+        private RefreshToken GetCurrentRefreshTokenRecordFor(Guid accountId)
+        {
+            return RefreshTokenRepository.GetAll(new RefreshTokenQueryParameters { AccountId = accountId })
+                .Where(r => r.Expires >= DateTime.UtcNow)
+                .FirstOrDefault();
+        }
+
+        private void PurgeExpiredRefreshTokensFor(Guid accountId)
+        {
+            var expiredRecords = RefreshTokenRepository.GetAll(new RefreshTokenQueryParameters { AccountId = accountId })
+                .Where(r => r.Expires < DateTime.UtcNow);
+
+            foreach (var record in expiredRecords)
+            {
+                RefreshTokenRepository.Delete(record.Id);
+            }
         }
 
         /// <summary>
