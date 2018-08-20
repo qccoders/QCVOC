@@ -2,6 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
     using NLog;
@@ -10,6 +11,18 @@
     {
         Terse,
         Verbose,
+    }
+
+    public static class ExceptionMiddlewareExtensions
+    {
+        public static IApplicationBuilder UseExceptionMiddleware(this IApplicationBuilder builder, Action<ExceptionMiddlewareOptions> configureOptions = null)
+        {
+            var options = new ExceptionMiddlewareOptions();
+
+            configureOptions?.Invoke(options);
+
+            return builder.UseMiddleware<ExceptionMiddleware>(options);
+        }
     }
 
     public class ExceptionMiddleware
@@ -48,7 +61,7 @@
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
 
-            var response = Options.Verbosity == ExceptionMiddlwareVerbosity.Terse ? JsonConvert.SerializeObject(exception.Message) :
+            var response = Options.Verbosity == ExceptionMiddlwareVerbosity.Terse ? JsonConvert.SerializeObject(new { exception.Message }) :
                 JsonConvert.SerializeObject(exception);
 
             return context.Response.WriteAsync(response);
