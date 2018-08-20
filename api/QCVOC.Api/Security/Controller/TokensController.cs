@@ -95,7 +95,7 @@ namespace QCVOC.Api.Security.Controller
 
                 refreshTokenRecord = new RefreshToken()
                 {
-                    TokenId = Guid.Parse(refreshJwt.Claims.Where(c => c.Type == "jti").FirstOrDefault().Value),
+                    Id = Guid.Parse(refreshJwt.Claims.Where(c => c.Type == "jti").FirstOrDefault().Value),
                     AccountId = accountRecord.Id,
                     Issued = refreshJwt.ValidFrom,
                     Expires = refreshJwt.ValidTo,
@@ -105,10 +105,10 @@ namespace QCVOC.Api.Security.Controller
             }
             else
             {
-                refreshJwt = TokenFactory.GetRefreshToken(refreshTokenRecord.TokenId, refreshTokenRecord.Expires, refreshTokenRecord.Issued);
+                refreshJwt = TokenFactory.GetRefreshToken(refreshTokenRecord.Id, refreshTokenRecord.Expires, refreshTokenRecord.Issued);
             }
 
-            var accessJwt = TokenFactory.GetAccessToken(accountRecord, refreshTokenRecord.TokenId);
+            var accessJwt = TokenFactory.GetAccessToken(accountRecord, refreshTokenRecord.Id);
             var response = new TokenResponse(accessJwt, refreshJwt);
 
             return Ok(response);
@@ -167,7 +167,7 @@ namespace QCVOC.Api.Security.Controller
                 return Unauthorized();
             }
 
-            var accessJwt = TokenFactory.GetAccessToken(account, refreshTokenRecord.TokenId);
+            var accessJwt = TokenFactory.GetAccessToken(account, refreshTokenRecord.Id);
             var refreshJwt = TokenFactory.GetRefreshToken(refreshTokenId, refreshTokenRecord.Expires, refreshTokenRecord.Issued);
             var response = new TokenResponse(accessJwt, refreshJwt);
 
