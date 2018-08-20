@@ -38,13 +38,13 @@ namespace QCVOC.Api.Security.Data.Repository
         {
             var query = @"
                 INSERT INTO refreshtokens (
-                    tokenid,
+                    id,
                     issued,
                     expires,
                     accountid
                 )
                 VALUES (
-                    @tokenid,
+                    @id,
                     @issued,
                     @expires,
                     @accountid
@@ -53,7 +53,7 @@ namespace QCVOC.Api.Security.Data.Repository
 
             var param = new
             {
-                tokenid = refreshToken.TokenId,
+                tokenid = refreshToken.Id,
                 issued = refreshToken.Issued,
                 expires = refreshToken.Expires,
                 accountid = refreshToken.AccountId
@@ -74,7 +74,7 @@ namespace QCVOC.Api.Security.Data.Repository
         {
             var query = @"
                 DELETE FROM refreshtokens
-                WHERE accountId = @id
+                WHERE id = @id
             ";
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -109,9 +109,9 @@ namespace QCVOC.Api.Security.Data.Repository
                     accountid AS AccountID,
                     expires AS Expires,
                     issued AS Issued,
-                    tokenid AS TokenId
+                    id AS Id
                 FROM refreshtokens
-                WHERE tokenid = @tokenid
+                WHERE id = @id
             ";
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -131,7 +131,7 @@ namespace QCVOC.Api.Security.Data.Repository
                     accountid AS AccountID,
                     expires AS Expires,
                     issued AS Issued,
-                    tokenid AS TokenId
+                    id AS Id
                 FROM refreshtokens
             ";
 
@@ -153,7 +153,7 @@ namespace QCVOC.Api.Security.Data.Repository
                 SET
                     expires = @expires,
                     issued = @issued,
-                    tokenid = @tokenid
+                    id = @tokenid
                 WHERE accountid = @id;
             ";
 
