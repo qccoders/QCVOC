@@ -9,8 +9,17 @@ namespace QCVOC.Api.Middleware
     using System.Diagnostics;
     using System.Text;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using NLog;
+
+    public static class LoggingMiddlewareExtensions
+    {
+        public static IApplicationBuilder UseLogger(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<LoggingMiddleware>();
+        }
+    }
 
     /// <summary>
     ///     Provides logging for HTTP requests.
@@ -34,7 +43,7 @@ namespace QCVOC.Api.Middleware
         /// </summary>
         /// <param name="context">The context within which the middleware is to execute</param>
         /// <returns>The result of the asynchronous middleware function.</returns>
-        public async Task Invoke(HttpContext context)
+        public async Task InvokeAsync(HttpContext context)
         {
             Stopwatch benchmark = new Stopwatch();
             benchmark.Start();

@@ -11,7 +11,7 @@ namespace QCVOC.Api.Security
     using System.Security.Claims;
     using System.Text;
     using Microsoft.IdentityModel.Tokens;
-    using QCVOC.Api.Data.Model.Security;
+    using QCVOC.Api.Security.Data.Model;
     using Utility = Utility;
 
     /// <summary>

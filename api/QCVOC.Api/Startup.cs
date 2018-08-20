@@ -24,12 +24,16 @@ namespace QCVOC.Api
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using NLog;
-    using QCVOC.Api.Data.ConnectionFactory;
-    using QCVOC.Api.Data.Model;
-    using QCVOC.Api.Data.Model.Security;
-    using QCVOC.Api.Data.Repository;
+    using QCVOC.Api.Common.Data.ConnectionFactory;
+    using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Domain.Patrons.Data.Model;
+    using QCVOC.Api.Domain.Patrons.Data.Repository;
+    using QCVOC.Api.Domain.Service.Data.Model;
+    using QCVOC.Api.Domain.Service.Data.Repository;
     using QCVOC.Api.Middleware;
     using QCVOC.Api.Security;
+    using QCVOC.Api.Security.Data.Model;
+    using QCVOC.Api.Security.Data.Repository;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
     using Swashbuckle.AspNetCore.SwaggerUI;
@@ -47,8 +51,9 @@ namespace QCVOC.Api
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
-            app.UseMiddleware<ExceptionMiddleware>();
-            app.UseMiddleware<LoggingMiddleware>();
+            app.UseExceptionMiddleware(options => options.Verbosity = ExceptionMiddlwareVerbosity.Terse);
+
+            app.UseLogger();
 
             app.UseAuthentication();
             app.UseCors("AllowAll");
@@ -120,6 +125,11 @@ namespace QCVOC.Api
             options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
         }
 
+        private static void ConfigureJwtBearerOptions(JwtBearerOptions options)
+        {
+            options.TokenValidationParameters = GetTokenValidationParameters();
+        }
+
         private static void ConfigureSwaggerGenOptions(SwaggerGenOptions options, IServiceCollection services)
         {
             var provider = services.BuildServiceProvider().GetRequiredService<IApiVersionDescriptionProvider>();
@@ -183,11 +193,6 @@ namespace QCVOC.Api
             }
 
             return info;
-        }
-
-        private static void ConfigureJwtBearerOptions(JwtBearerOptions options)
-        {
-            options.TokenValidationParameters = GetTokenValidationParameters();
         }
 
         private static TokenValidationParameters GetTokenValidationParameters()

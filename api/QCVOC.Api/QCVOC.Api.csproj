@@ -18,10 +18,6 @@
     <Copy SourceFiles="@(DocFile)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
   </Target>
   <ItemGroup>
-    <Compile Remove="Data\DbConnectionFactory.cs" />
-    <Compile Remove="Data\DbConnectionType.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Remove="stylecop.json" />
   </ItemGroup>
   <ItemGroup>

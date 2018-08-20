@@ -1,16 +1,14 @@
-using System;
-using Xunit;
-using QCVOC.Api.Data.Repository;
-using QCVOC.Api.Data.ConnectionFactory;
-using QCVOC.Api.Data.Model.Security;
-using QCVOC.Api;
-using FsCheck;
-using FsCheck.Experimental;
-using FsCheck.Xunit;
-using System.Linq;
-
 namespace Server.Tests
 {
+    using System;
+    using System.Linq;
+    using FsCheck;
+    using FsCheck.Experimental;
+    using FsCheck.Xunit;
+    using QCVOC.Api.Security.Data.Model;
+    using QCVOC.Api.Security.Data.Repository;
+    using Xunit;
+
     public class RefreshTokens 
     {
         public RefreshTokens()
