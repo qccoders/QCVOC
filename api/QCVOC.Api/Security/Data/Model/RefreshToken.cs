@@ -12,7 +12,7 @@ namespace QCVOC.Api.Security.Data.Model
         public Guid AccountId { get; set; }
         public DateTime Expires { get; set; }
         public DateTime Issued { get; set; }
-        public Guid TokenId { get; set; }
+        public Guid Id { get; set; }
 
         public bool Equals(RefreshToken token)
         {
@@ -21,7 +21,7 @@ namespace QCVOC.Api.Security.Data.Model
                 return this == null;
             }
 
-            return this.TokenId == token.TokenId
+            return this.Id == token.Id
             && this.AccountId == token.AccountId
             && (this.Expires - token.Expires <= TimeSpan.FromSeconds(1))
             && (this.Issued - token.Issued <= TimeSpan.FromSeconds(1));
