@@ -126,6 +126,8 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>A list of all <see cref="RefreshToken"/> objects in the collection.</returns>
         public IEnumerable<RefreshToken> GetAll(QueryParameters queryParameters = null)
         {
+            queryParameters = queryParameters ?? new QueryParameters();
+
             var query = @"
                 SELECT
                     accountid AS AccountID,
@@ -134,6 +136,12 @@ namespace QCVOC.Api.Security.Data.Repository
                     id AS Id
                 FROM refreshtokens
             ";
+
+            if (queryParameters is RefreshTokenQueryParameters)
+            {
+                var accountId = ((RefreshTokenQueryParameters)queryParameters).AccountId;
+                query += accountId != null ? $"\nWHERE accountid = '{accountId}'" : string.Empty;
+            }
 
             query += $"\nORDER BY issued DESC";
             query += $"\nLIMIT @limit OFFSET @offset";
