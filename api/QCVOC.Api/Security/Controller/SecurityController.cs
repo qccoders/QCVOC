@@ -174,18 +174,40 @@ namespace QCVOC.Api.Security.Controller
             return Ok(response);
         }
 
+        /// <summary>
+        ///     Returns a list of Accounts.
+        /// </summary>
+        /// <param name="queryParams">Optional filtering and pagination options.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The list was retrieved successfully.</response>
+        /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpGet("accounts")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(IEnumerable<AccountResponse>), 200)]
+        [ProducesResponseType(403)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult GetAll([FromQuery]AccountQueryParameters queryParams)
         {
             return Ok(AccountRepository.GetAll(queryParams).Select(a => MapAccountResponseFrom(a)));
         }
 
+        /// <summary>
+        ///     Returns the Account matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Account to retrieve.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The Account was retrieved successfully.</response>
+        /// <response code="400">The specified id was invalid.</response>
+        /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="404">An Account matching the specified id could not be found.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpGet("accounts/{id}")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(AccountResponse), 200)]
-        [ProducesResponseType(404)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Get(string id)
         {
