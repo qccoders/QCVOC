@@ -172,14 +172,14 @@ namespace QCVOC.Api
                 string.Join('/', key.Split('/').Select(x => x.Contains("{") || x.Length < 2 ? x : char.ToLowerInvariant(x[0]) + x.Substring(1)));
 
             options.PreSerializeFilters.Add((document, request) =>
-             {
-                 document.Paths = document.Paths.ToDictionary(p => camelCase(p.Key), p => p.Value);
+            {
+                document.Paths = document.Paths.ToDictionary(p => camelCase(p.Key), p => p.Value);
 
-                 document.Paths.ToList()
+                document.Paths.ToList()
                     .ForEach(path => typeof(PathItem).GetProperties().Where(p => p.PropertyType == typeof(Operation)).ToList()
                     .ForEach(prop => ((Operation)prop.GetValue(path.Value, null))?.Parameters.ToList()
                     .ForEach(p => p.Name = camelCase(p.Name))));
-             });
+            });
         }
 
         private static void ConfigureSwaggerUIOptions(SwaggerUIOptions options, IApiVersionDescriptionProvider provider)
