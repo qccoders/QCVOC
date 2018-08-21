@@ -56,8 +56,8 @@ namespace QCVOC.Api.Security.Controller
         /// <response code="400">The specified credentials were invalid.</response>
         /// <response code="401">Authentication failed.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
-        [HttpPost]
-        [Route("login")]
+        [HttpPost("login")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(TokenResponse), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
@@ -123,8 +123,8 @@ namespace QCVOC.Api.Security.Controller
         /// <response code="400">The specified Refresh Token was blank.</response>
         /// <response code="401">The specified Refresh Token was invalid.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
-        [HttpPost]
-        [Route("refresh")]
+        [HttpPost("refresh")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(TokenResponse), 200)]
         [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
@@ -199,6 +199,7 @@ namespace QCVOC.Api.Security.Controller
         /// <returns>See attributes.</returns>
         /// <response code="200">The Account was retrieved successfully.</response>
         /// <response code="400">The specified id was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
         /// <response code="403">The user has insufficient rights to perform this operation.</response>
         /// <response code="404">An Account matching the specified id could not be found.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
@@ -206,6 +207,7 @@ namespace QCVOC.Api.Security.Controller
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(AccountResponse), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
@@ -245,6 +247,7 @@ namespace QCVOC.Api.Security.Controller
         /// <returns>See attributes.</returns>
         /// <response code="201">The Account was created successfully.</response>
         /// <response code="400">The specified Account was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
         /// <response code="403">The user has insufficient rights to perform this operation.</response>
         /// <response code="409">An Account with the specified name aleady exists.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
@@ -252,8 +255,9 @@ namespace QCVOC.Api.Security.Controller
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(AccountResponse), 201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
-        [ProducesResponseType(403)]
-        [ProducesResponseType(409)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(string), 403)]
+        [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Create([FromBody]AccountCreateRequest account)
         {
@@ -264,7 +268,7 @@ namespace QCVOC.Api.Security.Controller
 
             if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
             {
-                return Forbid();
+                return StatusCode(403, "Administrative accounts may not be created by non-Administrative users.");
             }
 
             var existingAccounts = AccountRepository.GetAll();
@@ -301,6 +305,7 @@ namespace QCVOC.Api.Security.Controller
         /// <returns>See attributes.</returns>
         /// <response code="200">The Account was updated successfully.</response>
         /// <response code="400">The specified Account was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
         /// <response code="403">The user has insufficient rights to perform this operation.</response>
         /// <response code="404">An Account matching the specified id could not be found.</response>
         /// <response code="409">An Account with the specified name aleady exists.</response>
@@ -309,9 +314,10 @@ namespace QCVOC.Api.Security.Controller
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(AccountResponse), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
-        [ProducesResponseType(403)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(string), 403)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(409)]
+        [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Update(Guid id, [FromBody]AccountUpdateRequest account)
         {
@@ -320,10 +326,9 @@ namespace QCVOC.Api.Security.Controller
                 return BadRequest(ModelState);
             }
 
-            // only Administrators can modify Administrator accounts
             if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
             {
-                return Forbid();
+                return StatusCode(403, "Accounts may not be promited to Administrative by non-Administrative users.");
             }
 
             var existingAccounts = AccountRepository.GetAll();
@@ -334,10 +339,9 @@ namespace QCVOC.Api.Security.Controller
                 return NotFound();
             }
 
-            // only Administrators can demote an account from Administrator
             if (existingAccountRecord.Role == Role.Administrator && account.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
             {
-                return Forbid();
+                return StatusCode(403, "Administrators may not be demoted by non-Administrative users.");
             }
 
             if (existingAccounts.Any(a => a.Id != id && a.Name == account.Name))
@@ -365,9 +369,24 @@ namespace QCVOC.Api.Security.Controller
             }
         }
 
+        /// <summary>
+        ///     Deletes the Account matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Account to dete.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="204">The Account was deleted successfully.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="404">An Account matching the specified id could not be found.</response>
+        /// <response code="409">The request would result in a configuration conflict.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpDelete("accounts/{id}")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(string), 403)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Delete(Guid id)
         {
@@ -376,6 +395,18 @@ namespace QCVOC.Api.Security.Controller
             if (account == default(Account))
             {
                 return NotFound();
+            }
+
+            if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+            {
+                return StatusCode(403, "Administrative accounts may not be deleted by non-Administrative users.");
+            }
+
+            var accounts = AccountRepository.GetAll(new AccountQueryParameters() { Role = Role.Administrator });
+
+            if (!accounts.Where(a => a.Id != id).Any())
+            {
+                return Conflict($"At least one administrative account must remain.  Create a new administrative account, then repeat this request to complete deletion.");
             }
 
             try
