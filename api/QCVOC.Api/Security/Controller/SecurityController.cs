@@ -293,17 +293,36 @@ namespace QCVOC.Api.Security.Controller
             }
         }
 
+        /// <summary>
+        ///     Updates the Account matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Account to update.</param>
+        /// <param name="account">The updated Account.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The Account was updated successfully.</response>
+        /// <response code="400">The specified Account was invalid.</response>
+        /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="404">An Account matching the specified id could not be found.</response>
+        /// <response code="409">An Account with the specified name aleady exists.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPut("accounts/{id}")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(AccountResponse), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(string), 409)]
+        [ProducesResponseType(409)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Update(Guid id, [FromBody]AccountUpdateRequest account)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+            {
+                return Forbid();
             }
 
             var existingAccounts = AccountRepository.GetAll();
