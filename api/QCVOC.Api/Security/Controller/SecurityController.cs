@@ -238,9 +238,21 @@ namespace QCVOC.Api.Security.Controller
             return Ok(MapAccountResponseFrom(account));
         }
 
+        /// <summary>
+        ///     Creates a new Account.
+        /// </summary>
+        /// <param name="account">The Account to create.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="201">The Account was created successfully.</response>
+        /// <response code="400">The specified Account was invalid.</response>
+        /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="409">An Account with the specified name aleady exists.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost("accounts")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(AccountResponse), 201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(403)]
         [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Create([FromBody]AccountCreateRequest account)
@@ -248,6 +260,11 @@ namespace QCVOC.Api.Security.Controller
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+            {
+                return Forbid();
             }
 
             var existingAccounts = AccountRepository.GetAll();
