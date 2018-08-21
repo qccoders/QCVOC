@@ -60,7 +60,7 @@ namespace QCVOC.Api
 
             app.UseMvc();
 
-            app.UseSwagger();
+            app.UseSwagger(options => ConfigureSwaggerOptions(options));
             app.UseSwaggerUI(options => ConfigureSwaggerUIOptions(options, provider));
         }
 
@@ -158,14 +158,28 @@ namespace QCVOC.Api
                 Type = "apiKey",
             };
 
-            options.DocumentFilter<LowercaseDocumentFilter>();
-
             options.AddSecurityDefinition("Bearer", apiKeyScheme);
 
             options.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
                 {
                     { "Bearer", new string[] { } }
                 });
+        }
+
+        private static void ConfigureSwaggerOptions(SwaggerOptions options)
+        {
+            string camelCase(string key) =>
+                string.Join('/', key.Split('/').Select(x => x.Contains("{") || x.Length < 2 ? x : char.ToLowerInvariant(x[0]) + x.Substring(1)));
+
+            options.PreSerializeFilters.Add((document, request) =>
+             {
+                 document.Paths = document.Paths.ToDictionary(p => camelCase(p.Key), p => p.Value);
+
+                 document.Paths.ToList()
+                    .ForEach(path => typeof(PathItem).GetProperties().Where(p => p.PropertyType == typeof(Operation)).ToList()
+                    .ForEach(prop => ((Operation)prop.GetValue(path.Value, null))?.Parameters.ToList()
+                    .ForEach(p => p.Name = camelCase(p.Name))));
+             });
         }
 
         private static void ConfigureSwaggerUIOptions(SwaggerUIOptions options, IApiVersionDescriptionProvider provider)
@@ -220,40 +234,6 @@ namespace QCVOC.Api
             var basePath = AppContext.BaseDirectory;
 
             return Path.Combine(basePath, fileName);
-        }
-
-        private class LowercaseDocumentFilter : IDocumentFilter
-        {
-            public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
-            {
-                swaggerDoc.Paths = swaggerDoc.Paths.ToDictionary(entry => CamelCaseEverythingButParameters(entry.Key), entry => entry.Value);
-
-                foreach (var path in swaggerDoc.Paths)
-                {
-                    var t = typeof(PathItem).GetProperties();
-                    var pr = t.Where(p => p.PropertyType == typeof(Operation));
-
-                    foreach (var prop in pr)
-                    {
-                        var operation = (Operation)prop.GetValue(path.Value, null);
-
-                        CamelCaseAllParameters(operation?.Parameters);
-                    };
-                }
-            }
-
-            private static void CamelCaseAllParameters(IList<IParameter> parameters)
-            {
-                foreach (var parameter in parameters ?? new List<IParameter>())
-                {
-                    parameter.Name = char.ToLowerInvariant(parameter.Name[0]) + parameter.Name.Substring(1);
-                }
-            }
-
-            private static string CamelCaseEverythingButParameters(string key)
-            {
-                return string.Join('/', key.Split('/').Select(x => x.Contains("{") || x.Length < 2 ? x : char.ToLowerInvariant(x[0]) + x.Substring(1)));
-            }
         }
     }
 }
