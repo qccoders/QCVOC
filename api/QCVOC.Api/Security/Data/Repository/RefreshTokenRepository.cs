@@ -38,13 +38,13 @@ namespace QCVOC.Api.Security.Data.Repository
         {
             var query = @"
                 INSERT INTO refreshtokens (
-                    tokenid,
+                    id,
                     issued,
                     expires,
                     accountid
                 )
                 VALUES (
-                    @tokenid,
+                    @id,
                     @issued,
                     @expires,
                     @accountid
@@ -53,7 +53,7 @@ namespace QCVOC.Api.Security.Data.Repository
 
             var param = new
             {
-                tokenid = refreshToken.TokenId,
+                tokenid = refreshToken.Id,
                 issued = refreshToken.Issued,
                 expires = refreshToken.Expires,
                 accountid = refreshToken.AccountId
@@ -74,7 +74,7 @@ namespace QCVOC.Api.Security.Data.Repository
         {
             var query = @"
                 DELETE FROM refreshtokens
-                WHERE accountId = @id
+                WHERE id = @id
             ";
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -109,9 +109,9 @@ namespace QCVOC.Api.Security.Data.Repository
                     accountid AS AccountID,
                     expires AS Expires,
                     issued AS Issued,
-                    tokenid AS TokenId
+                    id AS Id
                 FROM refreshtokens
-                WHERE tokenid = @tokenid
+                WHERE id = @id
             ";
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -126,18 +126,36 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>A list of all <see cref="RefreshToken"/> objects in the collection.</returns>
         public IEnumerable<RefreshToken> GetAll(QueryParameters queryParameters = null)
         {
+            queryParameters = queryParameters ?? new QueryParameters();
+
             var query = @"
                 SELECT
                     accountid AS AccountID,
                     expires AS Expires,
                     issued AS Issued,
-                    tokenid AS TokenId
+                    id AS Id
                 FROM refreshtokens
             ";
 
+            if (queryParameters is RefreshTokenQueryParameters)
+            {
+                var accountId = ((RefreshTokenQueryParameters)queryParameters).AccountId;
+                query += accountId != null ? $"\nWHERE accountid = '{accountId}'" : string.Empty;
+            }
+
+            query += $"\nORDER BY issued DESC";
+            query += $"\nLIMIT @limit OFFSET @offset";
+
+            var param = new
+            {
+                limit = queryParameters.Limit,
+                offset = queryParameters.Offset,
+                orderby = queryParameters.OrderBy.ToString(),
+            };
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.Query<RefreshToken>(query);
+                return db.Query<RefreshToken>(query, param);
             }
         }
 
@@ -148,28 +166,7 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The updated RefreshToken.</returns>
         public RefreshToken Update(RefreshToken refreshToken)
         {
-            var query = @"
-                UPDATE refreshtokens
-                SET
-                    expires = @expires,
-                    issued = @issued,
-                    tokenid = @tokenid
-                WHERE accountid = @id;
-            ";
-
-            var param = new
-            {
-                id = refreshToken.AccountId,
-                expires = refreshToken.Expires,
-                issued = refreshToken.Issued,
-                tokenid = refreshToken.TokenId
-            };
-
-            using (var db = ConnectionFactory.CreateConnection())
-            {
-                db.Execute(query, param);
-                return Get(refreshToken.AccountId);
-            }
+            throw new NotImplementedException("Refresh tokens are immutable.");
         }
     }
 }

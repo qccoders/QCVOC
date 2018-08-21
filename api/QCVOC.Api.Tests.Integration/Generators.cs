@@ -88,7 +88,7 @@ namespace Server.Tests
                        AccountId = accountId,
                        Expires = expires,
                        Issued = issued,
-                       TokenId = tokenId
+                       Id = tokenId
                    };
         }
     }
