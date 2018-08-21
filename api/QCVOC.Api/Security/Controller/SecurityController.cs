@@ -114,24 +114,6 @@ namespace QCVOC.Api.Security.Controller
             return Ok(response);
         }
 
-        private RefreshToken GetCurrentRefreshTokenRecordFor(Guid accountId)
-        {
-            return RefreshTokenRepository.GetAll(new RefreshTokenQueryParameters { AccountId = accountId })
-                .Where(r => r.Expires >= DateTime.UtcNow)
-                .FirstOrDefault();
-        }
-
-        private void PurgeExpiredRefreshTokensFor(Guid accountId)
-        {
-            var expiredRecords = RefreshTokenRepository.GetAll(new RefreshTokenQueryParameters { AccountId = accountId })
-                .Where(r => r.Expires < DateTime.UtcNow);
-
-            foreach (var record in expiredRecords)
-            {
-                RefreshTokenRepository.Delete(record.Id);
-            }
-        }
-
         /// <summary>
         ///     Issues a new Access Token given a Refresh Token.
         /// </summary>
@@ -192,27 +174,83 @@ namespace QCVOC.Api.Security.Controller
             return Ok(response);
         }
 
-        [HttpDelete("accounts/{id}")]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
+        [HttpGet("accounts")]
+        [ProducesResponseType(typeof(IEnumerable<AccountResponse>), 200)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Delete(Guid id)
+        public IActionResult GetAll([FromQuery]AccountQueryParameters queryParams)
         {
-            var account = AccountRepository.Get(id);
+            return Ok(AccountRepository.GetAll(queryParams).Select(a => MapAccountResponseFrom(a)));
+        }
+
+        [HttpGet("accounts/{id}")]
+        [ProducesResponseType(typeof(AccountResponse), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Get(string id)
+        {
+            if (!Guid.TryParse(id, out var guid))
+            {
+                var err = new ModelStateDictionary();
+                err.AddModelError("id", "The requested Id must be a valid Guid.");
+
+                return BadRequest(err);
+            }
+
+            Account account = default(Account);
+
+            try
+            {
+                account = AccountRepository.Get(guid);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Exception("Error retrieving the specified Account. See inner exception for details.", ex));
+            }
 
             if (account == default(Account))
             {
                 return NotFound();
             }
 
+            return Ok(MapAccountResponseFrom(account));
+        }
+
+        [HttpPost("accounts")]
+        [ProducesResponseType(typeof(AccountResponse), 201)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 409)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Create([FromBody]AccountCreateRequest account)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingAccounts = AccountRepository.GetAll();
+
+            if (existingAccounts.Any(a => a.Name == account.Name))
+            {
+                return Conflict($"A user named '{account.Name}' already exists.");
+            }
+
+            var accountRecord = new Account()
+            {
+                Id = Guid.NewGuid(),
+                Name = account.Name,
+                Role = account.Role,
+                PasswordHash = Utility.ComputeSHA512Hash(account.Password),
+            };
+
             try
             {
-                AccountRepository.Delete(account);
-                return NoContent();
+                var createdAccount = AccountRepository.Create(accountRecord);
+                return Ok(MapAccountResponseFrom(createdAccount));
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error deleting account for '{account.Name ?? id.ToString()}': {ex.Message}", ex);
+                throw new Exception($"Error creating account for {account.Name}: {ex.Message}", ex);
             }
         }
 
@@ -262,84 +300,28 @@ namespace QCVOC.Api.Security.Controller
             }
         }
 
-        [HttpPost("accounts")]
-        [ProducesResponseType(typeof(AccountResponse), 201)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
-        [ProducesResponseType(typeof(string), 409)]
-        [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Create([FromBody]AccountCreateRequest account)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var existingAccounts = AccountRepository.GetAll();
-
-            if (existingAccounts.Any(a => a.Name == account.Name))
-            {
-                return Conflict($"A user named '{account.Name}' already exists.");
-            }
-
-            var accountRecord = new Account()
-            {
-                Id = Guid.NewGuid(),
-                Name = account.Name,
-                Role = account.Role,
-                PasswordHash = Utility.ComputeSHA512Hash(account.Password),
-            };
-
-            try
-            {
-                var createdAccount = AccountRepository.Create(accountRecord);
-                return Ok(MapAccountResponseFrom(createdAccount));
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error creating account for {account.Name}: {ex.Message}", ex);
-            }
-        }
-
-        [HttpGet("accounts/{id}")]
-        [ProducesResponseType(typeof(AccountResponse), 200)]
+        [HttpDelete("accounts/{id}")]
+        [ProducesResponseType(204)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Get(string id)
+        public IActionResult Delete(Guid id)
         {
-            if (!Guid.TryParse(id, out var guid))
-            {
-                var err = new ModelStateDictionary();
-                err.AddModelError("id", "The requested Id must be a valid Guid.");
-
-                return BadRequest(err);
-            }
-
-            Account account = default(Account);
-
-            try
-            {
-                account = AccountRepository.Get(guid);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new Exception("Error retrieving the specified Account. See inner exception for details.", ex));
-            }
+            var account = AccountRepository.Get(id);
 
             if (account == default(Account))
             {
                 return NotFound();
             }
 
-            return Ok(MapAccountResponseFrom(account));
-        }
-
-        [HttpGet("accounts")]
-        [ProducesResponseType(typeof(IEnumerable<AccountResponse>), 200)]
-        [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult GetAll([FromQuery]AccountQueryParameters queryParams)
-        {
-            return Ok(AccountRepository.GetAll(queryParams).Select(a => MapAccountResponseFrom(a)));
+            try
+            {
+                AccountRepository.Delete(account);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting account for '{account.Name ?? id.ToString()}': {ex.Message}", ex);
+            }
         }
 
         private AccountResponse MapAccountResponseFrom(Account account)
@@ -350,6 +332,24 @@ namespace QCVOC.Api.Security.Controller
                 Name = account.Name,
                 Role = account.Role,
             };
+        }
+
+        private RefreshToken GetCurrentRefreshTokenRecordFor(Guid accountId)
+        {
+            return RefreshTokenRepository.GetAll(new RefreshTokenQueryParameters { AccountId = accountId })
+                .Where(r => r.Expires >= DateTime.UtcNow)
+                .FirstOrDefault();
+        }
+
+        private void PurgeExpiredRefreshTokensFor(Guid accountId)
+        {
+            var expiredRecords = RefreshTokenRepository.GetAll(new RefreshTokenQueryParameters { AccountId = accountId })
+                .Where(r => r.Expires < DateTime.UtcNow);
+
+            foreach (var record in expiredRecords)
+            {
+                RefreshTokenRepository.Delete(record.Id);
+            }
         }
     }
 }
