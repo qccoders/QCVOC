@@ -320,6 +320,7 @@ namespace QCVOC.Api.Security.Controller
                 return BadRequest(ModelState);
             }
 
+            // only Administrators can modify Administrator accounts
             if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
             {
                 return Forbid();
@@ -331,6 +332,12 @@ namespace QCVOC.Api.Security.Controller
             if (existingAccountRecord == default(Account))
             {
                 return NotFound();
+            }
+
+            // only Administrators can demote an account from Administrator
+            if (existingAccountRecord.Role == Role.Administrator && account.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+            {
+                return Forbid();
             }
 
             if (existingAccounts.Any(a => a.Id != id && a.Name == account.Name))
