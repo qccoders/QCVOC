@@ -253,7 +253,7 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(typeof(AccountResponse), 201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(403)]
-        [ProducesResponseType(typeof(string), 409)]
+        [ProducesResponseType(409)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Create([FromBody]AccountCreateRequest account)
         {
