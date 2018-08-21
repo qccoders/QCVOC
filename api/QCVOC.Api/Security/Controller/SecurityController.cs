@@ -20,7 +20,6 @@ namespace QCVOC.Api.Security.Controller
     /// <summary>
     ///     Provides endpoints for manipulation of API authentication Access and Refresh Tokens.
     /// </summary>
-    [AllowAnonymous]
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
@@ -206,31 +205,13 @@ namespace QCVOC.Api.Security.Controller
         [HttpGet("accounts/{id}")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(AccountResponse), 200)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Get(string id)
+        public IActionResult Get(Guid id)
         {
-            if (!Guid.TryParse(id, out var guid))
-            {
-                var err = new ModelStateDictionary();
-                err.AddModelError("id", "The requested Id must be a valid Guid.");
-
-                return BadRequest(err);
-            }
-
-            Account account = default(Account);
-
-            try
-            {
-                account = AccountRepository.Get(guid);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new Exception("Error retrieving the specified Account. See inner exception for details.", ex));
-            }
+            var account = AccountRepository.Get(id);
 
             if (account == default(Account))
             {
