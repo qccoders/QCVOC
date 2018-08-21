@@ -38,17 +38,33 @@ namespace QCVOC.Api
     using Swashbuckle.AspNetCore.SwaggerGen;
     using Swashbuckle.AspNetCore.SwaggerUI;
 
+    /// <summary>
+    ///     The AspNetCore Startup configuration.
+    /// </summary>
     public class Startup
     {
         private readonly Logger logger = LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Startup"/> class.
+        /// </summary>
+        /// <param name="configuration">Configuration properties for the application.</param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
+        /// <summary>
+        ///     Gets onfiguration properties for the application.
+        /// </summary>
         public IConfiguration Configuration { get; }
 
+        /// <summary>
+        ///     Configures middleware for the application.
+        /// </summary>
+        /// <param name="app">The default application builder.</param>
+        /// <param name="env">The hosting environment.</param>
+        /// <param name="provider">The API version information provider.</param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
         {
             app.UseExceptionMiddleware(options => options.Verbosity = ExceptionMiddlwareVerbosity.Terse);
@@ -64,6 +80,10 @@ namespace QCVOC.Api
             app.UseSwaggerUI(options => ConfigureSwaggerUIOptions(options, provider));
         }
 
+        /// <summary>
+        ///     Configures services for the application.
+        /// </summary>
+        /// <param name="services">The application services collection.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ITokenFactory, TokenFactory>();
@@ -86,6 +106,7 @@ namespace QCVOC.Api
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => ConfigureJwtBearerOptions(options));
+
             services.AddCors(options => ConfigureCorsOptions(options));
 
             services.AddMvc()
@@ -177,8 +198,8 @@ namespace QCVOC.Api
 
                 document.Paths.ToList()
                     .ForEach(path => typeof(PathItem).GetProperties().Where(p => p.PropertyType == typeof(Operation)).ToList()
-                    .ForEach(prop => ((Operation)prop.GetValue(path.Value, null))?.Parameters.ToList()
-                    .ForEach(p => p.Name = camelCase(p.Name))));
+                        .ForEach(operation => ((Operation)operation.GetValue(path.Value, null))?.Parameters.ToList()
+                            .ForEach(prop => prop.Name = camelCase(prop.Name))));
             });
         }
 
