@@ -7,6 +7,7 @@ namespace QCVOC.Api.Security.Data.Repository
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Dapper;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
@@ -89,20 +90,7 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The account with the specified Id.</returns>
         public Account Get(Guid id)
         {
-            var query = @"
-                SELECT
-                    id,
-                    name,
-                    passwordhash,
-                    role
-                FROM accounts
-                WHERE id = @id;
-            ";
-
-            using (var db = ConnectionFactory.CreateConnection())
-            {
-                return db.QueryFirstOrDefault<Account>(query, new { id });
-            }
+            return GetAll(new AccountQueryParameters() { Id = id }).SingleOrDefault();
         }
 
         /// <summary>
@@ -113,34 +101,50 @@ namespace QCVOC.Api.Security.Data.Repository
         {
             queryParameters = queryParameters ?? new QueryParameters();
 
-            var query = @"
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate($@"
                 SELECT
                     id,
                     name,
                     passwordhash,
                     role
                 FROM accounts
-            ";
+                /**where**/
+                ORDER BY name {queryParameters.OrderBy.ToString()}
+                LIMIT @limit OFFSET @offset
+            ");
 
-            if (queryParameters is AccountQueryParameters)
-            {
-                var role = ((AccountQueryParameters)queryParameters).Role;
-                query += role != null ? $"\nWHERE role = '{role.ToString()}'" : string.Empty;
-            }
-
-            query += $"\nORDER BY name {queryParameters.OrderBy.ToString()}";
-            query += "\nLIMIT @limit OFFSET @offset";
-
-            var param = new
+            var parameters = new
             {
                 limit = queryParameters.Limit,
                 offset = queryParameters.Offset,
                 orderby = queryParameters.OrderBy.ToString(),
             };
 
+            builder.AddParameters(parameters);
+
+            if (queryParameters is AccountQueryParameters accountParameters)
+            {
+                if (accountParameters.Role != null)
+                {
+                    builder.Where("role = @role", new { role = accountParameters.Role.ToString() });
+                }
+
+                if (!string.IsNullOrWhiteSpace(accountParameters.Name))
+                {
+                    builder.Where("name = @name", new { accountParameters.Name });
+                }
+
+                if (accountParameters.Id != null)
+                {
+                    builder.Where("id = @id", new { accountParameters.Id });
+                }
+            }
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.Query<Account>(query, param);
+                return db.Query<Account>(query.RawSql, query.Parameters);
             }
         }
 
