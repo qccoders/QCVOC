@@ -53,7 +53,7 @@ namespace QCVOC.Api.Security.Data.Repository
 
             var param = new
             {
-                tokenid = refreshToken.Id,
+                id = refreshToken.Id,
                 issued = refreshToken.Issued,
                 expires = refreshToken.Expires,
                 accountid = refreshToken.AccountId
@@ -116,7 +116,7 @@ namespace QCVOC.Api.Security.Data.Repository
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.QueryFirstOrDefault<RefreshToken>(query, new { tokenid = id });
+                return db.QueryFirstOrDefault<RefreshToken>(query, new { id = id });
             }
         }
 
@@ -126,7 +126,7 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>A list of all <see cref="RefreshToken"/> objects in the collection.</returns>
         public IEnumerable<RefreshToken> GetAll(Filters queryParameters = null)
         {
-            queryParameters = queryParameters ?? new Filters();
+            queryParameters = queryParameters ?? new RefreshTokenFilters();
 
             var query = @"
                 SELECT
