@@ -179,11 +179,13 @@ namespace QCVOC.Api.Security.Controller
         /// <param name="queryParams">Optional filtering and pagination options.</param>
         /// <returns>See attributes.</returns>
         /// <response code="200">The list was retrieved successfully.</response>
+        /// <response code="401">Unauthorized.</response>
         /// <response code="403">The user has insufficient rights to perform this operation.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpGet("accounts")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(IEnumerable<AccountResponse>), 200)]
+        [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult GetAll([FromQuery]AccountFilters queryParams)
