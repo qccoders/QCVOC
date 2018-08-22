@@ -53,6 +53,8 @@ namespace QCVOC.Api.Security.Data.DTO
         /// </summary>
         public DateTime Issued => AccessJwtSecurityToken.ValidFrom;
 
+        public JwtPayload Payload => AccessJwtSecurityToken.Payload;
+
         /// <summary>
         ///     Gets or sets the Refresh Token.
         /// </summary>

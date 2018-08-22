@@ -204,14 +204,16 @@ namespace QCVOC.Api.Security.Controller
         /// <param name="queryParams">Optional filtering and pagination options.</param>
         /// <returns>See attributes.</returns>
         /// <response code="200">The list was retrieved successfully.</response>
+        /// <response code="401">Unauthorized.</response>
         /// <response code="403">The user has insufficient rights to perform this operation.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpGet("accounts")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(IEnumerable<AccountResponse>), 200)]
+        [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult GetAll([FromQuery]AccountQueryParameters queryParams)
+        public IActionResult GetAll([FromQuery]AccountFilters queryParams)
         {
             return Ok(AccountRepository.GetAll(queryParams).Select(a => MapAccountResponseFrom(a)));
         }
@@ -408,7 +410,7 @@ namespace QCVOC.Api.Security.Controller
                 return StatusCode(403, "Administrative accounts may not be deleted by non-Administrative users.");
             }
 
-            var accounts = AccountRepository.GetAll(new AccountQueryParameters() { Role = Role.Administrator });
+            var accounts = AccountRepository.GetAll(new AccountFilters() { Role = Role.Administrator });
 
             if (!accounts.Where(a => a.Id != id).Any())
             {
@@ -438,14 +440,14 @@ namespace QCVOC.Api.Security.Controller
 
         private RefreshToken GetCurrentRefreshTokenRecordFor(Guid accountId)
         {
-            return RefreshTokenRepository.GetAll(new RefreshTokenQueryParameters { AccountId = accountId })
+            return RefreshTokenRepository.GetAll(new RefreshTokenFilters { AccountId = accountId })
                 .Where(r => r.Expires >= DateTime.UtcNow)
                 .FirstOrDefault();
         }
 
         private void PurgeExpiredRefreshTokensFor(Guid accountId)
         {
-            var expiredRecords = RefreshTokenRepository.GetAll(new RefreshTokenQueryParameters { AccountId = accountId })
+            var expiredRecords = RefreshTokenRepository.GetAll(new RefreshTokenFilters { AccountId = accountId })
                 .Where(r => r.Expires < DateTime.UtcNow);
 
             foreach (var record in expiredRecords)

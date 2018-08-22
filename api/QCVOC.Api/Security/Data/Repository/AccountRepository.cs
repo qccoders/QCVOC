@@ -90,17 +90,17 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The account with the specified Id.</returns>
         public Account Get(Guid id)
         {
-            return GetAll(new AccountQueryParameters() { Id = id }).SingleOrDefault();
+            return GetAll(new AccountFilters() { Id = id }).SingleOrDefault();
         }
 
         /// <summary>
         ///     Retrieves all accounts.
         /// </summary>
         /// <returns>A list of accounts.</returns>
-        public IEnumerable<Account> GetAll(QueryParameters queryParameters = null)
+        /// <param name="filters">The optional query filters.</param>
+        public IEnumerable<Account> GetAll(Filters filters = null)
         {
-            queryParameters = queryParameters ?? new QueryParameters();
-
+            filters = filters ?? new Filters();
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate($@"
@@ -111,34 +111,32 @@ namespace QCVOC.Api.Security.Data.Repository
                     role
                 FROM accounts
                 /**where**/
-                ORDER BY name {queryParameters.OrderBy.ToString()}
+                ORDER BY name {filters.OrderBy.ToString()}
                 LIMIT @limit OFFSET @offset
             ");
 
-            var parameters = new
+            builder.AddParameters(new
             {
-                limit = queryParameters.Limit,
-                offset = queryParameters.Offset,
-                orderby = queryParameters.OrderBy.ToString(),
-            };
+                limit = filters.Limit,
+                offset = filters.Offset,
+                orderby = filters.OrderBy.ToString(),
+            });
 
-            builder.AddParameters(parameters);
-
-            if (queryParameters is AccountQueryParameters accountParameters)
+            if (filters is AccountFilters accountFilters)
             {
-                if (accountParameters.Role != null)
+                if (accountFilters.Role != null)
                 {
-                    builder.Where("role = @role", new { role = accountParameters.Role.ToString() });
+                    builder.Where("role = @role", new { role = accountFilters.Role.ToString() });
                 }
 
-                if (!string.IsNullOrWhiteSpace(accountParameters.Name))
+                if (!string.IsNullOrWhiteSpace(accountFilters.Name))
                 {
-                    builder.Where("name = @name", new { accountParameters.Name });
+                    builder.Where("name = @name", new { accountFilters.Name });
                 }
 
-                if (accountParameters.Id != null)
+                if (accountFilters.Id != null)
                 {
-                    builder.Where("id = @id", new { accountParameters.Id });
+                    builder.Where("id = @id", new { accountFilters.Id });
                 }
             }
 

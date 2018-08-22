@@ -53,7 +53,7 @@ namespace QCVOC.Api.Security.Data.Repository
 
             var param = new
             {
-                tokenid = refreshToken.Id,
+                id = refreshToken.Id,
                 issued = refreshToken.Issued,
                 expires = refreshToken.Expires,
                 accountid = refreshToken.AccountId
@@ -116,7 +116,7 @@ namespace QCVOC.Api.Security.Data.Repository
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.QueryFirstOrDefault<RefreshToken>(query, new { tokenid = id });
+                return db.QueryFirstOrDefault<RefreshToken>(query, new { id = id });
             }
         }
 
@@ -124,9 +124,9 @@ namespace QCVOC.Api.Security.Data.Repository
         ///     Retrieves a lisst of all <see cref="RefreshToken"/> objects in the collection.
         /// </summary>
         /// <returns>A list of all <see cref="RefreshToken"/> objects in the collection.</returns>
-        public IEnumerable<RefreshToken> GetAll(QueryParameters queryParameters = null)
+        public IEnumerable<RefreshToken> GetAll(Filters queryParameters = null)
         {
-            queryParameters = queryParameters ?? new QueryParameters();
+            queryParameters = queryParameters ?? new RefreshTokenFilters();
 
             var query = @"
                 SELECT
@@ -137,9 +137,9 @@ namespace QCVOC.Api.Security.Data.Repository
                 FROM refreshtokens
             ";
 
-            if (queryParameters is RefreshTokenQueryParameters)
+            if (queryParameters is RefreshTokenFilters)
             {
-                var accountId = ((RefreshTokenQueryParameters)queryParameters).AccountId;
+                var accountId = ((RefreshTokenFilters)queryParameters).AccountId;
                 query += accountId != null ? $"\nWHERE accountid = '{accountId}'" : string.Empty;
             }
 
