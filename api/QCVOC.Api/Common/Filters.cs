@@ -14,13 +14,14 @@ namespace QCVOC.Api.Common
     public class Filters
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Filters"/> class.
+        ///     Initializes a new instance of the <see cref="Filters"/> class with the optionally specified <paramref name="filters"/>.
         /// </summary>
-        public Filters()
+        /// <param name="filters">The optional filters with which to initialize the new instance.</param>
+        public Filters(Filters filters = null)
         {
-            Offset = 0;
-            Limit = 100;
-            OrderBy = SortOrder.ASC;
+            Offset = filters?.Offset ?? 0;
+            Limit = filters?.Limit ?? 100;
+            OrderBy = filters?.OrderBy ?? SortOrder.ASC;
         }
 
         /// <summary>
