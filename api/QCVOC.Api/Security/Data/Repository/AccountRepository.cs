@@ -100,17 +100,7 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <param name="filters">The optional query filters.</param>
         public IEnumerable<Account> GetAll(Filters filters = null)
         {
-            return GetAll(new AccountFilters(filters));
-        }
-
-        /// <summary>
-        ///     Retrieves all accounts.
-        /// </summary>
-        /// <returns>A list of accounts.</returns>
-        /// <param name="filters">The optional query filters.</param>
-        public IEnumerable<Account> GetAll(AccountFilters filters = null)
-        {
-            filters = filters ?? new AccountFilters();
+            filters = filters ?? new Filters();
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate($@"
@@ -132,19 +122,22 @@ namespace QCVOC.Api.Security.Data.Repository
                 orderby = filters.OrderBy.ToString(),
             });
 
-            if (filters.Role != null)
+            if (filters is AccountFilters accountFilters)
             {
-                builder.Where("role = @role", new { role = filters.Role.ToString() });
-            }
+                if (accountFilters.Role != null)
+                {
+                    builder.Where("role = @role", new { role = accountFilters.Role.ToString() });
+                }
 
-            if (!string.IsNullOrWhiteSpace(filters.Name))
-            {
-                builder.Where("name = @name", new { filters.Name });
-            }
+                if (!string.IsNullOrWhiteSpace(accountFilters.Name))
+                {
+                    builder.Where("name = @name", new { accountFilters.Name });
+                }
 
-            if (filters.Id != null)
-            {
-                builder.Where("id = @id", new { filters.Id });
+                if (accountFilters.Id != null)
+                {
+                    builder.Where("id = @id", new { accountFilters.Id });
+                }
             }
 
             using (var db = ConnectionFactory.CreateConnection())

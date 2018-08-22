@@ -14,29 +14,18 @@ namespace QCVOC.Api.Common
     public class Filters
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Filters"/> class with the optionally specified <paramref name="filters"/>.
-        /// </summary>
-        /// <param name="filters">The optional filters with which to initialize the new instance.</param>
-        public Filters(Filters filters = null)
-        {
-            Offset = filters?.Offset ?? 0;
-            Limit = filters?.Limit ?? 100;
-            OrderBy = filters?.OrderBy ?? SortOrder.ASC;
-        }
-
-        /// <summary>
         ///     The number of items in the page.
         /// </summary>
-        public int Limit { get; set; }
+        public int Limit { get; set; } = 100;
 
         /// <summary>
         ///     The starting offset for the page.
         /// </summary>
-        public int Offset { get; set; }
+        public int Offset { get; set; } = 0;
 
         /// <summary>
         ///     The sort order of the items.
         /// </summary>
-        public SortOrder OrderBy { get; set; }
+        public SortOrder OrderBy { get; set; } = SortOrder.ASC;
     }
 }

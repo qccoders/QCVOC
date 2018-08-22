@@ -16,15 +16,6 @@ namespace QCVOC.Api.Security
     public class AccountFilters : Filters
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="AccountFilters"/> class with the optionally specified <paramref name="filters"/>.
-        /// </summary>
-        /// <param name="filters">The optional filters with which to initialize the new instance.</param>
-        public AccountFilters(Filters filters = null)
-            : base(filters)
-        {
-        }
-
-        /// <summary>
         ///     The id of the Account.
         /// </summary>
         public Guid? Id { get; set; }
