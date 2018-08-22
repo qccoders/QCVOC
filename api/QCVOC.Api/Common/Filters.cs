@@ -1,5 +1,5 @@
-﻿// <copyright file="QueryParameters.cs" company="JP Dillingham, Nick Acosta, et. al.">
-//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+﻿// <copyright file="Filters.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file 
 //     in the project root for full license information.
 // </copyright>
 
@@ -8,15 +8,15 @@ namespace QCVOC.Api.Common
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
-    ///     Request pagination options.
+    ///     Request filters.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1623:PropertySummaryDocumentationMustMatchAccessors", Justification = "Omitted for Swashbuckle compatibility.")]
-    public class QueryParameters
+    public class Filters
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="QueryParameters"/> class.
+        ///     Initializes a new instance of the <see cref="Filters"/> class.
         /// </summary>
-        public QueryParameters()
+        public Filters()
         {
             Offset = 0;
             Limit = 100;
