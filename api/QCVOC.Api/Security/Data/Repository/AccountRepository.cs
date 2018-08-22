@@ -15,10 +15,14 @@ namespace QCVOC.Api.Security.Data.Repository
     using QCVOC.Api.Security.Data.Model;
 
     /// <summary>
+    ///     Provides data access for <see cref="Account"/>.
     /// </summary>
-    /// <typeparam name="Account"></typeparam>
     public class AccountRepository : IRepository<Account>
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="AccountRepository"/> class.
+        /// </summary>
+        /// <param name="connectionFactory">The database connection factory used for data access.</param>
         public AccountRepository(IDbConnectionFactory connectionFactory)
         {
             ConnectionFactory = connectionFactory;
@@ -33,28 +37,29 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The created account</returns>
         public Account Create(Account account)
         {
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
+                INSERT INTO accounts
+                    (id, name, passwordhash, role)
+                VALUES
+                    (@id, @name, @passwordhash, @role);
+            ");
+
+            builder.AddParameters(new
+            {
+                id = account.Id,
+                name = account.Name,
+                passwordhash = account.PasswordHash,
+                role = account.Role,
+            });
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                var command = @"
-                    INSERT INTO accounts
-                        (id, name, passwordhash, role)
-                    VALUES
-                        (@id, @name, @passwordhash, @role);
-                ";
-
-                var param = new
-                {
-                    id = account.Id,
-                    name = account.Name,
-                    passwordhash = account.PasswordHash,
-                    role = account.Role,
-                };
-
-                db.Execute(command, param);
-
-                var inserted = Get(account.Id);
-                return inserted;
+                db.Execute(query.RawSql, query.Parameters);
             }
+
+            return Get(account.Id);
         }
 
         /// <summary>
@@ -63,14 +68,18 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <param name="id">The Id of the account to delete.</param>
         public void Delete(Guid id)
         {
-            var command = @"
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
                 DELETE FROM accounts
                 WHERE id = @id;
-            ";
+            ");
+
+            builder.AddParameters(new { id });
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute(command, new { id });
+                db.Execute(query.RawSql, query.Parameters);
             }
         }
 
@@ -153,29 +162,31 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The updated account.</returns>
         public Account Update(Account account)
         {
-            var command = @"
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
                 UPDATE accounts
                 SET 
                     name = @name,
                     passwordhash = @passwordhash,
                     role = @role
                 WHERE id = @id;
-            ";
+            ");
 
-            var param = new
+            builder.AddParameters(new
             {
                 name = account.Name,
                 passwordhash = account.PasswordHash,
                 role = account.Role,
                 id = account.Id,
-            };
+            });
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute(command, param);
-
-                return Get(account.Id);
+                db.Execute(query.RawSql, query.Parameters);
             }
+
+            return Get(account.Id);
         }
     }
 }
