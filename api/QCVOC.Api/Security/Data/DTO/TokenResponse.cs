@@ -7,6 +7,8 @@ namespace QCVOC.Api.Security.Data.DTO
 {
     using System;
     using System.IdentityModel.Tokens.Jwt;
+    using System.Linq;
+    using System.Security.Claims;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Newtonsoft.Json;
 
@@ -53,7 +55,15 @@ namespace QCVOC.Api.Security.Data.DTO
         /// </summary>
         public DateTime Issued => AccessJwtSecurityToken.ValidFrom;
 
-        public JwtPayload Payload => AccessJwtSecurityToken.Payload;
+        /// <summary>
+        ///     Gets the value of the Name claim from the Access Token.
+        /// </summary>
+        public string Name => AccessJwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Name).SingleOrDefault().Value;
+
+        /// <summary>
+        ///     Gets the value of the Role claim from the Access Token.
+        /// </summary>
+        public string Role => AccessJwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).SingleOrDefault().Value;
 
         /// <summary>
         ///     Gets or sets the Refresh Token.
