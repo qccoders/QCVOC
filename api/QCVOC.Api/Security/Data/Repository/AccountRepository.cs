@@ -97,6 +97,17 @@ namespace QCVOC.Api.Security.Data.Repository
         ///     Retrieves all accounts.
         /// </summary>
         /// <returns>A list of accounts.</returns>
+        /// <param name="filters">The optional query filters.</param>
+        public IEnumerable<Account> GetAll(Filters filters = null)
+        {
+            return GetAll(new AccountFilters(filters));
+        }
+
+        /// <summary>
+        ///     Retrieves all accounts.
+        /// </summary>
+        /// <returns>A list of accounts.</returns>
+        /// <param name="filters">The optional query filters.</param>
         public IEnumerable<Account> GetAll(AccountFilters filters = null)
         {
             filters = filters ?? new AccountFilters();
