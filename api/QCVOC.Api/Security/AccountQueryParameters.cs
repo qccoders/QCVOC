@@ -5,6 +5,7 @@
 
 namespace QCVOC.Api.Security
 {
+    using System;
     using System.Diagnostics.CodeAnalysis;
     using QCVOC.Api.Common;
 
@@ -18,5 +19,15 @@ namespace QCVOC.Api.Security
         ///     The Role by which to filter results.
         /// </summary>
         public Role? Role { get; set; }
+
+        /// <summary>
+        ///     The id of the Account.
+        /// </summary>
+        public Guid? Id { get; set; }
+
+        /// <summary>
+        ///     The name associated with the Account.
+        /// </summary>
+        public string Name { get; set; }
     }
 }
