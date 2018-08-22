@@ -61,7 +61,7 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Create([FromBody]TokenRequest credentials)
+        public IActionResult Login([FromBody]TokenRequest credentials)
         {
             if (!ModelState.IsValid)
             {
@@ -171,6 +171,31 @@ namespace QCVOC.Api.Security.Controller
             var response = new TokenResponse(accessJwt, refreshJwt);
 
             return Ok(response);
+        }
+
+        /// <summary>
+        ///     Deletes and invalidates the Refresh Token for the current session.
+        /// </summary>
+        /// <returns>See attributes.</returns>
+        /// <response code="204">The Refresh Token was deleted and invalidated successfully.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpPost("logout")]
+        [Authorize]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Logout()
+        {
+            var refreshTokenIdString = User?.Claims?.Where(c => c.Type == "jti")?.SingleOrDefault()?.Value;
+
+            if (Guid.TryParse(refreshTokenIdString, out var refreshTokenId))
+            {
+                RefreshTokenRepository.Delete(refreshTokenId);
+                return NoContent();
+            }
+
+            return StatusCode(500, new Exception($"The 'jti' claim is missing or contains an invalid id ({refreshTokenIdString})."));
         }
 
         /// <summary>
