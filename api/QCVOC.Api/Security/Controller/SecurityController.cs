@@ -186,7 +186,7 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(typeof(IEnumerable<AccountResponse>), 200)]
         [ProducesResponseType(403)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult GetAll([FromQuery]AccountQueryParameters queryParams)
+        public IActionResult GetAll([FromQuery]AccountFilters queryParams)
         {
             return Ok(AccountRepository.GetAll(queryParams).Select(a => MapAccountResponseFrom(a)));
         }
@@ -383,7 +383,7 @@ namespace QCVOC.Api.Security.Controller
                 return StatusCode(403, "Administrative accounts may not be deleted by non-Administrative users.");
             }
 
-            var accounts = AccountRepository.GetAll(new AccountQueryParameters() { Role = Role.Administrator });
+            var accounts = AccountRepository.GetAll(new AccountFilters() { Role = Role.Administrator });
 
             if (!accounts.Where(a => a.Id != id).Any())
             {
@@ -413,14 +413,14 @@ namespace QCVOC.Api.Security.Controller
 
         private RefreshToken GetCurrentRefreshTokenRecordFor(Guid accountId)
         {
-            return RefreshTokenRepository.GetAll(new RefreshTokenQueryParameters { AccountId = accountId })
+            return RefreshTokenRepository.GetAll(new RefreshTokenFilters { AccountId = accountId })
                 .Where(r => r.Expires >= DateTime.UtcNow)
                 .FirstOrDefault();
         }
 
         private void PurgeExpiredRefreshTokensFor(Guid accountId)
         {
-            var expiredRecords = RefreshTokenRepository.GetAll(new RefreshTokenQueryParameters { AccountId = accountId })
+            var expiredRecords = RefreshTokenRepository.GetAll(new RefreshTokenFilters { AccountId = accountId })
                 .Where(r => r.Expires < DateTime.UtcNow);
 
             foreach (var record in expiredRecords)

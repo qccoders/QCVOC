@@ -147,7 +147,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
         ///     Retrieves a list of all <see cref="Patron"/> objects in the collection.
         /// </summary>
         /// <returns>A list of all <see cref="Patron"/> objects in the collection.</returns>
-        public IEnumerable<Patron> GetAll(QueryParameters queryParameters = null)
+        public IEnumerable<Patron> GetAll(Filters queryParameters = null)
         {
             using (var db = ConnectionFactory.CreateConnection())
             {
