@@ -8,14 +8,24 @@ namespace QCVOC.Api.Security.Data.DTO
     using System;
     using QCVOC.Api.Security;
 
+    /// <summary>
+    ///     DTO containing Account details.
+    /// </summary>
     public class AccountResponse
     {
-        #region Public Properties
-
+        /// <summary>
+        ///     Gets or sets the Account id.
+        /// </summary>
         public Guid Id { get; set; }
-        public string Name { get; set; }
-        public Role Role { get; set; }
 
-        #endregion Public Properties
+        /// <summary>
+        ///     Gets or sets the Account name.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Role for the account.
+        /// </summary>
+        public Role Role { get; set; }
     }
 }

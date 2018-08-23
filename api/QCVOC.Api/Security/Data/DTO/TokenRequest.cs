@@ -12,8 +12,6 @@ namespace QCVOC.Api.Security.Data.DTO
     /// </summary>
     public class TokenRequest
     {
-        #region Public Properties
-
         /// <summary>
         ///     Gets or sets the username.
         /// </summary>
@@ -27,7 +25,5 @@ namespace QCVOC.Api.Security.Data.DTO
         [Required]
         [StringLength(256, MinimumLength = 6, ErrorMessage = "Passwords must be between 6 and 256 characters in length.")]
         public string Password { get; set; }
-
-        #endregion Public Properties
     }
 }

@@ -17,8 +17,6 @@ namespace QCVOC.Api.Security.Data.DTO
     /// </summary>
     public class TokenResponse
     {
-        #region Public Constructors
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="TokenResponse"/> class.
         /// </summary>
@@ -29,10 +27,6 @@ namespace QCVOC.Api.Security.Data.DTO
             AccessJwtSecurityToken = accessJwtSecurityToken;
             RefreshJwtSecurityToken = refreshJwtSecurityToken;
         }
-
-        #endregion Public Constructors
-
-        #region Public Properties
 
         /// <summary>
         ///     Gets or sets the Access Token.
@@ -61,11 +55,6 @@ namespace QCVOC.Api.Security.Data.DTO
         public string Name => AccessJwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Name).SingleOrDefault().Value;
 
         /// <summary>
-        ///     Gets the value of the Role claim from the Access Token.
-        /// </summary>
-        public string Role => AccessJwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).SingleOrDefault().Value;
-
-        /// <summary>
         ///     Gets or sets the Refresh Token.
         /// </summary>
         [JsonIgnore]
@@ -83,10 +72,13 @@ namespace QCVOC.Api.Security.Data.DTO
         public Guid RefreshTokenId => Guid.Parse(RefreshJwtSecurityToken.Id);
 
         /// <summary>
+        ///     Gets the value of the Role claim from the Access Token.
+        /// </summary>
+        public string Role => AccessJwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Role).SingleOrDefault().Value;
+
+        /// <summary>
         ///     Gets the Token type.
         /// </summary>
         public string TokenType => JwtBearerDefaults.AuthenticationScheme;
-
-        #endregion Public Properties
     }
 }
