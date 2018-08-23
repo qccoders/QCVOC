@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api
+namespace QCVOC.Api.Common
 {
     using System;
     using System.IO;
@@ -118,7 +118,7 @@ namespace QCVOC.Api
 
             try
             {
-                defaultValue = (T)typeof(Defaults).GetField(settingName.Split('_')[1]).GetValue(null);
+                defaultValue = (T)typeof(Settings.Defaults).GetField(settingName.Split('_')[1]).GetValue(null);
             }
             catch (Exception)
             {
