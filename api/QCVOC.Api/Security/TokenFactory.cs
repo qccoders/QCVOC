@@ -11,8 +11,9 @@ namespace QCVOC.Api.Security
     using System.Security.Claims;
     using System.Text;
     using Microsoft.IdentityModel.Tokens;
+    using QCVOC.Api.Common;
     using QCVOC.Api.Security.Data.Model;
-    using Utility = Utility;
+    using Utility = Common.Utility;
 
     /// <summary>
     ///     Creates <see cref="JwtSecurityToken"/> instances.

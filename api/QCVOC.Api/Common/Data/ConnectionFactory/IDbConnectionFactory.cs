@@ -7,12 +7,15 @@ namespace QCVOC.Api.Common.Data.ConnectionFactory
 {
     using System.Data;
 
+    /// <summary>
+    ///     A connection factory for database connections.
+    /// </summary>
     public interface IDbConnectionFactory
     {
-        #region Public Methods
-
+        /// <summary>
+        ///     Constructs and returns a database connection.
+        /// </summary>
+        /// <returns>A database connection.</returns>
         IDbConnection CreateConnection();
-
-        #endregion Public Methods
     }
 }

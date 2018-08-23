@@ -125,7 +125,7 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <summary>
         ///     Retrieves a lisst of all <see cref="RefreshToken"/> objects in the collection.
         /// </summary>
-        /// <param name="filters">The optional query filters.</param>
+        /// <param name="filters">Optional query filters.</param>
         /// <returns>A list of all <see cref="RefreshToken"/> objects in the collection.</returns>
         public IEnumerable<RefreshToken> GetAll(Filters filters = null)
         {

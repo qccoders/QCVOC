@@ -12,6 +12,7 @@ namespace QCVOC.Api.Security.Controller
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Security;
     using QCVOC.Api.Security.Data.DTO;

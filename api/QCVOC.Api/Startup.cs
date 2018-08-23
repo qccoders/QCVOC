@@ -24,6 +24,7 @@ namespace QCVOC.Api
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
     using NLog;
+    using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Domain.Patrons.Data.Model;
@@ -37,6 +38,7 @@ namespace QCVOC.Api
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
     using Swashbuckle.AspNetCore.SwaggerUI;
+    using Utility = Common.Utility;
 
     /// <summary>
     ///     The AspNetCore Startup configuration.
