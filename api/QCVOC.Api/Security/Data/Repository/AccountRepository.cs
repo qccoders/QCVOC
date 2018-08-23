@@ -7,6 +7,7 @@ namespace QCVOC.Api.Security.Data.Repository
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Dapper;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
@@ -14,10 +15,14 @@ namespace QCVOC.Api.Security.Data.Repository
     using QCVOC.Api.Security.Data.Model;
 
     /// <summary>
+    ///     Provides data access for <see cref="Account"/>.
     /// </summary>
-    /// <typeparam name="Account"></typeparam>
     public class AccountRepository : IRepository<Account>
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="AccountRepository"/> class.
+        /// </summary>
+        /// <param name="connectionFactory">The database connection factory used for data access.</param>
         public AccountRepository(IDbConnectionFactory connectionFactory)
         {
             ConnectionFactory = connectionFactory;
@@ -32,28 +37,29 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The created account</returns>
         public Account Create(Account account)
         {
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
+                INSERT INTO accounts
+                    (id, name, passwordhash, role)
+                VALUES
+                    (@id, @name, @passwordhash, @role);
+            ");
+
+            builder.AddParameters(new
+            {
+                id = account.Id,
+                name = account.Name,
+                passwordhash = account.PasswordHash,
+                role = account.Role,
+            });
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                var command = @"
-                    INSERT INTO accounts
-                        (id, name, passwordhash, role)
-                    VALUES
-                        (@id, @name, @passwordhash, @role);
-                ";
-
-                var param = new
-                {
-                    id = account.Id,
-                    name = account.Name,
-                    passwordhash = account.PasswordHash,
-                    role = account.Role,
-                };
-
-                db.Execute(command, param);
-
-                var inserted = Get(account.Id);
-                return inserted;
+                db.Execute(query.RawSql, query.Parameters);
             }
+
+            return Get(account.Id);
         }
 
         /// <summary>
@@ -62,14 +68,18 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <param name="id">The Id of the account to delete.</param>
         public void Delete(Guid id)
         {
-            var command = @"
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
                 DELETE FROM accounts
                 WHERE id = @id;
-            ";
+            ");
+
+            builder.AddParameters(new { id });
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute(command, new { id });
+                db.Execute(query.RawSql, query.Parameters);
             }
         }
 
@@ -89,58 +99,59 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The account with the specified Id.</returns>
         public Account Get(Guid id)
         {
-            var query = @"
-                SELECT
-                    id,
-                    name,
-                    passwordhash,
-                    role
-                FROM accounts
-                WHERE id = @id;
-            ";
-
-            using (var db = ConnectionFactory.CreateConnection())
-            {
-                return db.QueryFirstOrDefault<Account>(query, new { id });
-            }
+            return GetAll(new AccountFilters() { Id = id }).SingleOrDefault();
         }
 
         /// <summary>
         ///     Retrieves all accounts.
         /// </summary>
         /// <returns>A list of accounts.</returns>
-        public IEnumerable<Account> GetAll(QueryParameters queryParameters = null)
+        /// <param name="filters">Optional query filters.</param>
+        public IEnumerable<Account> GetAll(Filters filters = null)
         {
-            queryParameters = queryParameters ?? new QueryParameters();
+            filters = filters ?? new Filters();
+            var builder = new SqlBuilder();
 
-            var query = @"
+            var query = builder.AddTemplate($@"
                 SELECT
                     id,
                     name,
                     passwordhash,
                     role
                 FROM accounts
-            ";
+                /**where**/
+                ORDER BY name {filters.OrderBy.ToString()}
+                LIMIT @limit OFFSET @offset
+            ");
 
-            if (queryParameters is AccountQueryParameters)
+            builder.AddParameters(new
             {
-                var role = ((AccountQueryParameters)queryParameters).Role;
-                query += role != null ? $"\nWHERE role = '{role.ToString()}'" : string.Empty;
+                limit = filters.Limit,
+                offset = filters.Offset,
+                orderby = filters.OrderBy.ToString(),
+            });
+
+            if (filters is AccountFilters accountFilters)
+            {
+                if (accountFilters.Role != null)
+                {
+                    builder.Where("role = @role", new { role = accountFilters.Role.ToString() });
+                }
+
+                if (!string.IsNullOrWhiteSpace(accountFilters.Name))
+                {
+                    builder.Where("name = @name", new { accountFilters.Name });
+                }
+
+                if (accountFilters.Id != null)
+                {
+                    builder.Where("id = @id", new { accountFilters.Id });
+                }
             }
-
-            query += $"\nORDER BY name {queryParameters.OrderBy.ToString()}";
-            query += "\nLIMIT @limit OFFSET @offset";
-
-            var param = new
-            {
-                limit = queryParameters.Limit,
-                offset = queryParameters.Offset,
-                orderby = queryParameters.OrderBy.ToString(),
-            };
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.Query<Account>(query, param);
+                return db.Query<Account>(query.RawSql, query.Parameters);
             }
         }
 
@@ -151,29 +162,31 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The updated account.</returns>
         public Account Update(Account account)
         {
-            var command = @"
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
                 UPDATE accounts
                 SET 
                     name = @name,
                     passwordhash = @passwordhash,
                     role = @role
                 WHERE id = @id;
-            ";
+            ");
 
-            var param = new
+            builder.AddParameters(new
             {
                 name = account.Name,
                 passwordhash = account.PasswordHash,
                 role = account.Role,
                 id = account.Id,
-            };
+            });
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute(command, param);
-
-                return Get(account.Id);
+                db.Execute(query.RawSql, query.Parameters);
             }
+
+            return Get(account.Id);
         }
     }
 }

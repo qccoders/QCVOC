@@ -2,7 +2,7 @@ namespace Server.Tests
 {
     using System;
     using FsCheck;
-    using QCVOC.Api;
+    using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Domain.Patrons.Data.Model;
     using QCVOC.Api.Domain.Patrons.Data.Repository;

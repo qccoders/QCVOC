@@ -17,7 +17,7 @@
       "documentPrivateElements": false,
       "documentPrivateFields": false,
       "companyName": "JP Dillingham, Nick Acosta, et. al.",
-      "copyrightText": "    Copyright (c) {companyName}. All rights reserved. Licensed under the {licenseName} license. See {licenseFile} file \n    in the project root for full license information.",
+      "copyrightText": "    Copyright (c) {companyName}. All rights reserved. Licensed under the {licenseName} license. See {licenseFile} file\n    in the project root for full license information.",
       "variables": {
         "licenseName": "GPLv3",
         "licenseFile": "LICENSE"

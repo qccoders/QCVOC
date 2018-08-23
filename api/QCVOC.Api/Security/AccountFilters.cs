@@ -1,4 +1,4 @@
-﻿// <copyright file="RefreshTokenQueryParameters.cs" company="JP Dillingham, Nick Acosta, et. al.">
+﻿// <copyright file="AccountFilters.cs" company="JP Dillingham, Nick Acosta, et. al.">
 //     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
@@ -10,14 +10,24 @@ namespace QCVOC.Api.Security
     using QCVOC.Api.Common;
 
     /// <summary>
-    ///     Refresh token pagination and filtering options.
+    ///     Account request pagination and filtering options.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1623:PropertySummaryDocumentationMustMatchAccessors", Justification = "Omitted for Swashbuckle compatibility.")]
-    public class RefreshTokenQueryParameters : QueryParameters
+    public class AccountFilters : Filters
     {
         /// <summary>
-        ///     The Account id by which to filter results.
+        ///     The id of the Account.
         /// </summary>
-        public Guid? AccountId { get; set; }
+        public Guid? Id { get; set; }
+
+        /// <summary>
+        ///     The name associated with the Account.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        ///     The Role by which to filter results.
+        /// </summary>
+        public Role? Role { get; set; }
     }
 }

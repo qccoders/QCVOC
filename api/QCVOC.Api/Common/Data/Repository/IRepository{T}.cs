@@ -43,8 +43,9 @@ namespace QCVOC.Api.Common.Data.Repository
         /// <summary>
         ///     Retrieves a list of all resources in the collection.
         /// </summary>
+        /// <param name="filters">Optional query filters.</param>
         /// <returns>A list of all resources in the collection.</returns>
-        IEnumerable<T> GetAll(QueryParameters queryParameters = null);
+        IEnumerable<T> GetAll(Filters filters = null);
 
         /// <summary>
         ///     Updates the specified <paramref name="resource"/>.

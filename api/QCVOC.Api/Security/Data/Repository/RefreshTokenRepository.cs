@@ -36,7 +36,9 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The created RefreshToken.</returns>
         public RefreshToken Create(RefreshToken refreshToken)
         {
-            var query = @"
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
                 INSERT INTO refreshtokens (
                     id,
                     issued,
@@ -49,21 +51,22 @@ namespace QCVOC.Api.Security.Data.Repository
                     @expires,
                     @accountid
                 );
-            ";
+            ");
 
-            var param = new
+            builder.AddParameters(new
             {
-                tokenid = refreshToken.Id,
+                id = refreshToken.Id,
                 issued = refreshToken.Issued,
                 expires = refreshToken.Expires,
                 accountid = refreshToken.AccountId
-            };
+            });
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute(query, param);
-                return Get(refreshToken.AccountId);
+                db.Execute(query.RawSql, query.Parameters);
             }
+
+            return Get(refreshToken.AccountId);
         }
 
         /// <summary>
@@ -72,14 +75,18 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <param name="id">The id of the <see cref="RefreshToken"/> to delete.</param>
         public void Delete(Guid id)
         {
-            var query = @"
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
                 DELETE FROM refreshtokens
                 WHERE id = @id
-            ";
+            ");
+
+            builder.AddParameters(new { id });
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                db.Execute(query, new { id });
+                db.Execute(query.RawSql, query.Parameters);
             }
         }
 
@@ -89,11 +96,6 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <param name="refreshToken">The RefreshToken to delete.</param>
         public void Delete(RefreshToken refreshToken)
         {
-            if (refreshToken == null)
-            {
-                throw new ArgumentException("token cannot be null.", nameof(refreshToken));
-            }
-
             Delete(refreshToken.AccountId);
         }
 
@@ -116,46 +118,47 @@ namespace QCVOC.Api.Security.Data.Repository
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.QueryFirstOrDefault<RefreshToken>(query, new { tokenid = id });
+                return db.QueryFirstOrDefault<RefreshToken>(query, new { id = id });
             }
         }
 
         /// <summary>
         ///     Retrieves a lisst of all <see cref="RefreshToken"/> objects in the collection.
         /// </summary>
+        /// <param name="filters">Optional query filters.</param>
         /// <returns>A list of all <see cref="RefreshToken"/> objects in the collection.</returns>
-        public IEnumerable<RefreshToken> GetAll(QueryParameters queryParameters = null)
+        public IEnumerable<RefreshToken> GetAll(Filters filters = null)
         {
-            queryParameters = queryParameters ?? new QueryParameters();
+            filters = filters ?? new Filters();
+            var builder = new SqlBuilder();
 
-            var query = @"
+            var query = builder.AddTemplate(@"
                 SELECT
                     accountid AS AccountID,
                     expires AS Expires,
                     issued AS Issued,
                     id AS Id
                 FROM refreshtokens
-            ";
+            ");
 
-            if (queryParameters is RefreshTokenQueryParameters)
+            builder.AddParameters(new
             {
-                var accountId = ((RefreshTokenQueryParameters)queryParameters).AccountId;
-                query += accountId != null ? $"\nWHERE accountid = '{accountId}'" : string.Empty;
+                limit = filters.Limit,
+                offset = filters.Offset,
+                orderby = filters.OrderBy.ToString(),
+            });
+
+            if (filters is RefreshTokenFilters refreshTokenFilters)
+            {
+                if (refreshTokenFilters.AccountId != null)
+                {
+                    builder.Where("accountid = @accountid", new { accountid = refreshTokenFilters.AccountId });
+                }
             }
-
-            query += $"\nORDER BY issued DESC";
-            query += $"\nLIMIT @limit OFFSET @offset";
-
-            var param = new
-            {
-                limit = queryParameters.Limit,
-                offset = queryParameters.Offset,
-                orderby = queryParameters.OrderBy.ToString(),
-            };
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.Query<RefreshToken>(query, param);
+                return db.Query<RefreshToken>(query.RawSql, query.Parameters);
             }
         }
 

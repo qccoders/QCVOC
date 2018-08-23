@@ -103,7 +103,7 @@ namespace QCVOC.Api.Domain.Service.Data.Repository
             }
         }
 
-        public IEnumerable<Service> GetAll(QueryParameters queryParameters = null)
+        public IEnumerable<Service> GetAll(Filters queryParameters = null)
         {
             using (var db = ConnectionFactory.CreateConnection())
             {

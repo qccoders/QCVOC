@@ -8,25 +8,26 @@ namespace QCVOC.Api.Common.Data.ConnectionFactory
     using System.Data;
     using Npgsql;
 
+    /// <summary>
+    ///     A connection factory for Postgresql database connections.
+    /// </summary>
     public class NpgsqlDbConnectionFactory : IDbConnectionFactory
     {
-        #region Public Constructors
-
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="NpgsqlDbConnectionFactory"/> class.
+        /// </summary>
+        /// <param name="connectionString">The database connection string.</param>
         public NpgsqlDbConnectionFactory(string connectionString)
         {
             ConnectionString = connectionString;
         }
 
-        #endregion Public Constructors
-
-        #region Private Properties
-
         private string ConnectionString { get; set; }
 
-        #endregion Private Properties
-
-        #region Public Methods
-
+        /// <summary>
+        ///     Constructs and returns a Postgresql database connection.
+        /// </summary>
+        /// <returns>A Postgresql database connection.</returns>
         public IDbConnection CreateConnection()
         {
             var connection = NpgsqlFactory.Instance.CreateConnection();
@@ -34,7 +35,5 @@ namespace QCVOC.Api.Common.Data.ConnectionFactory
 
             return connection;
         }
-
-        #endregion Public Methods
     }
 }

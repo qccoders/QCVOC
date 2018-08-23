@@ -8,25 +8,29 @@ namespace QCVOC.Api.Security.Data.Model
     using System;
     using QCVOC.Api.Security;
 
-    public class Account : IEquatable<Account>
+    /// <summary>
+    ///     A user account.
+    /// </summary>
+    public class Account
     {
+        /// <summary>
+        ///     Gets or sets the Account id.
+        /// </summary>
         public Guid Id { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the Account name.
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Account password hash.
+        /// </summary>
         public string PasswordHash { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Account Role.
+        /// </summary>
         public Role Role { get; set; }
-
-        public bool Equals(Account other)
-        {
-            if (other == null)
-            {
-                return this == null;
-            }
-
-            return this.Id == other.Id
-            && this.Name == other.Name
-            && this.PasswordHash == other.PasswordHash
-            && this.Role == other.Role;
-        }
     }
 }
