@@ -21,7 +21,7 @@ namespace QCVOC.Api.Domain.Patrons
         public string Address { get; set; }
 
         /// <summary>
-        ///     The email of the Patron.
+        ///     The email address of the Patron.
         /// </summary>
         public string Email { get; set; }
 
@@ -56,12 +56,12 @@ namespace QCVOC.Api.Domain.Patrons
         public int? MemberId { get; set; }
 
         /// <summary>
-        ///     The primary phone number of the patron.
+        ///     The primary phone number of the Patron.
         /// </summary>
         public string PrimaryPhone { get; set; }
 
         /// <summary>
-        ///     The secondary phone number of the patron.
+        ///     The secondary phone number of the Patron.
         /// </summary>
         public string SecondaryPhone { get; set; }
     }

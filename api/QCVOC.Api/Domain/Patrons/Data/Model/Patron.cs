@@ -7,12 +7,30 @@ namespace QCVOC.Api.Domain.Patrons.Data.Model
 {
     using System;
 
+    /// <summary>
+    ///     A service Patron.
+    /// </summary>
     public class Patron : IEquatable<Patron>
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Patron"/> class.
+        /// </summary>
         public Patron()
         {
         }
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Patron"/> class.
+        /// </summary>
+        /// <param name="id">The id of the Patron</param>
+        /// <param name="memberId">The member id of the Patron.</param>
+        /// <param name="firstName">The first name of the Patron/</param>
+        /// <param name="lastName">The last name of the Patron.</param>
+        /// <param name="address">The address of the Patron.</param>
+        /// <param name="primaryPhone">The primary phone number of the Patron.</param>
+        /// <param name="secondaryPhone">The secondary phone number of the Patron.</param>
+        /// <param name="email">The email address of the Patron.</param>
+        /// <param name="enrollmentDate">The date on which the Patron was enrolled.</param>
         public Patron(
             Guid id,
             int memberId,
@@ -35,21 +53,56 @@ namespace QCVOC.Api.Domain.Patrons.Data.Model
             EnrollmentDate = enrollmentDate;
         }
 
+        /// <summary>
+        ///     Gets or sets the address of the Patron.
+        /// </summary>
         public string Address { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the email address of the Patron.
+        /// </summary>
         public string Email { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the date on which the Patron was enrolled.
+        /// </summary>
         public DateTime EnrollmentDate { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the first name of the Patron.
+        /// </summary>
         public string FirstName { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the id of the Patron.
+        /// </summary>
         public Guid Id { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the last name of the Patron.
+        /// </summary>
         public string LastName { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the member id of the Patron.
+        /// </summary>
         public int MemberId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the primary phone number of the Patron.
+        /// </summary>
         public string PrimaryPhone { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the secondary phone number of the Patron.
+        /// </summary>
         public string SecondaryPhone { get; set; }
 
+        /// <summary>
+        ///     Compares two Patron instances.
+        /// </summary>
+        /// <param name="patron">The Patron to which to compare.</param>
+        /// <returns>A value indicating whether the compared instances are equal.</returns>
         public bool Equals(Patron patron)
         {
             if (patron == null)

@@ -9,7 +9,7 @@ namespace QCVOC.Api.Security.Data.Model
     using QCVOC.Api.Security;
 
     /// <summary>
-    ///     A user account.
+    ///     A user Account.
     /// </summary>
     public class Account : IEquatable<Account>
     {
