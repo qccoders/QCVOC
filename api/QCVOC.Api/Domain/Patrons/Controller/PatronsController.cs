@@ -81,9 +81,19 @@ namespace QCVOC.Api.Domain.Patrons.Controller
             return Ok(patron);
         }
 
+        /// <summary>
+        ///     Enrolls a new Patron.
+        /// </summary>
+        /// <param name="patron">The Patron to enroll.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="201">The Patron was enrolled successfully.</response>
+        /// <response code="400">The specified Patron was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="409">A Patron with the same member id or first and last names and address already exists.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost("")]
         [Authorize]
-        [ProducesResponseType(typeof(Patron), 200)]
+        [ProducesResponseType(typeof(Patron), 201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(409)]
@@ -95,45 +105,37 @@ namespace QCVOC.Api.Domain.Patrons.Controller
                 return BadRequest(ModelState);
             }
 
-            Patron patronResponse = default(Patron);
-
-            try
+            var existingPatron = PatronRepository.GetAll(new PatronFilters()
             {
-                patronResponse = PatronRepository.Update(patron);
+                MemberId = patron.MemberId,
+            });
+
+            if (existingPatron != default(Patron))
+            {
+                return Conflict($"A Patron with member id '{patron.MemberId}' already exists.");
             }
-            catch (Exception ex)
+
+            existingPatron = PatronRepository.GetAll(new PatronFilters()
             {
-                return StatusCode(500, new Exception("Error createing the specified Patron. See inner exception for details.", ex));
-            }
+                FirstName = patron.FirstName,
+                LastName = patron.LastName,
+                Address = patron.Address,
+            });
 
-            return Ok(MapPatronResponseFrom(patronResponse));
-        }
-
-        [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(OkResult), 200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
-        [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Delete(string id)
-        {
-            if (!Guid.TryParse(id, out Guid guid))
+            if (existingPatron != default(Patron))
             {
-                var err = new ModelStateDictionary();
-                err.AddModelError("id", "The requested Id must be a valid Guid.");
-
-                return BadRequest(err);
+                return Conflict($"A Patron with a matching first name, last name and address a.ready exists.");
             }
 
             try
             {
-                PatronRepository.Delete(guid);
+                var createdPatron = PatronRepository.Create(patron);
+                return StatusCode(201, createdPatron);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new Exception("Error retrieving the specified Patron. See inner exception for details.", ex));
+                throw new Exception($"Error creating the specified Patron: {ex.Message}. See inner exception for details.", ex);
             }
-
-            return Ok();
         }
 
         [HttpPut("{id}")]
@@ -167,6 +169,43 @@ namespace QCVOC.Api.Domain.Patrons.Controller
             }
 
             return Ok(MapPatronResponseFrom(patronResponse));
+        }
+
+        /// <summary>
+        ///     Deletes the Patron matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Patron to delete.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="204">The Patron was deleted successfully.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="404">A Patron matching the specified id could not be found.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Delete(Guid id)
+        {
+            var patron = PatronRepository.Get(id);
+
+            if (patron == default(Patron))
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                PatronRepository.Delete(patron);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting the specified Patron: {ex.Message}. See inner exception for details.", ex));
+            }
         }
 
         public ModelStateDictionary ValidatePatron(Patron patron)
