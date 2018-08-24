@@ -297,11 +297,11 @@ namespace QCVOC.Api.Security.Controller
             try
             {
                 var createdAccount = AccountRepository.Create(accountRecord);
-                return Ok(MapAccountResponseFrom(createdAccount));
+                return StatusCode(201, MapAccountResponseFrom(createdAccount));
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error creating account for {account.Name}: {ex.Message}", ex);
+                throw new Exception($"Error creating Account for {account.Name}: {ex.Message}", ex);
             }
         }
 
@@ -380,7 +380,7 @@ namespace QCVOC.Api.Security.Controller
         /// <summary>
         ///     Deletes the Account matching the specified <paramref name="id"/>.
         /// </summary>
-        /// <param name="id">The id of the Account to dete.</param>
+        /// <param name="id">The id of the Account to delete.</param>
         /// <returns>See attributes.</returns>
         /// <response code="204">The Account was deleted successfully.</response>
         /// <response code="401">Unauthorized.</response>
