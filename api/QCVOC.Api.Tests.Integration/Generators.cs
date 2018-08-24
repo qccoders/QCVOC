@@ -52,8 +52,18 @@ namespace Server.Tests
                    from secondaryPhone in Arb.Default.NonEmptyString().Generator
                    from email in Arb.Default.NonEmptyString().Generator
                    from enrollmentDate in Arb.Default.DateTime().Generator
-                   select new Patron(id, memberId, firstName.ToString(), lastName.ToString(), address.ToString()
-                   , primaryPhone.ToString(), secondaryPhone.ToString(), email.ToString(), enrollmentDate);
+                   select new Patron()
+                   {
+                       Id = id,
+                       MemberId = memberId,
+                       FirstName = firstName.ToString(),
+                       LastName = lastName.ToString(),
+                       Address = address.ToString(),
+                       PrimaryPhone = primaryPhone.ToString(),
+                       SecondaryPhone = secondaryPhone.ToString(),
+                       Email = email.ToString(),
+                       EnrollmentDate = enrollmentDate
+                   };
         }
 
         public static Gen<PatronRepository> GenPatronRepository()
