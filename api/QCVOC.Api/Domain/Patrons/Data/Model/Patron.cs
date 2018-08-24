@@ -13,47 +13,6 @@ namespace QCVOC.Api.Domain.Patrons.Data.Model
     public class Patron : IEquatable<Patron>
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="Patron"/> class.
-        /// </summary>
-        public Patron()
-        {
-        }
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Patron"/> class.
-        /// </summary>
-        /// <param name="id">The id of the Patron</param>
-        /// <param name="memberId">The member id of the Patron.</param>
-        /// <param name="firstName">The first name of the Patron/</param>
-        /// <param name="lastName">The last name of the Patron.</param>
-        /// <param name="address">The address of the Patron.</param>
-        /// <param name="primaryPhone">The primary phone number of the Patron.</param>
-        /// <param name="secondaryPhone">The secondary phone number of the Patron.</param>
-        /// <param name="email">The email address of the Patron.</param>
-        /// <param name="enrollmentDate">The date on which the Patron was enrolled.</param>
-        public Patron(
-            Guid id,
-            int memberId,
-            string firstName,
-            string lastName,
-            string address,
-            string primaryPhone,
-            string secondaryPhone,
-            string email,
-            DateTime enrollmentDate)
-        {
-            Id = id;
-            MemberId = memberId;
-            FirstName = firstName;
-            LastName = lastName;
-            Address = address;
-            PrimaryPhone = primaryPhone;
-            SecondaryPhone = secondaryPhone;
-            Email = email;
-            EnrollmentDate = enrollmentDate;
-        }
-
-        /// <summary>
         ///     Gets or sets the address of the Patron.
         /// </summary>
         public string Address { get; set; }
