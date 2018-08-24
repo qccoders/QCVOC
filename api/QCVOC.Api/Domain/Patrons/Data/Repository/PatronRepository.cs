@@ -220,39 +220,41 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
         /// <returns>The updated Patron.</returns>
         public Patron Update(Patron patron)
         {
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
+                UPDATE patrons
+                SET
+                    memberid = @memberId,
+                    firstname = @firstName,
+                    lastname = @lastName,
+                    address = @address,
+                    primaryphone = @primaryPhone,
+                    secondaryphone = @secondaryPhone,
+                    email = @email,
+                    enrollmentdate = @enrollmentDate
+                WHERE id = @id
+            ");
+
+            builder.AddParameters(new
+            {
+                memberId = patron.MemberId,
+                firstName = patron.FirstName,
+                lastName = patron.LastName,
+                address = patron.Address,
+                primaryPhone = patron.PrimaryPhone,
+                secondaryPhone = patron.SecondaryPhone,
+                email = patron.Email,
+                enrollmentDate = patron.EnrollmentDate,
+                id = patron.Id
+            });
+
             using (var db = ConnectionFactory.CreateConnection())
             {
-                var query = @"
-                    UPDATE patrons
-                    SET
-                        memberid = @memberId,
-                        firstname = @firstName,
-                        lastname = @lastName,
-                        address = @address,
-                        primaryphone = @primaryPhone,
-                        secondaryphone = @secondaryPhone,
-                        email = @email,
-                        enrollmentdate = @enrollmentDate
-                    WHERE id = @id
-                ";
-
-                var param = new
-                {
-                    memberId = patron.MemberId,
-                    firstName = patron.FirstName,
-                    lastName = patron.LastName,
-                    address = patron.Address,
-                    primaryPhone = patron.PrimaryPhone,
-                    secondaryPhone = patron.SecondaryPhone,
-                    email = patron.Email,
-                    enrollmentDate = patron.EnrollmentDate,
-                    id = patron.Id
-                };
-
-                db.Execute(query, param);
-
-                return Get(patron.Id);
+                db.Execute(query.RawSql, query.Parameters);
             }
+
+            return Get(patron.Id);
         }
     }
 }
