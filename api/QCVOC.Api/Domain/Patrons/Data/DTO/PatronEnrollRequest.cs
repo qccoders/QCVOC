@@ -10,7 +10,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.DTO
     /// <summary>
     ///     DTO containing new Patron details for a Patron enrollment request.
     /// </summary>
-    public class PatronCreateRequest
+    public class PatronEnrollRequest
     {
         /// <summary>
         ///     Gets or sets the address of the Patron.
