@@ -19,7 +19,7 @@ namespace QCVOC.Api.Security.Controller
     using QCVOC.Api.Security.Data.Model;
 
     /// <summary>
-    ///     Provides endpoints for manipulation of API authentication Access and Refresh Tokens.
+    ///     Provides endpoints for manipulation of API authentication Access and Refresh Tokens and user Account records.
     /// </summary>
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]
@@ -30,10 +30,10 @@ namespace QCVOC.Api.Security.Controller
         /// <summary>
         ///     Initializes a new instance of the <see cref="SecurityController"/> class.
         /// </summary>
-        /// <param name="accountRepository">The repository used for retrieval of user accounts.</param>
+        /// <param name="accountRepository">The repository used for Account data access.</param>
         /// <param name="tokenFactory">The factory used to create new tokens.</param>
         /// <param name="tokenValidator">The validator used to validate tokens.</param>
-        /// <param name="refreshTokenRepository">The repository used for refresh token persistence.</param>
+        /// <param name="refreshTokenRepository">The repository used for RefreshToken data access.</param>
         public SecurityController(IRepository<Account> accountRepository, ITokenFactory tokenFactory, ITokenValidator tokenValidator, IRepository<RefreshToken> refreshTokenRepository)
         {
             AccountRepository = accountRepository;
@@ -202,7 +202,7 @@ namespace QCVOC.Api.Security.Controller
         /// <summary>
         ///     Returns a list of Accounts.
         /// </summary>
-        /// <param name="queryParams">Optional filtering and pagination options.</param>
+        /// <param name="filters">Optional filtering and pagination options.</param>
         /// <returns>See attributes.</returns>
         /// <response code="200">The list was retrieved successfully.</response>
         /// <response code="401">Unauthorized.</response>
@@ -214,9 +214,9 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult GetAll([FromQuery]AccountFilters queryParams)
+        public IActionResult GetAll([FromQuery]AccountFilters filters)
         {
-            return Ok(AccountRepository.GetAll(queryParams).Select(a => MapAccountResponseFrom(a)));
+            return Ok(AccountRepository.GetAll(filters).Select(a => MapAccountResponseFrom(a)));
         }
 
         /// <summary>
@@ -225,7 +225,6 @@ namespace QCVOC.Api.Security.Controller
         /// <param name="id">The id of the Account to retrieve.</param>
         /// <returns>See attributes.</returns>
         /// <response code="200">The Account was retrieved successfully.</response>
-        /// <response code="400">The specified id was invalid.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="403">The user has insufficient rights to perform this operation.</response>
         /// <response code="404">An Account matching the specified id could not be found.</response>
