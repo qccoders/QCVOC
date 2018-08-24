@@ -279,9 +279,9 @@ namespace QCVOC.Api.Security.Controller
                 return StatusCode(403, "Administrative accounts may not be created by non-Administrative users.");
             }
 
-            var existingAccounts = AccountRepository.GetAll();
+            var existingAccount = AccountRepository.GetAll(new AccountFilters() { Name = account.Name }).FirstOrDefault();
 
-            if (existingAccounts.Any(a => a.Name == account.Name))
+            if (existingAccount != default(Account))
             {
                 return Conflict($"A user named '{account.Name}' already exists.");
             }
