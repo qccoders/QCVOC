@@ -81,6 +81,34 @@ namespace QCVOC.Api.Domain.Patrons.Controller
             return Ok(patron);
         }
 
+        [HttpPost("")]
+        [Authorize]
+        [ProducesResponseType(typeof(Patron), 200)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Enroll(Patron patron)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            Patron patronResponse = default(Patron);
+
+            try
+            {
+                patronResponse = PatronRepository.Update(patron);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new Exception("Error createing the specified Patron. See inner exception for details.", ex));
+            }
+
+            return Ok(MapPatronResponseFrom(patronResponse));
+        }
+
         [HttpDelete("{id}")]
         [ProducesResponseType(typeof(OkResult), 200)]
         [ProducesResponseType(404)]
@@ -106,39 +134,6 @@ namespace QCVOC.Api.Domain.Patrons.Controller
             }
 
             return Ok();
-        }
-
-        [HttpPost("{id}")]
-        [ProducesResponseType(typeof(PatronResponse), 200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
-        [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Post(Patron patron)
-        {
-            if (patron == null)
-            {
-                return BadRequest("Patron cannot be null.");
-            }
-
-            ModelStateDictionary err = ValidatePatron(patron);
-
-            if (err.Keys.Any())
-            {
-                return BadRequest(err);
-            }
-
-            Patron patronResponse = default(Patron);
-
-            try
-            {
-                patronResponse = PatronRepository.Update(patron);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new Exception("Error createing the specified Patron. See inner exception for details.", ex));
-            }
-
-            return Ok(MapPatronResponseFrom(patronResponse));
         }
 
         [HttpPut("{id}")]
