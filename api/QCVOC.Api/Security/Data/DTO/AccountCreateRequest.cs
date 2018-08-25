@@ -17,7 +17,7 @@ namespace QCVOC.Api.Security.Data.DTO
         ///     Gets or sets the name for the new Account.
         /// </summary>
         [Required]
-        [StringLength(maximumLength: 256, MinimumLength = 2)]
+        [StringLength(maximumLength: 256, MinimumLength = 1)]
         public string Name { get; set; }
 
         /// <summary>

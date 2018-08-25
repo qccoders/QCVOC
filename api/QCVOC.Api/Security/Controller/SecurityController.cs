@@ -19,7 +19,7 @@ namespace QCVOC.Api.Security.Controller
     using QCVOC.Api.Security.Data.Model;
 
     /// <summary>
-    ///     Provides endpoints for manipulation of API authentication Access and Refresh Tokens.
+    ///     Provides endpoints for manipulation of API authentication Access and Refresh Tokens and user Account records.
     /// </summary>
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]
@@ -30,10 +30,10 @@ namespace QCVOC.Api.Security.Controller
         /// <summary>
         ///     Initializes a new instance of the <see cref="SecurityController"/> class.
         /// </summary>
-        /// <param name="accountRepository">The repository used for retrieval of user accounts.</param>
+        /// <param name="accountRepository">The repository used for Account data access.</param>
         /// <param name="tokenFactory">The factory used to create new tokens.</param>
         /// <param name="tokenValidator">The validator used to validate tokens.</param>
-        /// <param name="refreshTokenRepository">The repository used for refresh token persistence.</param>
+        /// <param name="refreshTokenRepository">The repository used for RefreshToken data access.</param>
         public SecurityController(IRepository<Account> accountRepository, ITokenFactory tokenFactory, ITokenValidator tokenValidator, IRepository<RefreshToken> refreshTokenRepository)
         {
             AccountRepository = accountRepository;
@@ -202,7 +202,7 @@ namespace QCVOC.Api.Security.Controller
         /// <summary>
         ///     Returns a list of Accounts.
         /// </summary>
-        /// <param name="queryParams">Optional filtering and pagination options.</param>
+        /// <param name="filters">Optional filtering and pagination options.</param>
         /// <returns>See attributes.</returns>
         /// <response code="200">The list was retrieved successfully.</response>
         /// <response code="401">Unauthorized.</response>
@@ -214,9 +214,9 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult GetAll([FromQuery]AccountFilters queryParams)
+        public IActionResult GetAll([FromQuery]AccountFilters filters)
         {
-            return Ok(AccountRepository.GetAll(queryParams).Select(a => MapAccountResponseFrom(a)));
+            return Ok(AccountRepository.GetAll(filters).Select(a => MapAccountResponseFrom(a)));
         }
 
         /// <summary>
@@ -225,7 +225,6 @@ namespace QCVOC.Api.Security.Controller
         /// <param name="id">The id of the Account to retrieve.</param>
         /// <returns>See attributes.</returns>
         /// <response code="200">The Account was retrieved successfully.</response>
-        /// <response code="400">The specified id was invalid.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="403">The user has insufficient rights to perform this operation.</response>
         /// <response code="404">An Account matching the specified id could not be found.</response>
@@ -280,9 +279,9 @@ namespace QCVOC.Api.Security.Controller
                 return StatusCode(403, "Administrative accounts may not be created by non-Administrative users.");
             }
 
-            var existingAccounts = AccountRepository.GetAll();
+            var existingAccount = AccountRepository.GetAll(new AccountFilters() { Name = account.Name }).FirstOrDefault();
 
-            if (existingAccounts.Any(a => a.Name == account.Name))
+            if (existingAccount != default(Account))
             {
                 return Conflict($"A user named '{account.Name}' already exists.");
             }
@@ -298,11 +297,11 @@ namespace QCVOC.Api.Security.Controller
             try
             {
                 var createdAccount = AccountRepository.Create(accountRecord);
-                return Ok(MapAccountResponseFrom(createdAccount));
+                return StatusCode(201, MapAccountResponseFrom(createdAccount));
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error creating account for {account.Name}: {ex.Message}", ex);
+                throw new Exception($"Error creating Account for {account.Name}: {ex.Message}", ex);
             }
         }
 
@@ -340,30 +339,31 @@ namespace QCVOC.Api.Security.Controller
                 return StatusCode(403, "Accounts may not be promited to Administrative by non-Administrative users.");
             }
 
-            var existingAccounts = AccountRepository.GetAll();
-            var existingAccountRecord = existingAccounts.Where(a => a.Id == id).FirstOrDefault();
+            var accountToUpdate = AccountRepository.Get(id);
 
-            if (existingAccountRecord == default(Account))
+            if (accountToUpdate == default(Account))
             {
                 return NotFound();
             }
 
-            if (existingAccountRecord.Role == Role.Administrator && account.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+            if (accountToUpdate.Role == Role.Administrator && account.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
             {
                 return StatusCode(403, "Administrators may not be demoted by non-Administrative users.");
             }
 
-            if (existingAccounts.Any(a => a.Id != id && a.Name == account.Name))
+            var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
+
+            if (conflictingAccounts.Any(a => a.Id != id))
             {
                 return Conflict($"A user named '{account.Name}' already exists.");
             }
 
             var accountRecord = new Account()
             {
-                Id = existingAccountRecord.Id,
-                Name = account.Name ?? existingAccountRecord.Name,
-                Role = account.Role ?? existingAccountRecord.Role,
-                PasswordHash = account.Password == null ? existingAccountRecord.PasswordHash :
+                Id = accountToUpdate.Id,
+                Name = account.Name ?? accountToUpdate.Name,
+                Role = account.Role ?? accountToUpdate.Role,
+                PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
                     Utility.ComputeSHA512Hash(account.Password),
             };
 
@@ -381,7 +381,7 @@ namespace QCVOC.Api.Security.Controller
         /// <summary>
         ///     Deletes the Account matching the specified <paramref name="id"/>.
         /// </summary>
-        /// <param name="id">The id of the Account to dete.</param>
+        /// <param name="id">The id of the Account to delete.</param>
         /// <returns>See attributes.</returns>
         /// <response code="204">The Account was deleted successfully.</response>
         /// <response code="401">Unauthorized.</response>

@@ -1,4 +1,4 @@
-// <copyright file="AccountsController.cs" company="JP Dillingham, Nick Acosta, et. al.">
+// <copyright file="PatronsController.cs" company="JP Dillingham, Nick Acosta, et. al.">
 //     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
@@ -8,6 +8,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -16,13 +17,19 @@ namespace QCVOC.Api.Domain.Patrons.Controller
     using QCVOC.Api.Domain.Patrons.Data.Model;
     using QCVOC.Api.Security;
 
-    [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
+    /// <summary>
+    ///     Provides endpoints for manipulation of Patron records.
+    /// </summary>
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     [Consumes("application/json")]
     public class PatronsController : Controller
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="PatronsController"/> class.
+        /// </summary>
+        /// <param name="patronRepository">The repository used for Patron data access.</param>
         public PatronsController(IRepository<Patron> patronRepository)
         {
             PatronRepository = patronRepository;
@@ -30,195 +37,225 @@ namespace QCVOC.Api.Domain.Patrons.Controller
 
         private IRepository<Patron> PatronRepository { get; set; }
 
-        [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(OkResult), 200)]
-        [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        /// <summary>
+        ///     Returns a list of Patrons.
+        /// </summary>
+        /// <param name="filters">Optional filtering and pagination options.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The list was retrieved successfully.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpGet("")]
+        [Authorize]
+        [ProducesResponseType(typeof(IEnumerable<Patron>), 200)]
+        [ProducesResponseType(401)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Delete(string id)
+        public IActionResult GetAll([FromQuery]PatronFilters filters)
         {
-            if (!Guid.TryParse(id, out Guid guid))
-            {
-                var err = new ModelStateDictionary();
-                err.AddModelError("id", "The requested Id must be a valid Guid.");
-
-                return BadRequest(err);
-            }
-
-            try
-            {
-                PatronRepository.Delete(guid);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new Exception("Error retrieving the specified Patron. See inner exception for details.", ex));
-            }
-
-            return Ok();
+            return Ok(PatronRepository.GetAll(filters));
         }
 
+        /// <summary>
+        ///     Returns the Patron matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Patron to retrieve.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The Patron was retrieved successfully.</response>
+        /// <response code="400">The specified id was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="404">A Patron matching the specified id could not be found.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(PatronResponse), 200)]
+        [Authorize]
+        [ProducesResponseType(typeof(IEnumerable<Patron>), 200)]
+        [ProducesResponseType(401)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Get(string id)
+        public IActionResult Get(Guid id)
         {
-            if (!Guid.TryParse(id, out Guid guid))
-            {
-                var err = new ModelStateDictionary();
-                err.AddModelError("id", "The requested Id must be a valid Guid.");
-
-                return BadRequest(err);
-            }
-
-            Patron patron = default(Patron);
-
-            try
-            {
-                patron = PatronRepository.Get(guid);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new Exception("Error retrieving the specified Patron. See inner exception for details.", ex));
-            }
+            var patron = PatronRepository.Get(id);
 
             if (patron == default(Patron))
             {
                 return NotFound();
             }
 
-            return Ok(MapPatronResponseFrom(patron));
+            return Ok(patron);
         }
 
-        [HttpGet("")]
-        [ProducesResponseType(typeof(IEnumerable<PatronResponse>), 200)]
-        [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult GetAll()
-        {
-            return Ok(PatronRepository.GetAll().Select(a => MapPatronResponseFrom(a)));
-        }
-
-        [HttpPost("{id}")]
-        [ProducesResponseType(typeof(PatronResponse), 200)]
-        [ProducesResponseType(404)]
+        /// <summary>
+        ///     Enrolls a new Patron.
+        /// </summary>
+        /// <param name="patron">The Patron to enroll.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="201">The Patron was enrolled successfully.</response>
+        /// <response code="400">The specified Patron was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="409">A Patron with the same member id or first and last names and address already exists.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpPost("")]
+        [Authorize]
+        [ProducesResponseType(typeof(Patron), 201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(409)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Post(Patron patron)
+        public IActionResult Enroll(PatronEnrollRequest patron)
         {
-            if (patron == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Patron cannot be null.");
+                return BadRequest(ModelState);
             }
 
-            ModelStateDictionary err = ValidatePatron(patron);
-
-            if (err.Keys.Any())
+            var existingPatron = PatronRepository.GetAll(new PatronFilters()
             {
-                return BadRequest(err);
+                MemberId = patron.MemberId,
+            });
+
+            if (existingPatron != default(Patron))
+            {
+                return Conflict($"A Patron with member id '{patron.MemberId}' already exists.");
             }
 
-            Patron patronResponse = default(Patron);
+            existingPatron = PatronRepository.GetAll(new PatronFilters()
+            {
+                FirstName = patron.FirstName,
+                LastName = patron.LastName,
+                Address = patron.Address,
+            });
+
+            if (existingPatron != default(Patron))
+            {
+                return Conflict($"A Patron with a matching first name, last name and address a.ready exists.");
+            }
+
+            var patronRecord = new Patron()
+            {
+                Address = patron.Address,
+                Email = patron.Email,
+                EnrollmentDate = DateTime.UtcNow,
+                FirstName = patron.FirstName,
+                Id = Guid.NewGuid(),
+                LastName = patron.LastName,
+                LastUpdateDate = DateTime.UtcNow,
+                LastUpdateBy = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value,
+                MemberId = patron.MemberId,
+                PrimaryPhone = patron.PrimaryPhone,
+                SecondaryPhone = patron.SecondaryPhone,
+            };
 
             try
             {
-                patronResponse = PatronRepository.Update(patron);
+                var createdPatron = PatronRepository.Create(patronRecord);
+                return StatusCode(201, createdPatron);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new Exception("Error createing the specified Patron. See inner exception for details.", ex));
+                throw new Exception($"Error creating the specified Patron: {ex.Message}. See inner exception for details.", ex);
             }
-
-            return Ok(MapPatronResponseFrom(patronResponse));
         }
 
+        /// <summary>
+        ///     Updates the Patron matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Patron to update.</param>
+        /// <param name="patron">The updated Patron.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The Patron was updated successfully.</response>
+        /// <response code="400">The specified Patron was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="404">A Patron matching the specified id could not be found.</response>
+        /// <response code="409">A Patron with the same member id already exists.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(PatronResponse), 200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Patron), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Put(Patron patron)
+        public IActionResult Update(Guid id, [FromBody]PatronUpdateRequest patron)
         {
-            if (patron == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Patron cannot be null.");
+                return BadRequest(ModelState);
             }
 
-            ModelStateDictionary err = ValidatePatron(patron);
+            var patronToUpdate = PatronRepository.Get(id);
 
-            if (err.Keys.Any())
+            if (patronToUpdate == default(Patron))
             {
-                return BadRequest(err);
+                return NotFound();
             }
 
-            Patron patronResponse = default(Patron);
+            var conflictingPatrons = PatronRepository.GetAll(new PatronFilters() { MemberId = patron.MemberId });
+
+            if (conflictingPatrons.Any(p => p.Id != id))
+            {
+                return Conflict($"A Patron with member id '{patron.MemberId}' already exists.");
+            }
+
+            var patronRecord = new Patron()
+            {
+                Address = patron.Address ?? patronToUpdate.Address,
+                Email = patron.Email ?? patronToUpdate.Email,
+                EnrollmentDate = patronToUpdate.EnrollmentDate,
+                FirstName = patron.FirstName ?? patronToUpdate.FirstName,
+                Id = patronToUpdate.Id,
+                LastName = patron.LastName ?? patronToUpdate.LastName,
+                LastUpdateDate = DateTime.UtcNow,
+                LastUpdateBy = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value,
+                MemberId = patron.MemberId ?? patronToUpdate.MemberId,
+                PrimaryPhone = patron.PrimaryPhone ?? patronToUpdate.PrimaryPhone,
+                SecondaryPhone = patron.SecondaryPhone ?? patronToUpdate.SecondaryPhone,
+            };
 
             try
             {
-                patronResponse = PatronRepository.Create(patron);
+                var updatedPatron = PatronRepository.Update(patronRecord);
+                return Ok(updatedPatron);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new Exception("Error createing the specified Patron. See inner exception for details.", ex));
+                throw new Exception($"Error createing the specified Patron: {ex.Message}. See inner exception for details.", ex);
             }
-
-            return Ok(MapPatronResponseFrom(patronResponse));
         }
 
-        public ModelStateDictionary ValidatePatron(Patron patron)
+        /// <summary>
+        ///     Deletes the Patron matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Patron to delete.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="204">The Patron was deleted successfully.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="404">A Patron matching the specified id could not be found.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpDelete("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Delete(Guid id)
         {
-            var err = new ModelStateDictionary();
+            var patron = PatronRepository.Get(id);
 
-            if (patron.MemberId <= 0)
+            if (patron == default(Patron))
             {
-                err.AddModelError("memberId", "The patron's memberId must be a positive number.");
+                return NotFound();
             }
 
-            if (string.IsNullOrWhiteSpace(patron.FirstName))
+            try
             {
-                err.AddModelError("firstName", "The patron's first name must be alphanumeric.");
+                PatronRepository.Delete(patron);
+                return NoContent();
             }
-
-            if (string.IsNullOrWhiteSpace(patron.LastName))
+            catch (Exception ex)
             {
-                err.AddModelError("lastName", "The patron's last name must be alphanumeric.");
+                throw new Exception($"Error deleting the specified Patron: {ex.Message}. See inner exception for details.", ex);
             }
-
-            if (string.IsNullOrWhiteSpace(patron.Address))
-            {
-                err.AddModelError("address", "The patron's address must be alphanumeric.");
-            }
-
-            // TODO: Better phone number validation.
-            if (string.IsNullOrWhiteSpace(patron.PrimaryPhone))
-            {
-                err.AddModelError("primaryPhone", "The patron's primary phone number must be a valid phone number.");
-            }
-
-            // TODO: Better phone number validation.
-            if (patron.SecondaryPhone != null && patron.SecondaryPhone.All(p => char.IsWhiteSpace(p)))
-            {
-                err.AddModelError("secondayPhone", "The patron's secondary phone number must be a valid phone number.");
-            }
-
-            if (string.IsNullOrWhiteSpace(patron.Email))
-            {
-                err.AddModelError("email", "The patron's email must be alphanumeric.");
-            }
-
-            if (patron.EnrollmentDate == null)
-            {
-                err.AddModelError("enrollmentDate", "The patron's enrollment date must be a valid date.");
-            }
-
-            return err;
-        }
-
-        private PatronResponse MapPatronResponseFrom(Patron patron)
-        {
-            return new PatronResponse(patron.Id, patron.MemberId, patron.FirstName,
-            patron.LastName, patron.Address, patron.PrimaryPhone, patron.SecondaryPhone,
-            patron.Email, patron.EnrollmentDate);
         }
     }
 }

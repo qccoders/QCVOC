@@ -9,9 +9,9 @@ namespace QCVOC.Api.Security.Data.Model
     using QCVOC.Api.Security;
 
     /// <summary>
-    ///     A user account.
+    ///     A user Account.
     /// </summary>
-    public class Account
+    public class Account : IEquatable<Account>
     {
         /// <summary>
         ///     Gets or sets the Account id.
@@ -32,5 +32,23 @@ namespace QCVOC.Api.Security.Data.Model
         ///     Gets or sets the Account Role.
         /// </summary>
         public Role Role { get; set; }
+
+        /// <summary>
+        ///     Compares two Account instances.
+        /// </summary>
+        /// <param name="account">The Account to which to compare.</param>
+        /// <returns>A value indicating whether the compared instances are equal.</returns>
+        public bool Equals(Account account)
+        {
+            if (account == null)
+            {
+                return this == null;
+            }
+
+            return this.Id == account.Id
+            && this.Name == account.Name
+            && this.PasswordHash == account.PasswordHash
+            && this.Role == account.Role;
+        }
     }
 }

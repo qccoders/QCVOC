@@ -31,10 +31,10 @@ namespace QCVOC.Api.Security.Data.Repository
         private IDbConnectionFactory ConnectionFactory { get; }
 
         /// <summary>
-        ///     Creates a new account.
+        ///     Creates a new Account from the specified <paramref name="account"/>.
         /// </summary>
-        /// <param name="account">The account to create.</param>
-        /// <returns>The created account</returns>
+        /// <param name="account">The Account to create.</param>
+        /// <returns>The created Account</returns>
         public Account Create(Account account)
         {
             var builder = new SqlBuilder();
@@ -63,7 +63,7 @@ namespace QCVOC.Api.Security.Data.Repository
         }
 
         /// <summary>
-        ///     Deletes an account with the specified Id.
+        ///     Deletes the Account matching the specified <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The Id of the account to delete.</param>
         public void Delete(Guid id)
@@ -84,16 +84,16 @@ namespace QCVOC.Api.Security.Data.Repository
         }
 
         /// <summary>
-        ///     Deletes the specified account.
+        ///     Deletes the specified <paramref name="account"/>.
         /// </summary>
-        /// <param name="account">The account to delete.</param>
+        /// <param name="account">The Account to delete.</param>
         public void Delete(Account account)
         {
             Delete(account.Id);
         }
 
         /// <summary>
-        ///     Retrieves the account with the specified Id.
+        ///     Retrieves the Account with the specified <paramref name="id"/>.
         /// </summary>
         /// <param name="id">The Id of the account to retrieve.</param>
         /// <returns>The account with the specified Id.</returns>
@@ -103,10 +103,10 @@ namespace QCVOC.Api.Security.Data.Repository
         }
 
         /// <summary>
-        ///     Retrieves all accounts.
+        ///     Retrieves all Accounts after applying optional <paramref name="filters"/>.
         /// </summary>
-        /// <returns>A list of accounts.</returns>
         /// <param name="filters">Optional query filters.</param>
+        /// <returns>A list of Accounts.</returns>
         public IEnumerable<Account> GetAll(Filters filters = null)
         {
             filters = filters ?? new Filters();
@@ -156,7 +156,7 @@ namespace QCVOC.Api.Security.Data.Repository
         }
 
         /// <summary>
-        ///     Updates the specified account.
+        ///     Updates the specified <paramref name="account"/>.
         /// </summary>
         /// <param name="account">The account to update.</param>
         /// <returns>The updated account.</returns>
