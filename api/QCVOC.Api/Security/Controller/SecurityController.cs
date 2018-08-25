@@ -292,6 +292,9 @@ namespace QCVOC.Api.Security.Controller
                 Name = account.Name,
                 Role = account.Role,
                 PasswordHash = Utility.ComputeSHA512Hash(account.Password),
+                CreationDate = DateTime.UtcNow,
+                LastUpdateDate = DateTime.UtcNow,
+                LastUpdateById = User.GetId(),
             };
 
             try
@@ -365,6 +368,9 @@ namespace QCVOC.Api.Security.Controller
                 Role = account.Role ?? accountToUpdate.Role,
                 PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
                     Utility.ComputeSHA512Hash(account.Password),
+                CreationDate = accountToUpdate.CreationDate,
+                LastUpdateById = User.GetId(),
+                LastUpdateDate = DateTime.UtcNow,
             };
 
             try
@@ -436,6 +442,10 @@ namespace QCVOC.Api.Security.Controller
                 Id = account.Id,
                 Name = account.Name,
                 Role = account.Role,
+                CreationDate = account.CreationDate,
+                LastUpdateDate = account.LastUpdateDate,
+                LastUpdateById = account.LastUpdateById,
+                LastUpdateBy = account.LastUpdateBy,
             };
         }
 
