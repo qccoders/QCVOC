@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'proptypes';
+import api from '../api';
 
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -31,7 +32,8 @@ class LogoutButton extends Component {
     }
 
     handleLogout = () => {
-        return this.props.onLogout();
+        return api.post('v1/security/logout')
+        .then(() => this.props.onLogout());
     }
 
     handleDialogClose = (result) => {
