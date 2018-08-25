@@ -1,3 +1,8 @@
+// <copyright file="RefreshTokens.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
 namespace Server.Tests
 {
     using System;
@@ -9,7 +14,7 @@ namespace Server.Tests
     using QCVOC.Api.Security.Data.Repository;
     using Xunit;
 
-    public class RefreshTokens 
+    public class RefreshTokens
     {
         public RefreshTokens()
         {
@@ -49,12 +54,14 @@ namespace Server.Tests
             var equal = updated.Equals(token);
             return equal.ToProperty();
         }
+
         private Property Gettable(RefreshToken token, RefreshTokenRepository tokens)
             => (tokens.GetAll().Count() > 0).ToProperty();
+
         private Property Deleteable(RefreshToken token, RefreshTokenRepository tokens)
         {
             tokens.Delete(token);
-            var equal = (tokens.Get(token.AccountId) == null);
+            var equal = tokens.Get(token.AccountId) == null;
             return equal.ToProperty();
         }
     }
