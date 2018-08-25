@@ -115,17 +115,17 @@ namespace QCVOC.Api.Security.Data.Repository
             var query = builder.AddTemplate($@"
                 SELECT
                     a1.id,
-                    name,
-                    passwordhash,
-                    role,
-                    creationdate,
-                    lastupdatedate,
+                    a1.name,
+                    a1.passwordhash,
+                    a1.role,
+                    a1.creationdate,
+                    a1.lastupdatedate,
                     COALESCE(a2.name, '(Deleted user)') AS lastupdateby,
-                    lastupdatebyid,
+                    a1.lastupdatebyid
                 FROM accounts a1
                 LEFT JOIN accounts a2 ON a1.id = a2.id
                 /**where**/
-                ORDER BY name {filters.OrderBy.ToString()}
+                ORDER BY a1.name {filters.OrderBy.ToString()}
                 LIMIT @limit OFFSET @offset
             ");
 
