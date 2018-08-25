@@ -48,9 +48,14 @@ namespace QCVOC.Api.Domain.Patrons.Data.Model
         public DateTime LastUpdateDate { get; set; }
 
         /// <summary>
-        ///     Gets or sets the name of the user which performed the last update.
+        ///     Gets the name of the user which performed the last update.
         /// </summary>
-        public string LastUpdateBy { get; set; }
+        public string LastUpdateBy { get; }
+
+        /// <summary>
+        ///     Gets or sets the id of the user which performed the last update.
+        /// </summary>
+        public Guid LastUpdateById { get; set; }
 
         /// <summary>
         ///     Gets or sets the member id of the Patron.
@@ -84,7 +89,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.Model
             && this.FirstName == patron.FirstName
             && this.LastName == patron.LastName
             && this.LastUpdateDate == patron.LastUpdateDate
-            && this.LastUpdateBy == patron.LastUpdateBy
+            && this.LastUpdateById == patron.LastUpdateById
             && this.Address == patron.Address
             && this.PrimaryPhone == patron.PrimaryPhone
             && this.SecondaryPhone == patron.SecondaryPhone
