@@ -339,30 +339,31 @@ namespace QCVOC.Api.Security.Controller
                 return StatusCode(403, "Accounts may not be promited to Administrative by non-Administrative users.");
             }
 
-            var existingAccounts = AccountRepository.GetAll();
-            var existingAccountRecord = existingAccounts.Where(a => a.Id == id).FirstOrDefault();
+            var accountToUpdate = AccountRepository.Get(id);
 
-            if (existingAccountRecord == default(Account))
+            if (accountToUpdate == default(Account))
             {
                 return NotFound();
             }
 
-            if (existingAccountRecord.Role == Role.Administrator && account.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+            if (accountToUpdate.Role == Role.Administrator && account.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
             {
                 return StatusCode(403, "Administrators may not be demoted by non-Administrative users.");
             }
 
-            if (existingAccounts.Any(a => a.Id != id && a.Name == account.Name))
+            var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
+
+            if (conflictingAccounts.Any(a => a.Id != id))
             {
                 return Conflict($"A user named '{account.Name}' already exists.");
             }
 
             var accountRecord = new Account()
             {
-                Id = existingAccountRecord.Id,
-                Name = account.Name ?? existingAccountRecord.Name,
-                Role = account.Role ?? existingAccountRecord.Role,
-                PasswordHash = account.Password == null ? existingAccountRecord.PasswordHash :
+                Id = accountToUpdate.Id,
+                Name = account.Name ?? accountToUpdate.Name,
+                Role = account.Role ?? accountToUpdate.Role,
+                PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
                     Utility.ComputeSHA512Hash(account.Password),
             };
 
