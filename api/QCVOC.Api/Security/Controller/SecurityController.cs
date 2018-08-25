@@ -236,7 +236,7 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Get(Guid id)
+        public IActionResult Get([FromRoute]Guid id)
         {
             var account = AccountRepository.Get(id);
 
@@ -327,7 +327,7 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Update(Guid id, [FromBody]AccountUpdateRequest account)
+        public IActionResult Update([FromRoute]Guid id, [FromBody]AccountUpdateRequest account)
         {
             if (!ModelState.IsValid)
             {
@@ -397,7 +397,7 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Delete(Guid id)
+        public IActionResult Delete([FromRoute]Guid id)
         {
             var account = AccountRepository.Get(id);
 
