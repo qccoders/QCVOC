@@ -71,7 +71,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Get(Guid id)
+        public IActionResult Get([FromRoute]Guid id)
         {
             var patron = PatronRepository.Get(id);
 
@@ -100,7 +100,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
         [ProducesResponseType(401)]
         [ProducesResponseType(409)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Enroll(PatronEnrollRequest patron)
+        public IActionResult Enroll([FromBody]PatronEnrollRequest patron)
         {
             if (!ModelState.IsValid)
             {
@@ -112,7 +112,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
                 MemberId = patron.MemberId,
             });
 
-            if (existingPatron != default(Patron))
+            if (existingPatron.Any())
             {
                 return Conflict($"A Patron with member id '{patron.MemberId}' already exists.");
             }
@@ -124,7 +124,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
                 Address = patron.Address,
             });
 
-            if (existingPatron != default(Patron))
+            if (existingPatron.Any())
             {
                 return Conflict($"A Patron with a matching first name, last name and address a.ready exists.");
             }
@@ -138,7 +138,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
                 Id = Guid.NewGuid(),
                 LastName = patron.LastName,
                 LastUpdateDate = DateTime.UtcNow,
-                LastUpdateBy = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value,
+                LastUpdateById = Guid.Parse(User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value),
                 MemberId = patron.MemberId,
                 PrimaryPhone = patron.PrimaryPhone,
                 SecondaryPhone = patron.SecondaryPhone,
@@ -174,7 +174,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Update(Guid id, [FromBody]PatronUpdateRequest patron)
+        public IActionResult Update([FromRoute]Guid id, [FromBody]PatronUpdateRequest patron)
         {
             if (!ModelState.IsValid)
             {
@@ -204,7 +204,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
                 Id = patronToUpdate.Id,
                 LastName = patron.LastName ?? patronToUpdate.LastName,
                 LastUpdateDate = DateTime.UtcNow,
-                LastUpdateBy = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value,
+                LastUpdateById = Guid.Parse(User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value),
                 MemberId = patron.MemberId ?? patronToUpdate.MemberId,
                 PrimaryPhone = patron.PrimaryPhone ?? patronToUpdate.PrimaryPhone,
                 SecondaryPhone = patron.SecondaryPhone ?? patronToUpdate.SecondaryPhone,
@@ -238,7 +238,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Delete(Guid id)
+        public IActionResult Delete([FromRoute]Guid id)
         {
             var patron = PatronRepository.Get(id);
 
