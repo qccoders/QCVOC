@@ -31,7 +31,6 @@ const styles = {
 
 const initialState = {
     account: {
-        id: '',
         name: '',
         role: 'User',
         password: '',
@@ -54,7 +53,6 @@ class AccountDialog extends Component {
                 ...initialState, 
                 account: nextProps.account ? nextProps.account : { 
                     ...initialState.account, 
-                    id: nextProps.id ? nextProps.id : getGuid(),
                 },
                 validation: initialState.validation,
             });
