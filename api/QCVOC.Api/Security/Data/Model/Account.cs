@@ -34,6 +34,26 @@ namespace QCVOC.Api.Security.Data.Model
         public Role Role { get; set; }
 
         /// <summary>
+        ///     Gets or sets the Account creation date.
+        /// </summary>
+        public DateTime CreationDate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the date on which the Account was last updated.
+        /// </summary>
+        public DateTime LastUpdateDate { get; set; }
+
+        /// <summary>
+        ///     Gets the name of the user which performed the last update.
+        /// </summary>
+        public string LastUpdateBy { get; }
+
+        /// <summary>
+        ///     Gets or sets the id of the user which performed the last update.
+        /// </summary>
+        public Guid LastUpdateById { get; set; }
+
+        /// <summary>
         ///     Compares two Account instances.
         /// </summary>
         /// <param name="account">The Account to which to compare.</param>
