@@ -45,6 +45,8 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                     memberid,
                     firstname,
                     lastname,
+                    lastupdatedate,
+                    lastupdateby,
                     address,
                     primaryphone,
                     secondaryphone,
@@ -53,28 +55,32 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                 )
                 VALUES (
                     @id,
-                    @memberId,
-                    @firstName,
-                    @lastName,
+                    @memberid,
+                    @firstname,
+                    @lastname,
+                    @lastupdatedate,
+                    @lastupdateby,
                     @address,
-                    @primaryPhone,
-                    @secondaryPhone,
+                    @primaryphone,
+                    @secondaryphone,
                     @email,
-                    @enrollmentDate
+                    @enrollmentdate
                 )
             ");
 
             builder.AddParameters(new
             {
                 id = patron.Id,
-                memberId = patron.MemberId,
-                firstName = patron.FirstName,
-                lastName = patron.LastName,
+                memberid = patron.MemberId,
+                firstname = patron.FirstName,
+                lastname = patron.LastName,
+                lastupdatedate = patron.LastUpdateDate,
+                lastupdateby = patron.LastUpdateBy,
                 address = patron.Address,
-                primaryPhone = patron.PrimaryPhone,
-                secondaryPhone = patron.SecondaryPhone,
+                primaryphone = patron.PrimaryPhone,
+                secondaryphone = patron.SecondaryPhone,
                 email = patron.Email,
-                enrollmentDate = patron.EnrollmentDate,
+                enrollmentdate = patron.EnrollmentDate,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -141,6 +147,8 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                     memberid,
                     firstname,
                     lastname,
+                    lastupdatedate,
+                    lastupdateby,
                     address,
                     primaryphone,
                     secondaryphone,
@@ -191,6 +199,16 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                     builder.Where("lastname = @lastname", new { lastname = patronFilters.LastName });
                 }
 
+                if (patronFilters.LastUpdateDateStart != null && patronFilters.LastUpdateDateEnd != null)
+                {
+                    builder.Where("lastupdatedate BETWEEN @start AND @end", new { start = patronFilters.LastUpdateDateStart, end = patronFilters.LastUpdateDateEnd });
+                }
+
+                if (!string.IsNullOrWhiteSpace(patronFilters.LastUpdateBy))
+                {
+                    builder.Where("lastupdateby = @lastupdateby", new { lastupdateby = patronFilters.LastUpdateBy });
+                }
+
                 if (patronFilters.MemberId != null)
                 {
                     builder.Where("memberid = @memberid", new { memberid = patronFilters.MemberId });
@@ -228,6 +246,8 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                     memberid = @memberId,
                     firstname = @firstName,
                     lastname = @lastName,
+                    lastupdatedate = @lastupdatedate,
+                    lastupdateby = @lastupdateby,
                     address = @address,
                     primaryphone = @primaryPhone,
                     secondaryphone = @secondaryPhone,
@@ -241,6 +261,8 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                 memberId = patron.MemberId,
                 firstName = patron.FirstName,
                 lastName = patron.LastName,
+                lastupdatedate = patron.LastUpdateDate,
+                lastupdateby = patron.LastUpdateBy,
                 address = patron.Address,
                 primaryPhone = patron.PrimaryPhone,
                 secondaryPhone = patron.SecondaryPhone,
