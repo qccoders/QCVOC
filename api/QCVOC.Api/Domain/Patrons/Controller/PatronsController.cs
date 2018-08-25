@@ -8,10 +8,12 @@ namespace QCVOC.Api.Domain.Patrons.Controller
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Domain.Patrons.Data.DTO;
     using QCVOC.Api.Domain.Patrons.Data.Model;
     using QCVOC.Api.Security;
 
@@ -98,7 +100,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
         [ProducesResponseType(401)]
         [ProducesResponseType(409)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Enroll(Patron patron)
+        public IActionResult Enroll(PatronEnrollRequest patron)
         {
             if (!ModelState.IsValid)
             {
@@ -127,9 +129,24 @@ namespace QCVOC.Api.Domain.Patrons.Controller
                 return Conflict($"A Patron with a matching first name, last name and address a.ready exists.");
             }
 
+            var patronRecord = new Patron()
+            {
+                Address = patron.Address,
+                Email = patron.Email,
+                EnrollmentDate = DateTime.UtcNow,
+                FirstName = patron.FirstName,
+                Id = Guid.NewGuid(),
+                LastName = patron.LastName,
+                LastUpdateDate = DateTime.UtcNow,
+                LastUpdateBy = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value,
+                MemberId = patron.MemberId,
+                PrimaryPhone = patron.PrimaryPhone,
+                SecondaryPhone = patron.SecondaryPhone,
+            };
+
             try
             {
-                var createdPatron = PatronRepository.Create(patron);
+                var createdPatron = PatronRepository.Create(patronRecord);
                 return StatusCode(201, createdPatron);
             }
             catch (Exception ex)
@@ -138,37 +155,70 @@ namespace QCVOC.Api.Domain.Patrons.Controller
             }
         }
 
+        /// <summary>
+        ///     Updates the Patron matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Patron to update.</param>
+        /// <param name="patron">The updated Patron.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The Patron was updated successfully.</response>
+        /// <response code="400">The specified Patron was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="404">A Patron matching the specified id could not be found.</response>
+        /// <response code="409">A Patron with the same member id already exists.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPut("{id}")]
-        [ProducesResponseType(typeof(PatronResponse), 200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Patron), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Put(Patron patron)
+        public IActionResult Update(Guid id, [FromBody]PatronUpdateRequest patron)
         {
-            if (patron == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest("Patron cannot be null.");
+                return BadRequest(ModelState);
             }
 
-            ModelStateDictionary err = ValidatePatron(patron);
+            var patronToUpdate = PatronRepository.Get(id);
 
-            if (err.Keys.Any())
+            if (patronToUpdate == default(Patron))
             {
-                return BadRequest(err);
+                return NotFound();
             }
 
-            Patron patronResponse = default(Patron);
+            var conflictingPatrons = PatronRepository.GetAll(new PatronFilters() { MemberId = patron.MemberId });
+
+            if (conflictingPatrons.Any(p => p.Id != id))
+            {
+                return Conflict($"A Patron with member id '{patron.MemberId}' already exists.");
+            }
+
+            var patronRecord = new Patron()
+            {
+                Address = patron.Address ?? patronToUpdate.Address,
+                Email = patron.Email ?? patronToUpdate.Email,
+                EnrollmentDate = patronToUpdate.EnrollmentDate,
+                FirstName = patron.FirstName ?? patronToUpdate.FirstName,
+                Id = patronToUpdate.Id,
+                LastName = patron.LastName ?? patronToUpdate.LastName,
+                LastUpdateDate = DateTime.UtcNow,
+                LastUpdateBy = User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value,
+                MemberId = patron.MemberId ?? patronToUpdate.MemberId,
+                PrimaryPhone = patron.PrimaryPhone ?? patronToUpdate.PrimaryPhone,
+                SecondaryPhone = patron.SecondaryPhone ?? patronToUpdate.SecondaryPhone,
+            };
 
             try
             {
-                patronResponse = PatronRepository.Create(patron);
+                var updatedPatron = PatronRepository.Update(patronRecord);
+                return Ok(updatedPatron);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new Exception("Error createing the specified Patron. See inner exception for details.", ex));
+                throw new Exception($"Error createing the specified Patron: {ex.Message}. See inner exception for details.", ex);
             }
-
-            return Ok(MapPatronResponseFrom(patronResponse));
         }
 
         /// <summary>
@@ -204,7 +254,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error deleting the specified Patron: {ex.Message}. See inner exception for details.", ex));
+                throw new Exception($"Error deleting the specified Patron: {ex.Message}. See inner exception for details.", ex);
             }
         }
     }
