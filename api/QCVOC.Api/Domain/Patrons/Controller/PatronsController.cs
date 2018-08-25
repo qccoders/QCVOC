@@ -8,10 +8,10 @@ namespace QCVOC.Api.Domain.Patrons.Controller
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Security.Claims;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Domain.Patrons.Data.DTO;
     using QCVOC.Api.Domain.Patrons.Data.Model;
@@ -138,7 +138,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
                 Id = Guid.NewGuid(),
                 LastName = patron.LastName,
                 LastUpdateDate = DateTime.UtcNow,
-                LastUpdateById = Guid.Parse(User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value),
+                LastUpdateById = User.GetId(),
                 MemberId = patron.MemberId,
                 PrimaryPhone = patron.PrimaryPhone,
                 SecondaryPhone = patron.SecondaryPhone,
@@ -204,7 +204,7 @@ namespace QCVOC.Api.Domain.Patrons.Controller
                 Id = patronToUpdate.Id,
                 LastName = patron.LastName ?? patronToUpdate.LastName,
                 LastUpdateDate = DateTime.UtcNow,
-                LastUpdateById = Guid.Parse(User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value),
+                LastUpdateById = User.GetId(),
                 MemberId = patron.MemberId ?? patronToUpdate.MemberId,
                 PrimaryPhone = patron.PrimaryPhone ?? patronToUpdate.PrimaryPhone,
                 SecondaryPhone = patron.SecondaryPhone ?? patronToUpdate.SecondaryPhone,
