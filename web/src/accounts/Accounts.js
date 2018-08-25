@@ -47,7 +47,7 @@ class Accounts extends Component {
 
     refresh = () => {
         this.setState({ ...this.state, api: { ...this.state.api, isExecuting: true }}, () => {
-            api.get('/v1/accounts')
+            api.get('/v1/security/accounts')
             .then(response => {
                 this.setState({ 
                     accounts: response.data,
@@ -102,7 +102,14 @@ class Accounts extends Component {
     }
 
     addAccount = (account) => {
-        console.log('add', account);
+        delete account.password2;
+
+        this.setState({ api: { isExecuting: true }}, () => {
+            api.post('/v1/security/accounts', account)
+            .then(response => {
+                console.log(response);
+            })
+        })
     }
 
     editAccount = (account) => { 
