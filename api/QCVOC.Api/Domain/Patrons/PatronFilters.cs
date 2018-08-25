@@ -66,6 +66,11 @@ namespace QCVOC.Api.Domain.Patrons
         public string LastUpdateBy { get; set; }
 
         /// <summary>
+        ///     The id of the user which performed the last update.
+        /// </summary>
+        public Guid? LastUpdateById { get; set; }
+
+        /// <summary>
         ///     The member id of the Patron.
         /// </summary>
         public int? MemberId { get; set; }

@@ -114,13 +114,18 @@ namespace QCVOC.Api.Security.Data.Repository
 
             var query = builder.AddTemplate($@"
                 SELECT
-                    id,
-                    name,
-                    passwordhash,
-                    role
-                FROM accounts
+                    a1.id,
+                    a1.name,
+                    a1.passwordhash,
+                    a1.role,
+                    a1.creationdate,
+                    a1.lastupdatedate,
+                    COALESCE(a2.name, '(Deleted user)') AS lastupdateby,
+                    a1.lastupdatebyid
+                FROM accounts a1
+                LEFT JOIN accounts a2 ON a1.id = a2.id
                 /**where**/
-                ORDER BY name {filters.OrderBy.ToString()}
+                ORDER BY a1.name {filters.OrderBy.ToString()}
                 LIMIT @limit OFFSET @offset
             ");
 
@@ -146,6 +151,26 @@ namespace QCVOC.Api.Security.Data.Repository
                 if (accountFilters.Id != null)
                 {
                     builder.Where("id = @id", new { accountFilters.Id });
+                }
+
+                if (accountFilters.CreationDateStart != null && accountFilters.CreationDateStart != null)
+                {
+                    builder.Where("creationdate BETWEEN @start AND @end", new { start = accountFilters.CreationDateStart, end = accountFilters.CreationDateEnd });
+                }
+
+                if (accountFilters.LastUpdateDateStart != null && accountFilters.LastUpdateDateEnd != null)
+                {
+                    builder.Where("lastupdate BETWEEN @start AND @end", new { start = accountFilters.LastUpdateDateStart, end = accountFilters.LastUpdateDateEnd });
+                }
+
+                if (!string.IsNullOrWhiteSpace(accountFilters.LastUpdateBy))
+                {
+                    builder.Where("lastupdateby = @lastupdateby", new { lastupdateby = accountFilters.LastUpdateBy });
+                }
+
+                if (accountFilters.LastUpdateById != null)
+                {
+                    builder.Where("lastupdatebyid = @lastupdatebyid", new { lastupdatebyid = accountFilters.LastUpdateById });
                 }
             }
 

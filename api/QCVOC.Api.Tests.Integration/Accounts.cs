@@ -1,3 +1,8 @@
+// <copyright file="Accounts.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
 namespace Server.Tests
 {
     using System.Linq;
@@ -46,6 +51,7 @@ namespace Server.Tests
             var updated = accounts.Update(account);
             return updated.Equals(account).ToProperty();
         }
+
         private Property Gettable(Account account, AccountRepository accounts)
             => (accounts.GetAll().Count() > 0).ToProperty();
         private Property Deleteable(Account account, AccountRepository accounts)

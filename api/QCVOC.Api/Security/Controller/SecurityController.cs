@@ -236,7 +236,7 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Get(Guid id)
+        public IActionResult Get([FromRoute]Guid id)
         {
             var account = AccountRepository.Get(id);
 
@@ -292,6 +292,9 @@ namespace QCVOC.Api.Security.Controller
                 Name = account.Name,
                 Role = account.Role,
                 PasswordHash = Utility.ComputeSHA512Hash(account.Password),
+                CreationDate = DateTime.UtcNow,
+                LastUpdateDate = DateTime.UtcNow,
+                LastUpdateById = User.GetId(),
             };
 
             try
@@ -327,7 +330,7 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Update(Guid id, [FromBody]AccountUpdateRequest account)
+        public IActionResult Update([FromRoute]Guid id, [FromBody]AccountUpdateRequest account)
         {
             if (!ModelState.IsValid)
             {
@@ -365,6 +368,9 @@ namespace QCVOC.Api.Security.Controller
                 Role = account.Role ?? accountToUpdate.Role,
                 PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
                     Utility.ComputeSHA512Hash(account.Password),
+                CreationDate = accountToUpdate.CreationDate,
+                LastUpdateById = User.GetId(),
+                LastUpdateDate = DateTime.UtcNow,
             };
 
             try
@@ -397,7 +403,7 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Delete(Guid id)
+        public IActionResult Delete([FromRoute]Guid id)
         {
             var account = AccountRepository.Get(id);
 
@@ -436,6 +442,10 @@ namespace QCVOC.Api.Security.Controller
                 Id = account.Id,
                 Name = account.Name,
                 Role = account.Role,
+                CreationDate = account.CreationDate,
+                LastUpdateDate = account.LastUpdateDate,
+                LastUpdateById = account.LastUpdateById,
+                LastUpdateBy = account.LastUpdateBy,
             };
         }
 

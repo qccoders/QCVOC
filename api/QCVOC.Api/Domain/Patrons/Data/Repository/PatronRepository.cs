@@ -46,7 +46,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                     firstname,
                     lastname,
                     lastupdatedate,
-                    lastupdateby,
+                    lastupdatebyid,
                     address,
                     primaryphone,
                     secondaryphone,
@@ -59,7 +59,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                     @firstname,
                     @lastname,
                     @lastupdatedate,
-                    @lastupdateby,
+                    @lastupdatebyid,
                     @address,
                     @primaryphone,
                     @secondaryphone,
@@ -75,7 +75,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                 firstname = patron.FirstName,
                 lastname = patron.LastName,
                 lastupdatedate = patron.LastUpdateDate,
-                lastupdateby = patron.LastUpdateBy,
+                lastupdatebyid = patron.LastUpdateById,
                 address = patron.Address,
                 primaryphone = patron.PrimaryPhone,
                 secondaryphone = patron.SecondaryPhone,
@@ -143,20 +143,22 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
 
             var query = builder.AddTemplate($@"
                 SELECT
-                    id,
+                    p.id,
                     memberid,
                     firstname,
                     lastname,
-                    lastupdatedate,
-                    lastupdateby,
+                    p.lastupdatedate,
+                    COALESCE(a.name, '(Deleted user)') AS lastupdateby,
+                    p.lastupdatebyid,
                     address,
                     primaryphone,
                     secondaryphone,
                     email,
                     enrollmentdate
-                FROM patrons;
+                FROM patrons p
+                LEFT JOIN accounts a ON p.lastupdatebyid = a.id 
                 /**where**/
-                ORDER BY name {filters.OrderBy.ToString()}
+                ORDER BY (firstname || lastname) {filters.OrderBy.ToString()}
                 LIMIT @limit OFFSET @offset
             ");
 
@@ -191,7 +193,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
 
                 if (patronFilters.Id != null)
                 {
-                    builder.Where("id = @id", new { id = patronFilters.Id });
+                    builder.Where("p.id = @id", new { id = patronFilters.Id });
                 }
 
                 if (!string.IsNullOrWhiteSpace(patronFilters.LastName))
@@ -206,7 +208,12 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
 
                 if (!string.IsNullOrWhiteSpace(patronFilters.LastUpdateBy))
                 {
-                    builder.Where("lastupdateby = @lastupdateby", new { lastupdateby = patronFilters.LastUpdateBy });
+                    builder.Where("a.name = @lastupdateby", new { lastupdateby = patronFilters.LastUpdateBy });
+                }
+
+                if (patronFilters.LastUpdateById != null)
+                {
+                    builder.Where("lastupdatebyid = @lastupdatebyid", new { lastupdatebyid = patronFilters.LastUpdateById });
                 }
 
                 if (patronFilters.MemberId != null)
@@ -247,7 +254,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                     firstname = @firstName,
                     lastname = @lastName,
                     lastupdatedate = @lastupdatedate,
-                    lastupdateby = @lastupdateby,
+                    lastupdatebyid = @lastupdatebyid,
                     address = @address,
                     primaryphone = @primaryPhone,
                     secondaryphone = @secondaryPhone,
@@ -262,7 +269,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
                 firstName = patron.FirstName,
                 lastName = patron.LastName,
                 lastupdatedate = patron.LastUpdateDate,
-                lastupdateby = patron.LastUpdateBy,
+                lastupdatebyid = patron.LastUpdateById,
                 address = patron.Address,
                 primaryPhone = patron.PrimaryPhone,
                 secondaryPhone = patron.SecondaryPhone,

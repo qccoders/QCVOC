@@ -1,3 +1,8 @@
+// <copyright file="Patrons.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
 namespace Server.Tests
 {
     using System;
@@ -9,7 +14,7 @@ namespace Server.Tests
     using QCVOC.Api.Domain.Patrons.Data.Repository;
     using Xunit;
 
-    public class Patrons 
+    public class Patrons
     {
         public Patrons()
         {
@@ -46,7 +51,7 @@ namespace Server.Tests
             patron.MemberId = 1234567;
             patron.Address = "1111 1st street";
             patron.PrimaryPhone = "(123) 123-1234";
-            patron.SecondaryPhone= "(321) 321-4321";
+            patron.SecondaryPhone = "(321) 321-4321";
             patron.Email = "test@qcvoc.com";
             patron.EnrollmentDate = DateTime.Now;
 
@@ -54,12 +59,14 @@ namespace Server.Tests
             var equal = updated.Equals(patron);
             return equal.ToProperty();
         }
+
         private Property Gettable(Patron patron, PatronRepository patrons)
             => (patrons.GetAll().Count() > 0).ToProperty();
+
         private Property Deleteable(Patron patron, PatronRepository patrons)
         {
             patrons.Delete(patron);
-            var equal = (patrons.Get(patron.Id) == null);
+            var equal = patrons.Get(patron.Id) == null;
             return equal.ToProperty();
         }
     }

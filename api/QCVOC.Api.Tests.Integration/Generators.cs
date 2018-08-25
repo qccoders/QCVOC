@@ -1,3 +1,8 @@
+// <copyright file="Generators.cs" company="JP Dillingham, Nick Acosta, et. al.">
+//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
 namespace Server.Tests
 {
     using System;
@@ -27,11 +32,11 @@ namespace Server.Tests
         public static Arbitrary<RefreshTokenRepository> ArbRefreshTokenRepository() => Arb.From(GenRefreshTokenRepository());
 
         public static Gen<RefreshTokenRepository> GenRefreshTokenRepository()
-            => from _ in Arb.Default.String().Generator
+            => from a in Arb.Default.String().Generator
                select new RefreshTokenRepository(new NpgsqlDbConnectionFactory(Environment.GetEnvironmentVariable("qcvoc_connectionstring")));
 
         public static Gen<AccountRepository> GenAccountRepository()
-            => from _ in Arb.Default.String().Generator
+            => from a in Arb.Default.String().Generator
                select new AccountRepository(new NpgsqlDbConnectionFactory(Environment.GetEnvironmentVariable("qcvoc_connectionstring")));
 
         public static Gen<Role> GenRole()
@@ -44,7 +49,7 @@ namespace Server.Tests
         public static Gen<Patron> GenPatron()
         {
             return from id in Arb.Default.Guid().Generator
-                   from memberId  in Arb.Default.Int32().Generator
+                   from memberId in Arb.Default.Int32().Generator
                    from firstName in Arb.Default.NonEmptyString().Generator
                    from lastName in Arb.Default.NonEmptyString().Generator
                    from address in Arb.Default.NonEmptyString().Generator
@@ -68,7 +73,7 @@ namespace Server.Tests
 
         public static Gen<PatronRepository> GenPatronRepository()
         {
-            return from _ in Arb.Default.String().Generator
+            return from a in Arb.Default.String().Generator
             select new PatronRepository(new NpgsqlDbConnectionFactory(Environment.GetEnvironmentVariable("qcvoc_connectionstring")));
         }
 
