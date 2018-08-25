@@ -62,7 +62,9 @@ CREATE TABLE public.patrons (
     primaryphone text NOT NULL,
     secondaryphone text NOT NULL,
     email text NOT NULL,
-    enrollmentdate timestamp(0) without time zone NOT NULL
+    enrollmentdate timestamp(0) without time zone NOT NULL,
+	lastupdatedate timestamp(0) without time zone NOT NULL,
+	lastupdateby text NOT NULL
 );
 
 
