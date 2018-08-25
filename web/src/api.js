@@ -30,7 +30,7 @@ api.interceptors.response.use(config => {
 
         // use 'axios' here instead of the 'api' instance we created to bypass our interceptors
         // and avoid an endless loop should either of these two calls result in a 401.
-        return axios.post('/v1/tokens/refresh', data, headers)
+        return axios.post('/v1/security/refresh', data, headers)
             .then(response => {
                 saveCredentials(response.data);
                 request.headers.Authorization = response.data.tokenType + ' ' + response.data.accessToken;

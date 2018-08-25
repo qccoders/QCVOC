@@ -104,7 +104,7 @@ class LoginForm extends Component {
             validation: { name: undefined, password: undefined },
             
         }, () => {
-            axios.post(API_ROOT + '/v1/tokens', this.state)
+            axios.post(API_ROOT + '/v1/security/login', this.state)
             .then(
                 response => {
                     this.props.onLogin(response.data, this.state.rememberMe);
