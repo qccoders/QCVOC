@@ -27,5 +27,25 @@ namespace QCVOC.Api.Security.Data.DTO
         ///     Gets or sets the Role for the account.
         /// </summary>
         public Role Role { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Account creation date.
+        /// </summary>
+        public DateTime CreationDate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the date on which the Account was last updated.
+        /// </summary>
+        public DateTime LastUpdateDate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the name of the user which performed the last update.
+        /// </summary>
+        public string LastUpdateBy { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the id of the user which performed the last update.
+        /// </summary>
+        public Guid LastUpdateById { get; set; }
     }
 }
