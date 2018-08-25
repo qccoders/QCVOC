@@ -108,6 +108,11 @@ class Accounts extends Component {
             api.post('/v1/security/accounts', account)
             .then(response => {
                 console.log(response);
+                this.setState({ api: { isExecuting: false, isErrored: false }})
+            })
+            .catch(error => {
+                console.log(error);
+                this.setState({ api: { isExecuting: false, isErrored: true }})
             })
         })
     }
