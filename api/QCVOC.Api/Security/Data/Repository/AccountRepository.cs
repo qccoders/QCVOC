@@ -140,12 +140,12 @@ namespace QCVOC.Api.Security.Data.Repository
             {
                 if (accountFilters.Role != null)
                 {
-                    builder.Where("role = @role", new { role = accountFilters.Role.ToString() });
+                    builder.Where("a1.role = @role", new { role = accountFilters.Role.ToString() });
                 }
 
                 if (!string.IsNullOrWhiteSpace(accountFilters.Name))
                 {
-                    builder.Where("name = @name", new { accountFilters.Name });
+                    builder.Where("a1.name = @name", new { accountFilters.Name });
                 }
 
                 if (accountFilters.Id != null)
@@ -155,22 +155,22 @@ namespace QCVOC.Api.Security.Data.Repository
 
                 if (accountFilters.CreationDateStart != null && accountFilters.CreationDateStart != null)
                 {
-                    builder.Where("creationdate BETWEEN @start AND @end", new { start = accountFilters.CreationDateStart, end = accountFilters.CreationDateEnd });
+                    builder.Where("a1.creationdate BETWEEN @start AND @end", new { start = accountFilters.CreationDateStart, end = accountFilters.CreationDateEnd });
                 }
 
                 if (accountFilters.LastUpdateDateStart != null && accountFilters.LastUpdateDateEnd != null)
                 {
-                    builder.Where("lastupdate BETWEEN @start AND @end", new { start = accountFilters.LastUpdateDateStart, end = accountFilters.LastUpdateDateEnd });
+                    builder.Where("a1.lastupdate BETWEEN @start AND @end", new { start = accountFilters.LastUpdateDateStart, end = accountFilters.LastUpdateDateEnd });
                 }
 
                 if (!string.IsNullOrWhiteSpace(accountFilters.LastUpdateBy))
                 {
-                    builder.Where("lastupdateby = @lastupdateby", new { lastupdateby = accountFilters.LastUpdateBy });
+                    builder.Where("a1.lastupdateby = @lastupdateby", new { lastupdateby = accountFilters.LastUpdateBy });
                 }
 
                 if (accountFilters.LastUpdateById != null)
                 {
-                    builder.Where("lastupdatebyid = @lastupdatebyid", new { lastupdatebyid = accountFilters.LastUpdateById });
+                    builder.Where("a1.lastupdatebyid = @lastupdatebyid", new { lastupdatebyid = accountFilters.LastUpdateById });
                 }
             }
 
