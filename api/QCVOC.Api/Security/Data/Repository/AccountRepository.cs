@@ -150,7 +150,7 @@ namespace QCVOC.Api.Security.Data.Repository
 
                 if (accountFilters.Id != null)
                 {
-                    builder.Where("id = @id", new { accountFilters.Id });
+                    builder.Where("a1.id = @id", new { accountFilters.Id });
                 }
 
                 if (accountFilters.CreationDateStart != null && accountFilters.CreationDateStart != null)
