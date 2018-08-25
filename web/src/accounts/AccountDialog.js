@@ -114,7 +114,7 @@ class AccountDialog extends Component {
 
         return new Promise(resolve => {
             this.setState({ validation: result }, () => {
-                result.isValid = result === initialState.validation;
+                result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });                
         })
