@@ -51,6 +51,21 @@ namespace QCVOC.Api.Domain.Patrons
         public string LastName { get; set; }
 
         /// <summary>
+        ///     The starting time of a last updated date range.
+        /// </summary>
+        public DateTime? LastUpdateDateStart { get; set; }
+
+        /// <summary>
+        ///     The ending time of a last updated date range.
+        /// </summary>
+        public DateTime? LastUpdateDateEnd { get; set; }
+
+        /// <summary>
+        ///     The name of the user which performed the last update.
+        /// </summary>
+        public string LastUpdateBy { get; set; }
+
+        /// <summary>
         ///     The member id of the Patron.
         /// </summary>
         public int? MemberId { get; set; }
