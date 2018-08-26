@@ -34,7 +34,11 @@ const styles = {
 };
 
 const initialState = {
-    api: {
+    saveApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
+    deleteApi: {
         isExecuting: false,
         isErrored: false,
     },
@@ -91,16 +95,19 @@ class AccountDialog extends Component {
     handleSave = () => {
         this.validate().then(result => {
             if (result.isValid) {
-                this.setState({ api: { isExecuting: true }}, () => {
+                this.setState({ saveApi: { isExecuting: true }}, () => {
                     this.props.addAccount(this.state.account)
                     .then(response => {
-                        console.log(response);
-                        this.setState({ api: { isExecuting: false, isErrored: false }})
+                        var name = response.data.name;
+
+                        this.setState({ 
+                            saveApi: { isExecuting: false, isErrored: false },
+                        }, () => this.props.onClose('Account \'' + name + '\' successfully created.'))
                     }, error => {
                         var body = error && error.response && error.response.data ? error.response.data : error;
 
                         this.setState({ 
-                            api: { isExecuting: false, isErrored: true },
+                            saveApi: { isExecuting: false, isErrored: true },
                             snackbar: {
                                 message: body[Object.keys(body)[0]],
                                 open: true,
@@ -110,6 +117,27 @@ class AccountDialog extends Component {
                 })
             }
         });
+    }
+
+    handleDelete = () => {
+        this.setState({ deleteApi: { isExecuting: true }}, () => {
+            this.props.deleteAccount(this.state.account.id)
+            .then(response => {
+                this.setState({
+                    deleteApi: { isExecuting: false, isErrored: false }
+                }, () => this.props.onClose('Account \'' + this.state.account.name + '\' successfully deleted.'))
+            }, error => {
+                var body = error && error.response && error.response.data ? error.response.data : error;
+
+                this.setState({ 
+                    deleteApi: { isExecuting: false, isErrored: true },
+                    snackbar: {
+                        message: body,
+                        open: true,
+                    },
+                });
+            })
+        })
     }
 
     validate = () => {
@@ -215,10 +243,19 @@ class AccountDialog extends Component {
                     }
                 </DialogContent>
                 <DialogActions>
-                    {intent === 'edit' && <Button onClick={this.handleDelete} color="primary" className={classes.deleteButton}>Delete</Button>}
+                    {intent === 'edit' && 
+                        <Button 
+                            onClick={this.handleDelete} 
+                            color="primary" 
+                            className={classes.deleteButton}
+                        >
+                            {this.state.deleteApi.isExecuting && <CircularProgress size={20} style={styles.spinner}/>}
+                            Delete
+                        </Button>
+                    }
                     <Button onClick={this.handleCancel} color="primary">Cancel</Button>
                     <Button onClick={this.handleSave} color="primary">
-                        {this.state.api.isExecuting && <CircularProgress size={20} style={styles.spinner}/>}
+                        {this.state.saveApi.isExecuting && <CircularProgress size={20} style={styles.spinner}/>}
                         Save
                     </Button>
                 </DialogActions>
@@ -241,6 +278,7 @@ AccountDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     account: PropTypes.object,
     addAccount: PropTypes.func.isRequired,
+    deleteAccount: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(AccountDialog); 
