@@ -17,6 +17,7 @@ import {
 import { Add } from '@material-ui/icons'
 
 import Snackbar from '@material-ui/core/Snackbar';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
     fab: {
@@ -28,12 +29,27 @@ const styles = {
         position: 'fixed',
         zIndex: 1000
     },
+    card: {
+        minHeight: 125,
+    },
+    refreshSpinner: {
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: 25,
+    },
 };
 
 class Accounts extends Component {
     state = { 
         accounts: [],
-        api: {
+        loadApi: {
+            isExecuting: false,
+            isErrored: false,
+        },
+        refreshApi: {
             isExecuting: false,
             isErrored: false,
         },
@@ -53,20 +69,23 @@ class Accounts extends Component {
     };
 
     componentWillMount = () => {
-        this.refresh();
+        this.refresh('loadApi');
     }
 
-    refresh = () => {
-        this.setState({ ...this.state, api: { ...this.state.api, isExecuting: true }}, () => {
+    refresh = (apiType) => {
+        this.setState({ ...this.state, [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
             api.get('/v1/security/accounts')
             .then(response => {
                 this.setState({ 
                     accounts: response.data,
-                    api: { isExecuting: false, isErrored: false },
+                    [apiType]: { isExecuting: false, isErrored: false },
                 });
             }, error => {
-                this.setState({ ...this.state, api: { isExecuting: false, isErrored: true }});
-                console.log(error);
+                this.setState({ 
+                    ...this.state, 
+                    [apiType]: { isExecuting: false, isErrored: true },
+                    snackbar: { message: error.response.data, open: true },
+                });
             });
         })
     }
@@ -107,7 +126,7 @@ class Accounts extends Component {
             }
         }, () => {
             if (!result) return;
-            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh())
+            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'))
         })
     }
 
@@ -141,21 +160,24 @@ class Accounts extends Component {
     }
 
     render() {
-        let { accounts, api, accountDialog, passwordResetDialog } = this.state;
+        let { accounts, loadApi, refreshApi, accountDialog, passwordResetDialog } = this.state;
         let { classes } = this.props;
 
         return (
-            <ContentWrapper api={api}>
+            <ContentWrapper api={loadApi}>
                 <Card>
-                    <CardContent>
+                    <CardContent className={classes.card}>
                         <Typography gutterBottom variant="headline" component="h2">
                             Accounts
                         </Typography>
-                        <AccountList 
-                            accounts={accounts} 
-                            onItemClick={this.handleEditClick} 
-                            onItemResetClick={this.handleResetClick}
-                        />
+                        {refreshApi.isExecuting ? 
+                            <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
+                            <AccountList 
+                                accounts={accounts} 
+                                onItemClick={this.handleEditClick} 
+                                onItemResetClick={this.handleResetClick}
+                            />
+                        }
                     </CardContent>
                 </Card>
                 <Button 
