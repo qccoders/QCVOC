@@ -72,8 +72,6 @@ const initialState = {
 class AccountDialog extends Component {
     state = initialState;
 
-
-
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
@@ -124,22 +122,6 @@ class AccountDialog extends Component {
         });
     }
 
-    handleError = (error, api) => {
-        var body = error && error.response && error.response.data ? error.response.data : error;
-    
-        this.setState({ 
-            [api]: { isExecuting: false, isErrored: true },
-            snackbar: {
-                message: body[Object.keys(body)[0]],
-                open: true,
-            },
-        });
-    }
-
-    handleDialogClose = (result) => {
-        this.setState({ confirmDialog: { open: false }});
-    }
-
     handleDeleteClick = () => {
         this.setState({ confirmDialog: { open: true }});
     }
@@ -150,6 +132,14 @@ class AccountDialog extends Component {
             'deleteApi', 
             'Account \'' + this.state.account.name + '\' successfully deleted.'
         );
+    }
+
+    handleDialogClose = (result) => {
+        this.setState({ confirmDialog: { open: false }});
+    }
+
+    handleSnackbarClose = () => {
+        this.setState({ snackbar: { open: false }});
     }
 
     execute = (action, api, successMessage) => {
@@ -166,16 +156,18 @@ class AccountDialog extends Component {
                 }, error => {
                     var body = error && error.response && error.response.data ? error.response.data : error;
 
-                    // var keys = Object.keys(body);
-
-                    // if (keys.length > 0) {
-                    //     body = body[keys[0]];
-                    // }
+                    if (typeof(body) !== 'string') {
+                        var keys = Object.keys(body);
     
+                        if (keys.length > 0) {
+                            body = body[keys[0]];
+                        }
+                    }
+
                     this.setState({ 
                         [api]: { isExecuting: false, isErrored: true },
                         snackbar: {
-                            message: JSON.stringify(body),
+                            message: body,
                             open: true,
                         },
                     }, () => reject(error));
@@ -219,10 +211,6 @@ class AccountDialog extends Component {
         })
     }
 
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
-    }
-
     render() {
         let { classes, intent, open } = this.props;
         let { name, role } = this.state.account;
@@ -231,7 +219,6 @@ class AccountDialog extends Component {
         let adding = this.state.addApi.isExecuting;
         let updating = this.state.updateApi.isExecuting;
         let deleting = this.state.deleteApi.isExecuting;
-
         
         let executing = adding || updating || deleting;
         
@@ -351,8 +338,8 @@ class AccountDialog extends Component {
 AccountDialog.propTypes = {
     classes: PropTypes.object.isRequired,
     intent: PropTypes.oneOf([ 'add', 'update' ]).isRequired,
-    onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
     account: PropTypes.object,
     addAccount: PropTypes.func.isRequired,
     deleteAccount: PropTypes.func.isRequired,
