@@ -41,9 +41,9 @@ namespace QCVOC.Api.Security.Data.Repository
 
             var query = builder.AddTemplate(@"
                 INSERT INTO accounts
-                    (id, name, passwordhash, role)
+                    (id, name, passwordhash, role, creationdate, lastupdatedate, lastupdatebyid)
                 VALUES
-                    (@id, @name, @passwordhash, @role);
+                    (@id, @name, @passwordhash, @role, @creationdate, @lastupdatedate, @lastupdatebyid);
             ");
 
             builder.AddParameters(new
@@ -52,6 +52,9 @@ namespace QCVOC.Api.Security.Data.Repository
                 name = account.Name,
                 passwordhash = account.PasswordHash,
                 role = account.Role,
+                creationdate = account.CreationDate,
+                lastupdatedate = account.LastUpdateDate,
+                lastupdatebyid = account.LastUpdateById,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -194,7 +197,9 @@ namespace QCVOC.Api.Security.Data.Repository
                 SET 
                     name = @name,
                     passwordhash = @passwordhash,
-                    role = @role
+                    role = @role,
+                    lastupdatedate = @lastupdatedate,
+                    lastupdatebyid = @lastupdatebyid
                 WHERE id = @id;
             ");
 
@@ -204,6 +209,8 @@ namespace QCVOC.Api.Security.Data.Repository
                 passwordhash = account.PasswordHash,
                 role = account.Role,
                 id = account.Id,
+                lastupdatedate = account.LastUpdateDate,
+                lastupdatebyid = account.LastUpdateById,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
