@@ -34,6 +34,7 @@ namespace QCVOC.Api.Security
             var claims = new Claim[]
             {
                 new Claim(ClaimTypes.Name, account.Name),
+                new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
                 new Claim(ClaimTypes.Role, account.Role.ToString()),
                 new Claim("sub", account.Id.ToString()),
                 new Claim("name", account.Name),

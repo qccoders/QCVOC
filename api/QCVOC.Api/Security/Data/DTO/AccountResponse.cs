@@ -24,6 +24,11 @@ namespace QCVOC.Api.Security.Data.DTO
         public string Name { get; set; }
 
         /// <summary>
+        ///     Gets or sets a value indicating whether a password reset is required.
+        /// </summary>
+        public bool PasswordResetRequired { get; set; }
+
+        /// <summary>
         ///     Gets or sets the Role for the account.
         /// </summary>
         public Role Role { get; set; }

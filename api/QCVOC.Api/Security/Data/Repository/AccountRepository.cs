@@ -41,9 +41,9 @@ namespace QCVOC.Api.Security.Data.Repository
 
             var query = builder.AddTemplate(@"
                 INSERT INTO accounts
-                    (id, name, passwordhash, role, creationdate, lastupdatedate, lastupdatebyid)
+                    (id, name, passwordhash, passwordresetrequired, role, creationdate, lastupdatedate, lastupdatebyid)
                 VALUES
-                    (@id, @name, @passwordhash, @role, @creationdate, @lastupdatedate, @lastupdatebyid);
+                    (@id, @name, @passwordhash, @passwordresetrequired, @role, @creationdate, @lastupdatedate, @lastupdatebyid);
             ");
 
             builder.AddParameters(new
@@ -51,6 +51,7 @@ namespace QCVOC.Api.Security.Data.Repository
                 id = account.Id,
                 name = account.Name,
                 passwordhash = account.PasswordHash,
+                passwordresetrequired = account.PasswordResetRequired,
                 role = account.Role,
                 creationdate = account.CreationDate,
                 lastupdatedate = account.LastUpdateDate,
@@ -120,6 +121,7 @@ namespace QCVOC.Api.Security.Data.Repository
                     a1.id,
                     a1.name,
                     a1.passwordhash,
+                    a1.passwordresetrequired,
                     a1.role,
                     a1.creationdate,
                     a1.lastupdatedate,
@@ -154,6 +156,11 @@ namespace QCVOC.Api.Security.Data.Repository
                 if (accountFilters.Id != null)
                 {
                     builder.Where("a1.id = @id", new { accountFilters.Id });
+                }
+
+                if (accountFilters.PasswordResetRequired != null)
+                {
+                    builder.Where("a1.passwordresetrequired = @passwordresetrequired", new { accountFilters.PasswordResetRequired });
                 }
 
                 if (accountFilters.CreationDateStart != null && accountFilters.CreationDateStart != null)
@@ -197,6 +204,7 @@ namespace QCVOC.Api.Security.Data.Repository
                 SET 
                     name = @name,
                     passwordhash = @passwordhash,
+                    passwordresetrequired = @passwordresetrequired,
                     role = @role,
                     lastupdatedate = @lastupdatedate,
                     lastupdatebyid = @lastupdatebyid
@@ -207,6 +215,7 @@ namespace QCVOC.Api.Security.Data.Repository
             {
                 name = account.Name,
                 passwordhash = account.PasswordHash,
+                passwordresetrequired = account.PasswordResetRequired,
                 role = account.Role,
                 id = account.Id,
                 lastupdatedate = account.LastUpdateDate,

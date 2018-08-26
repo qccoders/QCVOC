@@ -26,6 +26,11 @@ namespace QCVOC.Api.Security
         public string Name { get; set; }
 
         /// <summary>
+        ///     Whether a password reset is required for the Account.
+        /// </summary>
+        public bool? PasswordResetRequired { get; set; }
+
+        /// <summary>
         ///     The Role by which to filter results.
         /// </summary>
         public Role? Role { get; set; }
