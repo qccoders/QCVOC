@@ -11,7 +11,7 @@ import List from '@material-ui/core/List';
 
 import AppBar from './AppBar';
 import Link from './Link';
-import LogoutButton from '../security/LogoutButton';
+import SecurityMenuButton from '../security/SecurityMenuButton';
 import DrawerToggleButton from './DrawerToggleButton';
 
 import Accounts from '../accounts/Accounts';
@@ -86,6 +86,10 @@ class App extends Component {
         });
     }
 
+    handlePasswordReset = () => {
+        console.log('reset password');
+    }
+
     render() {
         let classes = this.props.classes;
 
@@ -97,7 +101,11 @@ class App extends Component {
                             title='QCVOC' 
                             drawerToggleButton={<DrawerToggleButton onToggleClick={this.handleToggleDrawer}/>}
                         >
-                            <LogoutButton credentials={this.state.credentials} onLogout={this.handleLogout}/>
+                            <SecurityMenuButton 
+                                credentials={this.state.credentials} 
+                                onLogout={this.handleLogout}
+                                onPasswordReset={this.handlePasswordReset}
+                            />
                         </AppBar>
                         <Drawer 
                             open={this.state.drawer.open} 
