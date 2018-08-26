@@ -5,6 +5,7 @@ import api from '../api';
 import AccountList from './AccountList';
 import ContentWrapper from '../shared/ContentWrapper';
 import AccountDialog from './AccountDialog';
+import PasswordResetDialog from '../security/PasswordResetDialog';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -36,9 +37,13 @@ class Accounts extends Component {
             isExecuting: false,
             isErrored: false,
         },
-        dialog: {
+        accountDialog: {
             open: false,
             intent: 'add',
+            account: undefined,
+        },
+        passwordResetDialog: {
+            open: false,
             account: undefined,
         },
         snackbar: {
@@ -68,7 +73,7 @@ class Accounts extends Component {
 
     handleAddClick = () => {
         this.setState({ 
-            dialog: {
+            accountDialog: {
                 open: true,
                 intent: 'add',
             },
@@ -77,7 +82,7 @@ class Accounts extends Component {
 
     handleEditClick = (account) => {
         this.setState({
-            dialog: {
+            accountDialog: {
                 open: true,
                 intent: 'update',
                 account: account,
@@ -86,20 +91,35 @@ class Accounts extends Component {
     }
 
     handleResetClick = (account) => {
-        this.editAccount(account);
+        this.setState({
+            passwordResetDialog: {
+                open: true,
+                account: account,
+            },
+        });
     }
 
-    handleDialogClose = (result) => {
-        console.log(result)
+    handleAccountDialogClose = (result) => {
         this.setState({ 
-            dialog: {
-                ...this.state.dialog,
+            accountDialog: {
+                ...this.state.accountDialog,
                 open: false,
             }
         }, () => {
             if (!result) return;
             this.setState({ snackbar: { message: result, open: true }}, () => this.refresh())
-            //this.refresh();
+        })
+    }
+
+    handlePasswordResetDialogClose = (result) => {
+        this.setState({
+            passwordResetDialog: {
+                ...this.state.passwordResetDialog,
+                open: false,
+            }
+        }, () => {
+            if (!result) return;
+            this.setState({ snackbar: { message: result, open: true }});
         })
     }
 
@@ -121,7 +141,7 @@ class Accounts extends Component {
     }
 
     render() {
-        let { accounts, api, dialog } = this.state;
+        let { accounts, api, accountDialog, passwordResetDialog } = this.state;
         let { classes } = this.props;
 
         return (
@@ -147,13 +167,19 @@ class Accounts extends Component {
                     <Add/>
                 </Button>
                 <AccountDialog
-                    open={dialog.open}
-                    intent={dialog.intent} 
-                    onClose={this.handleDialogClose}
+                    open={accountDialog.open}
+                    intent={accountDialog.intent} 
+                    onClose={this.handleAccountDialogClose}
                     addAccount={this.addAccount}
                     updateAccount={this.updateAccount}
                     deleteAccount={this.deleteAccount}
-                    account={dialog.account}
+                    account={accountDialog.account}
+                />
+                <PasswordResetDialog
+                    open={passwordResetDialog.open}
+                    account={passwordResetDialog.account}
+                    onClose={this.handlePasswordResetDialogClose}
+                    updateAccount={this.updateAccount}
                 />
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
