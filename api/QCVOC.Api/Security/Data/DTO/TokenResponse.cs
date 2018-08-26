@@ -45,6 +45,11 @@ namespace QCVOC.Api.Security.Data.DTO
         public DateTime Expires => AccessJwtSecurityToken.ValidTo;
 
         /// <summary>
+        ///     Gets the value of the NameIdentifier claim from the Access Token.
+        /// </summary>
+        public Guid Id => Guid.Parse(AccessJwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).SingleOrDefault().Value);
+
+        /// <summary>
         ///     Gets the time at which the Access Token was issued.
         /// </summary>
         public DateTime Issued => AccessJwtSecurityToken.ValidFrom;
