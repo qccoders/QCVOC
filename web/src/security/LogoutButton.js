@@ -4,8 +4,9 @@ import api from '../api';
 
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Person }  from '@material-ui/icons';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import { Badge } from '@material-ui/core';
 
 const styles = {
     container: {
@@ -13,8 +14,11 @@ const styles = {
         whiteSpace: 'pre',
     },
     caption: {
-        marginRight: 0,
+        marginRight: 10,
         display: 'inline'
+    },
+    margin: {
+        margin: 5,
     },
 }
 
@@ -41,14 +45,21 @@ class LogoutButton extends Component {
     }
 
     render() {
+        let { credentials } = this.props;
+
         return (
             <div style={styles.container}>
-                <Typography color="inherit" style={styles.caption}>Log Out</Typography>
+                <Typography color="inherit" style={styles.caption}>{credentials.name}</Typography>
                 <IconButton
                     color="inherit"
                     onClick={this.handleLogoutClick}
                 >
-                    <ExitToAppIcon/>
+                    {credentials.passwordResetRequired ? 
+                        <Badge style={styles.margin} badgeContent={1} color="secondary">
+                            <Person style={{ fontSize: 30 }}/>
+                        </Badge> :
+                        <Person style={{ fontSize: 30 }}/>
+                    }
                 </IconButton>
                 <ConfirmDialog
                     title={'Confirm Log Out'}
@@ -66,6 +77,7 @@ class LogoutButton extends Component {
 }
 
 LogoutButton.propTypes = {
+    credentials: PropTypes.object.isRequired,
     onLogout: PropTypes.func.isRequired,
 }
 
