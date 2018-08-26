@@ -337,11 +337,6 @@ namespace QCVOC.Api.Security.Controller
                 return BadRequest(ModelState);
             }
 
-            if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
-            {
-                return StatusCode(403, "Accounts may not be promited to Administrative by non-Administrative users.");
-            }
-
             var accountToUpdate = AccountRepository.Get(id);
 
             if (accountToUpdate == default(Account))
@@ -349,29 +344,74 @@ namespace QCVOC.Api.Security.Controller
                 return NotFound();
             }
 
-            if (accountToUpdate.Role == Role.Administrator && account.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+            Account accountRecord;
+
+            // users with the User role may only change their own password
+            if (!User.IsInRole(nameof(Role.Supervisor)) && !User.IsInRole(nameof(Role.Administrator)))
             {
-                return StatusCode(403, "Administrators may not be demoted by non-Administrative users.");
+                if (User.GetId() != id)
+                {
+                    return StatusCode(403, "Users may not modify Accounts for other users.");
+                }
+
+                if (!string.IsNullOrWhiteSpace(account.Name) || account.Role != null)
+                {
+                    return StatusCode(403, "Users may not change their name or Role.");
+                }
+
+                if (string.IsNullOrEmpty(account.Password))
+                {
+                    return BadRequest("Nothing to update.");
+                }
+
+                accountRecord = new Account()
+                {
+                    Id = accountToUpdate.Id,
+                    Name = accountToUpdate.Name,
+                    Role = accountToUpdate.Role,
+                    PasswordHash = Utility.ComputeSHA512Hash(account.Password),
+                    CreationDate = accountToUpdate.CreationDate,
+                    LastUpdateById = accountToUpdate.LastUpdateById, // don't consider this an update
+                    LastUpdateDate = accountToUpdate.LastUpdateDate,
+                };
             }
-
-            var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
-
-            if (conflictingAccounts.Any(a => a.Id != id))
+            else
             {
-                return Conflict($"A user named '{account.Name}' already exists.");
+                if (accountToUpdate.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+                {
+                    return StatusCode(403, "Administrative accounts may not be modified by non-Administrative users.");
+                }
+
+                if (account.Role != null)
+                {
+                    if (account.Role == Role.Administrator && accountToUpdate.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+                    {
+                        return StatusCode(403, "Accounts may not be promoted to Administrative by non-Administrative users.");
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(account.Name))
+                {
+                    var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
+
+                    if (conflictingAccounts.Any(a => a.Id != id))
+                    {
+                        return Conflict($"A user named '{account.Name}' already exists.");
+                    }
+                }
+
+                accountRecord = new Account()
+                {
+                    Id = accountToUpdate.Id,
+                    Name = account.Name ?? accountToUpdate.Name,
+                    Role = account.Role ?? accountToUpdate.Role,
+                    PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
+                        Utility.ComputeSHA512Hash(account.Password),
+                    CreationDate = accountToUpdate.CreationDate,
+                    LastUpdateById = User.GetId(),
+                    LastUpdateDate = DateTime.UtcNow,
+                };
             }
-
-            var accountRecord = new Account()
-            {
-                Id = accountToUpdate.Id,
-                Name = account.Name ?? accountToUpdate.Name,
-                Role = account.Role ?? accountToUpdate.Role,
-                PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
-                    Utility.ComputeSHA512Hash(account.Password),
-                CreationDate = accountToUpdate.CreationDate,
-                LastUpdateById = User.GetId(),
-                LastUpdateDate = DateTime.UtcNow,
-            };
 
             try
             {
@@ -380,7 +420,7 @@ namespace QCVOC.Api.Security.Controller
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error updating account for '{account.Name ?? id.ToString()}': {ex.Message}", ex);
+                throw new Exception($"Error updating account for '{accountToUpdate.Name}': {ex.Message}", ex);
             }
         }
 
@@ -414,7 +454,7 @@ namespace QCVOC.Api.Security.Controller
 
             if (account.Role == Role.Administrator)
             {
-                if (!User.IsInRole(nameof(Role.Administrator))) 
+                if (!User.IsInRole(nameof(Role.Administrator)))
                 {
                     return StatusCode(403, "Administrative accounts may not be deleted by non-Administrative users.");
                 }
