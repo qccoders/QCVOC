@@ -10,14 +10,14 @@ import List from '@material-ui/core/List';
 
 import AppBar from './AppBar';
 import Link from './Link';
-import LogoutButton from './LogoutButton';
+import LogoutButton from '../security/LogoutButton';
 import DrawerToggleButton from './DrawerToggleButton';
 
 import Accounts from '../accounts/Accounts';
 import Patrons from '../patrons/Patrons';
 import Services from '../services/Services';
 import Events from '../events/Events';
-import LoginForm from './LoginForm';
+import LoginForm from '../security/LoginForm';
 
 const styles = {
     root: {
