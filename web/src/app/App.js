@@ -54,14 +54,18 @@ class App extends Component {
         let { credentials } = this.state;
 
         if (credentials) {
-            api.get('/v1/security/accounts/' + credentials.id)
-            .then(response => {
-                this.setState({ credentials: { ...credentials, passwordResetRequired: response.data.passwordResetRequired }});
-            })
-            .catch(error => {
-                console.log(error);
-            });
+            this.getAccountDetails();
         }
+    }
+
+    getAccountDetails = () => {
+        api.get('/v1/security/accounts/' + credentials.id)
+        .then(response => {
+            this.setState({ credentials: { ...credentials, passwordResetRequired: response.data.passwordResetRequired }});
+        })
+        .catch(error => {
+            console.log(error);
+        });
     }
 
     handleToggleDrawer = () => { 
@@ -87,7 +91,7 @@ class App extends Component {
     }
 
     handlePasswordReset = () => {
-        console.log('reset password');
+        this.getAccountDetails();
     }
 
     render() {
