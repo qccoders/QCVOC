@@ -13,6 +13,8 @@ import {
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
+import ConfirmDialog from '../shared/ConfirmDialog';
+import { getCredentials } from '../credentialStore';
 
 const styles = {
     dialog: {
@@ -30,6 +32,7 @@ const initialState = {
     },
     account: {
         id: undefined,
+        name: undefined,
         password: '',
         password2: '',
     },
@@ -41,6 +44,9 @@ const initialState = {
         message: '',
         open: false,
     },
+    confirmDialog: {
+        open: false,
+    }
 }
 
 class PasswordResetDialog extends Component {
@@ -50,7 +56,12 @@ class PasswordResetDialog extends Component {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
                 ...initialState, 
-                account: nextProps.account ? { ...nextProps.account } : { 
+                account: nextProps.account ? { 
+                    id: nextProps.account.id,
+                    name: nextProps.account.name,
+                    password: '',
+                    password2: '',
+                } : { 
                     ...initialState.account, 
                 },
                 validation: initialState.validation,
@@ -75,23 +86,42 @@ class PasswordResetDialog extends Component {
         this.props.onClose();
     }
 
-    handleSaveClick = () => {
+    handleResetClick = () => {
         this.validate().then(result => {
             let account = { ...this.state.account }
             delete account.password2;
 
             if (result.isValid) {
-                this.execute(
-                    () => this.props.updateAccount(account), 
-                    'updateApi', 
-                    'Password for \'' + account.name + '\' successfully updated.'
-                );
+                if (getCredentials().name === account.name) {
+                    this.execute(
+                        () => this.props.updateAccount(account), 
+                        'updateApi', 
+                        'Password for \'' + account.name + '\' successfully updated.'
+                    );
+                }
+                else {
+                    this.setState({ confirmDialog: { open: true }});
+                }
             }
         });
     }
 
+    handleResetConfirmation = () => {
+        let account = { ...this.state.account };
+
+        return this.execute(
+            () => this.props.updateAccount(account), 
+            'updateApi', 
+            'Password for \'' + account.name + '\' successfully updated.'
+        );
+    }
+
     handleSnackbarClose = () => {
         this.setState({ snackbar: { open: false }});
+    }
+
+    handleDialogClose = () => {
+        this.setState({ confirmDialog: { open: false }});
     }
 
     execute = (action, api, successMessage) => {
@@ -129,12 +159,11 @@ class PasswordResetDialog extends Component {
     }
 
     validate = () => {
-        console.log(this.state.account);
         let { password, password2 } = this.state.account;
         let result = { ...initialState.validation };
 
         if (password === '') {
-            result.password = 'The Password field is required.';
+            result.password = 'The New Password field is required.';
         }
 
         if (password2 === '') {
@@ -198,14 +227,27 @@ class PasswordResetDialog extends Component {
                         Cancel
                     </Button>
                     <Button 
-                        onClick={this.handleSaveClick} 
+                        onClick={this.handleResetClick} 
                         color="primary"
                         disabled={executing}
                     >
                         {executing && <CircularProgress size={20} style={styles.spinner}/>}
-                        Save
+                        Reset
                     </Button>
                 </DialogActions>
+                <ConfirmDialog
+                    title={'Confirm Password Reset'}
+                    prompt={'Reset'}
+                    open={this.state.confirmDialog.open}
+                    onConfirm={this.handleResetConfirmation}
+                    onClose={this.handleDialogClose}
+                    suppressCloseOnConfirm
+                >
+                    <div>
+                        <p>Are you sure you want to reset the password for user '{this.state.account.name}'?</p>
+                        <p>The user will be prompted to change their password at the next log in.</p>
+                    </div>
+                </ConfirmDialog>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
                     open={this.state.snackbar.open}
