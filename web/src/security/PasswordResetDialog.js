@@ -50,7 +50,7 @@ class PasswordResetDialog extends Component {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
                 ...initialState, 
-                account: nextProps.account ? { id: nextProps.account.id, password: '', password2: '' } : { 
+                account: nextProps.account ? { ...nextProps.account } : { 
                     ...initialState.account, 
                 },
                 validation: initialState.validation,
@@ -77,11 +77,14 @@ class PasswordResetDialog extends Component {
 
     handleSaveClick = () => {
         this.validate().then(result => {
+            let account = { ...this.state.account }
+            delete account.password2;
+
             if (result.isValid) {
                 this.execute(
-                    () => this.props.updateAccount({ ...this.state.account }), 
+                    () => this.props.updateAccount(account), 
                     'updateApi', 
-                    'Password for \'' + this.state.account.name + '\' successfully updated.'
+                    'Password for \'' + account.name + '\' successfully updated.'
                 );
             }
         });
