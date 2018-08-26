@@ -177,7 +177,6 @@ class AccountDialog extends Component {
     }
 
     validate = () => {
-        console.log(this.state.account)
         let { name, role, password, password2 } = this.state.account;
         let result = { ...initialState.validation };
 
@@ -310,7 +309,7 @@ class AccountDialog extends Component {
                         disabled={executing}
                     >
                         {(adding || updating) && <CircularProgress size={20} style={styles.spinner}/>}
-                        Save
+                        {intent === 'add' ? 'Add' : 'Update'}
                     </Button>
                 </DialogActions>
                 <ConfirmDialog
