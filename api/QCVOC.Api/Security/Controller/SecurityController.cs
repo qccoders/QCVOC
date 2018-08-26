@@ -344,20 +344,22 @@ namespace QCVOC.Api.Security.Controller
                 return NotFound();
             }
 
-            var accountRecord;
+            Account accountRecord;
 
             // users with the User role may only change their own password
-            if (!User.IsInRole(nameof(Role.Supervisor)) && !User.IsInRole(nameof(Role.Administrator))) {
-                if (User.GetId() != id) 
+            if (!User.IsInRole(nameof(Role.Supervisor)) && !User.IsInRole(nameof(Role.Administrator)))
+            {
+                if (User.GetId() != id)
                 {
                     return StatusCode(403, "Users may not modify Accounts for other users.");
                 }
 
-                if (!string.IsNullOrWhiteSpace(account.Name) || account.Role != null) {
+                if (!string.IsNullOrWhiteSpace(account.Name) || account.Role != null)
+                {
                     return StatusCode(403, "Users may not change their name or Role.");
                 }
 
-                if (string.IsNullOrEmpty(account.Password)) 
+                if (string.IsNullOrEmpty(account.Password))
                 {
                     return BadRequest("Nothing to update.");
                 }
@@ -369,24 +371,27 @@ namespace QCVOC.Api.Security.Controller
                     Role = accountToUpdate.Role,
                     PasswordHash = Utility.ComputeSHA512Hash(account.Password),
                     CreationDate = accountToUpdate.CreationDate,
-                    LastUpdateById = accountToUpdate.LastUpdateById, // don't count this as an update
+                    LastUpdateById = accountToUpdate.LastUpdateById, // don't consider this an update
                     LastUpdateDate = accountToUpdate.LastUpdateDate,
                 };
             }
-            else { 
-                if (accountToUpdate.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator))) 
+            else
+            {
+                if (accountToUpdate.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
                 {
                     return StatusCode(403, "Administrative accounts may not be modified by non-Administrative users.");
                 }
 
-                if (account.Role != null) {
-                    if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+                if (account.Role != null)
+                {
+                    if (account.Role == Role.Administrator && accountToUpdate.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
                     {
                         return StatusCode(403, "Accounts may not be promoted to Administrative by non-Administrative users.");
                     }
                 }
 
-                if (!string.IsNullOrWhiteSpace(account.Name)) {
+                if (!string.IsNullOrWhiteSpace(account.Name))
+                {
                     var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
 
                     if (conflictingAccounts.Any(a => a.Id != id))
@@ -415,7 +420,7 @@ namespace QCVOC.Api.Security.Controller
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error updating account for '{account.Name ?? id.ToString()}': {ex.Message}", ex);
+                throw new Exception($"Error updating account for '{accountToUpdate.Name}': {ex.Message}", ex);
             }
         }
 
@@ -449,7 +454,7 @@ namespace QCVOC.Api.Security.Controller
 
             if (account.Role == Role.Administrator)
             {
-                if (!User.IsInRole(nameof(Role.Administrator))) 
+                if (!User.IsInRole(nameof(Role.Administrator)))
                 {
                     return StatusCode(403, "Administrative accounts may not be deleted by non-Administrative users.");
                 }
