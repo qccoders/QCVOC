@@ -79,6 +79,7 @@ class SecurityMenuButton extends Component {
 SecurityMenuButton.propTypes = {
     credentials: PropTypes.object.isRequired,
     onLogout: PropTypes.func.isRequired,
+    onPasswordReset: PropTypes.func.isRequired,
 }
 
 export default SecurityMenuButton; 
