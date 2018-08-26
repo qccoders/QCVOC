@@ -51,14 +51,14 @@ class App extends Component {
     }
 
     componentDidMount = () => {
-        let { credentials } = this.state;
-
-        if (credentials) {
+        if (this.state.credentials) {
             this.getAccountDetails();
         }
     }
 
     getAccountDetails = () => {
+        let { credentials } = this.state;
+
         api.get('/v1/security/accounts/' + credentials.id)
         .then(response => {
             this.setState({ credentials: { ...credentials, passwordResetRequired: response.data.passwordResetRequired }});
