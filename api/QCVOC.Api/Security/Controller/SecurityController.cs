@@ -347,7 +347,7 @@ namespace QCVOC.Api.Security.Controller
 
             Account accountRecord;
 
-            if (User.GetId() != id && !User.IsInRole(nameof(Role.Administrator)))
+            if (User.GetId() == id && !User.IsInRole(nameof(Role.Administrator)))
             {
                 if (!string.IsNullOrWhiteSpace(account.Name) || account.Role != null)
                 {
@@ -423,7 +423,7 @@ namespace QCVOC.Api.Security.Controller
                     Role = account.Role ?? accountToUpdate.Role,
                     PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
                         Utility.ComputeSHA512Hash(account.Password),
-                    PasswordResetRequired = account.Password != null,
+                    PasswordResetRequired = User.GetId() != accountToUpdate.Id && account.Password != null,
                     CreationDate = accountToUpdate.CreationDate,
                     LastUpdateById = User.GetId(),
                     LastUpdateDate = DateTime.UtcNow,
@@ -506,6 +506,7 @@ namespace QCVOC.Api.Security.Controller
                 Id = account.Id,
                 Name = account.Name,
                 Role = account.Role,
+                PasswordResetRequired = account.PasswordResetRequired,
                 CreationDate = account.CreationDate,
                 LastUpdateDate = account.LastUpdateDate,
                 LastUpdateById = account.LastUpdateById,
