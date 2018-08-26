@@ -169,7 +169,7 @@ class PasswordResetDialog extends Component {
                     <TextField
                         style={{marginTop: 0}}
                         id="password"
-                        label="Password"
+                        label="New Password"
                         type="password"
                         error={validation.password !== undefined}
                         helperText={validation.password}
