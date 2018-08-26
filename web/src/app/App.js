@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { getCredentials, saveCredentials, deleteCredentials } from '../credentialStore';
+import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
 import InboxIcon from '@material-ui/icons/Inbox';
@@ -41,11 +42,25 @@ const initialState = {
 class App extends Component {
     state = initialState;
 
-    componentDidMount = () => {
+    componentWillMount = () => {
         let credentials = getCredentials();
+        
+        if (credentials) {
+            this.setState({ credentials: credentials });
+        }
+    }
+
+    componentDidMount = () => {
+        let { credentials } = this.state;
 
         if (credentials) {
-            this.setState({ credentials: getCredentials() });
+            api.get('/v1/security/accounts/' + credentials.id)
+            .then(response => {
+                this.setState({ credentials: { ...credentials, passwordResetRequired: response.data.passwordResetRequired }});
+            })
+            .catch(error => {
+                console.log(error);
+            });
         }
     }
 
@@ -82,7 +97,7 @@ class App extends Component {
                             title='QCVOC' 
                             drawerToggleButton={<DrawerToggleButton onToggleClick={this.handleToggleDrawer}/>}
                         >
-                            <LogoutButton onLogout={this.handleLogout}/>
+                            <LogoutButton credentials={this.state.credentials} onLogout={this.handleLogout}/>
                         </AppBar>
                         <Drawer 
                             open={this.state.drawer.open} 
