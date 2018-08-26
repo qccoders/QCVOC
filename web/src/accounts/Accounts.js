@@ -15,6 +15,8 @@ import {
 } from '@material-ui/core';
 import { Add } from '@material-ui/icons'
 
+import Snackbar from '@material-ui/core/Snackbar';
+
 const styles = {
     fab: {
         margin: 0,
@@ -38,6 +40,10 @@ class Accounts extends Component {
             open: false,
             intent: 'add',
             account: undefined,
+        },
+        snackbar: {
+            message: '',
+            open: false,
         },
     };
 
@@ -84,6 +90,7 @@ class Accounts extends Component {
     }
 
     handleDialogClose = (result) => {
+        console.log(result)
         this.setState({ 
             dialog: {
                 ...this.state.dialog,
@@ -91,14 +98,13 @@ class Accounts extends Component {
             }
         }, () => {
             if (!result) return;
-
-            if (this.state.dialog.intent === 'add') {
-                this.addAccount(result);
-            }
-            else {
-                this.editAccount(result);
-            }
+            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh())
+            //this.refresh();
         })
+    }
+
+    handleSnackbarClose = () => {
+        this.setState({ snackbar: { open: false }});
     }
 
     addAccount = (account) => {
@@ -119,8 +125,16 @@ class Accounts extends Component {
         console.log('edit', account);
     }
 
-    deleteAccount = (account) => {
-        console.log('delete', account);
+    deleteAccount = (id) => {
+        return new Promise((resolve, reject) => {
+            api.delete('/v1/security/accounts/' + id)
+            .then(response => {
+                resolve(response);
+            })
+            .catch(error => {
+                reject(error);
+            })
+        })
     }
 
     render() {
@@ -154,7 +168,15 @@ class Accounts extends Component {
                     intent={dialog.intent} 
                     onClose={this.handleDialogClose}
                     addAccount={this.addAccount}
+                    deleteAccount={this.deleteAccount}
                     account={dialog.account}
+                />
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
+                    open={this.state.snackbar.open}
+                    onClose={this.handleSnackbarClose}
+                    autoHideDuration={3000}
+                    message={<span id="message-id">{this.state.snackbar.message}</span>}
                 />
             </ContentWrapper>
         );
