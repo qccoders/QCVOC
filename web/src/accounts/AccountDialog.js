@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { getGuid } from '../util';
-
 import { withStyles } from '@material-ui/core/styles';
 import { 
     Dialog,
@@ -17,6 +15,11 @@ import {
     MenuItem,
 } from '@material-ui/core';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Snackbar from '@material-ui/core/Snackbar';
+import ConfirmDialog from '../shared/ConfirmDialog';
+
+
 const styles = {
     dialog: {
         width: 320,
@@ -27,11 +30,25 @@ const styles = {
     roleSelect: {
         marginTop: 15,
     },
+    spinner: {
+        position: 'fixed',
+    },
 };
 
 const initialState = {
+    addApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
+    deleteApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
+    updateApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
     account: {
-        id: '',
         name: '',
         role: 'User',
         password: '',
@@ -42,6 +59,13 @@ const initialState = {
         role: undefined,
         password: undefined,
         password2: undefined,
+    },
+    snackbar: {
+        message: '',
+        open: false,
+    },
+    confirmDialog: {
+        open: false,
     },
 }
 
@@ -54,7 +78,6 @@ class AccountDialog extends Component {
                 ...initialState, 
                 account: nextProps.account ? nextProps.account : { 
                     ...initialState.account, 
-                    id: nextProps.id ? nextProps.id : getGuid(),
                 },
                 validation: initialState.validation,
             });
@@ -74,16 +97,83 @@ class AccountDialog extends Component {
         });
     }
 
-    handleCancel = () => {
+    handleCancelClick = () => {
         this.props.onClose();
     }
 
-    handleSave = () => {
+    handleSaveClick = () => {
         this.validate().then(result => {
             if (result.isValid) {
-                this.props.onClose(this.state.account);
+                if (this.props.intent === 'add') {
+                    this.execute(
+                        () => this.props.addAccount({ ...this.state.account }),
+                        'addApi', 
+                        'Account \'' + this.state.account.name + '\' successfully created.'
+                    )
+                }
+                else {
+                    this.execute(
+                        () => this.props.updateAccount({ ...this.state.account }), 
+                        'updateApi', 
+                        'Account \'' + this.state.account.name + '\' successfully updated.'
+                    );
+                }
             }
         });
+    }
+
+    handleDeleteClick = () => {
+        this.setState({ confirmDialog: { open: true }});
+    }
+
+    handleDeleteConfirmation = () => {
+        return this.execute(
+            () => this.props.deleteAccount({ ...this.state.account }), 
+            'deleteApi', 
+            'Account \'' + this.state.account.name + '\' successfully deleted.'
+        );
+    }
+
+    handleDialogClose = (result) => {
+        this.setState({ confirmDialog: { open: false }});
+    }
+
+    handleSnackbarClose = () => {
+        this.setState({ snackbar: { open: false }});
+    }
+
+    execute = (action, api, successMessage) => {
+        return new Promise((resolve, reject) => {
+            this.setState({ [api]: { isExecuting: true }}, () => {
+                action(this.state.account)
+                .then(response => {
+                    this.setState({
+                        [api]: { isExecuting: false, isErrored: false }
+                    }, () => {
+                        this.props.onClose(successMessage);
+                        resolve(response);
+                    })
+                }, error => {
+                    var body = error && error.response && error.response.data ? error.response.data : error;
+
+                    if (typeof(body) !== 'string') {
+                        var keys = Object.keys(body);
+    
+                        if (keys.length > 0) {
+                            body = body[keys[0]];
+                        }
+                    }
+
+                    this.setState({ 
+                        [api]: { isExecuting: false, isErrored: true },
+                        snackbar: {
+                            message: body,
+                            open: true,
+                        },
+                    }, () => reject(error));
+                })
+            })
+        })
     }
 
     validate = () => {
@@ -114,7 +204,7 @@ class AccountDialog extends Component {
 
         return new Promise(resolve => {
             this.setState({ validation: result }, () => {
-                result.isValid = result === initialState.validation;
+                result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });                
         })
@@ -124,6 +214,12 @@ class AccountDialog extends Component {
         let { classes, intent, open } = this.props;
         let { name, role } = this.state.account;
         let validation = this.state.validation;
+
+        let adding = this.state.addApi.isExecuting;
+        let updating = this.state.updateApi.isExecuting;
+        let deleting = this.state.deleteApi.isExecuting;
+        
+        let executing = adding || updating || deleting;
         
         return (
             <Dialog 
@@ -131,7 +227,7 @@ class AccountDialog extends Component {
                 onClose={this.handleCancel}
                 PaperProps={{ className: classes.dialog }}
             >
-                <DialogTitle>{(intent === 'add' ? 'Add' : 'Edit')} Account</DialogTitle>
+                <DialogTitle>{(intent === 'add' ? 'Add' : 'Update')} Account</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
@@ -143,10 +239,12 @@ class AccountDialog extends Component {
                         onChange={(event) => this.handleChange('name', event)}
                         helperText={validation.name}
                         error={validation.name !== undefined}
+                        disabled={executing}
                     />
                     <FormControl 
                         className={classes.roleSelect}
                         fullWidth
+                        disabled={executing}
                     >
                         <InputLabel>Role</InputLabel>
                         <Select
@@ -170,6 +268,7 @@ class AccountDialog extends Component {
                                 helperText={validation.password}
                                 fullWidth
                                 onChange={(event) => this.handleChange('password', event)}
+                                disabled={executing}
                             />
                             <TextField
                                 style={{marginTop: 15}}
@@ -180,15 +279,56 @@ class AccountDialog extends Component {
                                 helperText={validation.password2}
                                 fullWidth
                                 onChange={(event) => this.handleChange('password2', event)}
+                                disabled={executing}
                             />
                         </div>
                     }
                 </DialogContent>
                 <DialogActions>
-                    {intent === 'edit' && <Button onClick={this.handleDelete} color="primary" className={classes.deleteButton}>Delete</Button>}
-                    <Button onClick={this.handleCancel} color="primary">Cancel</Button>
-                    <Button onClick={this.handleSave} color="primary">Save</Button>
+                    {intent === 'update' && 
+                        <Button 
+                            onClick={this.handleDeleteClick} 
+                            color="primary" 
+                            className={classes.deleteButton}
+                            disabled={executing}
+                        >
+                            {deleting && <CircularProgress size={20} style={styles.spinner}/>}
+                            Delete
+                        </Button>
+                    }
+                    <Button 
+                        onClick={this.handleCancelClick}
+                        color="primary"
+                        disabled={executing}
+                    >
+                        Cancel
+                    </Button>
+                    <Button 
+                        onClick={this.handleSaveClick} 
+                        color="primary"
+                        disabled={executing}
+                    >
+                        {(adding || updating) && <CircularProgress size={20} style={styles.spinner}/>}
+                        {intent === 'add' ? 'Add' : 'Update'}
+                    </Button>
                 </DialogActions>
+                <ConfirmDialog
+                    title={'Confirm Account Deletion'}
+                    prompt={'Delete'}
+                    open={this.state.confirmDialog.open}
+                    onConfirm={this.handleDeleteConfirmation}
+                    onClose={this.handleDialogClose}
+                    suppressCloseOnConfirm
+                >
+                    <p>Are you sure you want to delete account '{this.state.account.name}'?</p>
+                </ConfirmDialog>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
+                    open={this.state.snackbar.open}
+                    onClose={this.handleSnackbarClose}
+                    autoHideDuration={3000}
+                    message={<span id="message-id">{this.state.snackbar.message}</span>}
+                />
             </Dialog>
         );
     }
@@ -196,10 +336,13 @@ class AccountDialog extends Component {
 
 AccountDialog.propTypes = {
     classes: PropTypes.object.isRequired,
-    intent: PropTypes.oneOf([ 'add', 'edit' ]).isRequired,
-    onClose: PropTypes.func.isRequired,
+    intent: PropTypes.oneOf([ 'add', 'update' ]).isRequired,
     open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
     account: PropTypes.object,
+    addAccount: PropTypes.func.isRequired,
+    deleteAccount: PropTypes.func.isRequired,
+    updateAccount: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(AccountDialog); 
