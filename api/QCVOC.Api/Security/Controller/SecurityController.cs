@@ -292,6 +292,7 @@ namespace QCVOC.Api.Security.Controller
                 Name = account.Name,
                 Role = account.Role,
                 PasswordHash = Utility.ComputeSHA512Hash(account.Password),
+                PasswordResetRequired = true,
                 CreationDate = DateTime.UtcNow,
                 LastUpdateDate = DateTime.UtcNow,
                 LastUpdateById = User.GetId(),
@@ -322,7 +323,7 @@ namespace QCVOC.Api.Security.Controller
         /// <response code="409">An Account with the specified name aleady exists.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPut("accounts/{id}")]
-        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
+        [Authorize]
         [ProducesResponseType(typeof(AccountResponse), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
@@ -346,22 +347,16 @@ namespace QCVOC.Api.Security.Controller
 
             Account accountRecord;
 
-            // users with the User role may only change their own password
-            if (!User.IsInRole(nameof(Role.Supervisor)) && !User.IsInRole(nameof(Role.Administrator)))
+            if (User.GetId() != id && !User.IsInRole(nameof(Role.Administrator)))
             {
-                if (User.GetId() != id)
-                {
-                    return StatusCode(403, "Users may not modify Accounts for other users.");
-                }
-
                 if (!string.IsNullOrWhiteSpace(account.Name) || account.Role != null)
                 {
-                    return StatusCode(403, "Users may not change their name or Role.");
+                    return StatusCode(403, "Users may not modify their own Account, except to change their password.");
                 }
 
-                if (string.IsNullOrEmpty(account.Password))
+                if (string.IsNullOrWhiteSpace(account.Password))
                 {
-                    return BadRequest("Nothing to update.");
+                    return BadRequest("A password must be specified.");
                 }
 
                 accountRecord = new Account()
@@ -370,26 +365,47 @@ namespace QCVOC.Api.Security.Controller
                     Name = accountToUpdate.Name,
                     Role = accountToUpdate.Role,
                     PasswordHash = Utility.ComputeSHA512Hash(account.Password),
+                    PasswordResetRequired = false,
                     CreationDate = accountToUpdate.CreationDate,
-                    LastUpdateById = accountToUpdate.LastUpdateById, // don't consider this an update
+                    LastUpdateById = accountToUpdate.LastUpdateById,
                     LastUpdateDate = accountToUpdate.LastUpdateDate,
                 };
             }
-            else
+            else if (User.IsInRole(nameof(Role.User)))
             {
-                if (accountToUpdate.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+                return StatusCode(403, "Users may not modify another user's Account.");
+            }
+            else if (User.IsInRole(nameof(Role.Supervisor)))
+            {
+                if (account.Role != null || !string.IsNullOrWhiteSpace(account.Name))
                 {
-                    return StatusCode(403, "Administrative accounts may not be modified by non-Administrative users.");
+                    return StatusCode(403, "Supervisors may not modify user names or Roles.");
                 }
 
-                if (account.Role != null)
+                if (accountToUpdate.Role == Role.Administrator || accountToUpdate.Role == Role.Supervisor)
                 {
-                    if (account.Role == Role.Administrator && accountToUpdate.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
-                    {
-                        return StatusCode(403, "Accounts may not be promoted to Administrative by non-Administrative users.");
-                    }
+                    return StatusCode(403, "Supervisors may not modify administrative or supervisory Accounts.");
                 }
 
+                if (string.IsNullOrWhiteSpace(account.Password))
+                {
+                    return BadRequest("A password must be specified.");
+                }
+
+                accountRecord = new Account()
+                {
+                    Id = accountToUpdate.Id,
+                    Name = accountToUpdate.Name,
+                    Role = accountToUpdate.Role,
+                    PasswordHash = Utility.ComputeSHA512Hash(account.Password),
+                    PasswordResetRequired = true,
+                    CreationDate = accountToUpdate.CreationDate,
+                    LastUpdateById = User.GetId(),
+                    LastUpdateDate = DateTime.UtcNow,
+                };
+            }
+            else if (User.IsInRole(nameof(Role.Administrator)))
+            {
                 if (!string.IsNullOrWhiteSpace(account.Name))
                 {
                     var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
@@ -407,10 +423,15 @@ namespace QCVOC.Api.Security.Controller
                     Role = account.Role ?? accountToUpdate.Role,
                     PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
                         Utility.ComputeSHA512Hash(account.Password),
+                    PasswordResetRequired = account.Password != null,
                     CreationDate = accountToUpdate.CreationDate,
                     LastUpdateById = User.GetId(),
                     LastUpdateDate = DateTime.UtcNow,
                 };
+            }
+            else
+            {
+                return StatusCode(403, "User Role has no rights to perform an Account update.");
             }
 
             try
