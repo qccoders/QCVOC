@@ -126,7 +126,7 @@ namespace QCVOC.Api.Security.Data.Repository
                     COALESCE(a2.name, '(Deleted user)') AS lastupdateby,
                     a1.lastupdatebyid
                 FROM accounts a1
-                LEFT JOIN accounts a2 ON a1.id = a2.id
+                LEFT JOIN accounts a2 ON a1.lastupdatebyid = a2.id
                 /**where**/
                 ORDER BY a1.name {filters.OrderBy.ToString()}
                 LIMIT @limit OFFSET @offset
