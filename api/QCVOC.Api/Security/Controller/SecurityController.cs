@@ -412,16 +412,19 @@ namespace QCVOC.Api.Security.Controller
                 return NotFound();
             }
 
-            if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+            if (account.Role == Role.Administrator)
             {
-                return StatusCode(403, "Administrative accounts may not be deleted by non-Administrative users.");
-            }
+                if (!User.IsInRole(nameof(Role.Administrator))) 
+                {
+                    return StatusCode(403, "Administrative accounts may not be deleted by non-Administrative users.");
+                }
 
-            var accounts = AccountRepository.GetAll(new AccountFilters() { Role = Role.Administrator });
+                var adminAccounts = AccountRepository.GetAll(new AccountFilters() { Role = Role.Administrator });
 
-            if (!accounts.Where(a => a.Id != id).Any())
-            {
-                return Conflict($"At least one administrative account must remain.  Create a new administrative account, then repeat this request to complete deletion.");
+                if (!adminAccounts.Where(a => a.Id != id).Any())
+                {
+                    return Conflict($"At least one administrative account must remain.  Create a new administrative account, then repeat this request to complete deletion.");
+                }
             }
 
             try
