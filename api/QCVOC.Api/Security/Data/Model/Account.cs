@@ -29,6 +29,11 @@ namespace QCVOC.Api.Security.Data.Model
         public string PasswordHash { get; set; }
 
         /// <summary>
+        ///     Gets or sets a value indicating whether a password reset is required.
+        /// </summary>
+        public bool PasswordResetRequired { get; set; }
+
+        /// <summary>
         ///     Gets or sets the Account Role.
         /// </summary>
         public Role Role { get; set; }
@@ -68,7 +73,11 @@ namespace QCVOC.Api.Security.Data.Model
             return this.Id == account.Id
             && this.Name == account.Name
             && this.PasswordHash == account.PasswordHash
-            && this.Role == account.Role;
+            && this.PasswordResetRequired == account.PasswordResetRequired
+            && this.Role == account.Role
+            && this.CreationDate == account.CreationDate
+            && this.LastUpdateDate == account.LastUpdateDate
+            && this.LastUpdateById == account.LastUpdateById;
         }
     }
 }
