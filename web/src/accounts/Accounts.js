@@ -104,15 +104,13 @@ class Accounts extends Component {
     addAccount = (account) => {
         delete account.password2;
 
-        this.setState({ api: { isExecuting: true }}, () => {
+        return new Promise((resolve, reject) => {
             api.post('/v1/security/accounts', account)
             .then(response => {
-                console.log(response);
-                this.setState({ api: { isExecuting: false, isErrored: false }})
+                resolve(response);
             })
             .catch(error => {
-                console.log(error);
-                this.setState({ api: { isExecuting: false, isErrored: true }})
+                reject(error);
             })
         })
     }
@@ -155,6 +153,7 @@ class Accounts extends Component {
                     open={dialog.open}
                     intent={dialog.intent} 
                     onClose={this.handleDialogClose}
+                    addAccount={this.addAccount}
                     account={dialog.account}
                 />
             </ContentWrapper>
