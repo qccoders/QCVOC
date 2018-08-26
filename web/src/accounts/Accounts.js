@@ -79,7 +79,7 @@ class Accounts extends Component {
         this.setState({
             dialog: {
                 open: true,
-                intent: 'edit',
+                intent: 'update',
                 account: account,
             },
         });
@@ -109,32 +109,15 @@ class Accounts extends Component {
 
     addAccount = (account) => {
         delete account.password2;
-
-        return new Promise((resolve, reject) => {
-            api.post('/v1/security/accounts', account)
-            .then(response => {
-                resolve(response);
-            })
-            .catch(error => {
-                reject(error);
-            })
-        })
+        return api.post('/v1/security/accounts', account);
     }
 
-    editAccount = (account) => { 
-        console.log('edit', account);
+    updateAccount = (account) => { 
+        return api.put('/v1/security/accounts/' + account.id, account);
     }
 
-    deleteAccount = (id) => {
-        return new Promise((resolve, reject) => {
-            api.delete('/v1/security/accounts/' + id)
-            .then(response => {
-                resolve(response);
-            })
-            .catch(error => {
-                reject(error);
-            })
-        })
+    deleteAccount = (account) => {
+        return api.delete('/v1/security/accounts/' + account.id);
     }
 
     render() {
@@ -168,6 +151,7 @@ class Accounts extends Component {
                     intent={dialog.intent} 
                     onClose={this.handleDialogClose}
                     addAccount={this.addAccount}
+                    updateAccount={this.updateAccount}
                     deleteAccount={this.deleteAccount}
                     account={dialog.account}
                 />
