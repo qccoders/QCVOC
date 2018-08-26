@@ -15,6 +15,9 @@ import {
     MenuItem,
 } from '@material-ui/core';
 
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Snackbar from '@material-ui/core/Snackbar';
+
 const styles = {
     dialog: {
         width: 320,
@@ -25,9 +28,16 @@ const styles = {
     roleSelect: {
         marginTop: 15,
     },
+    spinner: {
+        position: 'fixed',
+    },
 };
 
 const initialState = {
+    api: {
+        isExecuting: false,
+        isErrored: false,
+    },
     account: {
         name: '',
         role: 'User',
@@ -39,6 +49,10 @@ const initialState = {
         role: undefined,
         password: undefined,
         password2: undefined,
+    },
+    snackbar: {
+        message: '',
+        open: false,
     },
 }
 
@@ -77,7 +91,23 @@ class AccountDialog extends Component {
     handleSave = () => {
         this.validate().then(result => {
             if (result.isValid) {
-                this.props.onClose(this.state.account);
+                this.setState({ api: { isExecuting: true }}, () => {
+                    this.props.addAccount(this.state.account)
+                    .then(response => {
+                        console.log(response);
+                        this.setState({ api: { isExecuting: false, isErrored: false }})
+                    }, error => {
+                        var body = error && error.response && error.response.data ? error.response.data : error;
+
+                        this.setState({ 
+                            api: { isExecuting: false, isErrored: true },
+                            snackbar: {
+                                message: body[Object.keys(body)[0]],
+                                open: true,
+                            },
+                        });
+                    })
+                })
             }
         });
     }
@@ -114,6 +144,10 @@ class AccountDialog extends Component {
                 resolve(result);
             });                
         })
+    }
+
+    handleSnackbarClose = () => {
+        this.setState({ snackbar: { open: false }});
     }
 
     render() {
@@ -183,8 +217,18 @@ class AccountDialog extends Component {
                 <DialogActions>
                     {intent === 'edit' && <Button onClick={this.handleDelete} color="primary" className={classes.deleteButton}>Delete</Button>}
                     <Button onClick={this.handleCancel} color="primary">Cancel</Button>
-                    <Button onClick={this.handleSave} color="primary">Save</Button>
+                    <Button onClick={this.handleSave} color="primary">
+                        {this.state.api.isExecuting && <CircularProgress size={20} style={styles.spinner}/>}
+                        Save
+                    </Button>
                 </DialogActions>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
+                    open={this.state.snackbar.open}
+                    onClose={this.handleSnackbarClose}
+                    autoHideDuration={3000}
+                    message={<span id="message-id">{this.state.snackbar.message}</span>}
+                />
             </Dialog>
         );
     }
@@ -196,6 +240,7 @@ AccountDialog.propTypes = {
     onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     account: PropTypes.object,
+    addAccount: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(AccountDialog); 
