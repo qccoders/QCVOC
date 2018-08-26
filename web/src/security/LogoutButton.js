@@ -55,7 +55,7 @@ class LogoutButton extends Component {
                     onClick={this.handleLogoutClick}
                 >
                     {credentials.passwordResetRequired ? 
-                        <Badge style={styles.margin} badgeContent={1} color="secondary">
+                        <Badge style={styles.margin} badgeContent={'!'} color="secondary">
                             <Person style={{ fontSize: 30 }}/>
                         </Badge> :
                         <Person style={{ fontSize: 30 }}/>
