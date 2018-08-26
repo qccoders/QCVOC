@@ -17,6 +17,8 @@ import {
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
+import ConfirmDialog from '../shared/ConfirmDialog';
+
 
 const styles = {
     dialog: {
@@ -34,11 +36,15 @@ const styles = {
 };
 
 const initialState = {
-    saveApi: {
+    addApi: {
         isExecuting: false,
         isErrored: false,
     },
     deleteApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
+    updateApi: {
         isExecuting: false,
         isErrored: false,
     },
@@ -58,10 +64,15 @@ const initialState = {
         message: '',
         open: false,
     },
+    confirmDialog: {
+        open: false,
+    },
 }
 
 class AccountDialog extends Component {
     state = initialState;
+
+
 
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
@@ -88,59 +99,93 @@ class AccountDialog extends Component {
         });
     }
 
-    handleCancel = () => {
+    handleCancelClick = () => {
         this.props.onClose();
     }
 
-    handleSave = () => {
+    handleSaveClick = () => {
         this.validate().then(result => {
             if (result.isValid) {
-                this.setState({ saveApi: { isExecuting: true }}, () => {
-                    this.props.addAccount(this.state.account)
-                    .then(response => {
-                        var name = response.data.name;
-
-                        this.setState({ 
-                            saveApi: { isExecuting: false, isErrored: false },
-                        }, () => this.props.onClose('Account \'' + name + '\' successfully created.'))
-                    }, error => {
-                        var body = error && error.response && error.response.data ? error.response.data : error;
-
-                        this.setState({ 
-                            saveApi: { isExecuting: false, isErrored: true },
-                            snackbar: {
-                                message: body[Object.keys(body)[0]],
-                                open: true,
-                            },
-                        });
-                    })
-                })
+                if (this.props.intent === 'add') {
+                    this.execute(
+                        () => this.props.addAccount({ ...this.state.account }),
+                        'addApi', 
+                        'Account \'' + this.state.account.name + '\' successfully created.'
+                    )
+                }
+                else {
+                    this.execute(
+                        () => this.props.updateAccount({ ...this.state.account }), 
+                        'updateApi', 
+                        'Account \'' + this.state.account.name + '\' successfully updated.'
+                    );
+                }
             }
         });
     }
 
-    handleDelete = () => {
-        this.setState({ deleteApi: { isExecuting: true }}, () => {
-            this.props.deleteAccount(this.state.account.id)
-            .then(response => {
-                this.setState({
-                    deleteApi: { isExecuting: false, isErrored: false }
-                }, () => this.props.onClose('Account \'' + this.state.account.name + '\' successfully deleted.'))
-            }, error => {
-                var body = error && error.response && error.response.data ? error.response.data : error;
+    handleError = (error, api) => {
+        var body = error && error.response && error.response.data ? error.response.data : error;
+    
+        this.setState({ 
+            [api]: { isExecuting: false, isErrored: true },
+            snackbar: {
+                message: body[Object.keys(body)[0]],
+                open: true,
+            },
+        });
+    }
 
-                this.setState({ 
-                    deleteApi: { isExecuting: false, isErrored: true },
-                    snackbar: {
-                        message: body,
-                        open: true,
-                    },
-                });
+    handleDialogClose = (result) => {
+        this.setState({ confirmDialog: { open: false }});
+    }
+
+    handleDeleteClick = () => {
+        this.setState({ confirmDialog: { open: true }});
+    }
+
+    handleDeleteConfirmation = () => {
+        return this.execute(
+            () => this.props.deleteAccount({ ...this.state.account }), 
+            'deleteApi', 
+            'Account \'' + this.state.account.name + '\' successfully deleted.'
+        );
+    }
+
+    execute = (action, api, successMessage) => {
+        return new Promise((resolve, reject) => {
+            this.setState({ [api]: { isExecuting: true }}, () => {
+                action(this.state.account)
+                .then(response => {
+                    this.setState({
+                        [api]: { isExecuting: false, isErrored: false }
+                    }, () => {
+                        this.props.onClose(successMessage);
+                        resolve(response);
+                    })
+                }, error => {
+                    var body = error && error.response && error.response.data ? error.response.data : error;
+
+                    // var keys = Object.keys(body);
+
+                    // if (keys.length > 0) {
+                    //     body = body[keys[0]];
+                    // }
+    
+                    this.setState({ 
+                        [api]: { isExecuting: false, isErrored: true },
+                        snackbar: {
+                            message: JSON.stringify(body),
+                            open: true,
+                        },
+                    }, () => reject(error));
+                })
             })
         })
     }
 
     validate = () => {
+        console.log(this.state.account)
         let { name, role, password, password2 } = this.state.account;
         let result = { ...initialState.validation };
 
@@ -182,6 +227,13 @@ class AccountDialog extends Component {
         let { classes, intent, open } = this.props;
         let { name, role } = this.state.account;
         let validation = this.state.validation;
+
+        let adding = this.state.addApi.isExecuting;
+        let updating = this.state.updateApi.isExecuting;
+        let deleting = this.state.deleteApi.isExecuting;
+
+        
+        let executing = adding || updating || deleting;
         
         return (
             <Dialog 
@@ -189,7 +241,7 @@ class AccountDialog extends Component {
                 onClose={this.handleCancel}
                 PaperProps={{ className: classes.dialog }}
             >
-                <DialogTitle>{(intent === 'add' ? 'Add' : 'Edit')} Account</DialogTitle>
+                <DialogTitle>{(intent === 'add' ? 'Add' : 'Update')} Account</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
@@ -201,10 +253,12 @@ class AccountDialog extends Component {
                         onChange={(event) => this.handleChange('name', event)}
                         helperText={validation.name}
                         error={validation.name !== undefined}
+                        disabled={executing}
                     />
                     <FormControl 
                         className={classes.roleSelect}
                         fullWidth
+                        disabled={executing}
                     >
                         <InputLabel>Role</InputLabel>
                         <Select
@@ -228,6 +282,7 @@ class AccountDialog extends Component {
                                 helperText={validation.password}
                                 fullWidth
                                 onChange={(event) => this.handleChange('password', event)}
+                                disabled={executing}
                             />
                             <TextField
                                 style={{marginTop: 15}}
@@ -238,27 +293,49 @@ class AccountDialog extends Component {
                                 helperText={validation.password2}
                                 fullWidth
                                 onChange={(event) => this.handleChange('password2', event)}
+                                disabled={executing}
                             />
                         </div>
                     }
                 </DialogContent>
                 <DialogActions>
-                    {intent === 'edit' && 
+                    {intent === 'update' && 
                         <Button 
-                            onClick={this.handleDelete} 
+                            onClick={this.handleDeleteClick} 
                             color="primary" 
                             className={classes.deleteButton}
+                            disabled={executing}
                         >
-                            {this.state.deleteApi.isExecuting && <CircularProgress size={20} style={styles.spinner}/>}
+                            {deleting && <CircularProgress size={20} style={styles.spinner}/>}
                             Delete
                         </Button>
                     }
-                    <Button onClick={this.handleCancel} color="primary">Cancel</Button>
-                    <Button onClick={this.handleSave} color="primary">
-                        {this.state.saveApi.isExecuting && <CircularProgress size={20} style={styles.spinner}/>}
+                    <Button 
+                        onClick={this.handleCancelClick}
+                        color="primary"
+                        disabled={executing}
+                    >
+                        Cancel
+                    </Button>
+                    <Button 
+                        onClick={this.handleSaveClick} 
+                        color="primary"
+                        disabled={executing}
+                    >
+                        {(adding || updating) && <CircularProgress size={20} style={styles.spinner}/>}
                         Save
                     </Button>
                 </DialogActions>
+                <ConfirmDialog
+                    title={'Confirm Account Deletion'}
+                    prompt={'Delete'}
+                    open={this.state.confirmDialog.open}
+                    onConfirm={this.handleDeleteConfirmation}
+                    onClose={this.handleDialogClose}
+                    suppressCloseOnConfirm
+                >
+                    <p>Are you sure you want to delete account '{this.state.account.name}'?</p>
+                </ConfirmDialog>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
                     open={this.state.snackbar.open}
@@ -273,12 +350,13 @@ class AccountDialog extends Component {
 
 AccountDialog.propTypes = {
     classes: PropTypes.object.isRequired,
-    intent: PropTypes.oneOf([ 'add', 'edit' ]).isRequired,
+    intent: PropTypes.oneOf([ 'add', 'update' ]).isRequired,
     onClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     account: PropTypes.object,
     addAccount: PropTypes.func.isRequired,
     deleteAccount: PropTypes.func.isRequired,
+    updateAccount: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(AccountDialog); 
