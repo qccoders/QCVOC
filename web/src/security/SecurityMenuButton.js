@@ -28,7 +28,7 @@ const initialState = {
     },
 };
 
-class LogoutButton extends Component {
+class SecurityMenuButton extends Component {
     state = initialState;
 
     handleLogoutClick = () => {
@@ -76,9 +76,9 @@ class LogoutButton extends Component {
     }
 }
 
-LogoutButton.propTypes = {
+SecurityMenuButton.propTypes = {
     credentials: PropTypes.object.isRequired,
     onLogout: PropTypes.func.isRequired,
 }
 
-export default LogoutButton; 
+export default SecurityMenuButton; 
