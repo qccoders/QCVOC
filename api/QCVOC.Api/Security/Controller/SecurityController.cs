@@ -337,11 +337,6 @@ namespace QCVOC.Api.Security.Controller
                 return BadRequest(ModelState);
             }
 
-            if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
-            {
-                return StatusCode(403, "Accounts may not be promited to Administrative by non-Administrative users.");
-            }
-
             var accountToUpdate = AccountRepository.Get(id);
 
             if (accountToUpdate == default(Account))
@@ -349,16 +344,35 @@ namespace QCVOC.Api.Security.Controller
                 return NotFound();
             }
 
-            if (accountToUpdate.Role == Role.Administrator && account.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
-            {
-                return StatusCode(403, "Administrators may not be demoted by non-Administrative users.");
+            if (account.Role != null) {
+                if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+                {
+                    return StatusCode(403, "Accounts may not be promoted to Administrative by non-Administrative users.");
+                }
+
+                if (accountToUpdate.Role == Role.Administrator && account.Role != Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+                {
+                    return StatusCode(403, "Administrators may not be demoted by non-Administrative users.");
+                }
             }
 
-            var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
+            if (!string.IsNullOrWhiteSpace(account.Name)) {
+                if (accountToUpdate.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator))) 
+                {
+                    return StatusCode(403, "Administrative accounts may not be renamed by non-Administratvie users.");
+                }
 
-            if (conflictingAccounts.Any(a => a.Id != id))
+                var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
+
+                if (conflictingAccounts.Any(a => a.Id != id))
+                {
+                    return Conflict($"A user named '{account.Name}' already exists.");
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(account.Password)) 
             {
-                return Conflict($"A user named '{account.Name}' already exists.");
+
             }
 
             var accountRecord = new Account()
