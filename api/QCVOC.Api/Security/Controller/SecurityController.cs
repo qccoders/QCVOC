@@ -230,7 +230,7 @@ namespace QCVOC.Api.Security.Controller
         /// <response code="404">An Account matching the specified id could not be found.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpGet("accounts/{id}")]
-        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
+        [Authorize]
         [ProducesResponseType(typeof(AccountResponse), 200)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
@@ -238,6 +238,11 @@ namespace QCVOC.Api.Security.Controller
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Get([FromRoute]Guid id)
         {
+            if (User.IsInRole(nameof(Role.User)) && User.GetId() != id)
+            {
+                return StatusCode(403, "Users may not retrieve information for Accounts other than their own.");
+            }
+
             var account = AccountRepository.Get(id);
 
             if (account == default(Account))
