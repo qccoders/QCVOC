@@ -397,7 +397,7 @@ namespace QCVOC.Api.Security.Controller
                     Role = accountToUpdate.Role,
                     PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
                         Utility.ComputeSHA512Hash(account.Password),
-                    PasswordResetRequired = User.GetId() != accountToUpdate.Id && account.Password != null,
+                    PasswordResetRequired = account.Password != null,
                     CreationDate = accountToUpdate.CreationDate,
                     LastUpdateById = User.GetId(),
                     LastUpdateDate = DateTime.UtcNow,
@@ -533,11 +533,21 @@ namespace QCVOC.Api.Security.Controller
 
         private bool AccountNameExists(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+
             return AccountRepository.GetAll(new AccountFilters() { Name = name }).Any();
         }
 
         private bool AccountNameExistsExcludingId(string name, Guid id)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+
             return AccountRepository.GetAll(new AccountFilters() { Name = name }).Any(a => a.Id != id);
         }
     }
