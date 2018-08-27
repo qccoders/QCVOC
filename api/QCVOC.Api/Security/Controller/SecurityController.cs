@@ -279,7 +279,7 @@ namespace QCVOC.Api.Security.Controller
                 return StatusCode(403, "Neither administrative nor supervisory accounts may be created by non-Administrative users.");
             }
 
-            if (AccountNameExists(account.Name)
+            if (AccountNameExists(account.Name))
             {
                 return Conflict($"A user named '{account.Name}' already exists.");
             }
@@ -385,14 +385,9 @@ namespace QCVOC.Api.Security.Controller
                     return StatusCode(403, "Supervisors may not modify administrative or supervisory Accounts.");
                 }
 
-                if (!string.IsNullOrWhiteSpace(account.Name))
+                if (AccountNameExistsExcludingId(account.Name, id))
                 {
-                    var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
-
-                    if (conflictingAccounts.Any(a => a.Id != id))
-                    {
-                        return Conflict($"A user named '{account.Name}' already exists.");
-                    }
+                    return Conflict($"A user named '{account.Name}' already exists.");
                 }
 
                 accountRecord = new Account()
