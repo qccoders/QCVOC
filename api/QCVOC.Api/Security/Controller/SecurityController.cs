@@ -405,14 +405,9 @@ namespace QCVOC.Api.Security.Controller
             }
             else if (User.IsInRole(nameof(Role.Administrator)))
             {
-                if (!string.IsNullOrWhiteSpace(account.Name))
+                if (AccountNameExistsExcludingId(account.Name, id))
                 {
-                    var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
-
-                    if (conflictingAccounts.Any(a => a.Id != id))
-                    {
-                        return Conflict($"A user named '{account.Name}' already exists.");
-                    }
+                    return Conflict($"A user named '{account.Name}' already exists.");
                 }
 
                 accountRecord = new Account()
