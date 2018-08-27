@@ -94,7 +94,7 @@ class PasswordResetDialog extends Component {
             if (result.isValid) {
                 if (getCredentials().name === account.name) {
                     this.execute(
-                        () => this.props.updateAccount(account), 
+                        () => this.props.onReset(account), 
                         'updateApi', 
                         'Password for \'' + account.name + '\' successfully updated.'
                     );
@@ -110,7 +110,7 @@ class PasswordResetDialog extends Component {
         let account = { ...this.state.account };
 
         return this.execute(
-            () => this.props.updateAccount(account), 
+            () => this.props.onReset(account), 
             'updateApi', 
             'Password for \'' + account.name + '\' successfully updated.'
         );
@@ -265,7 +265,7 @@ PasswordResetDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     account: PropTypes.object,
-    updateAccount: PropTypes.func.isRequired,
+    onReset: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(PasswordResetDialog); 

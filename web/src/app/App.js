@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { getCredentials, saveCredentials, deleteCredentials } from '../credentialStore';
+import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
 import InboxIcon from '@material-ui/icons/Inbox';
@@ -10,7 +11,7 @@ import List from '@material-ui/core/List';
 
 import AppBar from './AppBar';
 import Link from './Link';
-import LogoutButton from '../security/LogoutButton';
+import SecurityMenu from '../security/SecurityMenu';
 import DrawerToggleButton from './DrawerToggleButton';
 
 import Accounts from '../accounts/Accounts';
@@ -41,12 +42,30 @@ const initialState = {
 class App extends Component {
     state = initialState;
 
-    componentDidMount = () => {
+    componentWillMount = () => {
         let credentials = getCredentials();
-
+        
         if (credentials) {
-            this.setState({ credentials: getCredentials() });
+            this.setState({ credentials: credentials });
         }
+    }
+
+    componentDidMount = () => {
+        if (this.state.credentials) {
+            this.getAccountDetails();
+        }
+    }
+
+    getAccountDetails = () => {
+        let { credentials } = this.state;
+
+        api.get('/v1/security/accounts/' + credentials.id)
+        .then(response => {
+            this.setState({ credentials: { ...credentials, passwordResetRequired: response.data.passwordResetRequired }});
+        })
+        .catch(error => {
+            console.log(error);
+        });
     }
 
     handleToggleDrawer = () => { 
@@ -71,6 +90,10 @@ class App extends Component {
         });
     }
 
+    handlePasswordReset = () => {
+        this.getAccountDetails();
+    }
+
     render() {
         let classes = this.props.classes;
 
@@ -82,7 +105,11 @@ class App extends Component {
                             title='QCVOC' 
                             drawerToggleButton={<DrawerToggleButton onToggleClick={this.handleToggleDrawer}/>}
                         >
-                            <LogoutButton onLogout={this.handleLogout}/>
+                            <SecurityMenu 
+                                credentials={this.state.credentials} 
+                                onLogout={this.handleLogout}
+                                onPasswordReset={this.handlePasswordReset}
+                            />
                         </AppBar>
                         <Drawer 
                             open={this.state.drawer.open} 

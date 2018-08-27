@@ -201,7 +201,7 @@ class Accounts extends Component {
                     open={passwordResetDialog.open}
                     account={passwordResetDialog.account}
                     onClose={this.handlePasswordResetDialogClose}
-                    updateAccount={this.updateAccount}
+                    onReset={this.updateAccount}
                 />
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
