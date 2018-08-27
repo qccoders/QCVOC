@@ -11,7 +11,7 @@ import List from '@material-ui/core/List';
 
 import AppBar from './AppBar';
 import Link from './Link';
-import SecurityMenuButton from '../security/SecurityMenuButton';
+import SecurityMenu from '../security/SecurityMenu';
 import DrawerToggleButton from './DrawerToggleButton';
 
 import Accounts from '../accounts/Accounts';
@@ -105,7 +105,7 @@ class App extends Component {
                             title='QCVOC' 
                             drawerToggleButton={<DrawerToggleButton onToggleClick={this.handleToggleDrawer}/>}
                         >
-                            <SecurityMenuButton 
+                            <SecurityMenu 
                                 credentials={this.state.credentials} 
                                 onLogout={this.handleLogout}
                                 onPasswordReset={this.handlePasswordReset}
