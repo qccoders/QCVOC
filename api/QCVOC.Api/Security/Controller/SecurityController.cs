@@ -274,9 +274,9 @@ namespace QCVOC.Api.Security.Controller
                 return BadRequest(ModelState);
             }
 
-            if (account.Role == Role.Administrator && !User.IsInRole(nameof(Role.Administrator)))
+            if ((account.Role == Role.Administrator || account.Role == Role.Supervisor) && !User.IsInRole(nameof(Role.Administrator)))
             {
-                return StatusCode(403, "Administrative accounts may not be created by non-Administrative users.");
+                return StatusCode(403, "Neither administrative nor supervisory accounts may be created by non-Administrative users.");
             }
 
             var existingAccount = AccountRepository.GetAll(new AccountFilters() { Name = account.Name }).FirstOrDefault();
