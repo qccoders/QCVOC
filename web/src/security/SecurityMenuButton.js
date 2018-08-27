@@ -4,9 +4,9 @@ import api from '../api';
 
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { Person }  from '@material-ui/icons';
+import { Person, LockOpen, ExitToApp }  from '@material-ui/icons';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { Badge } from '@material-ui/core';
+import { Badge, Menu, MenuItem, Divider, ListItemIcon, ListItemText } from '@material-ui/core';
 
 const styles = {
     container: {
@@ -24,6 +24,10 @@ const styles = {
 
 const initialState = {
     confirmDialog: {
+        open: false,
+    },
+    menu: {
+        anchorEl: undefined,
         open: false,
     },
 };
@@ -44,15 +48,28 @@ class SecurityMenuButton extends Component {
         this.setState({ confirmDialog: { open: false }});
     }
 
+    handleMenuClick = (event) => {
+        this.setState({ menu: { anchorEl: event.currentTarget, open: true }});
+    }
+
+    handleMenuClose = () => {
+        this.setState({ menu: { open: false }});
+    }
+
+    handleResetPasswordClick = () => {
+
+    }
+
     render() {
         let { credentials } = this.props;
+        let { menu } = this.state;
 
         return (
             <div style={styles.container}>
                 <Typography color="inherit" style={styles.caption}>{credentials.name}</Typography>
                 <IconButton
                     color="inherit"
-                    onClick={this.handleLogoutClick}
+                    onClick={this.handleMenuClick}
                 >
                     {credentials.passwordResetRequired ? 
                         <Badge style={styles.margin} badgeContent={'!'} color="secondary">
@@ -61,6 +78,29 @@ class SecurityMenuButton extends Component {
                         <Person style={{ fontSize: 30 }}/>
                     }
                 </IconButton>
+                <Menu
+                    open={menu.open}
+                    anchorEl={menu.anchorEl}
+                    onClose={this.handleMenuClose}
+                    style={{marginTop: 40}}
+                >
+                    <MenuItem onClick={this.handleResetPasswordClick}>
+                        <ListItemIcon>
+                            <LockOpen/>
+                        </ListItemIcon>
+                        <ListItemText>
+                            Reset Password
+                        </ListItemText>
+                    </MenuItem>
+                    <MenuItem onClick={this.handleLogoutClick}>
+                        <ListItemIcon>
+                            <ExitToApp/>
+                        </ListItemIcon>
+                        <ListItemText>
+                            Log Out
+                        </ListItemText>
+                    </MenuItem>
+                </Menu>
                 <ConfirmDialog
                     title={'Confirm Log Out'}
                     prompt={'Log Out'}
