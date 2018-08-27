@@ -377,9 +377,9 @@ namespace QCVOC.Api.Security.Controller
             }
             else if (User.IsInRole(nameof(Role.Supervisor)))
             {
-                if (account.Role != null || !string.IsNullOrWhiteSpace(account.Name))
+                if (account.Role != null)
                 {
-                    return StatusCode(403, "Supervisors may not modify user names or Roles.");
+                    return StatusCode(403, "Supervisors may not modify user Roles.");
                 }
 
                 if (accountToUpdate.Role == Role.Administrator || accountToUpdate.Role == Role.Supervisor)
@@ -387,9 +387,14 @@ namespace QCVOC.Api.Security.Controller
                     return StatusCode(403, "Supervisors may not modify administrative or supervisory Accounts.");
                 }
 
-                if (string.IsNullOrWhiteSpace(account.Password))
+                if (!string.IsNullOrWhiteSpace(account.Name))
                 {
-                    return BadRequest("A password must be specified.");
+                    var conflictingAccounts = AccountRepository.GetAll(new AccountFilters() { Name = account.Name });
+
+                    if (conflictingAccounts.Any(a => a.Id != id))
+                    {
+                        return Conflict($"A user named '{account.Name}' already exists.");
+                    }
                 }
 
                 accountRecord = new Account()
@@ -397,8 +402,9 @@ namespace QCVOC.Api.Security.Controller
                     Id = accountToUpdate.Id,
                     Name = accountToUpdate.Name,
                     Role = accountToUpdate.Role,
-                    PasswordHash = Utility.ComputeSHA512Hash(account.Password),
-                    PasswordResetRequired = true,
+                    PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
+                        Utility.ComputeSHA512Hash(account.Password),
+                    PasswordResetRequired = User.GetId() != accountToUpdate.Id && account.Password != null,
                     CreationDate = accountToUpdate.CreationDate,
                     LastUpdateById = User.GetId(),
                     LastUpdateDate = DateTime.UtcNow,
@@ -530,6 +536,11 @@ namespace QCVOC.Api.Security.Controller
             {
                 RefreshTokenRepository.Delete(record.Id);
             }
+        }
+
+        private bool AccountNameExistsExcludingId(string name, Guid id)
+        {
+            return AccountRepository.GetAll(new AccountFilters() { Name = name }).Any(a => a.Id != id);
         }
     }
 }
