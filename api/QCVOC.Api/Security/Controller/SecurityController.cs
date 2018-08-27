@@ -279,9 +279,7 @@ namespace QCVOC.Api.Security.Controller
                 return StatusCode(403, "Neither administrative nor supervisory accounts may be created by non-Administrative users.");
             }
 
-            var existingAccount = AccountRepository.GetAll(new AccountFilters() { Name = account.Name }).FirstOrDefault();
-
-            if (existingAccount != default(Account))
+            if (AccountNameExists(account.Name)
             {
                 return Conflict($"A user named '{account.Name}' already exists.");
             }
