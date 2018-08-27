@@ -17,8 +17,11 @@ const styles = {
         marginRight: 10,
         display: 'inline'
     },
-    margin: {
-        margin: 5,
+    icon: {
+        fontSize: 30,
+    },
+    menu: {
+        marginTop: 40,
     },
 }
 
@@ -36,12 +39,19 @@ class SecurityMenuButton extends Component {
     state = initialState;
 
     handleLogoutClick = () => {
-        this.setState({ confirmDialog: { open: true }});
+        this.setState({ 
+            menu: { open: false },
+            confirmDialog: { open: true }
+        });
     }
 
     handleLogout = () => {
         return api.post('v1/security/logout')
         .then(() => this.props.onLogout());
+    }
+
+    handleResetPassword = () => {
+        
     }
 
     handleDialogClose = (result) => {
@@ -72,21 +82,23 @@ class SecurityMenuButton extends Component {
                     onClick={this.handleMenuClick}
                 >
                     {credentials.passwordResetRequired ? 
-                        <Badge style={styles.margin} badgeContent={'!'} color="secondary">
-                            <Person style={{ fontSize: 30 }}/>
+                        <Badge badgeContent={'!'} color="secondary">
+                            <Person style={styles.icon}/>
                         </Badge> :
-                        <Person style={{ fontSize: 30 }}/>
+                        <Person style={styles.icon}/>
                     }
                 </IconButton>
                 <Menu
                     open={menu.open}
                     anchorEl={menu.anchorEl}
                     onClose={this.handleMenuClose}
-                    style={{marginTop: 40}}
+                    style={styles.menu}
                 >
                     <MenuItem onClick={this.handleResetPasswordClick}>
                         <ListItemIcon>
-                            <LockOpen/>
+                            <Badge badgeContent={'!'} color="secondary">
+                                <LockOpen/>
+                            </Badge>
                         </ListItemIcon>
                         <ListItemText>
                             Reset Password
