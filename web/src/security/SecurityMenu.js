@@ -6,7 +6,8 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { Person, LockOpen, ExitToApp }  from '@material-ui/icons';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { Badge, Menu, MenuItem, Divider, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Badge, Menu, MenuItem, Snackbar, ListItemIcon, ListItemText } from '@material-ui/core';
+import PasswordResetDialog from '../security/PasswordResetDialog';
 
 const styles = {
     container: {
@@ -29,14 +30,36 @@ const initialState = {
     confirmDialog: {
         open: false,
     },
+    passwordResetDialog: {
+        open: false,
+        account: undefined,
+    },
     menu: {
         anchorEl: undefined,
         open: false,
     },
+    snackbar: {
+        open: false,
+        message: undefined,
+    },
 };
 
-class SecurityMenuButton extends Component {
+class SecurityMenu extends Component {
     state = initialState;
+
+    logout = () => {
+        return api.post('v1/security/logout')
+        .then(() => this.props.onLogout());
+    }
+
+    resetPassword = (account) => {
+        return api.put('v1/security/accounts/' + account.id, account)
+        .then(() => this.props.onPasswordReset());
+    }
+
+    handleMenuClick = (event) => {
+        this.setState({ menu: { anchorEl: event.currentTarget, open: true }});
+    }
 
     handleLogoutClick = () => {
         this.setState({ 
@@ -45,34 +68,41 @@ class SecurityMenuButton extends Component {
         });
     }
 
-    handleLogout = () => {
-        return api.post('v1/security/logout')
-        .then(() => this.props.onLogout());
-    }
-
-    handleResetPassword = () => {
-        
-    }
-
-    handleDialogClose = (result) => {
-        this.setState({ confirmDialog: { open: false }});
-    }
-
-    handleMenuClick = (event) => {
-        this.setState({ menu: { anchorEl: event.currentTarget, open: true }});
+    handleResetPasswordClick = () => {
+        this.setState({ 
+            menu: { open: false },
+            passwordResetDialog: { 
+                open: true, 
+                account: { id: this.props.credentials.id, name: this.props.credentials.name }
+            }
+        });
     }
 
     handleMenuClose = () => {
         this.setState({ menu: { open: false }});
     }
 
-    handleResetPasswordClick = () => {
+    handleConfirmDialogClose = (result) => {
+        this.setState({ confirmDialog: { open: false }});
+    }
 
+    handleSnackbarClose = () => {
+        this.setState({ snackbar: { open: false }});
+    }
+
+    handlePasswordResetDialogClose = (result) => {
+        this.setState({
+            passwordResetDialog: { open: false },
+        });
+
+        if (result) { 
+            this.setState({ snackbar: { message: result, open: true }});
+        }
     }
 
     render() {
         let { credentials } = this.props;
-        let { menu } = this.state;
+        let { menu, passwordResetDialog } = this.state;
 
         return (
             <div style={styles.container}>
@@ -96,9 +126,12 @@ class SecurityMenuButton extends Component {
                 >
                     <MenuItem onClick={this.handleResetPasswordClick}>
                         <ListItemIcon>
-                            <Badge badgeContent={'!'} color="secondary">
+                            {credentials.passwordResetRequired ? 
+                                <Badge badgeContent={'!'} color="secondary">
+                                    <LockOpen/>
+                                </Badge> :
                                 <LockOpen/>
-                            </Badge>
+                            }
                         </ListItemIcon>
                         <ListItemText>
                             Reset Password
@@ -117,21 +150,34 @@ class SecurityMenuButton extends Component {
                     title={'Confirm Log Out'}
                     prompt={'Log Out'}
                     open={this.state.confirmDialog.open}
-                    onConfirm={this.handleLogout}
-                    onClose={this.handleDialogClose}
+                    onConfirm={this.logout}
+                    onClose={this.handleConfirmDialogClose}
                     suppressCloseOnConfirm
                 >
                     <p>Are you sure you want to log out?</p>
                 </ConfirmDialog>
+                <PasswordResetDialog
+                    open={passwordResetDialog.open}
+                    account={passwordResetDialog.account}
+                    onClose={this.handlePasswordResetDialogClose}
+                    onReset={this.resetPassword}
+                />
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
+                    open={this.state.snackbar.open}
+                    onClose={this.handleSnackbarClose}
+                    autoHideDuration={3000}
+                    message={<span id="message-id">{this.state.snackbar.message}</span>}
+                />
             </div>
         );
     }
 }
 
-SecurityMenuButton.propTypes = {
+SecurityMenu.propTypes = {
     credentials: PropTypes.object.isRequired,
     onLogout: PropTypes.func.isRequired,
     onPasswordReset: PropTypes.func.isRequired,
 }
 
-export default SecurityMenuButton; 
+export default SecurityMenu; 
