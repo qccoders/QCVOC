@@ -538,7 +538,12 @@ namespace QCVOC.Api.Security.Controller
             }
         }
 
-        private bool AccountNameExistsExcludingId(string name, Guid id) 
+        private bool AccountNameExists(string name)
+        {
+            return AccountRepository.GetAll(new AccountFilters() { Name = name }).Any();
+        }
+
+        private bool AccountNameExistsExcludingId(string name, Guid id)
         {
             return AccountRepository.GetAll(new AccountFilters() { Name = name }).Any(a => a.Id != id);
         }
