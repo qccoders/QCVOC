@@ -1,3 +1,8 @@
+/*
+    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    in the project root for full license information.
+*/
+
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
