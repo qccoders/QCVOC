@@ -8,6 +8,7 @@ import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
 import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
+import PatronList from './PatronList';
 
 const styles = {
     fab: {
@@ -80,9 +81,13 @@ class Patrons extends Component {
         this.setState({ snackbar: { open: false }});
     }
 
+    handleEditClick = () => {
+
+    }
+
     render() {
         let { classes } = this.props;
-        let { loadApi, refreshApi, snackbar } = this.state;
+        let { patrons, loadApi, refreshApi, snackbar } = this.state;
 
         return (
             <div>
@@ -94,7 +99,10 @@ class Patrons extends Component {
                             </Typography>
                             {refreshApi.isExecuting ? 
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
-                                <p>Patron list goes here</p>
+                                <PatronList
+                                    patrons={patrons}
+                                    onItemClick={this.handleEditClick}
+                                />
                             }
                         </CardContent>
                     </Card>
