@@ -21,6 +21,8 @@ const styles = {
     },
     card: {
         minHeight: 125,
+        maxWidth: 800,
+        margin: 'auto',
     },
     refreshSpinner: {
         position: 'fixed',
@@ -85,8 +87,8 @@ class Patrons extends Component {
         return (
             <div>
                 <ContentWrapper api={loadApi}>
-                    <Card>
-                        <CardContent className={classes.card}>
+                    <Card className={classes.card}>
+                        <CardContent>
                             <Typography gutterBottom variant="headline" componet="h2">
                                 Patrons
                             </Typography>
