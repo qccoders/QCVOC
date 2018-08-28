@@ -233,7 +233,7 @@ namespace QCVOC.Api.Security.Controller
         [Authorize]
         [ProducesResponseType(typeof(AccountResponse), 200)]
         [ProducesResponseType(401)]
-        [ProducesResponseType(403)]
+        [ProducesResponseType(typeof(string), 403)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Get([FromRoute]Guid id)
