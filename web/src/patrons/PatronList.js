@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { sortByProp } from '../util';
 
-import { List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, IconButton } from '@material-ui/core';
-import { Person, Star, SupervisorAccount, LockOpen } from '@material-ui/icons'
+import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Person } from '@material-ui/icons'
 
 const PatronList = (props) => {
     let { patrons, onItemClick } = props;
