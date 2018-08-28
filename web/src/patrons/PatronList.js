@@ -5,40 +5,24 @@ import { sortByProp } from '../util';
 import { List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, IconButton } from '@material-ui/core';
 import { Person, Star, SupervisorAccount, LockOpen } from '@material-ui/icons'
 
-const getUserIcon = (role) => {
-    switch (role) {
-        case 'Administrator':
-            return <Star/>;
-        case 'Supervisor':
-            return <SupervisorAccount/>;
-        default:
-            return <Person/>;
-    }
-}
-
 const PatronList = (props) => {
-    let { accounts, onItemClick, onItemResetClick } = props;
+    let { patrons, onItemClick } = props;
 
     return (
         <List>
-            {accounts.sort(sortByProp('name')).map(a => 
+            {patrons.sort(sortByProp('firstName')).map(p => 
                 <ListItem 
-                    key={a.id}
+                    key={p.id}
                     button
-                    onClick={() => onItemClick(a)}
+                    onClick={() => onItemClick(p)}
                 >
                     <ListItemIcon>
-                        {getUserIcon(a.role)}
+                        <Person/>
                     </ListItemIcon>
                     <ListItemText
-                        primary={a.name}
-                        secondary={a.role}
+                        primary={p.firstName + ' ' + p.lastName}
+                        secondary={p.address}
                     />
-                    <ListItemSecondaryAction>
-                        <IconButton onClick={() => onItemResetClick(a)}>
-                            <LockOpen/>
-                        </IconButton>
-                    </ListItemSecondaryAction>
                 </ListItem>
             )}
         </List>
@@ -46,7 +30,7 @@ const PatronList = (props) => {
 }
 
 PatronList.propTypes = {
-    accounts: PropTypes.array.isRequired,
+    patrons: PropTypes.array.isRequired,
     onItemClick: PropTypes.func.isRequired,
 };
 
