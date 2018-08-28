@@ -1,3 +1,8 @@
+/*
+    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    in the project root for full license information.
+*/
+
 import axios from 'axios';
 import { getCredentials, saveCredentials, deleteCredentials } from './credentialStore';
 import { API_ROOT } from './constants';
