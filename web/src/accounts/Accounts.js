@@ -169,45 +169,47 @@ class Accounts extends Component {
         let { classes } = this.props;
 
         return (
-            <ContentWrapper api={loadApi}>
-                <Card>
-                    <CardContent className={classes.card}>
-                        <Typography gutterBottom variant="headline" component="h2">
-                            Accounts
-                        </Typography>
-                        {refreshApi.isExecuting ? 
-                            <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
-                            <AccountList 
-                                accounts={accounts} 
-                                onItemClick={this.handleEditClick} 
-                                onItemResetClick={this.handleResetClick}
-                            />
-                        }
-                    </CardContent>
-                </Card>
-                <Button 
-                    variant="fab" 
-                    color="secondary" 
-                    className={classes.fab}
-                    onClick={this.handleAddClick}
-                >
-                    <Add/>
-                </Button>
-                <AccountDialog
-                    open={accountDialog.open}
-                    intent={accountDialog.intent} 
-                    onClose={this.handleAccountDialogClose}
-                    addAccount={this.addAccount}
-                    updateAccount={this.updateAccount}
-                    deleteAccount={this.deleteAccount}
-                    account={accountDialog.account}
-                />
-                <PasswordResetDialog
-                    open={passwordResetDialog.open}
-                    account={passwordResetDialog.account}
-                    onClose={this.handlePasswordResetDialogClose}
-                    onReset={this.updateAccount}
-                />
+            <div>
+                <ContentWrapper api={loadApi}>
+                    <Card>
+                        <CardContent className={classes.card}>
+                            <Typography gutterBottom variant="headline" component="h2">
+                                Accounts
+                            </Typography>
+                            {refreshApi.isExecuting ? 
+                                <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
+                                <AccountList 
+                                    accounts={accounts} 
+                                    onItemClick={this.handleEditClick} 
+                                    onItemResetClick={this.handleResetClick}
+                                />
+                            }
+                        </CardContent>
+                    </Card>
+                    <Button 
+                        variant="fab" 
+                        color="secondary" 
+                        className={classes.fab}
+                        onClick={this.handleAddClick}
+                    >
+                        <Add/>
+                    </Button>
+                    <AccountDialog
+                        open={accountDialog.open}
+                        intent={accountDialog.intent} 
+                        onClose={this.handleAccountDialogClose}
+                        addAccount={this.addAccount}
+                        updateAccount={this.updateAccount}
+                        deleteAccount={this.deleteAccount}
+                        account={accountDialog.account}
+                    />
+                    <PasswordResetDialog
+                        open={passwordResetDialog.open}
+                        account={passwordResetDialog.account}
+                        onClose={this.handlePasswordResetDialogClose}
+                        onReset={this.updateAccount}
+                    />
+                </ContentWrapper>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
                     open={this.state.snackbar.open}
@@ -215,7 +217,7 @@ class Accounts extends Component {
                     autoHideDuration={3000}
                     message={<span id="message-id">{this.state.snackbar.message}</span>}
                 />
-            </ContentWrapper>
+            </div>            
         );
     }
 }
