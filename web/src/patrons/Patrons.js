@@ -62,11 +62,10 @@ class Patrons extends Component {
                     [apiType]: { isExecuting: false, isErrored: false },
                 });
             }, error => {
-                console.log(JSON.stringify(error.response.data.Message))
                 this.setState({ 
                     [apiType]: { isExecuting: false, isErrored: true },
                     snackbar: { message: error.response.data.Message, open: true },
-                }, () => console.log(this.state));
+                });
             });
         })
     }
@@ -83,7 +82,6 @@ class Patrons extends Component {
         let { classes } = this.props;
         let { loadApi, refreshApi, snackbar } = this.state;
 
-        console.log(snackbar)
         return (
             <div>
                 <ContentWrapper api={loadApi}>
