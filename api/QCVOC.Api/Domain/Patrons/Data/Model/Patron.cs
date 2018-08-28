@@ -33,6 +33,11 @@ namespace QCVOC.Api.Domain.Patrons.Data.Model
         public string FirstName { get; set; }
 
         /// <summary>
+        ///     Gets the full name of the Patron.
+        /// </summary>
+        public string FullName => FirstName + " " + LastName;
+
+        /// <summary>
         ///     Gets or sets the id of the Patron.
         /// </summary>
         public Guid Id { get; set; }
