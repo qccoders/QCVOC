@@ -6,7 +6,8 @@ import { withStyles } from '@material-ui/core/styles';
 
 import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
-import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
+import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
+import { Add } from '@material-ui/icons';
 
 const styles = {
     fab: {
@@ -70,6 +71,10 @@ class Patrons extends Component {
         })
     }
 
+    handleAddClick = () => {
+
+    }
+
     handleSnackbarClose = () => {
         this.setState({ snackbar: { open: false }});
     }
@@ -93,6 +98,14 @@ class Patrons extends Component {
                             }
                         </CardContent>
                     </Card>
+                    <Button 
+                        variant="fab" 
+                        color="secondary" 
+                        className={classes.fab}
+                        onClick={this.handleAddClick}
+                    >
+                        <Add/>
+                    </Button>
                 </ContentWrapper>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
