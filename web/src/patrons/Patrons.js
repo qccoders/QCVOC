@@ -10,6 +10,8 @@ import { Card, CardContent, Typography, CircularProgress, Button, Paper, TextFie
 import { Add, Search } from '@material-ui/icons';
 import PatronList from './PatronList';
 
+import { sortByProp } from '../util';
+
 const styles = {
     fab: {
         margin: 0,
@@ -38,6 +40,8 @@ const styles = {
     },
 };
 
+const showCount = 7;
+
 class Patrons extends Component {
     state = {
         patrons: [],
@@ -54,7 +58,7 @@ class Patrons extends Component {
             open: false,
         },
         filter: '',
-        show: 10,
+        show: showCount,
     }
 
     componentWillMount = () => {
@@ -63,7 +67,7 @@ class Patrons extends Component {
 
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            api.get('/v1/patrons')
+            api.get('/v1/patrons?offset=0&limit=5000&orderBy=ASC')
             .then(response => {
                 this.setState({ 
                     patrons: response.data,
@@ -91,11 +95,14 @@ class Patrons extends Component {
     }
 
     handleSearchChange = (event) => {
-        this.setState({ filter: event.target.value });
+        this.setState({ 
+            filter: event.target.value,
+            show: showCount, 
+        });
     }
 
     handleShowMoreClick = () => {
-        this.setState({ show: this.state.show + 10 });
+        this.setState({ show: this.state.show + showCount });
     }
 
     render() {
@@ -103,7 +110,10 @@ class Patrons extends Component {
         let { patrons, loadApi, refreshApi, snackbar, show } = this.state;
 
         let list = patrons
+            .sort(sortByProp('firstName'))
             .filter(p => p.fullName.toLowerCase().includes(this.state.filter.toLowerCase()));
+
+        let shownList = list.slice(0, this.state.show);
 
         return (
             <div>
@@ -129,7 +139,7 @@ class Patrons extends Component {
                             {refreshApi.isExecuting ? 
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <PatronList
-                                    patrons={list}
+                                    patrons={shownList}
                                     onItemClick={this.handleEditClick}
                                 />
                             }
