@@ -6,8 +6,8 @@ import { withStyles } from '@material-ui/core/styles';
 
 import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
-import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
+import { Card, CardContent, Typography, CircularProgress, Button, Paper, TextField, Divider, InputAdornment } from '@material-ui/core';
+import { Add, Search } from '@material-ui/icons';
 import PatronList from './PatronList';
 
 const styles = {
@@ -33,6 +33,9 @@ const styles = {
         marginRight: 'auto',
         marginTop: 25,
     },
+    search: {
+        width: '100%'
+    },
 };
 
 class Patrons extends Component {
@@ -50,6 +53,7 @@ class Patrons extends Component {
             message: '',
             open: false,
         },
+        filter: '',
     }
 
     componentWillMount = () => {
@@ -85,6 +89,10 @@ class Patrons extends Component {
 
     }
 
+    handleSearchChange = (event) => {
+        this.setState({ filter: event.target.value });
+    }
+
     render() {
         let { classes } = this.props;
         let { patrons, loadApi, refreshApi, snackbar } = this.state;
@@ -97,10 +105,23 @@ class Patrons extends Component {
                             <Typography gutterBottom variant="headline" componet="h2">
                                 Patrons
                             </Typography>
+                            <TextField
+                                type="search"
+                                className={classes.search}
+                                margin="normal"
+                                onChange={this.handleSearchChange}
+                                InputProps={{
+                                    startAdornment: (
+                                      <InputAdornment position="start">
+                                        <Search />
+                                      </InputAdornment>
+                                    ),
+                                  }}
+                            />
                             {refreshApi.isExecuting ? 
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <PatronList
-                                    patrons={patrons}
+                                    patrons={patrons.filter(p => p.fullName.includes(this.state.filter))}
                                     onItemClick={this.handleEditClick}
                                 />
                             }
