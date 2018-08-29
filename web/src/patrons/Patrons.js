@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
-import { Card, CardContent, Typography, CircularProgress, Button, Paper, TextField, Divider, InputAdornment } from '@material-ui/core';
+import { Card, CardContent, Typography, CircularProgress, Button, TextField, InputAdornment } from '@material-ui/core';
 import { Add, Search } from '@material-ui/icons';
 import PatronList from './PatronList';
 
