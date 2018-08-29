@@ -56,7 +56,7 @@ class App extends Component {
     }
 
     componentDidMount = () => {
-        if (this.state.credentials) {
+        if (this.state.credentials.accessToken) {
             this.getAccountDetails();
         }
     }
