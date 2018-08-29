@@ -36,8 +36,12 @@ const styles = {
         marginTop: 25,
     },
     search: {
-        width: '100%'
+        width: '100%',
     },
+    searchInput: {
+        marginLeft: 25,
+        marginRight: 25,
+    }
 };
 
 const showCount = 7;
@@ -134,6 +138,7 @@ class Patrons extends Component {
                                         <Search />
                                       </InputAdornment>
                                     ),
+                                    style: styles.searchInput,
                                   }}
                             />
                             {refreshApi.isExecuting ? 
