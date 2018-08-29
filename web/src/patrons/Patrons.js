@@ -6,9 +6,11 @@ import { withStyles } from '@material-ui/core/styles';
 
 import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
-import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
+import { Card, CardContent, Typography, CircularProgress, Button, TextField, InputAdornment } from '@material-ui/core';
+import { Add, Search } from '@material-ui/icons';
 import PatronList from './PatronList';
+
+import { sortByProp } from '../util';
 
 const styles = {
     fab: {
@@ -33,7 +35,16 @@ const styles = {
         marginRight: 'auto',
         marginTop: 25,
     },
+    search: {
+        width: '100%',
+    },
+    searchInput: {
+        marginLeft: 25,
+        marginRight: 25,
+    }
 };
+
+const showCount = 7;
 
 class Patrons extends Component {
     state = {
@@ -50,6 +61,8 @@ class Patrons extends Component {
             message: '',
             open: false,
         },
+        filter: '',
+        show: showCount,
     }
 
     componentWillMount = () => {
@@ -58,7 +71,7 @@ class Patrons extends Component {
 
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            api.get('/v1/patrons')
+            api.get('/v1/patrons?offset=0&limit=5000&orderBy=ASC')
             .then(response => {
                 this.setState({ 
                     patrons: response.data,
@@ -85,9 +98,26 @@ class Patrons extends Component {
 
     }
 
+    handleSearchChange = (event) => {
+        this.setState({ 
+            filter: event.target.value,
+            show: showCount, 
+        });
+    }
+
+    handleShowMoreClick = () => {
+        this.setState({ show: this.state.show + showCount });
+    }
+
     render() {
         let { classes } = this.props;
-        let { patrons, loadApi, refreshApi, snackbar } = this.state;
+        let { patrons, loadApi, refreshApi, snackbar, show } = this.state;
+
+        let list = patrons
+            .sort(sortByProp('firstName'))
+            .filter(p => p.fullName.toLowerCase().includes(this.state.filter.toLowerCase()));
+
+        let shownList = list.slice(0, this.state.show);
 
         return (
             <div>
@@ -97,13 +127,28 @@ class Patrons extends Component {
                             <Typography gutterBottom variant="headline" componet="h2">
                                 Patrons
                             </Typography>
+                            <TextField
+                                type="search"
+                                className={classes.search}
+                                margin="normal"
+                                onChange={this.handleSearchChange}
+                                InputProps={{
+                                    startAdornment: (
+                                      <InputAdornment position="start">
+                                        <Search />
+                                      </InputAdornment>
+                                    ),
+                                    style: styles.searchInput,
+                                  }}
+                            />
                             {refreshApi.isExecuting ? 
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <PatronList
-                                    patrons={patrons}
+                                    patrons={shownList}
                                     onItemClick={this.handleEditClick}
                                 />
                             }
+                            {list.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                         </CardContent>
                     </Card>
                     <Button 
