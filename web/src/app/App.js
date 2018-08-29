@@ -82,6 +82,7 @@ class App extends Component {
             if (persistCredentials) {
                 saveCredentials(this.state.credentials);
             }
+            this.getAccountDetails();
         });
     }
 
