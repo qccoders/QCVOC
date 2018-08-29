@@ -54,6 +54,7 @@ class Patrons extends Component {
             open: false,
         },
         filter: '',
+        show: 10,
     }
 
     componentWillMount = () => {
@@ -93,9 +94,16 @@ class Patrons extends Component {
         this.setState({ filter: event.target.value });
     }
 
+    handleShowMoreClick = () => {
+        this.setState({ show: this.state.show + 10 });
+    }
+
     render() {
         let { classes } = this.props;
-        let { patrons, loadApi, refreshApi, snackbar } = this.state;
+        let { patrons, loadApi, refreshApi, snackbar, show } = this.state;
+
+        let list = patrons
+            .filter(p => p.fullName.toLowerCase().includes(this.state.filter.toLowerCase()));
 
         return (
             <div>
@@ -121,10 +129,11 @@ class Patrons extends Component {
                             {refreshApi.isExecuting ? 
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <PatronList
-                                    patrons={patrons.filter(p => p.fullName.includes(this.state.filter))}
+                                    patrons={list}
                                     onItemClick={this.handleEditClick}
                                 />
                             }
+                            {list.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                         </CardContent>
                     </Card>
                     <Button 
