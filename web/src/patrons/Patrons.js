@@ -23,7 +23,7 @@ const styles = {
         zIndex: 1000
     },
     card: {
-        minHeight: 125,
+        minHeight: 220,
         maxWidth: 800,
         margin: 'auto',
     },
@@ -33,7 +33,7 @@ const styles = {
         right: 0,
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: 25,
+        marginTop: 83,
     },
     search: {
         width: '100%',
@@ -66,7 +66,7 @@ class Patrons extends Component {
     }
 
     componentWillMount = () => {
-        this.refresh('loadApi');
+        this.refresh('refreshApi');
     }
 
     refresh = (apiType) => {
