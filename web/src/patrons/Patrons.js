@@ -118,8 +118,14 @@ class Patrons extends Component {
         this.setState({ snackbar: { open: false }});
     }
 
-    handleEditClick = () => {
-
+    handleEditClick = (patron) => {
+        this.setState({
+            patronDialog: {
+                open: true,
+                intent: 'update',
+                patron: patron,
+            }
+        })
     }
 
     handleSearchChange = (event) => {
