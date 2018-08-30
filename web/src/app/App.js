@@ -65,7 +65,7 @@ const initialState = {
 class App extends Component {
     state = initialState;
 
-    componentWillMount = () => {
+    componentDidMount = () => {
         if (getCredentials()) {
             this.setState({ api: { ...this.state.api, isExecuting: true }}, () => {
                 api.get('/v1/security').then(() => {
