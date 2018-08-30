@@ -31,6 +31,7 @@ const styles = {
         marginRight: 'auto',
         marginLeft: 'auto',
         marginTop: 50,
+        height: 'fit-content',
     },
     deleteButton: {
         marginRight: 'auto',
