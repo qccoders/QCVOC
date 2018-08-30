@@ -9,6 +9,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import { Card, CardContent, Typography, CircularProgress, Button, TextField, InputAdornment } from '@material-ui/core';
 import { Add, Search } from '@material-ui/icons';
 import PatronList from './PatronList';
+import PatronDialog from './PatronDialog';
 
 import { sortByProp } from '../util';
 
@@ -57,6 +58,11 @@ class Patrons extends Component {
             isExecuting: false,
             isErrored: false,
         },
+        patronDialog: {
+            open: false,
+            intent: 'add',
+            patron: undefined,
+        },
         snackbar: {
             message: '',
             open: false,
@@ -87,7 +93,25 @@ class Patrons extends Component {
     }
 
     handleAddClick = () => {
+        this.setState({
+            patronDialog: {
+                open: true,
+                intent: 'add',
+                patron: undefined,
+            }
+        })
+    }
 
+    handlePatronDialogClose = (result) => {
+        this.setState({
+            patronDialog: {
+                ...this.state.patronDialog,
+                open: false,
+            }
+        }, () => {
+            if (!result) return;
+            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'))
+        })
     }
 
     handleSnackbarClose = () => {
@@ -111,7 +135,7 @@ class Patrons extends Component {
 
     render() {
         let { classes } = this.props;
-        let { patrons, loadApi, refreshApi, snackbar, show } = this.state;
+        let { patrons, loadApi, refreshApi, snackbar, show, patronDialog } = this.state;
 
         let list = patrons
             .sort(sortByProp('firstName'))
@@ -159,6 +183,12 @@ class Patrons extends Component {
                     >
                         <Add/>
                     </Button>
+                    <PatronDialog
+                        open={patronDialog.open}
+                        intent={patronDialog.intent} 
+                        onClose={this.handlePatronDialogClose}
+                        patron={patronDialog.patron}
+                    />
                 </ContentWrapper>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
