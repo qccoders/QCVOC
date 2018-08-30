@@ -1,5 +1,5 @@
-﻿// <copyright file="SecurityController.cs" company="JP Dillingham, Nick Acosta, et. al.">
-//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+﻿// <copyright file="SecurityController.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+//     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
@@ -46,6 +46,23 @@ namespace QCVOC.Api.Security.Controller
         private IRepository<RefreshToken> RefreshTokenRepository { get; set; }
         private ITokenFactory TokenFactory { get; set; }
         private ITokenValidator TokenValidator { get; set; }
+
+        /// <summary>
+        ///     Checks the supplied credentials.
+        /// </summary>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The credentials are valid.</response>
+        /// <response code="401">The credentials are invalid.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpGet("")]
+        [Authorize]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult CheckCredentials()
+        {
+            return Ok();
+        }
 
         /// <summary>
         ///     Issues a new Access and new or existing Refresh Token given login credentials.
