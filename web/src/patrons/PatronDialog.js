@@ -16,10 +16,12 @@ import {
     TextField,
 } from '@material-ui/core';
 
+import { validateEmail, validatePhoneNumber } from '../util';
+import api from '../api';
+
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
-
 
 const styles = {
     dialog: {
@@ -60,10 +62,13 @@ const initialState = {
         email: '',
     },
     validation: {
-        name: undefined,
-        role: undefined,
-        password: undefined,
-        password2: undefined,
+        memberId: undefined,
+        firstName: undefined,
+        lastName: undefined,
+        address: undefined,
+        primaryPhone: undefined,
+        secondaryPhone: undefined,
+        email: undefined,
     },
     snackbar: {
         message: '',
@@ -89,6 +94,43 @@ class PatronDialog extends Component {
         }
     }
 
+    handleSaveClick = () => {
+        this.validate().then(result => {
+            if (result.isValid) {
+                if (this.props.intent === 'add') {
+                    this.execute(
+                        () => api.post('/v1/patrons', this.state.patron),
+                        'addApi', 
+                        'Account \'' + this.state.patron.firstName + ' ' + this.state.patron.lastName + '\' successfully created.'
+                    )
+                }
+                else {
+                    this.execute(
+                        () => api.put('/v1/patrons/' + this.state.patron.id, this.state.patron), 
+                        'updateApi', 
+                        'Account \'' + this.state.patron.firstName + ' ' + this.state.patron.lastName +  '\' successfully updated.'
+                    );
+                }
+            }
+        });
+    }
+
+    handleCancelClick = () => {
+        this.props.onClose();
+    }
+
+    handleDeleteClick = () => {
+        this.setState({ confirmDialog: { open: true }});
+    }
+
+    handleDeleteConfirmClick = () => {
+        return this.execute(
+            () => api.delete('/v1/patrons/' + this.state.patron.id),
+            'deleteApi', 
+            'Account \'' + this.state.patron.firstName + ' ' + this.state.patron.lastName +  '\' successfully deleted.'
+        );
+    }
+
     handleChange = (field, event) => {
         this.setState({ 
             patron: {
@@ -102,43 +144,6 @@ class PatronDialog extends Component {
         });
     }
 
-    handleCancelClick = () => {
-        this.props.onClose();
-    }
-
-    handleSaveClick = () => {
-        this.validate().then(result => {
-            if (result.isValid) {
-                if (this.props.intent === 'add') {
-                    this.execute(
-                        () => this.props.addAccount({ ...this.state.account }),
-                        'addApi', 
-                        'Account \'' + this.state.account.name + '\' successfully created.'
-                    )
-                }
-                else {
-                    this.execute(
-                        () => this.props.updateAccount({ ...this.state.account }), 
-                        'updateApi', 
-                        'Account \'' + this.state.account.name + '\' successfully updated.'
-                    );
-                }
-            }
-        });
-    }
-
-    handleDeleteClick = () => {
-        this.setState({ confirmDialog: { open: true }});
-    }
-
-    handleDeleteConfirmation = () => {
-        return this.execute(
-            () => this.props.deleteAccount({ ...this.state.account }), 
-            'deleteApi', 
-            'Account \'' + this.state.account.name + '\' successfully deleted.'
-        );
-    }
-
     handleDialogClose = (result) => {
         this.setState({ confirmDialog: { open: false }});
     }
@@ -150,7 +155,7 @@ class PatronDialog extends Component {
     execute = (action, api, successMessage) => {
         return new Promise((resolve, reject) => {
             this.setState({ [api]: { isExecuting: true }}, () => {
-                action(this.state.patron)
+                action()
                 .then(response => {
                     this.setState({
                         [api]: { isExecuting: false, isErrored: false }
@@ -182,29 +187,27 @@ class PatronDialog extends Component {
     }
 
     validate = () => {
-        let { name, role, password, password2 } = this.state.patron;
+        let { memberId, firstName, lastName, address, primaryPhone, secondaryPhone, email } = this.state.patron;
         let result = { ...initialState.validation };
 
-        if (name === '') {
-            result.name = 'The Name field is required.';
+        if (memberId === '') result.memberId = 'The Member ID field is required.';
+        if (firstName === '') result.firstName = 'The First Name field is required.';
+        if (lastName === '') result.lastName = 'The Last Name field is required.';
+        if (address === '') result.address = 'The Address field is required.';
+
+        if (primaryPhone === '') {
+            result.primaryPhone = 'The Primary Phone field is required.';
+        }
+        else if (!validatePhoneNumber(primaryPhone)) {
+            result.primaryPhone = 'Enter a valid phone number in the format (555) 555-5555.';
         }
 
-        if (role === '') {
-            result.role = 'Select a Role.';
+        if (secondaryPhone !== '' && !validatePhoneNumber(secondaryPhone)) {
+            result.secondaryPhone = 'Enter a valid phone number in the format (555) 555-5555.';
         }
 
-        if (this.props.intent === 'add') {
-            if (password === '') {
-                result.password = 'The Password field is required.';
-            }
-
-            if (password2 === '') {
-                result.password2 = 'The Confirm Password field is required.';
-            }
-
-            if (password !== '' && password2 !== '' && password !== password2) {
-                result.password = result.password2 = 'The Password fields must match.';
-            }
+        if (email !== '' && !validateEmail(email)) {
+            result.email = 'Enter a valid email address.';
         }
 
         return new Promise(resolve => {
@@ -353,7 +356,7 @@ class PatronDialog extends Component {
                     title={'Confirm Patron Deletion'}
                     prompt={'Delete'}
                     open={this.state.confirmDialog.open}
-                    onConfirm={this.handleDeleteConfirmation}
+                    onConfirm={this.handleDeleteConfirmClick}
                     onClose={this.handleDialogClose}
                     suppressCloseOnConfirm
                 >
