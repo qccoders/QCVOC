@@ -28,6 +28,9 @@ import ConfirmDialog from '../shared/ConfirmDialog';
 const styles = {
     dialog: {
         width: 320,
+        marginRight: 'auto',
+        marginLeft: 'auto',
+        marginTop: 50,
     },
     deleteButton: {
         marginRight: 'auto',
@@ -231,6 +234,7 @@ class PatronDialog extends Component {
                 open={open}
                 onClose={this.handleCancel}
                 PaperProps={{ className: classes.dialog }}
+                scroll={'body'}
             >
                 <DialogTitle>{(intent === 'add' ? 'Add' : 'Update')} Patron</DialogTitle>
                 <DialogContent>
