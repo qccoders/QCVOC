@@ -196,9 +196,6 @@ class PatronDialog extends Component {
         let { memberId, firstName, lastName, address, primaryPhone, secondaryPhone, email } = this.state.patron;
         let result = { ...initialState.validation };
 
-        let mId = parseInt(memberId, 10);
-        console.log(isNaN(memberId))
-
         if (memberId === '') result.memberId = 'The Member ID field is required.';
         if (memberId !== '' && (isNaN(memberId) || memberId < 1000 || memberId > 9999)) result.memberId = 'The Member ID field must be a number between 1000 and 9999.';
         if (firstName === '') result.firstName = 'The First Name field is required.';
