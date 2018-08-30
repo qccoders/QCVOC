@@ -83,10 +83,10 @@ class LoginForm extends Component {
         this.nameInput.focus();
     }
 
-    handleChange = (field, event) => {
+    handleChange = (field, value) => {
         this.setState({ 
             ...this.state, 
-            [field]: event.target.value,
+            [field]: value,
             validation: {
                 ...this.state.validation,
                 [field]: undefined,
@@ -177,7 +177,7 @@ class LoginForm extends Component {
                             helperText={this.state.validation.name}
                             margin="normal"
                             disabled={isExecuting}
-                            onChange={(event) => this.handleChange('name', event)}
+                            onChange={(event) => this.handleChange('name', event.target.value)}
                             inputRef={ref => this.nameInput = ref}
                         />
                         <TextField
@@ -191,7 +191,7 @@ class LoginForm extends Component {
                             disabled={isExecuting}
                             error={this.state.validation.password !== undefined}
                             helperText={this.state.validation.password}
-                            onChange={(event) => this.handleChange('password', event)}
+                            onChange={(event) => this.handleChange('password', event.target.value)}
                             inputRef={ref => this.passwordInput = ref}
                         />
                         <FormControlLabel
@@ -201,7 +201,7 @@ class LoginForm extends Component {
                             control={
                                 <Checkbox
                                     checked={this.state.rememberMe}
-                                    onChange={(event) => this.handleChange('rememberMe', event)}
+                                    onChange={(event) => this.handleChange('rememberMe', !this.state.rememberMe)}
                                     color="primary"
                                 />
                             }
