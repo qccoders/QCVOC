@@ -75,23 +75,6 @@ class Patrons extends Component {
         this.refresh('refreshApi');
     }
 
-    refresh = (apiType) => {
-        this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            api.get('/v1/patrons?offset=0&limit=5000&orderBy=ASC')
-            .then(response => {
-                this.setState({ 
-                    patrons: response.data,
-                    [apiType]: { isExecuting: false, isErrored: false },
-                });
-            }, error => {
-                this.setState({ 
-                    [apiType]: { isExecuting: false, isErrored: true },
-                    snackbar: { message: error.response.data.Message, open: true },
-                });
-            });
-        })
-    }
-
     handleAddClick = () => {
         this.setState({
             patronDialog: {
@@ -100,6 +83,27 @@ class Patrons extends Component {
                 patron: undefined,
             }
         })
+    }
+    
+    handleEditClick = (patron) => {
+        this.setState({
+            patronDialog: {
+                open: true,
+                intent: 'update',
+                patron: patron,
+            }
+        })
+    }
+
+    handleShowMoreClick = () => {
+        this.setState({ show: this.state.show + showCount });
+    }
+
+    handleSearchChange = (event) => {
+        this.setState({ 
+            filter: event.target.value,
+            show: showCount, 
+        });
     }
 
     handlePatronDialogClose = (result) => {
@@ -118,25 +122,21 @@ class Patrons extends Component {
         this.setState({ snackbar: { open: false }});
     }
 
-    handleEditClick = (patron) => {
-        this.setState({
-            patronDialog: {
-                open: true,
-                intent: 'update',
-                patron: patron,
-            }
+    refresh = (apiType) => {
+        this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
+            api.get('/v1/patrons?offset=0&limit=5000&orderBy=ASC')
+            .then(response => {
+                this.setState({ 
+                    patrons: response.data,
+                    [apiType]: { isExecuting: false, isErrored: false },
+                });
+            }, error => {
+                this.setState({ 
+                    [apiType]: { isExecuting: false, isErrored: true },
+                    snackbar: { message: error.response.data.Message, open: true },
+                });
+            });
         })
-    }
-
-    handleSearchChange = (event) => {
-        this.setState({ 
-            filter: event.target.value,
-            show: showCount, 
-        });
-    }
-
-    handleShowMoreClick = () => {
-        this.setState({ show: this.state.show + showCount });
     }
 
     render() {
@@ -204,7 +204,6 @@ class Patrons extends Component {
                     message={<span id="message-id">{snackbar.message}</span>}
                 />
             </div>
-
         );
     }
 }
