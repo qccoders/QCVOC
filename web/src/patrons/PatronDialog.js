@@ -32,9 +32,6 @@ const styles = {
     deleteButton: {
         marginRight: 'auto',
     },
-    roleSelect: {
-        marginTop: 15,
-    },
     spinner: {
         position: 'fixed',
     },
@@ -53,7 +50,7 @@ const initialState = {
         isExecuting: false,
         isErrored: false,
     },
-    account: {
+    patron: {
         memberId: '',
         firstName: '',
         lastName: '',
@@ -84,8 +81,8 @@ class PatronDialog extends Component {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
                 ...initialState, 
-                account: nextProps.account ? nextProps.account : { 
-                    ...initialState.account, 
+                patron: nextProps.patron ? nextProps.patron : { 
+                    ...initialState.patron, 
                 },
                 validation: initialState.validation,
             });
@@ -94,8 +91,8 @@ class PatronDialog extends Component {
 
     handleChange = (field, event) => {
         this.setState({ 
-            account: {
-                ...this.state.account,
+            patron: {
+                ...this.state.patron,
                 [field]: event.target.value,
             },
             validation: {
@@ -153,7 +150,7 @@ class PatronDialog extends Component {
     execute = (action, api, successMessage) => {
         return new Promise((resolve, reject) => {
             this.setState({ [api]: { isExecuting: true }}, () => {
-                action(this.state.account)
+                action(this.state.patron)
                 .then(response => {
                     this.setState({
                         [api]: { isExecuting: false, isErrored: false }
@@ -185,7 +182,7 @@ class PatronDialog extends Component {
     }
 
     validate = () => {
-        let { name, role, password, password2 } = this.state.account;
+        let { name, role, password, password2 } = this.state.patron;
         let result = { ...initialState.validation };
 
         if (name === '') {
@@ -250,71 +247,71 @@ class PatronDialog extends Component {
                         disabled={executing}
                     />
                     <TextField
-                        autoFocus
                         id="firstName"
                         label="First Name"
-                        value={name}
+                        value={firstName}
                         type="text"
                         fullWidth
-                        onChange={(event) => this.handleChange('name', event)}
-                        helperText={validation.name}
-                        error={validation.name !== undefined}
+                        onChange={(event) => this.handleChange('firstName', event)}
+                        helperText={validation.firstName}
+                        error={validation.firstName !== undefined}
                         disabled={executing}
                     />
-                    <TextField
-                        
-                        id="name"
-                        label="Name"
-                        value={name}
+                    <TextField                        
+                        id="lastName"
+                        label="Last Name"
+                        value={lastName}
                         type="text"
                         fullWidth
-                        onChange={(event) => this.handleChange('name', event)}
-                        helperText={validation.name}
-                        error={validation.name !== undefined}
+                        onChange={(event) => this.handleChange('lastName', event)}
+                        helperText={validation.lastName}
+                        error={validation.lastName !== undefined}
                         disabled={executing}
                     />
-                    <FormControl 
-                        className={classes.roleSelect}
+                    <TextField                        
+                        id="address"
+                        label="Address"
+                        value={address}
+                        type="text"
                         fullWidth
+                        onChange={(event) => this.handleChange('address', event)}
+                        helperText={validation.address}
+                        error={validation.address !== undefined}
                         disabled={executing}
-                    >
-                        <InputLabel>Role</InputLabel>
-                        <Select
-                            value={role}
-                            onChange={(event) => this.handleChange('role', event)}
-                            fullWidth
-                        >
-                            <MenuItem value={'User'}>User</MenuItem>
-                            <MenuItem value={'Supervisor'}>Supervisor</MenuItem>
-                            <MenuItem value={'Administrator'}>Administrator</MenuItem>
-                        </Select>
-                    </FormControl>
-                    {intent !== 'add' ? '' : 
-                        <div>
-                            <TextField
-                                style={{marginTop: 30}}
-                                id="password"
-                                label="Password"
-                                type="password"
-                                error={validation.password !== undefined}
-                                helperText={validation.password}
-                                fullWidth
-                                onChange={(event) => this.handleChange('password', event)}
-                                disabled={executing}
-                            />
-                            <TextField
-                                style={{marginTop: 15}}
-                                id="password2"
-                                label="Confirm Password"
-                                type="password"
-                                error={validation.password2 !== undefined}
-                                helperText={validation.password2}
-                                fullWidth
-                                onChange={(event) => this.handleChange('password2', event)}
-                                disabled={executing}
-                            />
-                        </div>
-                    }
+                    />
+                    <TextField                        
+                        id="email"
+                        label="Email"
+                        value={email}
+                        type="text"
+                        fullWidth
+                        onChange={(event) => this.handleChange('email', event)}
+                        helperText={validation.email}
+                        error={validation.email !== undefined}
+                        disabled={executing}
+                    />
+                    <TextField                        
+                        id="primaryPhone"
+                        label="Primary Phone"
+                        value={primaryPhone}
+                        type="text"
+                        fullWidth
+                        onChange={(event) => this.handleChange('primaryPhone', event)}
+                        helperText={validation.primaryPhone}
+                        error={validation.primaryPhone !== undefined}
+                        disabled={executing}
+                    />
+                    <TextField                        
+                        id="secondaryPhone"
+                        label="Secondary Phone"
+                        value={secondaryPhone}
+                        type="text"
+                        fullWidth
+                        onChange={(event) => this.handleChange('secondaryPhone', event)}
+                        helperText={validation.secondaryPhone}
+                        error={validation.secondaryPhone !== undefined}
+                        disabled={executing}
+                    />
                 </DialogContent>
                 <DialogActions>
                     {intent === 'update' && 
@@ -345,14 +342,14 @@ class PatronDialog extends Component {
                     </Button>
                 </DialogActions>
                 <ConfirmDialog
-                    title={'Confirm Account Deletion'}
+                    title={'Confirm Patron Deletion'}
                     prompt={'Delete'}
                     open={this.state.confirmDialog.open}
                     onConfirm={this.handleDeleteConfirmation}
                     onClose={this.handleDialogClose}
                     suppressCloseOnConfirm
                 >
-                    <p>Are you sure you want to delete account '{this.state.account.name}'?</p>
+                    <p>Are you sure you want to delete Patron '{firstName + ' ' + lastName}'?</p>
                 </ConfirmDialog>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
