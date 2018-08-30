@@ -24,14 +24,32 @@ import Patrons from '../patrons/Patrons';
 import Services from '../services/Services';
 import Events from '../events/Events';
 import LoginForm from '../security/LoginForm';
+import { CircularProgress } from '@material-ui/core';
 
 const styles = {
     root: {
         flexGrow: 1,
     },
+    spinner: {
+        position: 'fixed',
+        width: 45,
+        height: 45,
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: 'auto',
+        marginBottom: 'auto',
+    },
 };
 
 const initialState = {
+    api: {
+        isExecuting: false,
+        isErrored: false,
+    },
     credentials: {
         accessToken: undefined,
         refreshToken: undefined,
@@ -48,10 +66,21 @@ class App extends Component {
     state = initialState;
 
     componentDidMount = () => {
-        let credentials = getCredentials();
-
-        if (credentials) {
-            this.setState({ credentials: credentials }, () => this.getAccountDetails())
+        if (getCredentials()) {
+            this.setState({ api: { ...this.state.api, isExecuting: true }}, () => {
+                api.get('/v1/security').then(() => {
+                    this.setState({ 
+                        api: { isExecuting: false, isErrored: false },
+                        credentials: getCredentials() 
+                    }, () => this.getAccountDetails());
+                })
+                .catch(error => {
+                    this.setState({ 
+                        credentials: initialState.credentials,
+                        api: { isExecuting: false, isErrored: true }
+                    });
+                });
+            })
         }
     }
 
@@ -98,41 +127,43 @@ class App extends Component {
 
     render() {
         let classes = this.props.classes;
+        let { isExecuting, isErrored } = this.state.api;
 
         return (
             <div className={classes.root}>
-                {this.state.credentials.accessToken ? 
-                    <div>
-                        <AppBar 
-                            title='QCVOC' 
-                            drawerToggleButton={<DrawerToggleButton onToggleClick={this.handleToggleDrawer}/>}
-                        >
-                            <SecurityMenu 
-                                credentials={this.state.credentials} 
-                                onLogout={this.handleLogout}
-                                onPasswordReset={this.handlePasswordReset}
-                            />
-                        </AppBar>
-                        <Drawer 
-                            open={this.state.drawer.open} 
-                            onClose={this.handleToggleDrawer}
-                        >
-                            <AppBar title='QCVOC'/>
-                            <List>
-                                <Link to='/accounts' icon={<InboxIcon/>}>Accounts</Link>
-                                <Link to='/patrons' icon={<InboxIcon/>}>Patrons</Link>
-                                <Link to='/services' icon={<InboxIcon/>}>Services</Link>
-                                <Link to='/events' icon={<InboxIcon/>}>Events</Link>                                
-                            </List>                    
-                        </Drawer>
-                        <Switch>
-                            <Route path='/accounts' component={Accounts}/>
-                            <Route path='/patrons' component={Patrons}/>
-                            <Route path='/services' component={Services}/>
-                            <Route path='/events' component={Events}/>
-                        </Switch>
-                    </div> :
-                    <LoginForm onLogin={this.handleLogin}/>
+                {isExecuting || isErrored ? <CircularProgress size={20} style={styles.spinner}/>: 
+                    this.state.credentials.accessToken ? 
+                        <div>
+                            <AppBar 
+                                title='QCVOC' 
+                                drawerToggleButton={<DrawerToggleButton onToggleClick={this.handleToggleDrawer}/>}
+                            >
+                                <SecurityMenu 
+                                    credentials={this.state.credentials} 
+                                    onLogout={this.handleLogout}
+                                    onPasswordReset={this.handlePasswordReset}
+                                />
+                            </AppBar>
+                            <Drawer 
+                                open={this.state.drawer.open} 
+                                onClose={this.handleToggleDrawer}
+                            >
+                                <AppBar title='QCVOC'/>
+                                <List>
+                                    <Link to='/accounts' icon={<InboxIcon/>}>Accounts</Link>
+                                    <Link to='/patrons' icon={<InboxIcon/>}>Patrons</Link>
+                                    <Link to='/services' icon={<InboxIcon/>}>Services</Link>
+                                    <Link to='/events' icon={<InboxIcon/>}>Events</Link>                                
+                                </List>                    
+                            </Drawer>
+                            <Switch>
+                                <Route path='/accounts' component={Accounts}/>
+                                <Route path='/patrons' component={Patrons}/>
+                                <Route path='/services' component={Services}/>
+                                <Route path='/events' component={Events}/>
+                            </Switch>
+                        </div> :
+                        <LoginForm onLogin={this.handleLogin}/>
                 }
             </div>
         );
