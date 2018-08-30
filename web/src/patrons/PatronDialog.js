@@ -54,10 +54,13 @@ const initialState = {
         isErrored: false,
     },
     account: {
-        name: '',
-        role: 'User',
-        password: '',
-        password2: '',
+        memberId: '',
+        firstName: '',
+        lastName: '',
+        address: '',
+        primaryPhone: '',
+        secondaryPhone: '',
+        email: '',
     },
     validation: {
         name: undefined,
@@ -217,7 +220,7 @@ class PatronDialog extends Component {
 
     render() {
         let { classes, intent, open } = this.props;
-        let { name, role } = this.state.account;
+        let { memberId, firstName, lastName, address, primaryPhone, secondaryPhone, email } = this.state.patron;
         let validation = this.state.validation;
 
         let adding = this.state.addApi.isExecuting;
@@ -232,10 +235,34 @@ class PatronDialog extends Component {
                 onClose={this.handleCancel}
                 PaperProps={{ className: classes.dialog }}
             >
-                <DialogTitle>{(intent === 'add' ? 'Add' : 'Update')} Account</DialogTitle>
+                <DialogTitle>{(intent === 'add' ? 'Add' : 'Update')} Patron</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
+                        id="memberId"
+                        label="Member ID"
+                        value={memberId}
+                        type="text"
+                        fullWidth
+                        onChange={(event) => this.handleChange('memberId', event)}
+                        helperText={validation.memberId}
+                        error={validation.memberId !== undefined}
+                        disabled={executing}
+                    />
+                    <TextField
+                        autoFocus
+                        id="firstName"
+                        label="First Name"
+                        value={name}
+                        type="text"
+                        fullWidth
+                        onChange={(event) => this.handleChange('name', event)}
+                        helperText={validation.name}
+                        error={validation.name !== undefined}
+                        disabled={executing}
+                    />
+                    <TextField
+                        
                         id="name"
                         label="Name"
                         value={name}
