@@ -6,13 +6,32 @@
 const CREDENTIAL_KEY = 'qcvoc-credentials';
 
 export const getCredentials = () => {
-    return JSON.parse(localStorage.getItem(CREDENTIAL_KEY));
+    var credentials = JSON.parse(sessionStorage.getItem(CREDENTIAL_KEY));
+
+    if (credentials) {
+        return credentials;
+    } else {
+        return JSON.parse(localStorage.getItem(CREDENTIAL_KEY));
+    }
 }
 
-export const saveCredentials = (credentials) => {
+export const saveSessionCredentials = (credentials) => {
+    sessionStorage.setItem(CREDENTIAL_KEY, JSON.stringify(credentials));
+}
+
+export const saveLocalCredentials = (credentials) => {
     localStorage.setItem(CREDENTIAL_KEY, JSON.stringify(credentials));
 }
 
+export const updateCredentials = (credentials) => {
+    if (JSON.parse(sessionStorage.getItem(CREDENTIAL_KEY))) {
+        sessionStorage.setItem(CREDENTIAL_KEY, JSON.stringify(credentials));
+    } else {
+        localStorage.setItem(CREDENTIAL_KEY, JSON.stringify(credentials));
+    }
+}
+
 export const deleteCredentials = () => {
+    sessionStorage.removeItem(CREDENTIAL_KEY);
     localStorage.removeItem(CREDENTIAL_KEY);
 }

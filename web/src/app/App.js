@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { getCredentials, saveCredentials, deleteCredentials } from '../credentialStore';
+import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials } from '../credentialStore';
 import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -74,7 +74,9 @@ class App extends Component {
     handleLogin = (credentials, persistCredentials) => {
         this.setState({ credentials: credentials }, () => {
             if (persistCredentials) {
-                saveCredentials(this.state.credentials);
+                saveLocalCredentials(this.state.credentials);
+            } else {
+                saveSessionCredentials(this.state.credentials);
             }
             this.getAccountDetails();
         });
