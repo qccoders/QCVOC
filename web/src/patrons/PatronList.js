@@ -10,7 +10,7 @@ const PatronList = (props) => {
 
     return (
         <List>
-            {patrons.sort(sortByProp('firstName')).map(p => 
+            {patrons.sort(sortByProp('fullName')).map(p => 
                 <ListItem 
                     key={p.id}
                     button

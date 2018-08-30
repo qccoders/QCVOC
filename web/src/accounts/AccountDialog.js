@@ -28,6 +28,10 @@ import ConfirmDialog from '../shared/ConfirmDialog';
 const styles = {
     dialog: {
         width: 320,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: 50,
+        height: 'fit-content',
     },
     deleteButton: {
         marginRight: 'auto',
@@ -231,6 +235,7 @@ class AccountDialog extends Component {
                 open={open}
                 onClose={this.handleCancel}
                 PaperProps={{ className: classes.dialog }}
+                scroll={'body'}
             >
                 <DialogTitle>{(intent === 'add' ? 'Add' : 'Update')} Account</DialogTitle>
                 <DialogContent>
