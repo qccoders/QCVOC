@@ -4,7 +4,7 @@
 */
 
 import axios from 'axios';
-import { getCredentials, saveCredentials, deleteCredentials } from './credentialStore';
+import { getCredentials, updateCredentials, deleteCredentials } from './credentialStore';
 import { API_ROOT } from './constants';
 
 axios.defaults.baseURL = API_ROOT;
@@ -37,7 +37,7 @@ api.interceptors.response.use(config => {
         // and avoid an endless loop should either of these two calls result in a 401.
         return axios.post('/v1/security/refresh', data, headers)
             .then(response => {
-                saveCredentials(response.data);
+                updateCredentials(response.data);
                 request.headers.Authorization = response.data.tokenType + ' ' + response.data.accessToken;
                 return axios(request);
             }, error => {

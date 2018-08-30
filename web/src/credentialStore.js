@@ -15,10 +15,6 @@ export const getCredentials = () => {
     }
 }
 
-export const saveCredentials = (credentials) => {
-    localStorage.setItem(CREDENTIAL_KEY, JSON.stringify(credentials));
-}
-
 export const saveSessionCredentials = (credentials) => {
     sessionStorage.setItem(CREDENTIAL_KEY, JSON.stringify(credentials));
 }
