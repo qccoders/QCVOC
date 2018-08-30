@@ -245,6 +245,7 @@ class PatronDialog extends Component {
                         helperText={validation.memberId}
                         error={validation.memberId !== undefined}
                         disabled={executing}
+                        margin={'normal'}
                     />
                     <TextField
                         id="firstName"
@@ -256,6 +257,7 @@ class PatronDialog extends Component {
                         helperText={validation.firstName}
                         error={validation.firstName !== undefined}
                         disabled={executing}
+                        margin={'normal'}
                     />
                     <TextField                        
                         id="lastName"
@@ -267,6 +269,7 @@ class PatronDialog extends Component {
                         helperText={validation.lastName}
                         error={validation.lastName !== undefined}
                         disabled={executing}
+                        margin={'normal'}
                     />
                     <TextField                        
                         id="address"
@@ -278,6 +281,7 @@ class PatronDialog extends Component {
                         helperText={validation.address}
                         error={validation.address !== undefined}
                         disabled={executing}
+                        margin={'normal'}
                     />
                     <TextField                        
                         id="email"
@@ -289,6 +293,7 @@ class PatronDialog extends Component {
                         helperText={validation.email}
                         error={validation.email !== undefined}
                         disabled={executing}
+                        margin={'normal'}
                     />
                     <TextField                        
                         id="primaryPhone"
@@ -300,6 +305,7 @@ class PatronDialog extends Component {
                         helperText={validation.primaryPhone}
                         error={validation.primaryPhone !== undefined}
                         disabled={executing}
+                        margin={'normal'}
                     />
                     <TextField                        
                         id="secondaryPhone"
@@ -311,6 +317,7 @@ class PatronDialog extends Component {
                         helperText={validation.secondaryPhone}
                         error={validation.secondaryPhone !== undefined}
                         disabled={executing}
+                        margin={'normal'}
                     />
                 </DialogContent>
                 <DialogActions>
