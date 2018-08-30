@@ -95,6 +95,8 @@ class PatronDialog extends Component {
     }
 
     handleSaveClick = () => {
+        let patron = { ...this.state.patron }
+
         this.validate().then(result => {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
@@ -190,10 +192,15 @@ class PatronDialog extends Component {
         let { memberId, firstName, lastName, address, primaryPhone, secondaryPhone, email } = this.state.patron;
         let result = { ...initialState.validation };
 
+        let mId = parseInt(memberId, 10);
+        console.log(isNaN(memberId))
+
         if (memberId === '') result.memberId = 'The Member ID field is required.';
+        if (memberId !== '' && (isNaN(memberId) || memberId < 1000 || memberId > 9999)) result.memberId = 'The Member ID field must be a number between 1000 and 9999.';
         if (firstName === '') result.firstName = 'The First Name field is required.';
         if (lastName === '') result.lastName = 'The Last Name field is required.';
         if (address === '') result.address = 'The Address field is required.';
+        if (address !== '' && address.length < 5) result.address = 'The Address field must be a minimum of 5 characters.';
 
         if (primaryPhone === '') {
             result.primaryPhone = 'The Primary Phone field is required.';
@@ -202,11 +209,11 @@ class PatronDialog extends Component {
             result.primaryPhone = 'Enter a valid phone number in the format (555) 555-5555.';
         }
 
-        if (secondaryPhone !== '' && !validatePhoneNumber(secondaryPhone)) {
+        if ((secondaryPhone !== '' && secondaryPhone !== undefined) && !validatePhoneNumber(secondaryPhone)) {
             result.secondaryPhone = 'Enter a valid phone number in the format (555) 555-5555.';
         }
 
-        if (email !== '' && !validateEmail(email)) {
+        if ((email !== '' && email !== undefined) && !validateEmail(email)) {
             result.email = 'Enter a valid email address.';
         }
 
