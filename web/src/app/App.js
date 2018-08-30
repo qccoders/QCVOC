@@ -51,7 +51,7 @@ class App extends Component {
         let credentials = getCredentials();
 
         if (credentials) {
-            this.setState({credentials: credentials}, () => this.getAccountDetails())
+            this.setState({ credentials: credentials }, () => this.getAccountDetails())
         }
     }
 
