@@ -36,6 +36,8 @@ const styles = {
     },
     card: {
         minHeight: 125,
+        maxWidth: 800,
+        margin: 'auto',
     },
     refreshSpinner: {
         position: 'fixed',
