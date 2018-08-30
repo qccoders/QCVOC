@@ -96,21 +96,25 @@ class PatronDialog extends Component {
 
     handleSaveClick = () => {
         let patron = { ...this.state.patron }
+        let fullName = patron.firstName + ' ' + patron.lastName;
+
+        if (patron.email === '') delete patron.email;
+        if (patron.secondaryPhone === '') delete patron.secondaryPhone;
 
         this.validate().then(result => {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => api.post('/v1/patrons', this.state.patron),
+                        () => api.post('/v1/patrons', patron),
                         'addApi', 
-                        'Account \'' + this.state.patron.firstName + ' ' + this.state.patron.lastName + '\' successfully created.'
+                        'Account \'' + fullName + '\' successfully created.'
                     )
                 }
                 else {
                     this.execute(
-                        () => api.put('/v1/patrons/' + this.state.patron.id, this.state.patron), 
+                        () => api.put('/v1/patrons/' + patron.id, patron), 
                         'updateApi', 
-                        'Account \'' + this.state.patron.firstName + ' ' + this.state.patron.lastName +  '\' successfully updated.'
+                        'Account \'' + fullName +  '\' successfully updated.'
                     );
                 }
             }
