@@ -47,17 +47,11 @@ const initialState = {
 class App extends Component {
     state = initialState;
 
-    componentWillMount = () => {
-        let credentials = getCredentials();
-        
-        if (credentials) {
-            this.setState({ credentials: credentials });
-        }
-    }
-
     componentDidMount = () => {
-        if (this.state.credentials) {
-            this.getAccountDetails();
+        let credentials = getCredentials();
+
+        if (credentials) {
+            this.setState({credentials: credentials}, () => this.getAccountDetails())
         }
     }
 
@@ -82,6 +76,7 @@ class App extends Component {
             if (persistCredentials) {
                 saveCredentials(this.state.credentials);
             }
+            this.getAccountDetails();
         });
     }
 
