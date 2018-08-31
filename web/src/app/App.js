@@ -10,7 +10,7 @@ import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCre
 import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
-import { People, Inbox, VerifiedUser, AssignmentTurnedIn, InsertInvitation } from '@material-ui/icons';
+import { People, VerifiedUser, AssignmentTurnedIn, InsertInvitation } from '@material-ui/icons';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 
