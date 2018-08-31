@@ -10,7 +10,7 @@ import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCre
 import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
-import { People, VerifiedUser, AssignmentTurnedIn, InsertInvitation } from '@material-ui/icons';
+import { People, VerifiedUser, AssignmentTurnedIn, InsertInvitation, SpeakerPhone } from '@material-ui/icons';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 
@@ -157,6 +157,7 @@ class App extends Component {
                                 <List>
                                     <Link to='/patrons' icon={<People/>}>Patrons</Link>
                                     <Link to='/events' icon={<InsertInvitation/>}>Events</Link>
+                                    <Link to='/scanner' icon={<SpeakerPhone/>}>Scanner</Link>
                                     {(role === 'Administrator' || role === 'Supervisor') && 
                                         <div>
                                             <ListSubheader>Administration</ListSubheader>                               
@@ -167,6 +168,7 @@ class App extends Component {
                                 </List>                    
                             </Drawer>
                             <Switch>
+                                <Route exact path='/' component={Patrons}/>
                                 <Route path='/accounts' component={Accounts}/>
                                 <Route path='/patrons' component={Patrons}/>
                                 <Route path='/services' component={Services}/>
