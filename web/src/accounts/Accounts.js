@@ -153,19 +153,6 @@ class Accounts extends Component {
         this.setState({ snackbar: { open: false }});
     }
 
-    addAccount = (account) => {
-        delete account.password2;
-        return api.post('/v1/security/accounts', account);
-    }
-
-    updateAccount = (account) => { 
-        return api.put('/v1/security/accounts/' + account.id, account);
-    }
-
-    deleteAccount = (account) => {
-        return api.delete('/v1/security/accounts/' + account.id);
-    }
-
     render() {
         let { accounts, loadApi, refreshApi, accountDialog, passwordResetDialog } = this.state;
         let { classes } = this.props;
@@ -200,16 +187,12 @@ class Accounts extends Component {
                         open={accountDialog.open}
                         intent={accountDialog.intent} 
                         onClose={this.handleAccountDialogClose}
-                        addAccount={this.addAccount}
-                        updateAccount={this.updateAccount}
-                        deleteAccount={this.deleteAccount}
                         account={accountDialog.account}
                     />
                     <PasswordResetDialog
                         open={passwordResetDialog.open}
                         account={passwordResetDialog.account}
                         onClose={this.handlePasswordResetDialogClose}
-                        onReset={this.updateAccount}
                     />
                 </ContentWrapper>
                 <Snackbar
