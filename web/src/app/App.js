@@ -10,7 +10,7 @@ import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCre
 import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
-import { People, Inbox, VerifiedUser } from '@material-ui/icons';
+import { People, Inbox, VerifiedUser, AssignmentTurnedIn, InsertInvitation } from '@material-ui/icons';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 
@@ -151,10 +151,10 @@ class App extends Component {
                                 <AppBar title='QCVOC'/>
                                 <List>
                                     <Link to='/patrons' icon={<People/>}>Patrons</Link>
-                                    <Link to='/events' icon={<Inbox/>}>Events</Link> 
+                                    <Link to='/events' icon={<InsertInvitation/>}>Events</Link> 
                                     <ListSubheader>Administration</ListSubheader>                               
+                                    <Link to='/services' icon={<AssignmentTurnedIn/>}>Services</Link>
                                     <Link to='/accounts' icon={<VerifiedUser/>}>Accounts</Link>
-                                    <Link to='/services' icon={<Inbox/>}>Services</Link>
                                 </List>                    
                             </Drawer>
                             <Switch>
