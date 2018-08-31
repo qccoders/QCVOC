@@ -128,11 +128,12 @@ class App extends Component {
     render() {
         let classes = this.props.classes;
         let { isExecuting, isErrored } = this.state.api;
+        let { accessToken, role } = this.state.credentials;
 
         return (
             <div className={classes.root}>
                 {isExecuting || isErrored ? <CircularProgress size={20} style={styles.spinner}/>: 
-                    this.state.credentials.accessToken ? 
+                    accessToken ? 
                         <div>
                             <AppBar 
                                 title='QCVOC' 
@@ -151,10 +152,14 @@ class App extends Component {
                                 <AppBar title='QCVOC'/>
                                 <List>
                                     <Link to='/patrons' icon={<People/>}>Patrons</Link>
-                                    <Link to='/events' icon={<InsertInvitation/>}>Events</Link> 
-                                    <ListSubheader>Administration</ListSubheader>                               
-                                    <Link to='/services' icon={<AssignmentTurnedIn/>}>Services</Link>
-                                    <Link to='/accounts' icon={<VerifiedUser/>}>Accounts</Link>
+                                    <Link to='/events' icon={<InsertInvitation/>}>Events</Link>
+                                    {(role === 'Administrator' || role === 'Supervisor') && 
+                                        <div>
+                                            <ListSubheader>Administration</ListSubheader>                               
+                                            <Link to='/services' icon={<AssignmentTurnedIn/>}>Services</Link>
+                                            <Link to='/accounts' icon={<VerifiedUser/>}>Accounts</Link>
+                                        </div>
+                                    }
                                 </List>                    
                             </Drawer>
                             <Switch>
