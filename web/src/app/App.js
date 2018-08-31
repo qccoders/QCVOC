@@ -10,7 +10,7 @@ import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCre
 import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
-import InboxIcon from '@material-ui/icons/Inbox';
+import { People, VerifiedUser, AssignmentTurnedIn, InsertInvitation, SpeakerPhone } from '@material-ui/icons';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 
@@ -24,7 +24,7 @@ import Patrons from '../patrons/Patrons';
 import Services from '../services/Services';
 import Events from '../events/Events';
 import LoginForm from '../security/LoginForm';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, ListSubheader } from '@material-ui/core';
 
 const styles = {
     root: {
@@ -42,6 +42,9 @@ const styles = {
         marginRight: 'auto',
         marginTop: 'auto',
         marginBottom: 'auto',
+    },
+    drawer: {
+        width: 235,
     },
 };
 
@@ -128,11 +131,12 @@ class App extends Component {
     render() {
         let classes = this.props.classes;
         let { isExecuting, isErrored } = this.state.api;
+        let { accessToken, role } = this.state.credentials;
 
         return (
             <div className={classes.root}>
                 {isExecuting || isErrored ? <CircularProgress size={20} style={styles.spinner}/>: 
-                    this.state.credentials.accessToken ? 
+                    accessToken ? 
                         <div>
                             <AppBar 
                                 title='QCVOC' 
@@ -147,16 +151,24 @@ class App extends Component {
                             <Drawer 
                                 open={this.state.drawer.open} 
                                 onClose={this.handleToggleDrawer}
+                                PaperProps={{style: styles.drawer}}
                             >
                                 <AppBar title='QCVOC'/>
                                 <List>
-                                    <Link to='/accounts' icon={<InboxIcon/>}>Accounts</Link>
-                                    <Link to='/patrons' icon={<InboxIcon/>}>Patrons</Link>
-                                    <Link to='/services' icon={<InboxIcon/>}>Services</Link>
-                                    <Link to='/events' icon={<InboxIcon/>}>Events</Link>                                
+                                    <Link to='/patrons' icon={<People/>}>Patrons</Link>
+                                    <Link to='/events' icon={<InsertInvitation/>}>Events</Link>
+                                    <Link to='/scanner' icon={<SpeakerPhone/>}>Scanner</Link>
+                                    {(role === 'Administrator' || role === 'Supervisor') && 
+                                        <div>
+                                            <ListSubheader>Administration</ListSubheader>                               
+                                            <Link to='/services' icon={<AssignmentTurnedIn/>}>Services</Link>
+                                            <Link to='/accounts' icon={<VerifiedUser/>}>Accounts</Link>
+                                        </div>
+                                    }
                                 </List>                    
                             </Drawer>
                             <Switch>
+                                <Route exact path='/' component={Patrons}/>
                                 <Route path='/accounts' component={Accounts}/>
                                 <Route path='/patrons' component={Patrons}/>
                                 <Route path='/services' component={Services}/>

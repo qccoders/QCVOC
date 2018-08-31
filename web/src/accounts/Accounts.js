@@ -35,7 +35,7 @@ const styles = {
         zIndex: 1000
     },
     card: {
-        minHeight: 125,
+        minHeight: 212,
         maxWidth: 800,
         margin: 'auto',
     },
@@ -45,7 +45,7 @@ const styles = {
         right: 0,
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: 25,
+        marginTop: 43,
     },
 };
 
@@ -158,9 +158,9 @@ class Accounts extends Component {
         let { classes } = this.props;
 
         return (
-            <div className={classes.card}>
+            <div>
                 <ContentWrapper api={loadApi}>
-                    <Card>
+                    <Card className={classes.card}>
                         <CardContent>
                             <Typography gutterBottom variant="headline" component="h2">
                                 Accounts
