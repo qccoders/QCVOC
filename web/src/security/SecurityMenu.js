@@ -4,7 +4,7 @@ import api from '../api';
 
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { Person, LockOpen, ExitToApp }  from '@material-ui/icons';
+import { LockOpen, ExitToApp, AccountCircle }  from '@material-ui/icons';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { Badge, Menu, MenuItem, Snackbar, ListItemIcon, ListItemText } from '@material-ui/core';
 import PasswordResetDialog from '../security/PasswordResetDialog';
@@ -15,11 +15,11 @@ const styles = {
         whiteSpace: 'pre',
     },
     caption: {
-        marginRight: 10,
+        marginRight: 5,
         display: 'inline'
     },
     icon: {
-        fontSize: 30,
+        fontSize: 29,
     },
     menu: {
         marginTop: 40,
@@ -113,9 +113,9 @@ class SecurityMenu extends Component {
                 >
                     {credentials.passwordResetRequired ? 
                         <Badge badgeContent={'!'} color="secondary">
-                            <Person style={styles.icon}/>
+                            <AccountCircle style={styles.icon}/>
                         </Badge> :
-                        <Person style={styles.icon}/>
+                        <AccountCircle style={styles.icon}/>
                     }
                 </IconButton>
                 <Menu
