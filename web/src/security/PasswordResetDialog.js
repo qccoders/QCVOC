@@ -194,7 +194,7 @@ class PasswordResetDialog extends Component {
         return (
             <Dialog 
                 open={open}
-                onClose={this.handleCancel}
+                onClose={this.handleCancelClick}
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
