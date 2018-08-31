@@ -139,6 +139,7 @@ namespace QCVOC.Api.Security.Data.Repository
                     issued AS Issued,
                     id AS Id
                 FROM refreshtokens
+                /**where**/
             ");
 
             builder.AddParameters(new
