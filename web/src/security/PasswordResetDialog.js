@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -98,7 +99,7 @@ class PasswordResetDialog extends Component {
             if (result.isValid) {
                 if (getCredentials().name === account.name) {
                     this.execute(
-                        () => this.props.onReset(account), 
+                        () => api.put('/v1/security/accounts/' + account.id, account), 
                         'updateApi', 
                         'Password for \'' + account.name + '\' successfully updated.'
                     );
@@ -114,7 +115,7 @@ class PasswordResetDialog extends Component {
         let account = { ...this.state.account };
 
         return this.execute(
-            () => this.props.onReset(account), 
+            () => api.put('/v1/security/accounts/' + account.id, account), 
             'updateApi', 
             'Password for \'' + account.name + '\' successfully updated.'
         );
@@ -270,7 +271,6 @@ PasswordResetDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     account: PropTypes.object,
-    onReset: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(PasswordResetDialog); 

@@ -5,6 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -111,20 +112,22 @@ class AccountDialog extends Component {
     }
 
     handleSaveClick = () => {
+        let account = this.state.account;
+
         this.validate().then(result => {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => this.props.addAccount({ ...this.state.account }),
+                        () => api.post('/v1/security/accounts', account),
                         'addApi', 
-                        'Account \'' + this.state.account.name + '\' successfully created.'
+                        'Account \'' + account.name + '\' successfully created.'
                     )
                 }
                 else {
                     this.execute(
-                        () => this.props.updateAccount({ ...this.state.account }), 
+                        () => api.put('/v1/security/accounts/' + account.id, account), 
                         'updateApi', 
-                        'Account \'' + this.state.account.name + '\' successfully updated.'
+                        'Account \'' + account.name + '\' successfully updated.'
                     );
                 }
             }
@@ -136,10 +139,12 @@ class AccountDialog extends Component {
     }
 
     handleDeleteConfirmation = () => {
+        let account = this.state.account;
+
         return this.execute(
-            () => this.props.deleteAccount({ ...this.state.account }), 
+            () => api.delete('/v1/security/accounts/' + account.id), 
             'deleteApi', 
-            'Account \'' + this.state.account.name + '\' successfully deleted.'
+            'Account \'' + account.name + '\' successfully deleted.'
         );
     }
 
@@ -350,9 +355,6 @@ AccountDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     account: PropTypes.object,
-    addAccount: PropTypes.func.isRequired,
-    deleteAccount: PropTypes.func.isRequired,
-    updateAccount: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(AccountDialog); 
