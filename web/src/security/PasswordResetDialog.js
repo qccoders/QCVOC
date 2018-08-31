@@ -51,6 +51,9 @@ const initialState = {
     },
     confirmDialog: {
         open: false,
+    },
+    prompt: {
+        verb: undefined,
     }
 }
 
@@ -70,6 +73,11 @@ class PasswordResetDialog extends Component {
                     ...initialState.account, 
                 },
                 validation: initialState.validation,
+                prompt: (getCredentials().name === nextProps.account.name) ? {
+                    verb: "Update",
+                } : {
+                    verb: "Reset",
+                },
             });
         }
     }
@@ -191,6 +199,7 @@ class PasswordResetDialog extends Component {
         let { classes, open } = this.props;
         let validation = this.state.validation;
         let executing = this.state.updateApi.isExecuting;
+        let verb = this.state.prompt.verb;
         
         return (
             <Dialog 
@@ -199,7 +208,7 @@ class PasswordResetDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{'Reset Password'}</DialogTitle>
+                <DialogTitle>{verb + ' Password'}</DialogTitle>
                 <DialogContent>
                     <TextField
                         style={{marginTop: 0}}
@@ -238,7 +247,7 @@ class PasswordResetDialog extends Component {
                         disabled={executing}
                     >
                         {executing && <CircularProgress size={20} style={styles.spinner}/>}
-                        Reset
+                        {verb}
                     </Button>
                 </DialogActions>
                 <ConfirmDialog

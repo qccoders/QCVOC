@@ -134,7 +134,7 @@ class SecurityMenu extends Component {
                             }
                         </ListItemIcon>
                         <ListItemText>
-                            Reset Password
+                            Update Password
                         </ListItemText>
                     </MenuItem>
                     <MenuItem onClick={this.handleLogoutClick}>
