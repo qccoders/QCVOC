@@ -76,7 +76,7 @@ class Accounts extends Component {
     };
 
     componentWillMount = () => {
-        this.refresh('loadApi');
+        this.refresh('refreshApi');
     }
 
     refresh = (apiType) => {
