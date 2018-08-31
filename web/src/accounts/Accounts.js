@@ -171,10 +171,10 @@ class Accounts extends Component {
         let { classes } = this.props;
 
         return (
-            <div>
+            <div className={classes.card}>
                 <ContentWrapper api={loadApi}>
                     <Card>
-                        <CardContent className={classes.card}>
+                        <CardContent>
                             <Typography gutterBottom variant="headline" component="h2">
                                 Accounts
                             </Typography>
