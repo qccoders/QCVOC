@@ -43,6 +43,9 @@ const styles = {
         marginTop: 'auto',
         marginBottom: 'auto',
     },
+    drawer: {
+        width: 235,
+    },
 };
 
 const initialState = {
@@ -148,6 +151,7 @@ class App extends Component {
                             <Drawer 
                                 open={this.state.drawer.open} 
                                 onClose={this.handleToggleDrawer}
+                                PaperProps={{style: styles.drawer}}
                             >
                                 <AppBar title='QCVOC'/>
                                 <List>
