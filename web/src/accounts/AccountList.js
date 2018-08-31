@@ -7,20 +7,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { sortByProp } from '../util';
 
-import { List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, IconButton, ListSubheader } from '@material-ui/core';
-import { Person, Star, SupervisorAccount, LockOpen } from '@material-ui/icons'
-import AccountListItem from './AccountListItem'
-
-const getUserIcon = (role) => {
-    switch (role) {
-        case 'Administrator':
-            return <Star/>;
-        case 'Supervisor':
-            return <SupervisorAccount/>;
-        default:
-            return <Person/>;
-    }
-}
+import { List, ListSubheader } from '@material-ui/core';
+import AccountListItem from './AccountListItem';
 
 const AccountList = (props) => {
     let { accounts, onItemClick, onItemResetClick } = props;
