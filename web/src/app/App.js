@@ -24,7 +24,7 @@ import Patrons from '../patrons/Patrons';
 import Services from '../services/Services';
 import Events from '../events/Events';
 import LoginForm from '../security/LoginForm';
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, ListSubheader } from '@material-ui/core';
 
 const styles = {
     root: {
@@ -150,10 +150,11 @@ class App extends Component {
                             >
                                 <AppBar title='QCVOC'/>
                                 <List>
-                                    <Link to='/accounts' icon={<VerifiedUser/>}>Accounts</Link>
                                     <Link to='/patrons' icon={<People/>}>Patrons</Link>
+                                    <Link to='/events' icon={<Inbox/>}>Events</Link> 
+                                    <ListSubheader>Administration</ListSubheader>                               
+                                    <Link to='/accounts' icon={<VerifiedUser/>}>Accounts</Link>
                                     <Link to='/services' icon={<Inbox/>}>Services</Link>
-                                    <Link to='/events' icon={<Inbox/>}>Events</Link>                                
                                 </List>                    
                             </Drawer>
                             <Switch>
