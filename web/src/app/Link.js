@@ -15,6 +15,7 @@ const Link = (props) => {
             button 
             component={RouterLink} 
             to={props.to}
+            onClick={props.onClick}
         >            
             <ListItemIcon>{props.icon}</ListItemIcon>
             <ListItemText primary={props.children}/>

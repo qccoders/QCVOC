@@ -12,7 +12,6 @@ import api from '../api';
 import { withStyles } from '@material-ui/core/styles';
 import { People, VerifiedUser, Assignment, InsertInvitation, SpeakerPhone } from '@material-ui/icons';
 import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
 
 import AppBar from './AppBar';
 import Link from './Link';
@@ -24,6 +23,7 @@ import Patrons from '../patrons/Patrons';
 import Services from '../services/Services';
 import Events from '../events/Events';
 import LoginForm from '../security/LoginForm';
+import LinkList from './LinkList';
 import { CircularProgress, ListSubheader } from '@material-ui/core';
 
 const styles = {
@@ -154,7 +154,7 @@ class App extends Component {
                                 PaperProps={{style: styles.drawer}}
                             >
                                 <AppBar title='QCVOC'/>
-                                <List>
+                                <LinkList onLinkClick={this.handleToggleDrawer}>
                                     <Link to='/patrons' icon={<People/>}>Veterans</Link>
                                     <Link to='/events' icon={<InsertInvitation/>}>Events</Link>
                                     <Link to='/scanner' icon={<SpeakerPhone/>}>Scanner</Link>
@@ -165,7 +165,7 @@ class App extends Component {
                                             <Link to='/accounts' icon={<VerifiedUser/>}>Accounts</Link>
                                         </div>
                                     }
-                                </List>                    
+                                </LinkList>                    
                             </Drawer>
                             <Switch>
                                 <Route exact path='/' component={Patrons}/>
