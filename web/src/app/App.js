@@ -12,7 +12,6 @@ import api from '../api';
 import { withStyles } from '@material-ui/core/styles';
 import { People, VerifiedUser, Assignment, InsertInvitation, SpeakerPhone } from '@material-ui/icons';
 import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
 
 import AppBar from './AppBar';
 import Link from './Link';
