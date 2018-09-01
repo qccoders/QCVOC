@@ -5,7 +5,10 @@
 
 namespace QCVOC.Api.Common
 {
+    using Dapper;
     using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
     using System.Linq;
     using System.Security.Claims;
 
@@ -37,5 +40,56 @@ namespace QCVOC.Api.Common
 
             throw new FormatException("The value of the NameIdentifier claim is not a valid Guid.");
         }
+
+        public static SqlBuilder ApplyFilter(this SqlBuilder builder, string field, object value)
+        {
+            return builder.ApplyFilter(FilterType.Equals, field, value);
+        }
+
+        public static SqlBuilder ApplyFilter(this SqlBuilder builder, FilterType filterType, string field, params object[] values)
+        {
+            filterType = filterType ?? FilterType.Equals;
+
+            //if (value != null)
+            //{
+            //    if (type != FilterType.In)
+            //    {
+            //        builder.Where($"{field} {type} @{field}", new ExpandoObject().AddProperty(field, value));
+            //    }
+            //}
+
+            return builder;
+        }
+
+        public static ExpandoObject AddProperty(this ExpandoObject obj, string name, object value)
+        {
+            var dict = (IDictionary<string, object>)obj;
+
+            if (dict.ContainsKey(name))
+            {
+                dict[name] = value;
+            }
+            else
+            {
+                dict.Add(name, value);
+            }
+
+            return obj;
+        }
+    }
+
+    public class FilterType
+    {
+        private FilterType(string value)
+        {
+            Value = value;
+        }
+
+        public string Value { get; }
+
+        public static FilterType Equals => new FilterType("=");
+        public static FilterType In => new FilterType("IN");
+        public static FilterType Like => new FilterType("LIKE");
+        public static FilterType Between => new FilterType("BETWEEN");
     }
 }
