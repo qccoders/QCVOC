@@ -159,7 +159,7 @@ class Patrons extends Component {
                     <Card className={classes.card}>
                         <CardContent>
                             <Typography gutterBottom variant="headline" componet="h2">
-                                Patrons
+                                Veterans
                             </Typography>
                             <TextField
                                 type="search"

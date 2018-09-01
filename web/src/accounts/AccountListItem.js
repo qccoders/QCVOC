@@ -34,7 +34,6 @@ const AccountListItem = (props) => {
             </ListItemIcon>
             <ListItemText
                 primary={account.name}
-                secondary={account.role}
             />
             <ListItemSecondaryAction>
                 <IconButton onClick={() => onItemResetClick(account)}>
