@@ -107,14 +107,14 @@ class PatronDialog extends Component {
                     this.execute(
                         () => api.post('/v1/patrons', patron),
                         'addApi', 
-                        'Account \'' + fullName + '\' successfully created.'
+                        'Veteran \'' + fullName + '\' successfully enrolled.'
                     )
                 }
                 else {
                     this.execute(
                         () => api.put('/v1/patrons/' + patron.id, patron), 
                         'updateApi', 
-                        'Account \'' + fullName +  '\' successfully updated.'
+                        'Veteran \'' + fullName +  '\' successfully updated.'
                     );
                 }
             }
@@ -133,7 +133,7 @@ class PatronDialog extends Component {
         return this.execute(
             () => api.delete('/v1/patrons/' + this.state.patron.id),
             'deleteApi', 
-            'Account \'' + this.state.patron.firstName + ' ' + this.state.patron.lastName +  '\' successfully deleted.'
+            'Veteran \'' + this.state.patron.firstName + ' ' + this.state.patron.lastName +  '\' successfully deleted.'
         );
     }
 
@@ -244,7 +244,7 @@ class PatronDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Add' : 'Update')} Patron</DialogTitle>
+                <DialogTitle>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
@@ -361,7 +361,7 @@ class PatronDialog extends Component {
                     </Button>
                 </DialogActions>
                 <ConfirmDialog
-                    title={'Confirm Patron Deletion'}
+                    title={'Confirm Veteran Deletion'}
                     prompt={'Delete'}
                     open={this.state.confirmDialog.open}
                     onConfirm={this.handleDeleteConfirmClick}

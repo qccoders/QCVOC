@@ -155,7 +155,7 @@ class App extends Component {
                             >
                                 <AppBar title='QCVOC'/>
                                 <List>
-                                    <Link to='/patrons' icon={<People/>}>Patrons</Link>
+                                    <Link to='/patrons' icon={<People/>}>Veterans</Link>
                                     <Link to='/events' icon={<InsertInvitation/>}>Events</Link>
                                     <Link to='/scanner' icon={<SpeakerPhone/>}>Scanner</Link>
                                     {(role === 'Administrator' || role === 'Supervisor') && 
