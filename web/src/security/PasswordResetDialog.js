@@ -109,16 +109,7 @@ class PasswordResetDialog extends Component {
 
             if (result.isValid) {
                 if (getCredentials().name === account.name) {
-                    let name = account.name;
-
-                    delete account.name;
-                    delete account.password2;
-                    
-                    this.execute(
-                        () => api.put('/v1/security/accounts/' + account.id, account), 
-                        'updateApi', 
-                        'Password for \'' + name + '\' successfully updated.'
-                    );
+                    this.updatePassword();
                 }
                 else {
                     this.setState({ confirmDialog: { open: true }});
@@ -128,13 +119,7 @@ class PasswordResetDialog extends Component {
     }
 
     handleResetConfirmation = () => {
-        let account = { ...this.state.account };
-
-        return this.execute(
-            () => api.put('/v1/security/accounts/' + account.id, account), 
-            'updateApi', 
-            'Password for \'' + account.name + '\' successfully updated.'
-        );
+        return this.updatePassword();
     }
 
     handleSnackbarClose = () => {
@@ -145,15 +130,21 @@ class PasswordResetDialog extends Component {
         this.setState({ confirmDialog: { open: false }});
     }
 
-    execute = (action, api, successMessage) => {
+    updatePassword = () => {
         return new Promise((resolve, reject) => {
-            this.setState({ [api]: { isExecuting: true }}, () => {
-                action(this.state.account)
+            this.setState({ updateApi: { isExecuting: true }}, () => {
+                let account = { ...this.state.account };
+                let name = account.name;
+        
+                delete account.name;
+                delete account.password2;
+
+                api.put('/v1/security/accounts/' + account.id, account)
                 .then(response => {
                     this.setState({
-                        [api]: { isExecuting: false, isErrored: false }
+                        updateApi: { isExecuting: false, isErrored: false }
                     }, () => {
-                        this.props.onClose(successMessage);
+                        this.props.onClose('Password for \'' + name + '\' successfully updated.');
                         resolve(response);
                     })
                 }, error => {
@@ -168,7 +159,7 @@ class PasswordResetDialog extends Component {
                     }
 
                     this.setState({ 
-                        [api]: { isExecuting: false, isErrored: true },
+                        updateApi: { isExecuting: false, isErrored: true },
                         snackbar: {
                             message: body,
                             open: true,
