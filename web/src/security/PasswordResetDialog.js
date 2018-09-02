@@ -105,16 +105,19 @@ class PasswordResetDialog extends Component {
 
     handleResetClick = () => {
         this.validate().then(result => {
-            let account = { ...this.state.account }
-            delete account.name;
-            delete account.password2;
+            let account = { ...this.state.account };
 
             if (result.isValid) {
                 if (getCredentials().name === account.name) {
+                    let name = account.name;
+
+                    delete account.name;
+                    delete account.password2;
+                    
                     this.execute(
                         () => api.put('/v1/security/accounts/' + account.id, account), 
                         'updateApi', 
-                        'Password for \'' + account.name + '\' successfully updated.'
+                        'Password for \'' + name + '\' successfully updated.'
                     );
                 }
                 else {
