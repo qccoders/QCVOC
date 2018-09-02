@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 
 const LinkList = (props) => {
     return props.children
+        .filter(child => child)
         .map((child, index) => React.cloneElement(child, { key: index, onClick: props.onLinkClick }));
 }
 
