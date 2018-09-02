@@ -106,6 +106,7 @@ class PasswordResetDialog extends Component {
     handleResetClick = () => {
         this.validate().then(result => {
             let account = { ...this.state.account }
+            delete account.name;
             delete account.password2;
 
             if (result.isValid) {
