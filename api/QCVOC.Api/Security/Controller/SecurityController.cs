@@ -369,9 +369,14 @@ namespace QCVOC.Api.Security.Controller
 
             if (User.GetId() == id && !User.IsInRole(nameof(Role.Administrator)))
             {
-                if (!string.IsNullOrWhiteSpace(account.Name) || account.Role != null)
+                if (!string.IsNullOrWhiteSpace(account.Name) && account.Name != accountToUpdate.Name)
                 {
-                    return StatusCode(403, "Users may not modify their own Account, except to change their password.");
+                    return StatusCode(403, "Users may not change their Account name.");
+                }
+
+                if (account.Role != null && account.Role != accountToUpdate.Role)
+                {
+                    return StatusCode(403, "Users may not change their Role.");
                 }
 
                 if (string.IsNullOrWhiteSpace(account.Password))
