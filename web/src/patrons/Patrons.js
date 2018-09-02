@@ -147,7 +147,7 @@ class Patrons extends Component {
         let { classes } = this.props;
         let { patrons, loadApi, refreshApi, snackbar, show, patronDialog } = this.state;
 
-        let searchById = this.state.filter && !isNaN(this.state.filter);
+        let searchById = this.state.filter !== undefined && this.state.filter !== '' && !isNaN(this.state.filter);
 
         let list = patrons
             .sort(sortByProp('firstName'))
