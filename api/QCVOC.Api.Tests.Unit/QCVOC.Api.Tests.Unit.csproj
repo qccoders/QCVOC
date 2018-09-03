@@ -9,7 +9,7 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
   	<CodeAnalysisRuleSet>Analysis.ruleset</CodeAnalysisRuleSet>
-    <DocumentationFile>C:\Users\JP.WHATNET\Desktop\QCVOC\api\QCVOC.Api.Tests.Unit\QCVOC.Api.Tests.Unit.xml</DocumentationFile>
+    <DocumentationFile>.\QCVOC.Api.Tests.Unit.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
