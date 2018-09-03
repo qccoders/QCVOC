@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Domain.Event.Data.Model
+namespace QCVOC.Api.Event.Data.Model
 {
     using System;
     using System.Collections.Generic;

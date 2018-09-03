@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Domain.Patrons.Controller
+namespace QCVOC.Api.Patrons.Controller
 {
     using System;
     using System.Collections.Generic;
@@ -13,8 +13,8 @@ namespace QCVOC.Api.Domain.Patrons.Controller
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Domain.Patrons.Data.DTO;
-    using QCVOC.Api.Domain.Patrons.Data.Model;
+    using QCVOC.Api.Patrons.Data.DTO;
+    using QCVOC.Api.Patrons.Data.Model;
     using QCVOC.Api.Security;
 
     /// <summary>

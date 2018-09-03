@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Domain.Patrons.Data.Repository
+namespace QCVOC.Api.Patrons.Data.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Domain.Patrons.Data.Model;
+    using QCVOC.Api.Patrons.Data.Model;
 
     /// <summary>
     ///     Provides data access for <see cref="Patron"/>.
@@ -171,65 +171,19 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
 
             if (filters is PatronFilters patronFilters)
             {
-                if (!string.IsNullOrWhiteSpace(patronFilters.Address))
-                {
-                    builder.Where("address = @address", new { address = patronFilters.Address });
-                }
-
-                if (!string.IsNullOrWhiteSpace(patronFilters.Email))
-                {
-                    builder.Where("email = @email", new { email = patronFilters.Email });
-                }
-
-                if (patronFilters.EnrollmentDateStart != null && patronFilters.EnrollmentDateEnd != null)
-                {
-                    builder.Where("enrollmentdate BETWEEN @start AND @end", new { start = patronFilters.EnrollmentDateStart, end = patronFilters.EnrollmentDateEnd });
-                }
-
-                if (!string.IsNullOrWhiteSpace(patronFilters.FirstName))
-                {
-                    builder.Where("firstname = @firstname", new { firstname = patronFilters.FirstName });
-                }
-
-                if (patronFilters.Id != null)
-                {
-                    builder.Where("p.id = @id", new { id = patronFilters.Id });
-                }
-
-                if (!string.IsNullOrWhiteSpace(patronFilters.LastName))
-                {
-                    builder.Where("lastname = @lastname", new { lastname = patronFilters.LastName });
-                }
-
-                if (patronFilters.LastUpdateDateStart != null && patronFilters.LastUpdateDateEnd != null)
-                {
-                    builder.Where("lastupdatedate BETWEEN @start AND @end", new { start = patronFilters.LastUpdateDateStart, end = patronFilters.LastUpdateDateEnd });
-                }
-
-                if (!string.IsNullOrWhiteSpace(patronFilters.LastUpdateBy))
-                {
-                    builder.Where("a.name = @lastupdateby", new { lastupdateby = patronFilters.LastUpdateBy });
-                }
-
-                if (patronFilters.LastUpdateById != null)
-                {
-                    builder.Where("lastupdatebyid = @lastupdatebyid", new { lastupdatebyid = patronFilters.LastUpdateById });
-                }
-
-                if (patronFilters.MemberId != null)
-                {
-                    builder.Where("memberid = @memberid", new { memberid = patronFilters.MemberId });
-                }
-
-                if (!string.IsNullOrWhiteSpace(patronFilters.PrimaryPhone))
-                {
-                    builder.Where("primaryphone = @primaryphone", new { primaryphone = patronFilters.PrimaryPhone });
-                }
-
-                if (!string.IsNullOrWhiteSpace(patronFilters.SecondaryPhone))
-                {
-                    builder.Where("secondaryphone = @secondaryphone", new { secondaryphone = patronFilters.SecondaryPhone });
-                }
+                builder
+                    .ApplyFilter(FilterType.Equals, "address", patronFilters.Address)
+                    .ApplyFilter(FilterType.Equals, "email", patronFilters.Email)
+                    .ApplyFilter(FilterType.Between, "enrollmentdate", patronFilters.EnrollmentDateStart, patronFilters.EnrollmentDateEnd)
+                    .ApplyFilter(FilterType.Equals, "firstname", patronFilters.FirstName)
+                    .ApplyFilter(FilterType.Equals, "p.id", patronFilters.Id)
+                    .ApplyFilter(FilterType.Equals, "lastname", patronFilters.LastName)
+                    .ApplyFilter(FilterType.Between, "lastupdatedate", patronFilters.LastUpdateDateStart, patronFilters.LastUpdateDateEnd)
+                    .ApplyFilter(FilterType.Equals, "a.name", patronFilters.LastUpdateBy)
+                    .ApplyFilter(FilterType.Equals, "lastupdatebyid", patronFilters.LastUpdateById)
+                    .ApplyFilter(FilterType.Equals, "memberid", patronFilters.MemberId)
+                    .ApplyFilter(FilterType.Equals, "primaryphone", patronFilters.PrimaryPhone)
+                    .ApplyFilter(FilterType.Equals, "secondaryphone", patronFilters.SecondaryPhone);
             }
 
             using (var db = ConnectionFactory.CreateConnection())

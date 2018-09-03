@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Middleware
+namespace QCVOC.Api.Common.Middleware
 {
     using System;
     using System.Diagnostics;

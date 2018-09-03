@@ -6,8 +6,11 @@
 namespace QCVOC.Api.Common
 {
     using System;
+    using System.Collections.Generic;
+    using System.Dynamic;
     using System.Linq;
     using System.Security.Claims;
+    using Dapper;
 
     /// <summary>
     ///     Miscellaneous extension methods.
@@ -36,6 +39,95 @@ namespace QCVOC.Api.Common
             }
 
             throw new FormatException("The value of the NameIdentifier claim is not a valid Guid.");
+        }
+
+        /// <summary>
+        ///     Conditionally adds the specified where clause if the specified value(s) are non-null.
+        /// </summary>
+        /// <param name="builder">The SqlBuilder instance to which to apply the filter.</param>
+        /// <param name="filterType">The type of filter to apply.</param>
+        /// <param name="field">The field to filter.</param>
+        /// <param name="values">The value to filter by.</param>
+        /// <returns>The specified SqlBuilder instance with the filter applied.</returns>
+        public static SqlBuilder ApplyFilter(this SqlBuilder builder, FilterType filterType, string field, params object[] values)
+        {
+            if (values == null || !values.Any(v => v != null))
+            {
+                return builder;
+            }
+
+            filterType = filterType ?? FilterType.Equals;
+            var valueField = field.Replace('.', '.');
+
+            string sql = string.Empty;
+            ExpandoObject parms = new ExpandoObject();
+
+            switch (filterType.Value)
+            {
+                case "BETWEEN":
+                    if (values.Length != 2)
+                    {
+                        throw new ArgumentException($"BETWEEN filters must supply exactly two values (supplied: {values.Length}).");
+                    }
+
+                    sql = $"{field} BETWEEN @{field}_start AND @{valueField}_end";
+
+                    parms.AddProperty($"{field}_start", values[0]);
+                    parms.AddProperty($"{field}_end", values[1]);
+
+                    return builder.Where(sql, parms);
+                case "IN":
+                    sql = $"{field} IN ({string.Join(',', values.Select((v, i) => $"@{valueField}_{i}"))}";
+
+                    foreach (var value in values.Select((v, i) => new { Index = i, Value = v }))
+                    {
+                        parms.AddProperty($"{field}_{value.Index}", value.Value);
+                    }
+
+                    return builder.Where(sql, parms);
+                case "LIKE":
+                    if (values.Length != 1)
+                    {
+                        throw new ArgumentException($"LIKE filters must supply exactly one value (supplied: {values.Length}).");
+                    }
+
+                    sql = $"{field} LIKE @{valueField}";
+
+                    parms.AddProperty($"{field}", values[0]);
+
+                    return builder.Where(sql, parms);
+                case "=":
+                    if (values.Length != 1)
+                    {
+                        throw new ArgumentException($"EQUALS filters must supply exactly one value (supplied: {values.Length}).");
+                    }
+
+                    sql = $"{field} = @{valueField}";
+
+                    parms.AddProperty($"{field}", values[0]);
+
+                    return builder.Where(sql, parms);
+                default:
+                    break;
+            }
+
+            return builder;
+        }
+
+        private static ExpandoObject AddProperty(this ExpandoObject obj, string name, object value)
+        {
+            var dict = (IDictionary<string, object>)obj;
+
+            if (dict.ContainsKey(name))
+            {
+                dict[name] = value;
+            }
+            else
+            {
+                dict.Add(name, value);
+            }
+
+            return obj;
         }
     }
 }

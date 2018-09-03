@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Domain.Patrons
+namespace QCVOC.Api.Patrons
 {
     using System;
     using System.Diagnostics.CodeAnalysis;

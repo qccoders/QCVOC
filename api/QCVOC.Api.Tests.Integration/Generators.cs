@@ -9,8 +9,8 @@ namespace Server.Tests
     using FsCheck;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
-    using QCVOC.Api.Domain.Patrons.Data.Model;
-    using QCVOC.Api.Domain.Patrons.Data.Repository;
+    using QCVOC.Api.Patrons.Data.Model;
+    using QCVOC.Api.Patrons.Data.Repository;
     using QCVOC.Api.Security;
     using QCVOC.Api.Security.Data.Model;
     using QCVOC.Api.Security.Data.Repository;
