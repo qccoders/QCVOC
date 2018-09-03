@@ -56,11 +56,6 @@ class SecurityMenu extends Component {
         .then(() => this.props.onLogout());
     }
 
-    resetPassword = (account) => {
-        return api.put('v1/security/accounts/' + account.id, account)
-        .then(() => this.props.onPasswordReset());
-    }
-
     handleMenuClick = (event) => {
         this.setState({ menu: { anchorEl: event.currentTarget, open: true }});
     }
@@ -164,7 +159,6 @@ class SecurityMenu extends Component {
                     open={passwordResetDialog.open}
                     account={passwordResetDialog.account}
                     onClose={this.handlePasswordResetDialogClose}
-                    onReset={this.resetPassword}
                 />
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
