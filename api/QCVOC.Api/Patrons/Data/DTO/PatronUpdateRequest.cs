@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Domain.Patrons.Data.DTO
+namespace QCVOC.Api.Patrons.Data.DTO
 {
     using System.ComponentModel.DataAnnotations;
 

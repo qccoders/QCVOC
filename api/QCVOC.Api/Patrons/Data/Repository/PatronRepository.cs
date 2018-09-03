@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Domain.Patrons.Data.Repository
+namespace QCVOC.Api.Patrons.Data.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace QCVOC.Api.Domain.Patrons.Data.Repository
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Domain.Patrons.Data.Model;
+    using QCVOC.Api.Patrons.Data.Model;
 
     /// <summary>
     ///     Provides data access for <see cref="Patron"/>.

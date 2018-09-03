@@ -10,8 +10,8 @@ namespace Server.Tests
     using FsCheck;
     using FsCheck.Experimental;
     using FsCheck.Xunit;
-    using QCVOC.Api.Domain.Patrons.Data.Model;
-    using QCVOC.Api.Domain.Patrons.Data.Repository;
+    using QCVOC.Api.Patrons.Data.Model;
+    using QCVOC.Api.Patrons.Data.Repository;
     using Xunit;
 
     public class Patrons

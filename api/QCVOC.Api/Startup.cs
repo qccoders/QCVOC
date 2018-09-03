@@ -1,5 +1,5 @@
-﻿// <copyright file="Startup.cs" company="JP Dillingham, Nick Acosta, et. al.">
-//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+﻿// <copyright file="Startup.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+//     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
@@ -27,14 +27,13 @@ namespace QCVOC.Api
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Domain.Patrons.Data.Model;
-    using QCVOC.Api.Domain.Patrons.Data.Repository;
-    using QCVOC.Api.Domain.Service.Data.Model;
-    using QCVOC.Api.Domain.Service.Data.Repository;
-    using QCVOC.Api.Middleware;
+    using QCVOC.Api.Common.Middleware;
+    using QCVOC.Api.Patrons.Data.Model;
+    using QCVOC.Api.Patrons.Data.Repository;
     using QCVOC.Api.Security;
     using QCVOC.Api.Security.Data.Model;
     using QCVOC.Api.Security.Data.Repository;
+    using QCVOC.Api.Service.Data.Repository;
     using Swashbuckle.AspNetCore.Swagger;
     using Swashbuckle.AspNetCore.SwaggerGen;
     using Swashbuckle.AspNetCore.SwaggerUI;
@@ -103,7 +102,7 @@ namespace QCVOC.Api
                 new RefreshTokenRepository(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<IRepository<Patron>, PatronRepository>(serviceProvider =>
                 new PatronRepository(serviceProvider.GetService<IDbConnectionFactory>()));
-            services.AddScoped<IRepository<Service>, ServiceRepository>(serviceProvider =>
+            services.AddScoped<IRepository<Service.Data.Model.Service>, ServiceRepository>(serviceProvider =>
                 new ServiceRepository(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
