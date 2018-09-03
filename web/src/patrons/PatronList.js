@@ -10,7 +10,7 @@ import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { Person } from '@material-ui/icons'
 
 const PatronList = (props) => {
-    let { patrons, onItemClick } = props;
+    let { patrons, displayId, onItemClick } = props;
 
     return (
         <List>
@@ -25,7 +25,7 @@ const PatronList = (props) => {
                     </ListItemIcon>
                     <ListItemText
                         primary={p.firstName + ' ' + p.lastName}
-                        secondary={p.address}
+                        secondary={displayId ? 'Member ID: ' + p.memberId : p.address}
                     />
                 </ListItem>
             )}
@@ -35,6 +35,7 @@ const PatronList = (props) => {
 
 PatronList.propTypes = {
     patrons: PropTypes.array.isRequired,
+    displayId: PropTypes.bool.isRequired,
     onItemClick: PropTypes.func.isRequired,
 };
 

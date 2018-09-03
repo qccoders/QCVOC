@@ -147,9 +147,11 @@ class Patrons extends Component {
         let { classes } = this.props;
         let { patrons, loadApi, refreshApi, snackbar, show, patronDialog } = this.state;
 
+        let searchById = this.state.filter !== undefined && this.state.filter !== '' && !isNaN(this.state.filter);
+
         let list = patrons
             .sort(sortByProp('firstName'))
-            .filter(p => p.fullName.toLowerCase().includes(this.state.filter.toLowerCase()));
+            .filter(p => p.memberId.toString().includes(this.state.filter) || p.fullName.toLowerCase().includes(this.state.filter.toLowerCase()));
 
         let shownList = list.slice(0, this.state.show);
 
@@ -179,6 +181,7 @@ class Patrons extends Component {
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <PatronList
                                     patrons={shownList}
+                                    displayId={searchById}
                                     onItemClick={this.handleEditClick}
                                 />
                             }
