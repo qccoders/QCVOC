@@ -132,8 +132,9 @@ class Accounts extends Component {
                 open: false,
             }
         }, () => {
-            if (!result) return;
-            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'))
+            if (result) {
+                this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'));
+            }
         })
     }
 
@@ -144,8 +145,9 @@ class Accounts extends Component {
                 open: false,
             }
         }, () => {
-            if (!result) return;
-            this.setState({ snackbar: { message: result, open: true }}, () => this.props.onPasswordReset());
+            if (result) {
+                this.setState({ snackbar: { message: result, open: true }}, () => this.props.onPasswordReset());
+            }
         })
     }
 
