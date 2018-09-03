@@ -107,10 +107,14 @@ namespace QCVOC.Api.Patrons.Controller
                 return BadRequest(ModelState);
             }
 
-            var existingPatron = PatronRepository.GetAll(new PatronFilters()
+            var existingPatron = Enumerable.Empty<Patron>();
+            if (patron.MemberId != null)
             {
-                MemberId = patron.MemberId,
-            });
+                existingPatron = PatronRepository.GetAll(new PatronFilters()
+                {
+                    MemberId = patron.MemberId,
+                });
+            }
 
             if (existingPatron.Any())
             {
@@ -126,7 +130,7 @@ namespace QCVOC.Api.Patrons.Controller
 
             if (existingPatron.Any())
             {
-                return Conflict($"A Patron with a matching first name, last name and address a.ready exists.");
+                return Conflict($"A Patron with a matching first name, last name and address already exists.");
             }
 
             var patronRecord = new Patron()
@@ -188,7 +192,11 @@ namespace QCVOC.Api.Patrons.Controller
                 return NotFound();
             }
 
-            var conflictingPatrons = PatronRepository.GetAll(new PatronFilters() { MemberId = patron.MemberId });
+            var conflictingPatrons = Enumerable.Empty<Patron>();
+            if (patron.MemberId != null)
+            {
+                conflictingPatrons = PatronRepository.GetAll(new PatronFilters() { MemberId = patron.MemberId });
+            }
 
             if (conflictingPatrons.Any(p => p.Id != id))
             {
@@ -217,7 +225,7 @@ namespace QCVOC.Api.Patrons.Controller
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error createing the specified Patron: {ex.Message}. See inner exception for details.", ex);
+                throw new Exception($"Error creating the specified Patron: {ex.Message}. See inner exception for details.", ex);
             }
         }
 

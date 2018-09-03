@@ -42,9 +42,8 @@ namespace QCVOC.Api.Patrons.Data.DTO
         /// <summary>
         ///     Gets or sets the member id of the Patron.
         /// </summary>
-        [Required]
         [Range(minimum: 1000, maximum: 9999)]
-        public int MemberId { get; set; }
+        public int? MemberId { get; set; }
 
         /// <summary>
         ///     Gets or sets the primary phone number of the Patron.

@@ -55,7 +55,7 @@ ALTER TABLE public.accounts OWNER TO qcvoc;
 
 CREATE TABLE public.patrons (
     id uuid NOT NULL,
-    memberid integer NOT NULL,
+    memberid integer,
     firstname text NOT NULL,
     lastname text NOT NULL,
     address text NOT NULL,
