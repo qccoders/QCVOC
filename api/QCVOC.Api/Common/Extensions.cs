@@ -65,7 +65,7 @@ namespace QCVOC.Api.Common
             switch (filterType.Value)
             {
                 case "BETWEEN":
-                    if (values.Length != 2)
+                    if (values.Length != 2 || values[0] == null || values[1] == null)
                     {
                         throw new ArgumentException($"BETWEEN filters must supply exactly two values (supplied: {values.Length}).");
                     }
@@ -77,7 +77,7 @@ namespace QCVOC.Api.Common
 
                     return builder.Where(sql, parms);
                 case "IN":
-                    sql = $"{field} IN ({string.Join(',', values.Select((v, i) => $"@{valueField}_{i}"))}";
+                    sql = $"{field} IN ({string.Join(',', values.Select((v, i) => $"@{valueField}_{i}"))})";
 
                     foreach (var value in values.Select((v, i) => new { Index = i, Value = v }))
                     {
