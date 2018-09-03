@@ -1,5 +1,5 @@
-// <copyright file="RefreshTokenRepository.cs" company="JP Dillingham, Nick Acosta, et. al.">
-//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+// <copyright file="RefreshTokenRepository.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+//     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
@@ -7,6 +7,7 @@ namespace QCVOC.Api.Security.Data.Repository
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Dapper;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
@@ -106,20 +107,7 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The RefreshToken matching the specified id.</returns>
         public RefreshToken Get(Guid id)
         {
-            var query = @"
-                SELECT
-                    accountid AS AccountID,
-                    expires AS Expires,
-                    issued AS Issued,
-                    id AS Id
-                FROM refreshtokens
-                WHERE id = @id
-            ";
-
-            using (var db = ConnectionFactory.CreateConnection())
-            {
-                return db.QueryFirstOrDefault<RefreshToken>(query, new { id = id });
-            }
+            return GetAll(new RefreshTokenFilters() { AccountId = id }).SingleOrDefault();
         }
 
         /// <summary>
@@ -151,10 +139,7 @@ namespace QCVOC.Api.Security.Data.Repository
 
             if (filters is RefreshTokenFilters refreshTokenFilters)
             {
-                if (refreshTokenFilters.AccountId != null)
-                {
-                    builder.Where("accountid = @accountid", new { accountid = refreshTokenFilters.AccountId });
-                }
+                builder.ApplyFilter(FilterType.Equals, "accountid", refreshTokenFilters.AccountId);
             }
 
             using (var db = ConnectionFactory.CreateConnection())
