@@ -145,7 +145,7 @@ class Accounts extends Component {
             }
         }, () => {
             if (!result) return;
-            this.setState({ snackbar: { message: result, open: true }});
+            this.setState({ snackbar: { message: result, open: true }}, () => this.props.onPasswordReset());
         })
     }
 
