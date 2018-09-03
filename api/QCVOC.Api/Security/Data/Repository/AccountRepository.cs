@@ -1,5 +1,5 @@
-// <copyright file="AccountRepository.cs" company="JP Dillingham, Nick Acosta, et. al.">
-//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+// <copyright file="AccountRepository.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+//     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
@@ -143,45 +143,15 @@ namespace QCVOC.Api.Security.Data.Repository
 
             if (filters is AccountFilters accountFilters)
             {
-                if (accountFilters.Role != null)
-                {
-                    builder.Where("a1.role = @role", new { role = accountFilters.Role.ToString() });
-                }
-
-                if (!string.IsNullOrWhiteSpace(accountFilters.Name))
-                {
-                    builder.Where("a1.name = @name", new { accountFilters.Name });
-                }
-
-                if (accountFilters.Id != null)
-                {
-                    builder.Where("a1.id = @id", new { accountFilters.Id });
-                }
-
-                if (accountFilters.PasswordResetRequired != null)
-                {
-                    builder.Where("a1.passwordresetrequired = @passwordresetrequired", new { accountFilters.PasswordResetRequired });
-                }
-
-                if (accountFilters.CreationDateStart != null && accountFilters.CreationDateStart != null)
-                {
-                    builder.Where("a1.creationdate BETWEEN @start AND @end", new { start = accountFilters.CreationDateStart, end = accountFilters.CreationDateEnd });
-                }
-
-                if (accountFilters.LastUpdateDateStart != null && accountFilters.LastUpdateDateEnd != null)
-                {
-                    builder.Where("a1.lastupdate BETWEEN @start AND @end", new { start = accountFilters.LastUpdateDateStart, end = accountFilters.LastUpdateDateEnd });
-                }
-
-                if (!string.IsNullOrWhiteSpace(accountFilters.LastUpdateBy))
-                {
-                    builder.Where("a1.lastupdateby = @lastupdateby", new { lastupdateby = accountFilters.LastUpdateBy });
-                }
-
-                if (accountFilters.LastUpdateById != null)
-                {
-                    builder.Where("a1.lastupdatebyid = @lastupdatebyid", new { lastupdatebyid = accountFilters.LastUpdateById });
-                }
+                builder
+                    .ApplyFilter(FilterType.Equals, "a1.id", accountFilters.Id)
+                    .ApplyFilter(FilterType.Equals, "a1.name", accountFilters.Name)
+                    .ApplyFilter(FilterType.Equals, "a1.passwordresetrequired", accountFilters.PasswordResetRequired)
+                    .ApplyFilter(FilterType.Equals, "a1.role", accountFilters.Role.ToString())
+                    .ApplyFilter(FilterType.Between, "a1.creationdate", accountFilters.CreationDateStart, accountFilters.CreationDateEnd)
+                    .ApplyFilter(FilterType.Between, "a1.lastupdatedate", accountFilters.LastUpdateDateStart, accountFilters.LastUpdateDateEnd)
+                    .ApplyFilter(FilterType.Equals, "a1.lastupdateby", accountFilters.LastUpdateBy)
+                    .ApplyFilter(FilterType.Equals, "a1.lastupdatebyid", accountFilters.LastUpdateById);
             }
 
             using (var db = ConnectionFactory.CreateConnection())
