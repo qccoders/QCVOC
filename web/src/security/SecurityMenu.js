@@ -97,11 +97,11 @@ class SecurityMenu extends Component {
     handlePasswordResetDialogClose = (result) => {
         this.setState({
             passwordResetDialog: { open: false },
+        }, () => { 
+            if (result) { 
+                this.setState({ snackbar: { message: result, open: true }}, () => this.props.onPasswordReset());
+            }
         });
-
-        if (result) { 
-            this.setState({ snackbar: { message: result, open: true }});
-        }
     }
 
     render() {
