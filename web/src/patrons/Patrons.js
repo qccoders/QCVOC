@@ -131,7 +131,7 @@ class Patrons extends Component {
             api.get('/v1/patrons?offset=0&limit=5000&orderBy=ASC')
             .then(response => {
                 this.setState({ 
-                    patrons: response.data,
+                    patrons: response.data.map(p => ({ ...p, memberId: p.memberId || '' })),
                     [apiType]: { isExecuting: false, isErrored: false },
                 });
             }, error => {
