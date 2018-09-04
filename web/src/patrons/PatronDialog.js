@@ -196,7 +196,6 @@ class PatronDialog extends Component {
         let { memberId, firstName, lastName, address, primaryPhone, secondaryPhone, email } = this.state.patron;
         let result = { ...initialState.validation };
 
-        if (memberId === '') result.memberId = 'The Member ID field is required.';
         if (memberId !== '' && (isNaN(memberId) || memberId < 1000 || memberId > 9999)) result.memberId = 'The Member ID field must be a number between 1000 and 9999.';
         if (firstName === '') result.firstName = 'The First Name field is required.';
         if (lastName === '') result.lastName = 'The Last Name field is required.';
@@ -246,19 +245,6 @@ class PatronDialog extends Component {
             >
                 <DialogTitle>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
-                    <TextField
-                        autoFocus
-                        id="memberId"
-                        label="Member ID"
-                        value={memberId}
-                        type="text"
-                        fullWidth
-                        onChange={(event) => this.handleChange('memberId', event)}
-                        helperText={validation.memberId}
-                        error={validation.memberId !== undefined}
-                        disabled={executing}
-                        margin={'normal'}
-                    />
                     <TextField
                         id="firstName"
                         label="First Name"
@@ -328,6 +314,19 @@ class PatronDialog extends Component {
                         onChange={(event) => this.handleChange('secondaryPhone', event)}
                         helperText={validation.secondaryPhone}
                         error={validation.secondaryPhone !== undefined}
+                        disabled={executing}
+                        margin={'normal'}
+                    />
+                    <TextField
+                        autoFocus
+                        id="memberId"
+                        label="Member ID"
+                        value={memberId}
+                        type="text"
+                        fullWidth
+                        onChange={(event) => this.handleChange('memberId', event)}
+                        helperText={validation.memberId}
+                        error={validation.memberId !== undefined}
                         disabled={executing}
                         margin={'normal'}
                     />
