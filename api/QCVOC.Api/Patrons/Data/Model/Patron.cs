@@ -65,7 +65,7 @@ namespace QCVOC.Api.Patrons.Data.Model
         /// <summary>
         ///     Gets or sets the member id of the Patron.
         /// </summary>
-        public int MemberId { get; set; }
+        public int? MemberId { get; set; }
 
         /// <summary>
         ///     Gets or sets the primary phone number of the Patron.
