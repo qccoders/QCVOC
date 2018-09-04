@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials } from '../credentialStore';
+import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentialStore';
 import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -75,7 +75,7 @@ class App extends Component {
                     this.setState({ 
                         api: { isExecuting: false, isErrored: false },
                         credentials: getCredentials() 
-                    }, () => this.getAccountDetails());
+                    });
                 })
                 .catch(error => {
                     this.setState({ 
@@ -85,18 +85,6 @@ class App extends Component {
                 });
             })
         }
-    }
-
-    getAccountDetails = () => {
-        let { credentials } = this.state;
-
-        api.get('/v1/security/accounts/' + credentials.id)
-        .then(response => {
-            this.setState({ credentials: { ...credentials, passwordResetRequired: response.data.passwordResetRequired }});
-        })
-        .catch(error => {
-            console.log(error);
-        });
     }
 
     handleToggleDrawer = () => { 
@@ -110,7 +98,6 @@ class App extends Component {
             } else {
                 saveSessionCredentials(this.state.credentials);
             }
-            this.getAccountDetails();
         });
     }
 
@@ -126,7 +113,9 @@ class App extends Component {
     }
 
     handlePasswordReset = () => {
-        this.getAccountDetails();
+        this.setState({ 
+            credentials: { ...this.state.credentials, passwordResetRequired: false }
+        }, () => updateCredentials(this.state.credentials));
     }
 
     render() {
