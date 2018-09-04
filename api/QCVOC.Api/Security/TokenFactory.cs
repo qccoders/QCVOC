@@ -39,7 +39,7 @@ namespace QCVOC.Api.Security
                 new Claim("sub", account.Id.ToString()),
                 new Claim("name", account.Name),
                 new Claim("role", account.Role.ToString()),
-                new Claim("jti", refreshTokenId.ToString())
+                new Claim("jti", refreshTokenId.ToString()),
             };
 
             return GetJwtSecurityToken(claims, expiry);
@@ -113,7 +113,7 @@ namespace QCVOC.Api.Security
         {
             var claims = new Claim[]
             {
-                new Claim("jti", refreshTokenId.ToString())
+                new Claim("jti", refreshTokenId.ToString()),
             };
 
             return GetJwtSecurityToken(claims, expiresUtc, issuedUtc);
@@ -131,6 +131,13 @@ namespace QCVOC.Api.Security
 
         private JwtSecurityToken GetJwtSecurityToken(Claim[] claims, DateTime expiresUtc, DateTime issuedUtc)
         {
+            if (!claims.Any(c => c.Type == "iat"))
+            {
+                var claimList = claims.ToList();
+                claimList.Add(new Claim("iat", ((DateTimeOffset)issuedUtc).ToUnixTimeSeconds().ToString()));
+                claims = claimList.ToArray();
+            }
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>(Settings.JwtKey)));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
