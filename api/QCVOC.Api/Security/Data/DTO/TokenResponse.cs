@@ -55,6 +55,11 @@ namespace QCVOC.Api.Security.Data.DTO
         public long Issued => ((DateTimeOffset)AccessJwtSecurityToken.ValidFrom).ToUnixTimeSeconds();
 
         /// <summary>
+        ///     Gets a value indicating whether a password reset for the Account is required.
+        /// </summary>
+        public bool PasswordResetRequired => bool.Parse(AccessJwtSecurityToken.Claims.Where(c => c.Type == "pwd").SingleOrDefault().Value);
+
+        /// <summary>
         ///     Gets the value of the Name claim from the Access Token.
         /// </summary>
         public string Name => AccessJwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Name).SingleOrDefault().Value;
