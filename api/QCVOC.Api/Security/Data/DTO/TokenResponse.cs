@@ -42,7 +42,7 @@ namespace QCVOC.Api.Security.Data.DTO
         /// <summary>
         ///     Gets the time at which the Access Token expires.
         /// </summary>
-        public DateTime Expires => AccessJwtSecurityToken.ValidTo;
+        public long Expires => ((DateTimeOffset)AccessJwtSecurityToken.ValidTo).ToUnixTimeSeconds();
 
         /// <summary>
         ///     Gets the value of the NameIdentifier claim from the Access Token.
@@ -52,12 +52,22 @@ namespace QCVOC.Api.Security.Data.DTO
         /// <summary>
         ///     Gets the time at which the Access Token was issued.
         /// </summary>
-        public DateTime Issued => AccessJwtSecurityToken.ValidFrom;
+        public long Issued => ((DateTimeOffset)AccessJwtSecurityToken.ValidFrom).ToUnixTimeSeconds();
+
+        /// <summary>
+        ///     Gets a value indicating whether a password reset for the Account is required.
+        /// </summary>
+        public bool PasswordResetRequired => bool.Parse(AccessJwtSecurityToken.Claims.Where(c => c.Type == "pwd").SingleOrDefault().Value);
 
         /// <summary>
         ///     Gets the value of the Name claim from the Access Token.
         /// </summary>
         public string Name => AccessJwtSecurityToken.Claims.Where(c => c.Type == ClaimTypes.Name).SingleOrDefault().Value;
+
+        /// <summary>
+        ///     Gets the value of the Not Before claim from the Access Token.
+        /// </summary>
+        public long NotBefore => long.Parse(AccessJwtSecurityToken.Claims.Where(c => c.Type == "nbf").SingleOrDefault().Value);
 
         /// <summary>
         ///     Gets or sets the Refresh Token.
