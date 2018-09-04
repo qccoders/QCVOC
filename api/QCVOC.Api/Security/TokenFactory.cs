@@ -1,11 +1,12 @@
-﻿// <copyright file="TokenFactory.cs" company="JP Dillingham, Nick Acosta, et. al.">
-//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+﻿// <copyright file="TokenFactory.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+//     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
 namespace QCVOC.Api.Security
 {
     using System;
+    using System.Collections.Generic;
     using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
     using System.Security.Claims;
@@ -31,7 +32,7 @@ namespace QCVOC.Api.Security
             var expiry = Utility.GetSetting<int>(Settings.JwtAccessTokenExpiry);
             var key = Utility.GetSetting<string>(Settings.JwtKey);
 
-            var claims = new Claim[]
+            var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, account.Name),
                 new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
@@ -40,6 +41,7 @@ namespace QCVOC.Api.Security
                 new Claim("name", account.Name),
                 new Claim("role", account.Role.ToString()),
                 new Claim("jti", refreshTokenId.ToString()),
+                new Claim("pwd", account.PasswordResetRequired.ToString().ToLower()),
             };
 
             return GetJwtSecurityToken(claims, expiry);
@@ -111,7 +113,7 @@ namespace QCVOC.Api.Security
         /// <returns>The created JwtSecurityToken.</returns>
         public JwtSecurityToken GetRefreshToken(Guid refreshTokenId, DateTime expiresUtc, DateTime issuedUtc)
         {
-            var claims = new Claim[]
+            var claims = new List<Claim>
             {
                 new Claim("jti", refreshTokenId.ToString()),
             };
@@ -119,23 +121,21 @@ namespace QCVOC.Api.Security
             return GetJwtSecurityToken(claims, expiresUtc, issuedUtc);
         }
 
-        private JwtSecurityToken GetJwtSecurityToken(Claim[] claims, int ttlInMinuntes)
+        private JwtSecurityToken GetJwtSecurityToken(List<Claim> claims, int ttlInMinuntes)
         {
             return GetJwtSecurityToken(claims, DateTime.UtcNow.AddMinutes(ttlInMinuntes), DateTime.UtcNow);
         }
 
-        private JwtSecurityToken GetJwtSecurityToken(Claim[] claims, DateTime expiresUtc)
+        private JwtSecurityToken GetJwtSecurityToken(List<Claim> claims, DateTime expiresUtc)
         {
             return GetJwtSecurityToken(claims, expiresUtc, DateTime.UtcNow);
         }
 
-        private JwtSecurityToken GetJwtSecurityToken(Claim[] claims, DateTime expiresUtc, DateTime issuedUtc)
+        private JwtSecurityToken GetJwtSecurityToken(List<Claim> claims, DateTime expiresUtc, DateTime issuedUtc)
         {
             if (!claims.Any(c => c.Type == "iat"))
             {
-                var claimList = claims.ToList();
-                claimList.Add(new Claim("iat", ((DateTimeOffset)issuedUtc).ToUnixTimeSeconds().ToString()));
-                claims = claimList.ToArray();
+                claims.Add(new Claim("iat", ((DateTimeOffset)issuedUtc).ToUnixTimeSeconds().ToString()));
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Utility.GetSetting<string>(Settings.JwtKey)));
