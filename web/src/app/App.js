@@ -4,7 +4,7 @@
 */
 
 import React, { Component } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials } from '../credentialStore';
 import api from '../api';
@@ -119,6 +119,7 @@ class App extends Component {
             setTimeout(() => {
                 this.setState({ credentials: initialState.credentials }, () => {
                     deleteCredentials();
+                    this.props.history.push("/");
                 });
             }, 500);
         });
@@ -186,4 +187,4 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(App); 
+export default withRouter(withStyles(styles)(App)); 
