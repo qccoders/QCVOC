@@ -51,11 +51,5 @@ namespace QCVOC.Api.Patrons.Data.DTO
         [Required]
         [Phone]
         public string PrimaryPhone { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the secondary phone number of the Patron.
-        /// </summary>
-        [Phone]
-        public string SecondaryPhone { get; set; }
     }
 }

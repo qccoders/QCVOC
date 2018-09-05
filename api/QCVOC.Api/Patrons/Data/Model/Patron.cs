@@ -73,11 +73,6 @@ namespace QCVOC.Api.Patrons.Data.Model
         public string PrimaryPhone { get; set; }
 
         /// <summary>
-        ///     Gets or sets the secondary phone number of the Patron.
-        /// </summary>
-        public string SecondaryPhone { get; set; }
-
-        /// <summary>
         ///     Compares two Patron instances.
         /// </summary>
         /// <param name="patron">The Patron to which to compare.</param>
@@ -97,7 +92,6 @@ namespace QCVOC.Api.Patrons.Data.Model
             && this.LastUpdateById == patron.LastUpdateById
             && this.Address == patron.Address
             && this.PrimaryPhone == patron.PrimaryPhone
-            && this.SecondaryPhone == patron.SecondaryPhone
             && this.Email == patron.Email
             && this.EnrollmentDate - patron.EnrollmentDate <= TimeSpan.FromSeconds(1);
         }
