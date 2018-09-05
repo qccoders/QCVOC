@@ -10,7 +10,7 @@ namespace QCVOC.Api.Service.Data.Model
     /// <summary>
     ///     A Service.
     /// </summary>
-    public class Service
+    public class Service : IEquatable<Service>
     {
         /// <summary>
         ///     Gets or sets the id of the service.
@@ -36,5 +36,24 @@ namespace QCVOC.Api.Service.Data.Model
         ///     Gets or sets date on which the Service was created.
         /// </summary>
         public DateTime CreationDate { get; set; }
+
+        /// <summary>
+        ///    Compares two Service instances.
+        /// </summary>
+        /// <param name="service">The service to which to compare.</param>
+        /// <returns>A value indicating whether the compared instances are equal.</returns>
+        public bool Equals(Service service)
+        {
+            if (service == null)
+            {
+                return this == null;
+            }
+
+            return this.Id == service.Id
+            && this.Name == service.Name
+            && this.Description == service.Description
+            && this.CreationById == service.CreationById
+            && this.CreationDate - service.CreationDate <= TimeSpan.FromSeconds(1);
+        }
     }
 }
