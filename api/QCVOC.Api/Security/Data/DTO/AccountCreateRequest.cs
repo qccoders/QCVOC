@@ -1,5 +1,5 @@
-﻿// <copyright file="AccountCreateRequest.cs" company="JP Dillingham, Nick Acosta, et. al.">
-//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+﻿// <copyright file="AccountCreateRequest.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+//     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
@@ -21,16 +21,16 @@ namespace QCVOC.Api.Security.Data.DTO
         public string Name { get; set; }
 
         /// <summary>
-        ///     Gets or sets the Role for the new Account.
-        /// </summary>
-        [Required]
-        public Role Role { get; set; }
-
-        /// <summary>
         ///     Gets or sets the password for the new Account.
         /// </summary>
         [Required]
         [StringLength(maximumLength: 256, MinimumLength = 6)]
         public string Password { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Role for the new Account.
+        /// </summary>
+        [Required]
+        public Role Role { get; set; }
     }
 }
