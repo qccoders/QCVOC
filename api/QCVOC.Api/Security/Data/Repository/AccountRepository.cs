@@ -41,9 +41,9 @@ namespace QCVOC.Api.Security.Data.Repository
 
             var query = builder.AddTemplate(@"
                 INSERT INTO accounts
-                    (id, name, passwordhash, passwordresetrequired, role, creationdate, lastupdatedate, lastupdatebyid)
+                    (id, name, passwordhash, passwordresetrequired, role, creationdate, creationbyid, lastupdatedate, lastupdatebyid)
                 VALUES
-                    (@id, @name, @passwordhash, @passwordresetrequired, @role, @creationdate, @lastupdatedate, @lastupdatebyid);
+                    (@id, @name, @passwordhash, @passwordresetrequired, @role, @creationdate, @creationbyid, @lastupdatedate, @lastupdatebyid);
             ");
 
             builder.AddParameters(new
@@ -54,6 +54,7 @@ namespace QCVOC.Api.Security.Data.Repository
                 passwordresetrequired = account.PasswordResetRequired,
                 role = account.Role.ToString(),
                 creationdate = account.CreationDate,
+                creationbyid = account.CreationById,
                 lastupdatedate = account.LastUpdateDate,
                 lastupdatebyid = account.LastUpdateById,
             });
@@ -124,11 +125,14 @@ namespace QCVOC.Api.Security.Data.Repository
                     a1.passwordresetrequired,
                     a1.role,
                     a1.creationdate,
+                    a1.creationbyid,
+                    COALESCE(a3.name, '(Deleted user)') AS creationby,
                     a1.lastupdatedate,
                     COALESCE(a2.name, '(Deleted user)') AS lastupdateby,
                     a1.lastupdatebyid
                 FROM accounts a1
                 LEFT JOIN accounts a2 ON a1.lastupdatebyid = a2.id
+                LEFT JOIN accounts a3 ON a1.creationbyid = a3.id
                 /**where**/
                 ORDER BY a1.name {filters.OrderBy.ToString()}
                 LIMIT @limit OFFSET @offset
@@ -149,8 +153,8 @@ namespace QCVOC.Api.Security.Data.Repository
                     .ApplyFilter(FilterType.Equals, "a1.passwordresetrequired", accountFilters.PasswordResetRequired)
                     .ApplyFilter(FilterType.Equals, "a1.role", accountFilters.Role?.ToString())
                     .ApplyFilter(FilterType.Between, "a1.creationdate", accountFilters.CreationDateStart, accountFilters.CreationDateEnd)
+                    .ApplyFilter(FilterType.Equals, "a1.creationbyid", accountFilters.CreationById)
                     .ApplyFilter(FilterType.Between, "a1.lastupdatedate", accountFilters.LastUpdateDateStart, accountFilters.LastUpdateDateEnd)
-                    .ApplyFilter(FilterType.Equals, "a1.lastupdateby", accountFilters.LastUpdateBy)
                     .ApplyFilter(FilterType.Equals, "a1.lastupdatebyid", accountFilters.LastUpdateById);
             }
 
