@@ -212,7 +212,7 @@ namespace QCVOC.Api.Patrons.Controller
                 LastName = patron.LastName ?? patronToUpdate.LastName,
                 LastUpdateDate = DateTime.UtcNow,
                 LastUpdateById = User.GetId(),
-                MemberId = patron.MemberId ?? patronToUpdate.MemberId,
+                MemberId = patron.MemberId,
                 PrimaryPhone = patron.PrimaryPhone ?? patronToUpdate.PrimaryPhone,
             };
 
