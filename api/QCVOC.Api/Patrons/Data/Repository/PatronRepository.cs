@@ -49,7 +49,6 @@ namespace QCVOC.Api.Patrons.Data.Repository
                     lastupdatebyid,
                     address,
                     primaryphone,
-                    secondaryphone,
                     email,
                     enrollmentdate
                 )
@@ -62,7 +61,6 @@ namespace QCVOC.Api.Patrons.Data.Repository
                     @lastupdatebyid,
                     @address,
                     @primaryphone,
-                    @secondaryphone,
                     @email,
                     @enrollmentdate
                 )
@@ -78,7 +76,6 @@ namespace QCVOC.Api.Patrons.Data.Repository
                 lastupdatebyid = patron.LastUpdateById,
                 address = patron.Address,
                 primaryphone = patron.PrimaryPhone,
-                secondaryphone = patron.SecondaryPhone,
                 email = patron.Email,
                 enrollmentdate = patron.EnrollmentDate,
             });
@@ -152,7 +149,6 @@ namespace QCVOC.Api.Patrons.Data.Repository
                     p.lastupdatebyid,
                     address,
                     primaryphone,
-                    secondaryphone,
                     email,
                     enrollmentdate
                 FROM patrons p
@@ -182,8 +178,7 @@ namespace QCVOC.Api.Patrons.Data.Repository
                     .ApplyFilter(FilterType.Equals, "a.name", patronFilters.LastUpdateBy)
                     .ApplyFilter(FilterType.Equals, "lastupdatebyid", patronFilters.LastUpdateById)
                     .ApplyFilter(FilterType.Equals, "memberid", patronFilters.MemberId)
-                    .ApplyFilter(FilterType.Equals, "primaryphone", patronFilters.PrimaryPhone)
-                    .ApplyFilter(FilterType.Equals, "secondaryphone", patronFilters.SecondaryPhone);
+                    .ApplyFilter(FilterType.Equals, "primaryphone", patronFilters.PrimaryPhone);
             }
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -210,7 +205,6 @@ namespace QCVOC.Api.Patrons.Data.Repository
                     lastupdatedate = @lastupdatedate,
                     lastupdatebyid = @lastupdatebyid,
                     address = @address,
-                    primaryphone = @primaryPhone,
                     secondaryphone = @secondaryPhone,
                     email = @email,
                     enrollmentdate = @enrollmentDate
@@ -226,7 +220,6 @@ namespace QCVOC.Api.Patrons.Data.Repository
                 lastupdatebyid = patron.LastUpdateById,
                 address = patron.Address,
                 primaryPhone = patron.PrimaryPhone,
-                secondaryPhone = patron.SecondaryPhone,
                 email = patron.Email,
                 enrollmentDate = patron.EnrollmentDate,
                 id = patron.Id
