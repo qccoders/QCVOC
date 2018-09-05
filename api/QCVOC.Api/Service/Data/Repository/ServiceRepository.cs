@@ -48,8 +48,7 @@ namespace QCVOC.Api.Service.Data.Repository
                 var param = new
                 {
                     id = service.Id,
-                    name = service.Name,
-                    limit = service.Limit
+                    name = service.Name
                 };
 
                 db.Execute(query, param);
@@ -136,8 +135,7 @@ namespace QCVOC.Api.Service.Data.Repository
                 var param = new
                 {
                     id = service.Id,
-                    name = service.Name,
-                    limit = service.Limit
+                    name = service.Name
                 };
 
                 db.Execute(query, param);
