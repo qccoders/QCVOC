@@ -79,10 +79,5 @@ namespace QCVOC.Api.Patrons
         ///     The primary phone number of the Patron.
         /// </summary>
         public string PrimaryPhone { get; set; }
-
-        /// <summary>
-        ///     The secondary phone number of the Patron.
-        /// </summary>
-        public string SecondaryPhone { get; set; }
     }
 }

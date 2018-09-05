@@ -145,7 +145,6 @@ namespace QCVOC.Api.Patrons.Controller
                 LastUpdateById = User.GetId(),
                 MemberId = patron.MemberId,
                 PrimaryPhone = patron.PrimaryPhone,
-                SecondaryPhone = patron.SecondaryPhone,
             };
 
             try
@@ -215,7 +214,6 @@ namespace QCVOC.Api.Patrons.Controller
                 LastUpdateById = User.GetId(),
                 MemberId = patron.MemberId ?? patronToUpdate.MemberId,
                 PrimaryPhone = patron.PrimaryPhone ?? patronToUpdate.PrimaryPhone,
-                SecondaryPhone = patron.SecondaryPhone ?? patronToUpdate.SecondaryPhone,
             };
 
             try
