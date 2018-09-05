@@ -138,6 +138,7 @@ namespace QCVOC.Api.Patrons.Controller
                 Address = patron.Address,
                 Email = patron.Email,
                 EnrollmentDate = DateTime.UtcNow,
+                EnrollmentById = User.GetId(),
                 FirstName = patron.FirstName,
                 Id = Guid.NewGuid(),
                 LastName = patron.LastName,
@@ -206,7 +207,6 @@ namespace QCVOC.Api.Patrons.Controller
             {
                 Address = patron.Address ?? patronToUpdate.Address,
                 Email = patron.Email ?? patronToUpdate.Email,
-                EnrollmentDate = patronToUpdate.EnrollmentDate,
                 FirstName = patron.FirstName ?? patronToUpdate.FirstName,
                 Id = patronToUpdate.Id,
                 LastName = patron.LastName ?? patronToUpdate.LastName,
