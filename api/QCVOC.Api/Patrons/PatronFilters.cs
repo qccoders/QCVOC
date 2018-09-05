@@ -26,6 +26,16 @@ namespace QCVOC.Api.Patrons
         public string Email { get; set; }
 
         /// <summary>
+        ///     Gets the name of the user which enrolled the Patron.
+        /// </summary>
+        public string EnrollmentBy { get; }
+
+        /// <summary>
+        ///     The id of the user which enrolled the Patron.
+        /// </summary>
+        public string EnrollmentById { get; set; }
+
+        /// <summary>
         ///     The starting time of an enrollment date range.
         /// </summary>
         public DateTime? EnrollmentDateStart { get; set; }
