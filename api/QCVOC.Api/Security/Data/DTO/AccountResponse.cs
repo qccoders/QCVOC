@@ -14,9 +14,9 @@ namespace QCVOC.Api.Security.Data.DTO
     public class AccountResponse
     {
         /// <summary>
-        ///     Gets the name of the user which created the Account.
+        ///     Gets or sets the name of the user which created the Account.
         /// </summary>
-        public string CreationBy { get; }
+        public string CreationBy { get; set; }
 
         /// <summary>
         ///     Gets or sets the id of the user which created the Account.
