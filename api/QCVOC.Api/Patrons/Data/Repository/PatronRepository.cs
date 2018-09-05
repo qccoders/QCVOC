@@ -214,7 +214,7 @@ namespace QCVOC.Api.Patrons.Data.Repository
                     lastupdatedate = @lastupdatedate,
                     lastupdatebyid = @lastupdatebyid,
                     address = @address,
-                    secondaryphone = @secondaryPhone,
+                    primaryphone = @primaryphone,
                     email = @email
                 WHERE id = @id
             ");
@@ -228,8 +228,8 @@ namespace QCVOC.Api.Patrons.Data.Repository
                 lastupdatebyid = patron.LastUpdateById,
                 address = patron.Address,
                 primaryPhone = patron.PrimaryPhone,
-                email = patron.Email
-                id = patron.Id
+                email = patron.Email,
+                id = patron.Id,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
