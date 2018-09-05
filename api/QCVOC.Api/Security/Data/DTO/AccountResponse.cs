@@ -1,5 +1,5 @@
-﻿// <copyright file="AccountResponse.cs" company="JP Dillingham, Nick Acosta, et. al.">
-//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+﻿// <copyright file="AccountResponse.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+//     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
@@ -14,9 +14,39 @@ namespace QCVOC.Api.Security.Data.DTO
     public class AccountResponse
     {
         /// <summary>
+        ///     Gets the name of the user which created the Account.
+        /// </summary>
+        public string CreationBy { get; }
+
+        /// <summary>
+        ///     Gets or sets the id of the user which created the Account.
+        /// </summary>
+        public Guid CreationById { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Account creation date.
+        /// </summary>
+        public DateTime CreationDate { get; set; }
+
+        /// <summary>
         ///     Gets or sets the Account id.
         /// </summary>
         public Guid Id { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the name of the user which performed the last update.
+        /// </summary>
+        public string LastUpdateBy { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the id of the user which performed the last update.
+        /// </summary>
+        public Guid LastUpdateById { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the date on which the Account was last updated.
+        /// </summary>
+        public DateTime LastUpdateDate { get; set; }
 
         /// <summary>
         ///     Gets or sets the Account name.
@@ -32,25 +62,5 @@ namespace QCVOC.Api.Security.Data.DTO
         ///     Gets or sets the Role for the account.
         /// </summary>
         public Role Role { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the Account creation date.
-        /// </summary>
-        public DateTime CreationDate { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the date on which the Account was last updated.
-        /// </summary>
-        public DateTime LastUpdateDate { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the name of the user which performed the last update.
-        /// </summary>
-        public string LastUpdateBy { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the id of the user which performed the last update.
-        /// </summary>
-        public Guid LastUpdateById { get; set; }
     }
 }
