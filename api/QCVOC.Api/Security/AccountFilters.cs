@@ -46,6 +46,11 @@ namespace QCVOC.Api.Security
         public DateTime? CreationDateEnd { get; set; }
 
         /// <summary>
+        ///     The id of the user which created the Account.
+        /// </summary>
+        public Guid CreationById { get; set; }
+
+        /// <summary>
         ///     The starting time of a last updated date range.
         /// </summary>
         public DateTime? LastUpdateDateStart { get; set; }
@@ -54,11 +59,6 @@ namespace QCVOC.Api.Security
         ///     The ending time of a last updated date range.
         /// </summary>
         public DateTime? LastUpdateDateEnd { get; set; }
-
-        /// <summary>
-        ///     The name of the user which performed the last update.
-        /// </summary>
-        public string LastUpdateBy { get; }
 
         /// <summary>
         ///    The id of the user which performed the last update.
