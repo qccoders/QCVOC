@@ -314,6 +314,7 @@ namespace QCVOC.Api.Security.Controller
                 PasswordHash = Utility.ComputeSHA512Hash(account.Password),
                 PasswordResetRequired = true,
                 CreationDate = DateTime.UtcNow,
+                CreationById = User.GetId(),
                 LastUpdateDate = DateTime.UtcNow,
                 LastUpdateById = User.GetId(),
             };
@@ -391,7 +392,6 @@ namespace QCVOC.Api.Security.Controller
                     Role = accountToUpdate.Role,
                     PasswordHash = Utility.ComputeSHA512Hash(account.Password),
                     PasswordResetRequired = false,
-                    CreationDate = accountToUpdate.CreationDate,
                     LastUpdateById = accountToUpdate.LastUpdateById,
                     LastUpdateDate = accountToUpdate.LastUpdateDate,
                 };
@@ -425,7 +425,6 @@ namespace QCVOC.Api.Security.Controller
                     PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
                         Utility.ComputeSHA512Hash(account.Password),
                     PasswordResetRequired = account.Password != null,
-                    CreationDate = accountToUpdate.CreationDate,
                     LastUpdateById = User.GetId(),
                     LastUpdateDate = DateTime.UtcNow,
                 };
@@ -445,7 +444,6 @@ namespace QCVOC.Api.Security.Controller
                     PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
                         Utility.ComputeSHA512Hash(account.Password),
                     PasswordResetRequired = User.GetId() != accountToUpdate.Id && account.Password != null,
-                    CreationDate = accountToUpdate.CreationDate,
                     LastUpdateById = User.GetId(),
                     LastUpdateDate = DateTime.UtcNow,
                 };
@@ -529,6 +527,8 @@ namespace QCVOC.Api.Security.Controller
                 Role = account.Role,
                 PasswordResetRequired = account.PasswordResetRequired,
                 CreationDate = account.CreationDate,
+                CreationById = account.CreationById,
+                CreationBy = account.CreationBy,
                 LastUpdateDate = account.LastUpdateDate,
                 LastUpdateById = account.LastUpdateById,
                 LastUpdateBy = account.LastUpdateBy,
