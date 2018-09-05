@@ -23,6 +23,16 @@ namespace QCVOC.Api.Patrons.Data.Model
         public string Email { get; set; }
 
         /// <summary>
+        ///     Gets the name of the user which enrolled the Patron.
+        /// </summary>
+        public string EnrollmentBy { get; }
+
+        /// <summary>
+        ///     Gets or sets the id of the user which enrolled the Patron.
+        /// </summary>
+        public Guid EnrollmentById { get; set; }
+
+        /// <summary>
         ///     Gets or sets the date on which the Patron was enrolled.
         /// </summary>
         public DateTime EnrollmentDate { get; set; }
@@ -90,9 +100,12 @@ namespace QCVOC.Api.Patrons.Data.Model
             && this.LastName == patron.LastName
             && this.LastUpdateDate == patron.LastUpdateDate
             && this.LastUpdateById == patron.LastUpdateById
+            && this.LastUpdateBy == patron.LastUpdateBy
             && this.Address == patron.Address
             && this.PrimaryPhone == patron.PrimaryPhone
             && this.Email == patron.Email
+            && this.EnrollmentById == patron.EnrollmentById
+            && this.EnrollmentBy == patron.EnrollmentBy
             && this.EnrollmentDate - patron.EnrollmentDate <= TimeSpan.FromSeconds(1);
         }
     }
