@@ -54,7 +54,6 @@ namespace Server.Tests
                    from lastName in Arb.Default.NonEmptyString().Generator
                    from address in Arb.Default.NonEmptyString().Generator
                    from primaryPhone in Arb.Default.NonEmptyString().Generator
-                   from secondaryPhone in Arb.Default.NonEmptyString().Generator
                    from email in Arb.Default.NonEmptyString().Generator
                    from enrollmentDate in Arb.Default.DateTime().Generator
                    select new Patron()
@@ -65,7 +64,6 @@ namespace Server.Tests
                        LastName = lastName.ToString(),
                        Address = address.ToString(),
                        PrimaryPhone = primaryPhone.ToString(),
-                       SecondaryPhone = secondaryPhone.ToString(),
                        Email = email.ToString(),
                        EnrollmentDate = enrollmentDate
                    };

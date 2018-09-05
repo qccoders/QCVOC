@@ -51,7 +51,6 @@ namespace Server.Tests
             patron.MemberId = 1234567;
             patron.Address = "1111 1st street";
             patron.PrimaryPhone = "(123) 123-1234";
-            patron.SecondaryPhone = "(321) 321-4321";
             patron.Email = "test@qcvoc.com";
             patron.EnrollmentDate = DateTime.Now;
 
