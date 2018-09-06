@@ -193,27 +193,42 @@ namespace QCVOC.Api.Patrons.Controller
             }
 
             var conflictingPatrons = Enumerable.Empty<Patron>();
+
             if (patron.MemberId != null)
             {
-                conflictingPatrons = PatronRepository.GetAll(new PatronFilters() { MemberId = patron.MemberId });
+                var duplicateId = PatronRepository
+                    .GetAll(new PatronFilters() { MemberId = patron.MemberId })
+                    .Any(p => p.Id != id);
+
+                if (duplicateId)
+                {
+                    return Conflict($"A Patron with member id '{patron.MemberId}' already exists.");
+                }
             }
 
-            if (conflictingPatrons.Any(p => p.Id != id))
+            var duplicatePatron = PatronRepository.GetAll(new PatronFilters()
             {
-                return Conflict($"A Patron with member id '{patron.MemberId}' already exists.");
+                FirstName = patron.FirstName,
+                LastName = patron.LastName,
+                Address = patron.Address,
+            }).Any(p => p.Id != id);
+
+            if (duplicatePatron)
+            {
+                return Conflict($"A Patron with a matching first name, last name and address already exists.");
             }
 
             var patronRecord = new Patron()
             {
-                Address = patron.Address ?? patronToUpdate.Address,
-                Email = patron.Email ?? patronToUpdate.Email,
-                FirstName = patron.FirstName ?? patronToUpdate.FirstName,
+                Address = patron.Address,
+                Email = patron.Email,
+                FirstName = patron.FirstName,
                 Id = patronToUpdate.Id,
-                LastName = patron.LastName ?? patronToUpdate.LastName,
+                LastName = patron.LastName,
                 LastUpdateDate = DateTime.UtcNow,
                 LastUpdateById = User.GetId(),
-                MemberId = patron.MemberId ?? patronToUpdate.MemberId,
-                PrimaryPhone = patron.PrimaryPhone ?? patronToUpdate.PrimaryPhone,
+                MemberId = patron.MemberId,
+                PrimaryPhone = patron.PrimaryPhone,
             };
 
             try
