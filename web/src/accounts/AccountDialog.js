@@ -125,7 +125,7 @@ class AccountDialog extends Component {
                 }
                 else {
                     this.execute(
-                        () => api.put('/v1/security/accounts/' + account.id, account), 
+                        () => api.patch('/v1/security/accounts/' + account.id, account), 
                         'updateApi', 
                         'Account \'' + account.name + '\' successfully updated.'
                     );
