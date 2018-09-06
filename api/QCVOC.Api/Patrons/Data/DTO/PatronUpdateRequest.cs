@@ -15,6 +15,7 @@ namespace QCVOC.Api.Patrons.Data.DTO
         /// <summary>
         ///     Gets or sets the address of the Patron.
         /// </summary>
+        [Required]
         [StringLength(maximumLength: 256, MinimumLength = 5)]
         public string Address { get; set; }
 
@@ -27,12 +28,14 @@ namespace QCVOC.Api.Patrons.Data.DTO
         /// <summary>
         ///     Gets or sets the first name of the Patron.
         /// </summary>
+        [Required]
         [StringLength(maximumLength: 256, MinimumLength = 1)]
         public string FirstName { get; set; }
 
         /// <summary>
         ///     Gets or sets the last name of the Patron.
         /// </summary>
+        [Required]
         [StringLength(maximumLength: 256, MinimumLength = 1)]
         public string LastName { get; set; }
 
@@ -45,6 +48,7 @@ namespace QCVOC.Api.Patrons.Data.DTO
         /// <summary>
         ///     Gets or sets the primary phone number of the Patron.
         /// </summary>
+        [Required]
         [Phone]
         public string PrimaryPhone { get; set; }
     }
