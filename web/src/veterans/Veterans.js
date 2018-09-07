@@ -12,8 +12,8 @@ import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
 import { Card, CardContent, Typography, CircularProgress, Button, TextField, InputAdornment } from '@material-ui/core';
 import { Add, Search } from '@material-ui/icons';
-import PatronList from './PatronList';
-import PatronDialog from './PatronDialog';
+import VeteranList from './VeteranList';
+import VeteranDialog from './VeteranDialog';
 
 import { sortByProp } from '../util';
 
@@ -51,9 +51,9 @@ const styles = {
 
 const showCount = 7;
 
-class Patrons extends Component {
+class Veterans extends Component {
     state = {
-        patrons: [],
+        veterans: [],
         loadApi: {
             isExecuting: false,
             isErrored: false,
@@ -62,10 +62,10 @@ class Patrons extends Component {
             isExecuting: false,
             isErrored: false,
         },
-        patronDialog: {
+        veteranDialog: {
             open: false,
             intent: 'add',
-            patron: undefined,
+            veteran: undefined,
         },
         snackbar: {
             message: '',
@@ -81,20 +81,20 @@ class Patrons extends Component {
 
     handleAddClick = () => {
         this.setState({
-            patronDialog: {
+            veteranDialog: {
                 open: true,
                 intent: 'add',
-                patron: undefined,
+                veteran: undefined,
             }
         })
     }
     
-    handleEditClick = (patron) => {
+    handleEditClick = (veteran) => {
         this.setState({
-            patronDialog: {
+            veteranDialog: {
                 open: true,
                 intent: 'update',
-                patron: patron,
+                veteran: veteran,
             }
         })
     }
@@ -110,10 +110,10 @@ class Patrons extends Component {
         });
     }
 
-    handlePatronDialogClose = (result) => {
+    handleVeteranDialogClose = (result) => {
         this.setState({
-            patronDialog: {
-                ...this.state.patronDialog,
+            veteranDialog: {
+                ...this.state.veteranDialog,
                 open: false,
             }
         }, () => {
@@ -128,10 +128,10 @@ class Patrons extends Component {
 
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            api.get('/v1/patrons?offset=0&limit=5000&orderBy=ASC')
+            api.get('/v1/veterans?offset=0&limit=5000&orderBy=ASC')
             .then(response => {
                 this.setState({ 
-                    patrons: response.data.map(p => ({ ...p, memberId: p.memberId || '' })),
+                    veterans: response.data.map(p => ({ ...p, cardNumber: p.cardNumber || '' })),
                     [apiType]: { isExecuting: false, isErrored: false },
                 });
             }, error => {
@@ -145,13 +145,13 @@ class Patrons extends Component {
 
     render() {
         let { classes } = this.props;
-        let { patrons, loadApi, refreshApi, snackbar, show, patronDialog } = this.state;
+        let { veterans, loadApi, refreshApi, snackbar, show, veteranDialog } = this.state;
 
         let searchById = this.state.filter !== undefined && this.state.filter !== '' && !isNaN(this.state.filter);
 
-        let list = patrons
+        let list = veterans
             .sort(sortByProp('firstName'))
-            .filter(p => p.memberId.toString().includes(this.state.filter) || p.fullName.toLowerCase().includes(this.state.filter.toLowerCase()));
+            .filter(p => p.cardNumber.toString().includes(this.state.filter) || p.fullName.toLowerCase().includes(this.state.filter.toLowerCase()));
 
         let shownList = list.slice(0, this.state.show);
 
@@ -179,8 +179,8 @@ class Patrons extends Component {
                             />
                             {refreshApi.isExecuting ? 
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
-                                <PatronList
-                                    patrons={shownList}
+                                <VeteranList
+                                    veterans={shownList}
                                     displayId={searchById}
                                     onItemClick={this.handleEditClick}
                                 />
@@ -196,11 +196,11 @@ class Patrons extends Component {
                     >
                         <Add/>
                     </Button>
-                    <PatronDialog
-                        open={patronDialog.open}
-                        intent={patronDialog.intent} 
-                        onClose={this.handlePatronDialogClose}
-                        patron={patronDialog.patron}
+                    <VeteranDialog
+                        open={veteranDialog.open}
+                        intent={veteranDialog.intent} 
+                        onClose={this.handleVeteranDialogClose}
+                        veteran={veteranDialog.veteran}
                     />
                 </ContentWrapper>
                 <Snackbar
@@ -215,8 +215,8 @@ class Patrons extends Component {
     }
 }
 
-Patrons.propTypes = {
+Veterans.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Patrons); 
+export default withStyles(styles)(Veterans); 

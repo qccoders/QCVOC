@@ -9,12 +9,12 @@ import { sortByProp } from '../util';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { Person } from '@material-ui/icons'
 
-const PatronList = (props) => {
-    let { patrons, displayId, onItemClick } = props;
+const VeteranList = (props) => {
+    let { veterans, displayId, onItemClick } = props;
 
     return (
         <List>
-            {patrons.sort(sortByProp('fullName')).map(p => 
+            {veterans.sort(sortByProp('fullName')).map(p => 
                 <ListItem 
                     key={p.id}
                     button
@@ -25,7 +25,7 @@ const PatronList = (props) => {
                     </ListItemIcon>
                     <ListItemText
                         primary={p.firstName + ' ' + p.lastName}
-                        secondary={displayId ? 'Member ID: ' + p.memberId : p.address}
+                        secondary={displayId ? 'Card Number: ' + p.cardNumber : p.address}
                     />
                 </ListItem>
             )}
@@ -33,10 +33,10 @@ const PatronList = (props) => {
     );
 }
 
-PatronList.propTypes = {
-    patrons: PropTypes.array.isRequired,
+VeteranList.propTypes = {
+    veterans: PropTypes.array.isRequired,
     displayId: PropTypes.bool.isRequired,
     onItemClick: PropTypes.func.isRequired,
 };
 
-export default PatronList; 
+export default VeteranList; 

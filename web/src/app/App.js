@@ -19,7 +19,7 @@ import SecurityMenu from '../security/SecurityMenu';
 import DrawerToggleButton from './DrawerToggleButton';
 
 import Accounts from '../accounts/Accounts';
-import Patrons from '../patrons/Patrons';
+import Veterans from '../veterans/Veterans';
 import Services from '../services/Services';
 import Events from '../events/Events';
 import LoginForm from '../security/LoginForm';
@@ -145,7 +145,7 @@ class App extends Component {
                             >
                                 <AppBar title='QCVOC'/>
                                 <LinkList onLinkClick={this.handleToggleDrawer}>
-                                    <Link to='/patrons' icon={<People/>}>Veterans</Link>
+                                    <Link to='/veterans' icon={<People/>}>Veterans</Link>
                                     <Link to='/events' icon={<InsertInvitation/>}>Events</Link>
                                     <Link to='/scanner' icon={<SpeakerPhone/>}>Scanner</Link>
                                     {(role === 'Administrator' || role === 'Supervisor') && 
@@ -158,9 +158,9 @@ class App extends Component {
                                 </LinkList>                    
                             </Drawer>
                             <Switch>
-                                <Route exact path='/' component={Patrons}/>
+                                <Route exact path='/' component={Veterans}/>
                                 <Route path='/accounts' render={(props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>}/>
-                                <Route path='/patrons' component={Patrons}/>
+                                <Route path='/veterans' component={Veterans}/>
                                 <Route path='/services' component={Services}/>
                                 <Route path='/events' component={Events}/>
                             </Switch>
