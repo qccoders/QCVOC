@@ -1,9 +1,9 @@
-// <copyright file="PatronRepository.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+// <copyright file="VeteranRepository.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
 //     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Patrons.Data.Repository
+namespace QCVOC.Api.Veterans.Data.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -12,18 +12,18 @@ namespace QCVOC.Api.Patrons.Data.Repository
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Patrons.Data.Model;
+    using QCVOC.Api.Veterans.Data.Model;
 
     /// <summary>
-    ///     Provides data access for <see cref="Patron"/>.
+    ///     Provides data access for <see cref="Veteran"/>.
     /// </summary>
-    public class PatronRepository : IRepository<Patron>
+    public class VeteranRepository : IRepository<Veteran>
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="PatronRepository"/> class.
+        ///     Initializes a new instance of the <see cref="VeteranRepository"/> class.
         /// </summary>
         /// <param name="connectionFactory">The database connection factory used for data access.</param>
-        public PatronRepository(IDbConnectionFactory connectionFactory)
+        public VeteranRepository(IDbConnectionFactory connectionFactory)
         {
             ConnectionFactory = connectionFactory;
         }
@@ -31,11 +31,11 @@ namespace QCVOC.Api.Patrons.Data.Repository
         private IDbConnectionFactory ConnectionFactory { get; }
 
         /// <summary>
-        ///     Creates a new Patron from the specified <paramref name="patron"/>.
+        ///     Creates a new Veteran from the specified <paramref name="veteran"/>.
         /// </summary>
-        /// <param name="patron">The Patron to create.</param>
-        /// <returns>The created Patron.</returns>
-        public Patron Create(Patron patron)
+        /// <param name="veteran">The Veteran to create.</param>
+        /// <returns>The created Veteran.</returns>
+        public Veteran Create(Veteran veteran)
         {
             var builder = new SqlBuilder();
 
@@ -70,17 +70,17 @@ namespace QCVOC.Api.Patrons.Data.Repository
 
             builder.AddParameters(new
             {
-                id = patron.Id,
-                memberid = patron.MemberId,
-                firstname = patron.FirstName,
-                lastname = patron.LastName,
-                lastupdatedate = patron.LastUpdateDate,
-                lastupdatebyid = patron.LastUpdateById,
-                address = patron.Address,
-                primaryphone = patron.PrimaryPhone,
-                email = patron.Email,
-                enrollmentdate = patron.EnrollmentDate,
-                enrollmentbyid = patron.EnrollmentById,
+                id = veteran.Id,
+                memberid = veteran.MemberId,
+                firstname = veteran.FirstName,
+                lastname = veteran.LastName,
+                lastupdatedate = veteran.LastUpdateDate,
+                lastupdatebyid = veteran.LastUpdateById,
+                address = veteran.Address,
+                primaryphone = veteran.PrimaryPhone,
+                email = veteran.Email,
+                enrollmentdate = veteran.EnrollmentDate,
+                enrollmentbyid = veteran.EnrollmentById,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -88,13 +88,13 @@ namespace QCVOC.Api.Patrons.Data.Repository
                 db.Execute(query.RawSql, query.Parameters);
             }
 
-            return Get(patron.Id);
+            return Get(veteran.Id);
         }
 
         /// <summary>
-        ///     Deletes the Patron matching the specified <paramref name="id"/>.
+        ///     Deletes the Veteran matching the specified <paramref name="id"/>.
         /// </summary>
-        /// <param name="id">The id of the Patron to delete.</param>
+        /// <param name="id">The id of the Veteran to delete.</param>
         public void Delete(Guid id)
         {
             var builder = new SqlBuilder();
@@ -113,30 +113,30 @@ namespace QCVOC.Api.Patrons.Data.Repository
         }
 
         /// <summary>
-        ///     Deletes the specified <paramref name="patron"/>.
+        ///     Deletes the specified <paramref name="veteran"/>.
         /// </summary>
-        /// <param name="patron">The Patron to delete.</param>
-        public void Delete(Patron patron)
+        /// <param name="veteran">The Veteran to delete.</param>
+        public void Delete(Veteran veteran)
         {
-            Delete(patron.Id);
+            Delete(veteran.Id);
         }
 
         /// <summary>
-        ///     Retrieves the Patron matching the specified <paramref name="id"/>.
+        ///     Retrieves the Veteran matching the specified <paramref name="id"/>.
         /// </summary>
-        /// <param name="id">The id of the <see cref="Patron"/> to retrieve.</param>
-        /// <returns>The Patron matching the specified id.</returns>
-        public Patron Get(Guid id)
+        /// <param name="id">The id of the <see cref="Veteran"/> to retrieve.</param>
+        /// <returns>The Veteran matching the specified id.</returns>
+        public Veteran Get(Guid id)
         {
-            return GetAll(new PatronFilters() { Id = id }).SingleOrDefault();
+            return GetAll(new VeteranFilters() { Id = id }).SingleOrDefault();
         }
 
         /// <summary>
-        ///     Retrieves all Patrons after applying optional <paramref name="filters"/>.
+        ///     Retrieves all Veterans after applying optional <paramref name="filters"/>.
         /// </summary>
         /// <param name="filters">Optional query filters.</param>
-        /// <returns>A list of Patrons</returns>
-        public IEnumerable<Patron> GetAll(Filters filters = null)
+        /// <returns>A list of Veterans</returns>
+        public IEnumerable<Veteran> GetAll(Filters filters = null)
         {
             filters = filters ?? new Filters();
             var builder = new SqlBuilder();
@@ -171,37 +171,37 @@ namespace QCVOC.Api.Patrons.Data.Repository
                 orderby = filters.OrderBy.ToString(),
             });
 
-            if (filters is PatronFilters patronFilters)
+            if (filters is VeteranFilters veteranFilters)
             {
                 builder
-                    .ApplyFilter(FilterType.Equals, "address", patronFilters.Address)
-                    .ApplyFilter(FilterType.Equals, "email", patronFilters.Email)
-                    .ApplyFilter(FilterType.Between, "enrollmentdate", patronFilters.EnrollmentDateStart, patronFilters.EnrollmentDateEnd)
-                    .ApplyFilter(FilterType.Equals, "enrollmentbyid", patronFilters.EnrollmentById)
-                    .ApplyFilter(FilterType.Equals, "enrollmentby", patronFilters.EnrollmentBy)
-                    .ApplyFilter(FilterType.Equals, "firstname", patronFilters.FirstName)
-                    .ApplyFilter(FilterType.Equals, "p.id", patronFilters.Id)
-                    .ApplyFilter(FilterType.Equals, "lastname", patronFilters.LastName)
-                    .ApplyFilter(FilterType.Between, "lastupdatedate", patronFilters.LastUpdateDateStart, patronFilters.LastUpdateDateEnd)
-                    .ApplyFilter(FilterType.Equals, "a.name", patronFilters.LastUpdateBy)
-                    .ApplyFilter(FilterType.Equals, "lastupdatebyid", patronFilters.LastUpdateById)
-                    .ApplyFilter(FilterType.Equals, "lastupdateby", patronFilters.LastUpdateBy)
-                    .ApplyFilter(FilterType.Equals, "memberid", patronFilters.MemberId)
-                    .ApplyFilter(FilterType.Equals, "primaryphone", patronFilters.PrimaryPhone);
+                    .ApplyFilter(FilterType.Equals, "address", veteranFilters.Address)
+                    .ApplyFilter(FilterType.Equals, "email", veteranFilters.Email)
+                    .ApplyFilter(FilterType.Between, "enrollmentdate", veteranFilters.EnrollmentDateStart, veteranFilters.EnrollmentDateEnd)
+                    .ApplyFilter(FilterType.Equals, "enrollmentbyid", veteranFilters.EnrollmentById)
+                    .ApplyFilter(FilterType.Equals, "enrollmentby", veteranFilters.EnrollmentBy)
+                    .ApplyFilter(FilterType.Equals, "firstname", veteranFilters.FirstName)
+                    .ApplyFilter(FilterType.Equals, "p.id", veteranFilters.Id)
+                    .ApplyFilter(FilterType.Equals, "lastname", veteranFilters.LastName)
+                    .ApplyFilter(FilterType.Between, "lastupdatedate", veteranFilters.LastUpdateDateStart, veteranFilters.LastUpdateDateEnd)
+                    .ApplyFilter(FilterType.Equals, "a.name", veteranFilters.LastUpdateBy)
+                    .ApplyFilter(FilterType.Equals, "lastupdatebyid", veteranFilters.LastUpdateById)
+                    .ApplyFilter(FilterType.Equals, "lastupdateby", veteranFilters.LastUpdateBy)
+                    .ApplyFilter(FilterType.Equals, "memberid", veteranFilters.MemberId)
+                    .ApplyFilter(FilterType.Equals, "primaryphone", veteranFilters.PrimaryPhone);
             }
 
             using (var db = ConnectionFactory.CreateConnection())
             {
-                return db.Query<Patron>(query.RawSql, query.Parameters);
+                return db.Query<Veteran>(query.RawSql, query.Parameters);
             }
         }
 
         /// <summary>
-        ///     Updates the specified <paramref name="patron"/>.
+        ///     Updates the specified <paramref name="veteran"/>.
         /// </summary>
-        /// <param name="patron">The Patron to update.</param>
-        /// <returns>The updated Patron.</returns>
-        public Patron Update(Patron patron)
+        /// <param name="veteran">The Veteran to update.</param>
+        /// <returns>The updated Veteran.</returns>
+        public Veteran Update(Veteran veteran)
         {
             var builder = new SqlBuilder();
 
@@ -221,15 +221,15 @@ namespace QCVOC.Api.Patrons.Data.Repository
 
             builder.AddParameters(new
             {
-                memberId = patron.MemberId,
-                firstName = patron.FirstName,
-                lastName = patron.LastName,
-                lastupdatedate = patron.LastUpdateDate,
-                lastupdatebyid = patron.LastUpdateById,
-                address = patron.Address,
-                primaryPhone = patron.PrimaryPhone,
-                email = patron.Email,
-                id = patron.Id,
+                memberId = veteran.MemberId,
+                firstName = veteran.FirstName,
+                lastName = veteran.LastName,
+                lastupdatedate = veteran.LastUpdateDate,
+                lastupdatebyid = veteran.LastUpdateById,
+                address = veteran.Address,
+                primaryPhone = veteran.PrimaryPhone,
+                email = veteran.Email,
+                id = veteran.Id,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -237,7 +237,7 @@ namespace QCVOC.Api.Patrons.Data.Repository
                 db.Execute(query.RawSql, query.Parameters);
             }
 
-            return Get(patron.Id);
+            return Get(veteran.Id);
         }
     }
 }
