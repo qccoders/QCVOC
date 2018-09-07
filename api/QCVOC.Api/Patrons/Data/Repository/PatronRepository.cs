@@ -40,7 +40,7 @@ namespace QCVOC.Api.Patrons.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"
-                INSERT INTO patrons (
+                INSERT INTO veterans (
                     id,
                     memberid,
                     firstname,
@@ -100,7 +100,7 @@ namespace QCVOC.Api.Patrons.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"
-                DELETE FROM patrons
+                DELETE FROM veterans
                 WHERE id = @id
             ");
 
@@ -156,7 +156,7 @@ namespace QCVOC.Api.Patrons.Data.Repository
                     enrollmentdate,
                     enrollmentbyid,
                     COALESCE(b.name, '(Deleted user)') AS enrollmentby
-                FROM patrons p
+                FROM veterans p
                 LEFT JOIN accounts a ON p.lastupdatebyid = a.id 
                 LEFT JOIN accounts b ON p.enrollmentbyid = b.id
                 /**where**/
@@ -206,7 +206,7 @@ namespace QCVOC.Api.Patrons.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"
-                UPDATE patrons
+                UPDATE veterans
                 SET
                     memberid = @memberId,
                     firstname = @firstName,
