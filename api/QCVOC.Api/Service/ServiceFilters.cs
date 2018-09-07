@@ -16,39 +16,58 @@ namespace QCVOC.Api.Service
     public class ServiceFilters : Filters
     {
         /// <summary>
-        ///     The Id of the Service.
+        ///     The Id of the service.
         /// </summary>
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
 
         /// <summary>
-        ///     The name of the Service.
+        ///     The name of the service.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        ///     The description of the Service.
+        ///     The description of the service.
         /// </summary>
         public string Description { get; set; }
 
         /// <summary>
-        ///     The name of the user who created the Service.
+        ///     The name of the user who created the service.
         /// </summary>
         public string CreationBy { get; set; }
 
         /// <summary>
-        ///     The id of the user who created the Service.
+        ///     The id of the user who created the service.
         /// </summary>
-        public string CreationById { get; set; }
+        public Guid? CreationById { get; set; }
 
         /// <summary>
         ///     The starting time of a creation date range.
         /// </summary>
-        public string CreationDateStart { get; set; }
+        public DateTime? CreationDateStart { get; set; }
 
         /// <summary>
         ///     The ending time of a creation date range.
         /// </summary>
-        public string CreationDateEnd { get; set; }
+        public DateTime? CreationDateEnd { get; set; }
 
+        /// <summary>
+        ///     The name of the user who last updated the service.
+        /// </summary>
+        public string UpdateBy { get; set; }
+
+        /// <summary>
+        ///     The id of the user who last updated the service.
+        /// </summary>
+        public Guid? LastUpdateById { get; set; }
+
+        /// <summary>
+        ///     The starting date of a last updated date range.
+        /// </summary>
+        public DateTime? LastUpdateDateStart { get; set; }
+
+        /// <summary>
+        ///     The ending date of a last updated date range.
+        /// </summary>
+        public DateTime? LastUpdateDateEnd { get; set; }
     }
 }
