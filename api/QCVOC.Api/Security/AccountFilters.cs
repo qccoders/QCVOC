@@ -48,7 +48,7 @@ namespace QCVOC.Api.Security
         /// <summary>
         ///     The id of the user which created the Account.
         /// </summary>
-        public Guid CreationById { get; set; }
+        public Guid? CreationById { get; set; }
 
         /// <summary>
         ///     The starting time of a last updated date range.
