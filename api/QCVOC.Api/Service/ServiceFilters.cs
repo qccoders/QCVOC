@@ -53,7 +53,7 @@ namespace QCVOC.Api.Service
         /// <summary>
         ///     The name of the user who last updated the service.
         /// </summary>
-        public string UpdateBy { get; set; }
+        public string LastUpdateBy { get; set; }
 
         /// <summary>
         ///     The id of the user who last updated the service.
