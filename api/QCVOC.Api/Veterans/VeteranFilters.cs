@@ -1,37 +1,37 @@
-﻿// <copyright file="PatronFilters.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+﻿// <copyright file="VeteranFilters.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
 //     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Patrons
+namespace QCVOC.Api.Veterans
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
     using QCVOC.Api.Common;
 
     /// <summary>
-    ///     Patron request pagination and filtering options.
+    ///     Veteran request pagination and filtering options.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1623:PropertySummaryDocumentationMustMatchAccessors", Justification = "Omitted for Swashbuckle compatibility.")]
-    public class PatronFilters : Filters
+    public class VeteranFilters : Filters
     {
         /// <summary>
-        ///     The address of the Patron.
+        ///     The address of the Veteran.
         /// </summary>
         public string Address { get; set; }
 
         /// <summary>
-        ///     The email address of the Patron.
+        ///     The email address of the Veteran.
         /// </summary>
         public string Email { get; set; }
 
         /// <summary>
-        ///     Gets the name of the user which enrolled the Patron.
+        ///     Gets the name of the user which enrolled the Veteran.
         /// </summary>
         public string EnrollmentBy { get; }
 
         /// <summary>
-        ///     The id of the user which enrolled the Patron.
+        ///     The id of the user which enrolled the Veteran.
         /// </summary>
         public string EnrollmentById { get; set; }
 
@@ -46,17 +46,17 @@ namespace QCVOC.Api.Patrons
         public DateTime? EnrollmentDateEnd { get; set; }
 
         /// <summary>
-        ///     The first name of the Patron.
+        ///     The first name of the Veteran.
         /// </summary>
         public string FirstName { get; set; }
 
         /// <summary>
-        ///     The id of the Patron.
+        ///     The id of the Veteran.
         /// </summary>
         public Guid? Id { get; set; }
 
         /// <summary>
-        ///     The last name of the Patron.
+        ///     The last name of the Veteran.
         /// </summary>
         public string LastName { get; set; }
 
@@ -81,12 +81,12 @@ namespace QCVOC.Api.Patrons
         public Guid? LastUpdateById { get; set; }
 
         /// <summary>
-        ///     The member id of the Patron.
+        ///     The member id of the Veteran.
         /// </summary>
         public int? MemberId { get; set; }
 
         /// <summary>
-        ///     The primary phone number of the Patron.
+        ///     The primary phone number of the Veteran.
         /// </summary>
         public string PrimaryPhone { get; set; }
     }
