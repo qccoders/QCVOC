@@ -73,9 +73,9 @@ namespace QCVOC.Api.Veterans.Data.Model
         public Guid LastUpdateById { get; set; }
 
         /// <summary>
-        ///     Gets or sets the member id of the Veteran.
+        ///     Gets or sets the number of the card presently assigned to the Veteran.
         /// </summary>
-        public int? MemberId { get; set; }
+        public int? CardNumber { get; set; }
 
         /// <summary>
         ///     Gets or sets the primary phone number of the Veteran.
@@ -95,7 +95,7 @@ namespace QCVOC.Api.Veterans.Data.Model
             }
 
             return this.Id == veteran.Id
-            && this.MemberId == veteran.MemberId
+            && this.CardNumber == veteran.CardNumber
             && this.FirstName == veteran.FirstName
             && this.LastName == veteran.LastName
             && this.LastUpdateDate == veteran.LastUpdateDate

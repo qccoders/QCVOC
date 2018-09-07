@@ -40,10 +40,10 @@ namespace QCVOC.Api.Veterans.Data.DTO
         public string LastName { get; set; }
 
         /// <summary>
-        ///     Gets or sets the member id of the Veteran.
+        ///     Gets or sets the number of the card presently assigned to the Veteran.
         /// </summary>
         [Range(minimum: 1000, maximum: 9999)]
-        public int? MemberId { get; set; }
+        public int? CardNumber { get; set; }
 
         /// <summary>
         ///     Gets or sets the primary phone number of the Veteran.
