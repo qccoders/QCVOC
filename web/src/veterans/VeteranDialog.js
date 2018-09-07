@@ -58,7 +58,6 @@ const initialState = {
         lastName: '',
         address: '',
         primaryPhone: '',
-        secondaryPhone: '',
         email: '',
     },
     validation: {
@@ -67,7 +66,6 @@ const initialState = {
         lastName: undefined,
         address: undefined,
         primaryPhone: undefined,
-        secondaryPhone: undefined,
         email: undefined,
     },
     snackbar: {
@@ -99,7 +97,7 @@ class VeteranDialog extends Component {
         let fullName = veteran.firstName + ' ' + veteran.lastName;
 
         if (veteran.email === '') delete veteran.email;
-        if (veteran.secondaryPhone === '') delete veteran.secondaryPhone;
+        if (veteran.cardNumber === '') delete veteran.cardNumber;
 
         this.validate().then(result => {
             if (result.isValid) {
