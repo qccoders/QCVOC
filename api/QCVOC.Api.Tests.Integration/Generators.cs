@@ -1,5 +1,5 @@
-// <copyright file="Generators.cs" company="JP Dillingham, Nick Acosta, et. al.">
-//     Copyright (c) JP Dillingham, Nick Acosta, et. al.. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+// <copyright file="Generators.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+//     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
@@ -9,15 +9,15 @@ namespace Server.Tests
     using FsCheck;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
-    using QCVOC.Api.Patrons.Data.Model;
-    using QCVOC.Api.Patrons.Data.Repository;
     using QCVOC.Api.Security;
     using QCVOC.Api.Security.Data.Model;
     using QCVOC.Api.Security.Data.Repository;
+    using QCVOC.Api.Veterans.Data.Model;
+    using QCVOC.Api.Veterans.Data.Repository;
 
     public class Generators
     {
-        public static Arbitrary<Patron> ArbPatron() => Arb.From(GenPatron());
+        public static Arbitrary<Veteran> ArbVeteran() => Arb.From(GenVeteran());
 
         public static Arbitrary<Role> ArbRole() => Arb.From(GenRole());
 
@@ -25,7 +25,7 @@ namespace Server.Tests
 
         public static Arbitrary<RefreshToken> ArbRefreshToken() => Arb.From(GenRefreshToken());
 
-        public static Arbitrary<PatronRepository> ArbPatronRepository() => Arb.From(GenPatronRepository());
+        public static Arbitrary<VeteranRepository> ArbVeteranRepository() => Arb.From(GenVeteranRepository());
 
         public static Arbitrary<AccountRepository> ArbAccountRepository() => Arb.From(GenAccountRepository());
 
@@ -46,7 +46,7 @@ namespace Server.Tests
             => from a in Arb.Default.NonEmptyString().Generator.Where(p => !p.ToString().Contains("\0"))
                select Utility.ComputeSHA512Hash(a.ToString());
 
-        public static Gen<Patron> GenPatron()
+        public static Gen<Veteran> GenVeteran()
         {
             return from id in Arb.Default.Guid().Generator
                    from memberId in Arb.Default.Int32().Generator
@@ -56,7 +56,7 @@ namespace Server.Tests
                    from primaryPhone in Arb.Default.NonEmptyString().Generator
                    from email in Arb.Default.NonEmptyString().Generator
                    from enrollmentDate in Arb.Default.DateTime().Generator
-                   select new Patron()
+                   select new Veteran()
                    {
                        Id = id,
                        MemberId = memberId,
@@ -69,10 +69,10 @@ namespace Server.Tests
                    };
         }
 
-        public static Gen<PatronRepository> GenPatronRepository()
+        public static Gen<VeteranRepository> GenVeteranRepository()
         {
             return from a in Arb.Default.String().Generator
-            select new PatronRepository(new NpgsqlDbConnectionFactory(Environment.GetEnvironmentVariable("qcvoc_connectionstring")));
+            select new VeteranRepository(new NpgsqlDbConnectionFactory(Environment.GetEnvironmentVariable("qcvoc_connectionstring")));
         }
 
         public static Gen<Account> GenAccount()
