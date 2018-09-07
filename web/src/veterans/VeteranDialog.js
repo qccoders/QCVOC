@@ -52,8 +52,8 @@ const initialState = {
         isExecuting: false,
         isErrored: false,
     },
-    patron: {
-        memberId: '',
+    veteran: {
+        cardNumber: '',
         firstName: '',
         lastName: '',
         address: '',
@@ -62,7 +62,7 @@ const initialState = {
         email: '',
     },
     validation: {
-        memberId: undefined,
+        cardNumber: undefined,
         firstName: undefined,
         lastName: undefined,
         address: undefined,
@@ -79,15 +79,15 @@ const initialState = {
     },
 }
 
-class PatronDialog extends Component {
+class VeteranDialog extends Component {
     state = initialState;
 
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
                 ...initialState, 
-                patron: nextProps.patron ? nextProps.patron : { 
-                    ...initialState.patron, 
+                veteran: nextProps.veteran ? nextProps.veteran : { 
+                    ...initialState.veteran, 
                 },
                 validation: initialState.validation,
             });
@@ -95,24 +95,24 @@ class PatronDialog extends Component {
     }
 
     handleSaveClick = () => {
-        let patron = { ...this.state.patron }
-        let fullName = patron.firstName + ' ' + patron.lastName;
+        let veteran = { ...this.state.veteran }
+        let fullName = veteran.firstName + ' ' + veteran.lastName;
 
-        if (patron.email === '') delete patron.email;
-        if (patron.secondaryPhone === '') delete patron.secondaryPhone;
+        if (veteran.email === '') delete veteran.email;
+        if (veteran.secondaryPhone === '') delete veteran.secondaryPhone;
 
         this.validate().then(result => {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => api.post('/v1/patrons', patron),
+                        () => api.post('/v1/veterans', veteran),
                         'addApi', 
                         'Veteran \'' + fullName + '\' successfully enrolled.'
                     )
                 }
                 else {
                     this.execute(
-                        () => api.put('/v1/patrons/' + patron.id, patron), 
+                        () => api.put('/v1/veterans/' + veteran.id, veteran), 
                         'updateApi', 
                         'Veteran \'' + fullName +  '\' successfully updated.'
                     );
@@ -131,16 +131,16 @@ class PatronDialog extends Component {
 
     handleDeleteConfirmClick = () => {
         return this.execute(
-            () => api.delete('/v1/patrons/' + this.state.patron.id),
+            () => api.delete('/v1/veterans/' + this.state.veteran.id),
             'deleteApi', 
-            'Veteran \'' + this.state.patron.firstName + ' ' + this.state.patron.lastName +  '\' successfully deleted.'
+            'Veteran \'' + this.state.veteran.firstName + ' ' + this.state.veteran.lastName +  '\' successfully deleted.'
         );
     }
 
     handleChange = (field, event) => {
         this.setState({ 
-            patron: {
-                ...this.state.patron,
+            veteran: {
+                ...this.state.veteran,
                 [field]: event.target.value,
             },
             validation: {
@@ -193,10 +193,10 @@ class PatronDialog extends Component {
     }
 
     validate = () => {
-        let { memberId, firstName, lastName, address, primaryPhone, secondaryPhone, email } = this.state.patron;
+        let { cardNumber, firstName, lastName, address, primaryPhone, secondaryPhone, email } = this.state.veteran;
         let result = { ...initialState.validation };
 
-        if (memberId !== '' && (isNaN(memberId) || memberId < 1000 || memberId > 9999)) result.memberId = 'The Member ID field must be a number between 1000 and 9999.';
+        if (cardNumber !== '' && (isNaN(cardNumber) || cardNumber < 1000 || cardNumber > 9999)) result.cardNumber = 'The Card Number field must be a number between 1000 and 9999.';
         if (firstName === '') result.firstName = 'The First Name field is required.';
         if (lastName === '') result.lastName = 'The Last Name field is required.';
         if (address === '') result.address = 'The Address field is required.';
@@ -207,10 +207,6 @@ class PatronDialog extends Component {
         }
         else if (!validatePhoneNumber(primaryPhone)) {
             result.primaryPhone = 'Enter a valid phone number in the format (555) 555-5555.';
-        }
-
-        if ((secondaryPhone !== '' && secondaryPhone !== undefined) && !validatePhoneNumber(secondaryPhone)) {
-            result.secondaryPhone = 'Enter a valid phone number in the format (555) 555-5555.';
         }
 
         if ((email !== '' && email !== undefined) && !validateEmail(email)) {
@@ -227,7 +223,7 @@ class PatronDialog extends Component {
 
     render() {
         let { classes, intent, open } = this.props;
-        let { memberId, firstName, lastName, address, primaryPhone, secondaryPhone, email } = this.state.patron;
+        let { cardNumber, firstName, lastName, address, primaryPhone, email } = this.state.veteran;
         let validation = this.state.validation;
 
         let adding = this.state.addApi.isExecuting;
@@ -246,6 +242,7 @@ class PatronDialog extends Component {
                 <DialogTitle>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
                     <TextField
+                        autofocus
                         id="firstName"
                         label="First Name"
                         value={firstName}
@@ -305,28 +302,15 @@ class PatronDialog extends Component {
                         disabled={executing}
                         margin={'normal'}
                     />
-                    <TextField                        
-                        id="secondaryPhone"
-                        label="Secondary Phone"
-                        value={secondaryPhone}
-                        type="text"
-                        fullWidth
-                        onChange={(event) => this.handleChange('secondaryPhone', event)}
-                        helperText={validation.secondaryPhone}
-                        error={validation.secondaryPhone !== undefined}
-                        disabled={executing}
-                        margin={'normal'}
-                    />
                     <TextField
-                        autoFocus
-                        id="memberId"
-                        label="Member ID"
-                        value={memberId}
+                        id="cardNumber"
+                        label="Card Number"
+                        value={cardNumber}
                         type="text"
                         fullWidth
-                        onChange={(event) => this.handleChange('memberId', event)}
-                        helperText={validation.memberId}
-                        error={validation.memberId !== undefined}
+                        onChange={(event) => this.handleChange('cardNumber', event)}
+                        helperText={validation.cardNumber}
+                        error={validation.cardNumber !== undefined}
                         disabled={executing}
                         margin={'normal'}
                     />
@@ -367,7 +351,7 @@ class PatronDialog extends Component {
                     onClose={this.handleDialogClose}
                     suppressCloseOnConfirm
                 >
-                    <p>Are you sure you want to delete Patron '{firstName + ' ' + lastName}'?</p>
+                    <p>Are you sure you want to delete Veteran '{firstName + ' ' + lastName}'?</p>
                 </ConfirmDialog>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
@@ -381,12 +365,12 @@ class PatronDialog extends Component {
     }
 }
 
-PatronDialog.propTypes = {
+VeteranDialog.propTypes = {
     classes: PropTypes.object.isRequired,
     intent: PropTypes.oneOf([ 'add', 'update' ]).isRequired,
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    patron: PropTypes.object,
+    veteran: PropTypes.object,
 };
 
-export default withStyles(styles)(PatronDialog); 
+export default withStyles(styles)(VeteranDialog); 
