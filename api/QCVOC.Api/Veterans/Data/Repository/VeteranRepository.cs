@@ -42,7 +42,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
             var query = builder.AddTemplate(@"
                 INSERT INTO veterans (
                     id,
-                    memberid,
+                    cardnumber,
                     firstname,
                     lastname,
                     lastupdatedate,
@@ -55,7 +55,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 )
                 VALUES (
                     @id,
-                    @memberid,
+                    @cardnumber,
                     @firstname,
                     @lastname,
                     @lastupdatedate,
@@ -71,7 +71,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
             builder.AddParameters(new
             {
                 id = veteran.Id,
-                memberid = veteran.MemberId,
+                cardnumber = veteran.CardNumber,
                 firstname = veteran.FirstName,
                 lastname = veteran.LastName,
                 lastupdatedate = veteran.LastUpdateDate,
@@ -144,7 +144,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
             var query = builder.AddTemplate($@"
                 SELECT
                     p.id,
-                    memberid,
+                    cardnumber,
                     firstname,
                     lastname,
                     p.lastupdatedate,
@@ -186,7 +186,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     .ApplyFilter(FilterType.Equals, "a.name", veteranFilters.LastUpdateBy)
                     .ApplyFilter(FilterType.Equals, "lastupdatebyid", veteranFilters.LastUpdateById)
                     .ApplyFilter(FilterType.Equals, "lastupdateby", veteranFilters.LastUpdateBy)
-                    .ApplyFilter(FilterType.Equals, "memberid", veteranFilters.MemberId)
+                    .ApplyFilter(FilterType.Equals, "cardnumber", veteranFilters.CardNumber)
                     .ApplyFilter(FilterType.Equals, "primaryphone", veteranFilters.PrimaryPhone);
             }
 
@@ -208,7 +208,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
             var query = builder.AddTemplate(@"
                 UPDATE veterans
                 SET
-                    memberid = @memberId,
+                    cardnumber = @cardnumber,
                     firstname = @firstName,
                     lastname = @lastName,
                     lastupdatedate = @lastupdatedate,
@@ -221,7 +221,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
 
             builder.AddParameters(new
             {
-                memberId = veteran.MemberId,
+                cardnumber = veteran.CardNumber,
                 firstName = veteran.FirstName,
                 lastName = veteran.LastName,
                 lastupdatedate = veteran.LastUpdateDate,
