@@ -48,7 +48,7 @@ namespace Server.Tests
         {
             veteran.FirstName = "TestFirstName";
             veteran.LastName = "TestLastName";
-            veteran.MemberId = 1234567;
+            veteran.CardNumber = 1234567;
             veteran.Address = "1111 1st street";
             veteran.PrimaryPhone = "(123) 123-1234";
             veteran.Email = "test@qcvoc.com";

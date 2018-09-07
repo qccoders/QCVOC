@@ -49,7 +49,7 @@ namespace Server.Tests
         public static Gen<Veteran> GenVeteran()
         {
             return from id in Arb.Default.Guid().Generator
-                   from memberId in Arb.Default.Int32().Generator
+                   from cardNumber in Arb.Default.Int32().Generator
                    from firstName in Arb.Default.NonEmptyString().Generator
                    from lastName in Arb.Default.NonEmptyString().Generator
                    from address in Arb.Default.NonEmptyString().Generator
@@ -59,7 +59,7 @@ namespace Server.Tests
                    select new Veteran()
                    {
                        Id = id,
-                       MemberId = memberId,
+                       CardNumber = cardNumber,
                        FirstName = firstName.ToString(),
                        LastName = lastName.ToString(),
                        Address = address.ToString(),
