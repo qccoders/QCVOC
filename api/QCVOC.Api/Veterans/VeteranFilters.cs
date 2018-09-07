@@ -81,9 +81,9 @@ namespace QCVOC.Api.Veterans
         public Guid? LastUpdateById { get; set; }
 
         /// <summary>
-        ///     The member id of the Veteran.
+        ///     The number of the card presently assigned to the Veteran.
         /// </summary>
-        public int? MemberId { get; set; }
+        public int? CardNumber { get; set; }
 
         /// <summary>
         ///     The primary phone number of the Veteran.
