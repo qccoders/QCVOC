@@ -50,10 +50,10 @@ CREATE TABLE public.accounts (
 ALTER TABLE public.accounts OWNER TO qcvoc;
 
 --
--- Name: patrons; Type: TABLE; Schema: public; Owner: qcvoc
+-- Name: veterans; Type: TABLE; Schema: public; Owner: qcvoc
 --
 
-CREATE TABLE public.patrons (
+CREATE TABLE public.veterans (
     id uuid NOT NULL,
     memberid integer,
     firstname text NOT NULL,
@@ -68,7 +68,7 @@ CREATE TABLE public.patrons (
 );
 
 
-ALTER TABLE public.patrons OWNER TO qcvoc;
+ALTER TABLE public.veterans OWNER TO qcvoc;
 
 --
 -- Name: refreshtokens; Type: TABLE; Schema: public; Owner: qcvoc
@@ -104,10 +104,10 @@ COPY public.accounts (id, name, passwordhash, role) FROM stdin;
 
 
 --
--- Data for Name: patrons; Type: TABLE DATA; Schema: public; Owner: qcvoc
+-- Data for Name: veterans; Type: TABLE DATA; Schema: public; Owner: qcvoc
 --
 
-COPY public.patrons (id, memberid, firstname, lastname, address, primaryphone, secondaryphone, email, enrollmentdate) FROM stdin;
+COPY public.veterans (id, memberid, firstname, lastname, address, primaryphone, secondaryphone, email, enrollmentdate) FROM stdin;
 \.
 
 
@@ -136,11 +136,11 @@ ALTER TABLE ONLY public.accounts
 
 
 --
--- Name: patrons patrons_pkey; Type: CONSTRAINT; Schema: public; Owner: qcvoc
+-- Name: veterans veterans_pkey; Type: CONSTRAINT; Schema: public; Owner: qcvoc
 --
 
-ALTER TABLE ONLY public.patrons
-    ADD CONSTRAINT patrons_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.veterans
+    ADD CONSTRAINT veterans_pkey PRIMARY KEY (id);
 
 
 --
