@@ -343,7 +343,7 @@ namespace QCVOC.Api.Security.Controller
         /// <response code="404">An Account matching the specified id could not be found.</response>
         /// <response code="409">An Account with the specified name aleady exists.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
-        [HttpPut("accounts/{id}")]
+        [HttpPatch("accounts/{id}")]
         [Authorize]
         [ProducesResponseType(typeof(AccountResponse), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
@@ -420,7 +420,7 @@ namespace QCVOC.Api.Security.Controller
                 accountRecord = new Account()
                 {
                     Id = accountToUpdate.Id,
-                    Name = accountToUpdate.Name,
+                    Name = account.Name ?? accountToUpdate.Name,
                     Role = accountToUpdate.Role,
                     PasswordHash = account.Password == null ? accountToUpdate.PasswordHash :
                         Utility.ComputeSHA512Hash(account.Password),
