@@ -91,7 +91,7 @@ namespace QCVOC.Api.Veterans.Controller
         /// <response code="201">The Veteran was enrolled successfully.</response>
         /// <response code="400">The specified Veteran was invalid.</response>
         /// <response code="401">Unauthorized.</response>
-        /// <response code="409">A Veteran with the same member id or first and last names and address already exists.</response>
+        /// <response code="409">The card number is already assigned to another Veteran, or a Veteran with the same first and last names and address already exists.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost("")]
         [Authorize]
@@ -108,17 +108,17 @@ namespace QCVOC.Api.Veterans.Controller
             }
 
             var existingVeteran = Enumerable.Empty<Veteran>();
-            if (veteran.MemberId != null)
+            if (veteran.CardNumber != null)
             {
                 existingVeteran = VeteranRepository.GetAll(new VeteranFilters()
                 {
-                    MemberId = veteran.MemberId,
+                    CardNumber = veteran.CardNumber,
                 });
             }
 
             if (existingVeteran.Any())
             {
-                return Conflict($"A Veteran with member id '{veteran.MemberId}' already exists.");
+                return Conflict($"Card number {veteran.CardNumber} is already assigned to another veteran.");
             }
 
             existingVeteran = VeteranRepository.GetAll(new VeteranFilters()
@@ -144,7 +144,7 @@ namespace QCVOC.Api.Veterans.Controller
                 LastName = veteran.LastName,
                 LastUpdateDate = DateTime.UtcNow,
                 LastUpdateById = User.GetId(),
-                MemberId = veteran.MemberId,
+                CardNumber = veteran.CardNumber,
                 PrimaryPhone = veteran.PrimaryPhone,
             };
 
@@ -169,7 +169,7 @@ namespace QCVOC.Api.Veterans.Controller
         /// <response code="400">The specified Veteran was invalid.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="404">A Veteran matching the specified id could not be found.</response>
-        /// <response code="409">A Veteran with the same member id already exists.</response>
+        /// <response code="409">The card number is already assigned to another Veteran.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(Veteran), 200)]
@@ -194,15 +194,15 @@ namespace QCVOC.Api.Veterans.Controller
 
             var conflictingVeterans = Enumerable.Empty<Veteran>();
 
-            if (veteran.MemberId != null)
+            if (veteran.CardNumber != null)
             {
                 var duplicateId = VeteranRepository
-                    .GetAll(new VeteranFilters() { MemberId = veteran.MemberId })
+                    .GetAll(new VeteranFilters() { CardNumber = veteran.CardNumber })
                     .Any(p => p.Id != id);
 
                 if (duplicateId)
                 {
-                    return Conflict($"A Veteran with member id '{veteran.MemberId}' already exists.");
+                    return Conflict($"Card number {veteran.CardNumber} is already assigned to another veteran.");
                 }
             }
 
@@ -227,7 +227,7 @@ namespace QCVOC.Api.Veterans.Controller
                 LastName = veteran.LastName,
                 LastUpdateDate = DateTime.UtcNow,
                 LastUpdateById = User.GetId(),
-                MemberId = veteran.MemberId,
+                CardNumber = veteran.CardNumber,
                 PrimaryPhone = veteran.PrimaryPhone,
             };
 
