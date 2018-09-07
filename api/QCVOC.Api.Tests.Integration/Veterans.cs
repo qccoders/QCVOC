@@ -21,51 +21,51 @@ namespace Server.Tests
             Arb.Register<Generators>();
         }
 
-        [Fact(DisplayName = "Given a valid patron, it can be created, retrieved, updated and deleted.")]
+        [Fact(DisplayName = "Given a valid veteran, it can be created, retrieved, updated and deleted.")]
         [Trait("Type", "Integration")]
         public void VeteranLifecycle()
             => Prop.ForAll<Veteran, VeteranRepository>(
                 Generators.ArbVeteran(),
                 Generators.ArbVeteranRepository(),
-                (patron, repository) => Lifecycle(patron, repository)).QuickCheckThrowOnFailure();
+                (veteran, repository) => Lifecycle(veteran, repository)).QuickCheckThrowOnFailure();
 
-        private Property Lifecycle(Veteran patron, VeteranRepository repository)
+        private Property Lifecycle(Veteran veteran, VeteranRepository repository)
         {
-            return Insertable(patron, repository)
-            .And(Updateable(patron, repository))
-            .And(Gettable(patron, repository))
-            .And(Deleteable(patron, repository));
+            return Insertable(veteran, repository)
+            .And(Updateable(veteran, repository))
+            .And(Gettable(veteran, repository))
+            .And(Deleteable(veteran, repository));
         }
 
-        private Property Insertable(Veteran patron, VeteranRepository patrons)
+        private Property Insertable(Veteran veteran, VeteranRepository veterans)
         {
-            var inserted = patrons.Create(patron);
-            var equal = inserted.Equals(patron);
+            var inserted = veterans.Create(veteran);
+            var equal = inserted.Equals(veteran);
             return equal.ToProperty();
         }
 
-        private Property Updateable(Veteran patron, VeteranRepository patrons)
+        private Property Updateable(Veteran veteran, VeteranRepository veterans)
         {
-            patron.FirstName = "TestFirstName";
-            patron.LastName = "TestLastName";
-            patron.MemberId = 1234567;
-            patron.Address = "1111 1st street";
-            patron.PrimaryPhone = "(123) 123-1234";
-            patron.Email = "test@qcvoc.com";
-            patron.EnrollmentDate = DateTime.Now;
+            veteran.FirstName = "TestFirstName";
+            veteran.LastName = "TestLastName";
+            veteran.MemberId = 1234567;
+            veteran.Address = "1111 1st street";
+            veteran.PrimaryPhone = "(123) 123-1234";
+            veteran.Email = "test@qcvoc.com";
+            veteran.EnrollmentDate = DateTime.Now;
 
-            var updated = patrons.Update(patron);
-            var equal = updated.Equals(patron);
+            var updated = veterans.Update(veteran);
+            var equal = updated.Equals(veteran);
             return equal.ToProperty();
         }
 
-        private Property Gettable(Veteran patron, VeteranRepository patrons)
-            => (patrons.GetAll().Count() > 0).ToProperty();
+        private Property Gettable(Veteran veteran, VeteranRepository veterans)
+            => (veterans.GetAll().Count() > 0).ToProperty();
 
-        private Property Deleteable(Veteran patron, VeteranRepository patrons)
+        private Property Deleteable(Veteran veteran, VeteranRepository veterans)
         {
-            patrons.Delete(patron);
-            var equal = patrons.Get(patron.Id) == null;
+            veterans.Delete(veteran);
+            var equal = veterans.Get(veteran.Id) == null;
             return equal.ToProperty();
         }
     }
