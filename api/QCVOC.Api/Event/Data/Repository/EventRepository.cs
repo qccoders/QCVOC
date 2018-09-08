@@ -143,6 +143,32 @@ namespace QCVOC.Api.Event.Data.Repository
 
         public Event Update(Event @event)
         {
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
+            UPDATE events
+            SET
+                name = @name,
+                startdate = @startdate,
+                enddate = @enddate,
+                lastupdatedate = @lastupdatedate,
+                lastupdatebyid = @lastupdatebyid
+            ");
+
+            builder.AddParameters(new
+            {
+                name = @event.Name,
+                startdate = @event.StartDate,
+                enddate = @event.EndDate,
+                lastupdatedate = @event.LastUpdateDate,
+                lastupdatebyid = @event.LastUpdateById,
+            });
+
+            using (var db = ConnectionFactory.CreateConnection())
+            {
+                db.Execute(query.RawSql, query.Parameters);
+            }
+
             return Get(@event.Id);
         }
     }
