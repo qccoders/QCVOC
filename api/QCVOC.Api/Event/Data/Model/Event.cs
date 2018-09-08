@@ -6,21 +6,60 @@
 namespace QCVOC.Api.Event.Data.Model
 {
     using System;
-    using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-    using QCVOC.Api.Security.Data.Model;
 
+    /// <summary>
+    ///     An Event.
+    /// </summary>
     public class Event
     {
-        public DateTime EndTime { get; set; }
+        /// <summary>
+        ///     Gets the name of the user which created the Event.
+        /// </summary>
+        public string CreationBy { get; }
 
-        public IList<Account> Hosts { get; set; }
+        /// <summary>
+        ///     Gets or sets the id of the user which created the Event.
+        /// </summary>
+        public Guid CreationById { get; set; }
 
-        [Key]
+        /// <summary>
+        ///     Gets or sets the Event creation date.
+        /// </summary>
+        public DateTime CreationDate { get; set; }
+
+        /// <summary>
+        ///     Gets the name of the user which performed the last update.
+        /// </summary>
+        public string LastUpdateBy { get; }
+
+        /// <summary>
+        ///     Gets or sets the id of the user which performed the last update.
+        /// </summary>
+        public Guid LastUpdateById { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the date on which the Event was last updated.
+        /// </summary>
+        public DateTime LastUpdateDate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the ending time and date of the Event.
+        /// </summary>
+        public DateTime EndDate { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Event id.
+        /// </summary>
         public Guid Id { get; set; }
 
+        /// <summary>
+        ///     Gets or sets the Event name.
+        /// </summary>
         public string Name { get; set; }
 
-        public DateTime StartTime { get; set; }
+        /// <summary>
+        ///     Gets or sets the starting time and date of the Event.
+        /// </summary>
+        public DateTime StartDate { get; set; }
     }
 }
