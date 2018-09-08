@@ -8,7 +8,7 @@ namespace QCVOC.Api.Veterans.Data.Model
     using System;
 
     /// <summary>
-    ///     A service Veteran.
+    ///     A Veteran.
     /// </summary>
     public class Veteran : IEquatable<Veteran>
     {
