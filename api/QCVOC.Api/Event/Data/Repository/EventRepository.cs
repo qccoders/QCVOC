@@ -58,6 +58,28 @@ namespace QCVOC.Api.Event.Data.Repository
             return Get(@event.Id);
         }
 
+        public void Delete(Guid id)
+        {
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
+                DELETE FROM events
+                WHERE id = @id;
+            ");
+
+            builder.AddParameters(new { id });
+
+            using (var db = ConnectionFactory.CreateConnection())
+            {
+                db.Execute(query.RawSql, query.Parameters);
+            }
+        }
+
+        public void Delete(Event @event)
+        {
+            Delete(@event.Id);
+        }
+
         public Event Get(Guid id)
         {
             return GetAll(new EventFilters() { Id = id }).SingleOrDefault();
@@ -74,7 +96,7 @@ namespace QCVOC.Api.Event.Data.Repository
                     e.name,
                     e.startdate,
                     e.enddate,
-                    e.crationdate,
+                    e.creationdate,
                     e.creationbyid,
                     COALESCE(a1.name, '(Deleted user)') AS creationby,
                     e.lastupdatedate,
@@ -87,6 +109,41 @@ namespace QCVOC.Api.Event.Data.Repository
                 ORDER BY e.startdate {filters.OrderBy.ToString()}
                 LIMIT @limit OFFSET @offset
             ");
+
+            builder.AddParameters(new
+            {
+                limit = filters.Limit,
+                offset = filters.Offset,
+                orderby = filters.OrderBy.ToString(),
+            });
+
+            if (filters is EventFilters eventFilters)
+            {
+                builder
+                    .ApplyFilter(FilterType.Equals, "e.id", eventFilters.Id)
+                    .ApplyFilter(FilterType.Like, "e.name", eventFilters.Name)
+                    .ApplyFilter(FilterType.Between, "e.");
+
+                if (eventFilters.DateStart != null && eventFilters.DateEnd != null)
+                {
+                    var dates = new { start = eventFilters.DateStart, end = eventFilters.DateEnd };
+
+                    builder
+                        .Where("e.startdate BETWEEN @start AND @end", dates)
+                        .OrWhere("e.enddate BETWEEN @start AND @end", dates)
+                        .OrWhere("(e.startdate <= @start AND e.enddate >= @end)", dates);
+                }
+            }
+
+            using (var db = ConnectionFactory.CreateConnection())
+            {
+                return db.Query<Event>(query.RawSql, query.Parameters);
+            }
+        }
+
+        public Event Update(Event @event)
+        {
+            return Get(@event.Id);
         }
     }
 }
