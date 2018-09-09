@@ -5,7 +5,12 @@
 
 namespace QCVOC.Api.Event.Controller
 {
+    using System;
+    using System.Collections.Generic;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Event.Data.Model;
 
     /// <summary>
     ///     Provides endpoints for manipulation of Event records.
@@ -16,5 +21,61 @@ namespace QCVOC.Api.Event.Controller
     [Consumes("application/json")]
     public class EventsController : Controller
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="EventsController"/> class.
+        /// </summary>
+        /// <param name="eventRepository">The repository used for Event data access.</param>
+        public EventsController(IRepository<Event> eventRepository)
+        {
+            EventRepository = eventRepository;
+        }
+
+        private IRepository<Event> EventRepository { get; }
+
+        /// <summary>
+        ///     Returns a list of Events.
+        /// </summary>
+        /// <param name="filters">Optional filtering and pagination options.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The list was retrieved successfully.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpGet("")]
+        [Authorize]
+        [ProducesResponseType(typeof(IEnumerable<Event>), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult GetAll([FromQuery]EventFilters filters)
+        {
+            return Ok(EventRepository.GetAll(filters));
+        }
+
+        /// <summary>
+        ///     Returns the Event matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Event to retrieve.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The Event was retrieved successfully.</response>
+        /// <response code="400">The specified id was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="404">An Event matching the specified id could not be found.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpGet("{id}")]
+        [Authorize]
+        [ProducesResponseType(typeof(IEnumerable<Event>), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Get([FromRoute]Guid id)
+        {
+            var veteran = EventRepository.Get(id);
+
+            if (veteran == default(Event))
+            {
+                return NotFound();
+            }
+
+            return Ok(veteran);
+        }
     }
 }
