@@ -13,9 +13,9 @@ namespace QCVOC.Api.Veterans.Controller
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Security;
     using QCVOC.Api.Veterans.Data.DTO;
     using QCVOC.Api.Veterans.Data.Model;
-    using QCVOC.Api.Security;
 
     /// <summary>
     ///     Provides endpoints for manipulation of Veteran records.
@@ -61,7 +61,6 @@ namespace QCVOC.Api.Veterans.Controller
         /// <param name="id">The id of the Veteran to retrieve.</param>
         /// <returns>See attributes.</returns>
         /// <response code="200">The Veteran was retrieved successfully.</response>
-        /// <response code="400">The specified id was invalid.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="404">A Veteran matching the specified id could not be found.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
