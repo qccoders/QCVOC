@@ -6,6 +6,7 @@
 namespace QCVOC.Api.Event.Data.Model
 {
     using System;
+    using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     ///     An Event.
@@ -15,16 +16,19 @@ namespace QCVOC.Api.Event.Data.Model
         /// <summary>
         ///     Gets or sets the ending time and date of the Event.
         /// </summary>
+        [Required]
         public DateTime EndDate { get; set; }
 
         /// <summary>
         ///     Gets or sets the Event name.
         /// </summary>
+        [Required]
         public string Name { get; set; }
 
         /// <summary>
         ///     Gets or sets the starting time and date of the Event.
         /// </summary>
+        [Required]
         public DateTime StartDate { get; set; }
     }
 }
