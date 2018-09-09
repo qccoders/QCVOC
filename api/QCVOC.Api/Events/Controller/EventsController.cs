@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Event.Controller
+namespace QCVOC.Api.Events.Controller
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace QCVOC.Api.Event.Controller
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Event.Data.Model;
+    using QCVOC.Api.Events.Data.Model;
     using QCVOC.Api.Security;
 
     /// <summary>

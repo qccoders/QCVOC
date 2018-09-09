@@ -28,6 +28,8 @@ namespace QCVOC.Api
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Common.Middleware;
+    using QCVOC.Api.Events.Data.Model;
+    using QCVOC.Api.Events.Data.Repository;
     using QCVOC.Api.Security;
     using QCVOC.Api.Security.Data.Model;
     using QCVOC.Api.Security.Data.Repository;
@@ -104,6 +106,8 @@ namespace QCVOC.Api
                 new VeteranRepository(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<IRepository<Service.Data.Model.Service>, ServiceRepository>(serviceProvider =>
                 new ServiceRepository(serviceProvider.GetService<IDbConnectionFactory>()));
+            services.AddScoped<IRepository<Event>, EventRepository>(serviceProvider =>
+                new EventRepository(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => ConfigureJwtBearerOptions(options));

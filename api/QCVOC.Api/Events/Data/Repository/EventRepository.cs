@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Event.Data.Repository
+namespace QCVOC.Api.Events.Data.Repository
 {
     using System;
     using System.Collections.Generic;
@@ -12,7 +12,7 @@ namespace QCVOC.Api.Event.Data.Repository
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
-    using QCVOC.Api.Event.Data.Model;
+    using QCVOC.Api.Events.Data.Model;
 
     /// <summary>
     ///     Provides data access for <see cref="Event"/>.
