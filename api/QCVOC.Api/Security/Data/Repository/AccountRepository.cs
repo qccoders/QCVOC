@@ -70,7 +70,7 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <summary>
         ///     Deletes the Account matching the specified <paramref name="id"/>.
         /// </summary>
-        /// <param name="id">The Id of the account to delete.</param>
+        /// <param name="id">The id of the Account to delete.</param>
         public void Delete(Guid id)
         {
             var builder = new SqlBuilder();
@@ -100,8 +100,8 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <summary>
         ///     Retrieves the Account with the specified <paramref name="id"/>.
         /// </summary>
-        /// <param name="id">The Id of the account to retrieve.</param>
-        /// <returns>The account with the specified Id.</returns>
+        /// <param name="id">The id of the Account to retrieve.</param>
+        /// <returns>The Account with the specified dd.</returns>
         public Account Get(Guid id)
         {
             return GetAll(new AccountFilters() { Id = id }).SingleOrDefault();
@@ -167,8 +167,8 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <summary>
         ///     Updates the specified <paramref name="account"/>.
         /// </summary>
-        /// <param name="account">The account to update.</param>
-        /// <returns>The updated account.</returns>
+        /// <param name="account">The Account to update.</param>
+        /// <returns>The updated Account.</returns>
         public Account Update(Account account)
         {
             var builder = new SqlBuilder();

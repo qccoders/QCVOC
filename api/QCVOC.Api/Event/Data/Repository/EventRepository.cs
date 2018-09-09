@@ -13,20 +13,28 @@ namespace QCVOC.Api.Event.Data.Repository
     using QCVOC.Api.Common.Data.ConnectionFactory;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Event.Data.Model;
-    using QCVOC.Api.Event;
 
     /// <summary>
     ///     Provides data access for <see cref="Event"/>.
     /// </summary>
     public class EventRepository : IRepository<Event>
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="EventRepository"/> class.
+        /// </summary>
+        /// <param name="connectionFactory">The database connection factory used for data access.</param>
         public EventRepository(IDbConnectionFactory connectionFactory)
         {
-            connectionFactory = connectionFactory;
+            ConnectionFactory = connectionFactory;
         }
 
         private IDbConnectionFactory ConnectionFactory { get; }
 
+        /// <summary>
+        ///     Creates a new Event from the specified <paramref name="event"/>.
+        /// </summary>
+        /// <param name="event">The Event to create.</param>
+        /// <returns>The created Event.</returns>
         public Event Create(Event @event)
         {
             var builder = new SqlBuilder();
@@ -58,6 +66,10 @@ namespace QCVOC.Api.Event.Data.Repository
             return Get(@event.Id);
         }
 
+        /// <summary>
+        ///     Deletes the Event matching the specified <paramref name="id"/>
+        /// </summary>
+        /// <param name="id">The id of the Event to delete.</param>
         public void Delete(Guid id)
         {
             var builder = new SqlBuilder();
@@ -75,16 +87,30 @@ namespace QCVOC.Api.Event.Data.Repository
             }
         }
 
+        /// <summary>
+        ///     Deletes the specified <paramref name="event"/>.
+        /// </summary>
+        /// <param name="event">The Event to delete.</param>
         public void Delete(Event @event)
         {
             Delete(@event.Id);
         }
 
+        /// <summary>
+        ///     Retrieves the Event with the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Event to retrieve.</param>
+        /// <returns>The Event with the specified id.</returns>
         public Event Get(Guid id)
         {
             return GetAll(new EventFilters() { Id = id }).SingleOrDefault();
         }
 
+        /// <summary>
+        ///     Retrieves all Events after applying optional <paramref name="filters"/>.
+        /// </summary>
+        /// <param name="filters">Optional query filters.</param>
+        /// <returns>A list of Events.</returns>
         public IEnumerable<Event> GetAll(Filters filters = null)
         {
             filters = filters ?? new Filters();
@@ -141,6 +167,11 @@ namespace QCVOC.Api.Event.Data.Repository
             }
         }
 
+        /// <summary>
+        ///     Updates the specified <paramref name="event"/>.
+        /// </summary>
+        /// <param name="event">The Event to update.</param>
+        /// <returns>The updated Event.</returns>
         public Event Update(Event @event)
         {
             var builder = new SqlBuilder();
