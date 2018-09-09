@@ -13,9 +13,9 @@ namespace QCVOC.Api.Veterans.Controller
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Security;
     using QCVOC.Api.Veterans.Data.DTO;
     using QCVOC.Api.Veterans.Data.Model;
-    using QCVOC.Api.Security;
 
     /// <summary>
     ///     Provides endpoints for manipulation of Veteran records.
