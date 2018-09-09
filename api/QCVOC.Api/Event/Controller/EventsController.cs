@@ -10,6 +10,7 @@ namespace QCVOC.Api.Event.Controller
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Event.Data.Model;
     using QCVOC.Api.Security;
@@ -91,6 +92,28 @@ namespace QCVOC.Api.Event.Controller
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            var eventRecord = new Event()
+            {
+                Id = Guid.NewGuid(),
+                Name = @event.Name,
+                StartDate = @event.StartDate,
+                EndDate = @event.EndDate,
+                CreationDate = DateTime.UtcNow,
+                CreationById = User.GetId(),
+                LastUpdateDate = DateTime.UtcNow,
+                LastUpdateById = User.GetId(),
+            };
+
+            try
+            {
+                var createdEvent = EventRepository.Create(eventRecord);
+                return StatusCode(201, createdEvent);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error creating the specified Event: {ex.Message}.  See inner Exception for details.", ex);
             }
         }
 
