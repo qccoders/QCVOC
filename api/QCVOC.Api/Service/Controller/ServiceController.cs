@@ -67,7 +67,7 @@ namespace QCVOC.Api.Service.Controller
         /// <response code="409">A Service with the same name already exists.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost("")]
-        [Authorize]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(Service), 201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
@@ -125,6 +125,7 @@ namespace QCVOC.Api.Service.Controller
         /// <response code="409">A Service with the same name already exists.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPut("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(Service), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
