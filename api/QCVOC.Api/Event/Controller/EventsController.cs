@@ -9,8 +9,10 @@ namespace QCVOC.Api.Event.Controller
     using System.Collections.Generic;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Event.Data.Model;
+    using QCVOC.Api.Security;
 
     /// <summary>
     ///     Provides endpoints for manipulation of Event records.
@@ -56,7 +58,6 @@ namespace QCVOC.Api.Event.Controller
         /// <param name="id">The id of the Event to retrieve.</param>
         /// <returns>See attributes.</returns>
         /// <response code="200">The Event was retrieved successfully.</response>
-        /// <response code="400">The specified id was invalid.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="404">An Event matching the specified id could not be found.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
@@ -76,6 +77,44 @@ namespace QCVOC.Api.Event.Controller
             }
 
             return Ok(veteran);
+        }
+
+        [HttpPost("")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
+        [ProducesResponseType(typeof(Event), 201)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(409)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Create([FromBody]EventRequest @event)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
+        [ProducesResponseType(typeof(Event), 200)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(string), 409)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Update([FromRoute]Guid id, [FromBody]EventRequest @event)
+        {
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Delete([FromRoute]Guid id)
+        {
         }
     }
 }
