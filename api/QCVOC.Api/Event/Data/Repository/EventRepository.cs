@@ -131,7 +131,7 @@ namespace QCVOC.Api.Event.Data.Repository
                     builder
                         .Where("e.startdate BETWEEN @start AND @end", dates)
                         .OrWhere("e.enddate BETWEEN @start AND @end", dates)
-                        .OrWhere("(e.startdate <= @start AND e.enddate >= @end)", dates);
+                        .OrWhere("(e.startdate < @start AND e.enddate > @end)", dates);
                 }
             }
 
