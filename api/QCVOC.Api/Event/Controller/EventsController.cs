@@ -127,6 +127,37 @@ namespace QCVOC.Api.Event.Controller
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Update([FromRoute]Guid id, [FromBody]EventRequest @event)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var eventToUpdate = EventRepository.Get(id);
+
+            if (eventToUpdate == default(Event))
+            {
+                return NotFound();
+            }
+
+            var eventRecord = new Event()
+            {
+                Id = eventToUpdate.Id,
+                Name = @event.Name,
+                StartDate = @event.StartDate,
+                EndDate = @event.EndDate,
+                LastUpdateDate = DateTime.UtcNow,
+                LastUpdateById = User.GetId(),
+            };
+
+            try
+            {
+                var updatedEvent = EventRepository.Update(eventRecord);
+                return Ok(updatedEvent);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error updating the specified Event: {ex.Message}.  See inner Exception for details.", ex);
+            }
         }
 
         [HttpDelete("{id}")]
@@ -138,6 +169,22 @@ namespace QCVOC.Api.Event.Controller
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Delete([FromRoute]Guid id)
         {
+            var @event = EventRepository.Get(id);
+
+            if (@event == default(Event))
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                EventRepository.Delete(@event);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting the specified Event: {ex.Message}.  See inner Exception for details.", ex);
+            }
         }
     }
 }
