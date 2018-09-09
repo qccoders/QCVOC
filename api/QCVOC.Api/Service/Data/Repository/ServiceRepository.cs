@@ -172,7 +172,6 @@ namespace QCVOC.Api.Service.Data.Repository
             {
                 return db.Query<Service>(query.RawSql, query.Parameters);
             }
-
         }
 
         /// <summary>
@@ -202,10 +201,12 @@ namespace QCVOC.Api.Service.Data.Repository
                 lastupdatebyid = service.LastUpdateById,
                 id = service.Id,
             });
+
             using (var db = ConnectionFactory.CreateConnection())
             {
                 db.Execute(query.RawSql, query.Parameters);
             }
+
             return Get(service.Id);
         }
     }

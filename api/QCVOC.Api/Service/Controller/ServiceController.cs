@@ -13,9 +13,9 @@ namespace QCVOC.Api.Service.Controller
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Security;
     using QCVOC.Api.Service.Data.DTO;
     using QCVOC.Api.Service.Data.Model;
-    using QCVOC.Api.Security;
 
     /// <summary>
     ///     Provides endpoints for manipulation of Service records.
@@ -26,7 +26,6 @@ namespace QCVOC.Api.Service.Controller
     [Consumes("application/json")]
     public class ServiceController : Controller
     {
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="ServiceController"/> class.
         /// </summary>
@@ -54,6 +53,33 @@ namespace QCVOC.Api.Service.Controller
         public IActionResult GetAll([FromQuery]ServiceFilters filters)
         {
             return Ok(ServiceRepository.GetAll(filters));
+        }
+
+        /// <summary>
+        ///     Returns the Service matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Service to retrieve.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The Service was retrieved successfully.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="404">A Service matching the specified id could not be found.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpGet("{id}")]
+        [Authorize]
+        [ProducesResponseType(typeof(IEnumerable<Service>), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Get([FromRoute]Guid id)
+        {
+            var service = ServiceRepository.Get(id);
+
+            if (service == default(Service))
+            {
+                return NotFound();
+            }
+
+            return Ok(service);
         }
 
         /// <summary>
