@@ -80,6 +80,16 @@ namespace QCVOC.Api.Event.Controller
             return Ok(veteran);
         }
 
+        /// <summary>
+        ///     Creates a new Event.
+        /// </summary>
+        /// <param name="event">The Event to create.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="201">The Event was created successfully.</response>
+        /// <response code="400">The specified Event was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost("")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(Event), 201)]
@@ -117,13 +127,25 @@ namespace QCVOC.Api.Event.Controller
             }
         }
 
+        /// <summary>
+        ///     Updates the Event matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Event to update.</param>
+        /// <param name="event">The updated Event.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The Event was updated successfully.</response>
+        /// <response code="400">The specified Event was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="404">An Event matching the specified id could not be found.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPut("{id}")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(Event), 200)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         [ProducesResponseType(404)]
-        [ProducesResponseType(typeof(string), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Update([FromRoute]Guid id, [FromBody]EventRequest @event)
         {
@@ -160,6 +182,16 @@ namespace QCVOC.Api.Event.Controller
             }
         }
 
+        /// <summary>
+        ///     Deletes the Event matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the Event to delete.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="204">The Event was deleted successfully.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="404">An Event matching the specified id could not be found.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpDelete("{id}")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(204)]
