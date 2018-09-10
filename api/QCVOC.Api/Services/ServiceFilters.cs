@@ -3,7 +3,7 @@
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Service
+namespace QCVOC.Api.Services
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
