@@ -148,22 +148,22 @@ namespace QCVOC.Api.Veterans.Data.Repository
 
             var query = builder.AddTemplate($@"
                 SELECT
-                    p.id,
-                    cardnumber,
-                    firstname,
-                    lastname,
-                    p.lastupdatedate,
+                    v.id,
+                    v.cardnumber,
+                    v.firstname,
+                    v.lastname,
+                    v.lastupdatedate,
                     a.name AS lastupdateby,
-                    p.lastupdatebyid,
-                    address,
-                    primaryphone,
-                    email,
-                    enrollmentdate,
-                    enrollmentbyid,
+                    v.lastupdatebyid,
+                    v.address,
+                    v.primaryphone,
+                    v.email,
+                    v.enrollmentdate,
+                    v.enrollmentbyid,
                     b.name AS enrollmentby
-                FROM veterans p
-                LEFT JOIN accounts a ON p.lastupdatebyid = a.id 
-                LEFT JOIN accounts b ON p.enrollmentbyid = b.id
+                FROM veterans v
+                LEFT JOIN accounts a ON v.lastupdatebyid = a.id 
+                LEFT JOIN accounts b ON v.enrollmentbyid = b.id
                 /**where**/
                 ORDER BY (firstname || lastname) {filters.OrderBy.ToString()}
                 LIMIT @limit OFFSET @offset
@@ -176,25 +176,25 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 orderby = filters.OrderBy.ToString(),
             });
 
-            builder.ApplyFilter(FilterType.Equals, "deleted", false);
+            builder.ApplyFilter(FilterType.Equals, "v.deleted", false);
 
             if (filters is VeteranFilters veteranFilters)
             {
                 builder
-                    .ApplyFilter(FilterType.Equals, "address", veteranFilters.Address)
-                    .ApplyFilter(FilterType.Equals, "email", veteranFilters.Email)
-                    .ApplyFilter(FilterType.Between, "enrollmentdate", veteranFilters.EnrollmentDateStart, veteranFilters.EnrollmentDateEnd)
-                    .ApplyFilter(FilterType.Equals, "enrollmentbyid", veteranFilters.EnrollmentById)
+                    .ApplyFilter(FilterType.Equals, "v.address", veteranFilters.Address)
+                    .ApplyFilter(FilterType.Equals, "v.email", veteranFilters.Email)
+                    .ApplyFilter(FilterType.Between, "v.enrollmentdate", veteranFilters.EnrollmentDateStart, veteranFilters.EnrollmentDateEnd)
+                    .ApplyFilter(FilterType.Equals, "v.enrollmentbyid", veteranFilters.EnrollmentById)
                     .ApplyFilter(FilterType.Equals, "enrollmentby", veteranFilters.EnrollmentBy)
-                    .ApplyFilter(FilterType.Equals, "firstname", veteranFilters.FirstName)
-                    .ApplyFilter(FilterType.Equals, "p.id", veteranFilters.Id)
-                    .ApplyFilter(FilterType.Equals, "lastname", veteranFilters.LastName)
-                    .ApplyFilter(FilterType.Between, "lastupdatedate", veteranFilters.LastUpdateDateStart, veteranFilters.LastUpdateDateEnd)
+                    .ApplyFilter(FilterType.Equals, "v.firstname", veteranFilters.FirstName)
+                    .ApplyFilter(FilterType.Equals, "v.id", veteranFilters.Id)
+                    .ApplyFilter(FilterType.Equals, "v.lastname", veteranFilters.LastName)
+                    .ApplyFilter(FilterType.Between, "v.lastupdatedate", veteranFilters.LastUpdateDateStart, veteranFilters.LastUpdateDateEnd)
                     .ApplyFilter(FilterType.Equals, "a.name", veteranFilters.LastUpdateBy)
-                    .ApplyFilter(FilterType.Equals, "lastupdatebyid", veteranFilters.LastUpdateById)
+                    .ApplyFilter(FilterType.Equals, "v.lastupdatebyid", veteranFilters.LastUpdateById)
                     .ApplyFilter(FilterType.Equals, "lastupdateby", veteranFilters.LastUpdateBy)
-                    .ApplyFilter(FilterType.Equals, "cardnumber", veteranFilters.CardNumber)
-                    .ApplyFilter(FilterType.Equals, "primaryphone", veteranFilters.PrimaryPhone);
+                    .ApplyFilter(FilterType.Equals, "v.cardnumber", veteranFilters.CardNumber)
+                    .ApplyFilter(FilterType.Equals, "v.primaryphone", veteranFilters.PrimaryPhone);
             }
 
             using (var db = ConnectionFactory.CreateConnection())
