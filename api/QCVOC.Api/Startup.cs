@@ -33,6 +33,7 @@ namespace QCVOC.Api
     using QCVOC.Api.Security;
     using QCVOC.Api.Security.Data.Model;
     using QCVOC.Api.Security.Data.Repository;
+    using QCVOC.Api.Services.Data.Model;
     using QCVOC.Api.Services.Data.Repository;
     using QCVOC.Api.Veterans.Data.Model;
     using QCVOC.Api.Veterans.Data.Repository;
@@ -104,7 +105,7 @@ namespace QCVOC.Api
                 new RefreshTokenRepository(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<IRepository<Veteran>, VeteranRepository>(serviceProvider =>
                 new VeteranRepository(serviceProvider.GetService<IDbConnectionFactory>()));
-            services.AddScoped<IRepository<Services.Data.Model.Service>, ServiceRepository>(serviceProvider =>
+            services.AddScoped<IRepository<Service>, ServiceRepository>(serviceProvider =>
                 new ServiceRepository(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<IRepository<Event>, EventRepository>(serviceProvider =>
                 new EventRepository(serviceProvider.GetService<IDbConnectionFactory>()));
