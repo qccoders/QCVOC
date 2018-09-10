@@ -176,7 +176,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 orderby = filters.OrderBy.ToString(),
             });
 
-            builder.ApplyFilter(FilterType.Between, "deleted", false);
+            builder.ApplyFilter(FilterType.Equals, "deleted", false);
 
             if (filters is VeteranFilters veteranFilters)
             {
