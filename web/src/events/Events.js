@@ -5,8 +5,12 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
+import ContentWrapper from '../shared/ContentWrapper';
+import Snackbar from '@material-ui/core/Snackbar';
+import { Card, CardContent, Typography } from '@material-ui/core';
 
 const styles = {
     root: {
@@ -14,13 +18,73 @@ const styles = {
     },
 };
 
+const showCount = 4;
+
 class Events extends Component {
+    state = {
+        events: [],
+        loadApi: {
+            isExecuting: false,
+            isErrored: false,
+        },
+        refreshApi: {
+            isExecuting: false,
+            isErrored: false,
+        },
+        snackbar: {
+            message: '',
+            open: false,
+        },
+        show: showCount
+    }
+
+    componentWillMount = () => {
+        this.refresh('refreshApi');
+    }
+
+    handleSnackbarClose = () => {
+        this.setState({ snackbar: { open: false }});
+    }
+
+    refresh = (apiType) => {
+        this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
+            api.get('/v1/events?offset=0&limit=100&orderBy=ASC')
+            .then(response => {
+                this.setState({ 
+                    events: response.data,
+                    [apiType]: { isExecuting: false, isErrored: false },
+                });
+            }, error => {
+                this.setState({ 
+                    [apiType]: { isExecuting: false, isErrored: true },
+                    snackbar: { message: error.response.data.Message, open: true },
+                });
+            });
+        })
+    }
+
     render() {
+        let { events, loadApi, refreshApi, snackbar } = this.state;
         let classes = this.props.classes;
 
         return (
             <div className={classes.root}>
-                Events
+                <ContentWrapper api={loadApi}>
+                    <Card className={classes.card}>
+                        <CardContent>
+                            <Typography gutterBottom variant="headline" component="h2">
+                                Events
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </ContentWrapper>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
+                    open={snackbar.open}
+                    onClose={this.handleSnackbarClose}
+                    autoHideDuration={3000}
+                    message={<span id="message-id">{snackbar.message}</span>}
+                />
             </div>
         );
     }
