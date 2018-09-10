@@ -51,7 +51,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     primaryphone,
                     email,
                     enrollmentdate,
-                    enrollmentbyid
+                    enrollmentbyid,
+                    deleted
                 )
                 VALUES (
                     @id,
@@ -64,7 +65,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     @primaryphone,
                     @email,
                     @enrollmentdate,
-                    @enrollmentbyid
+                    @enrollmentbyid,
+                    @deleted
                 )
             ");
 
@@ -81,6 +83,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 email = veteran.Email,
                 enrollmentdate = veteran.EnrollmentDate,
                 enrollmentbyid = veteran.EnrollmentById,
+                deleted = false,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -100,7 +103,9 @@ namespace QCVOC.Api.Veterans.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"
-                DELETE FROM veterans
+                UPDATE veterans
+                SET 
+                    deleted = true
                 WHERE id = @id
             ");
 
@@ -170,6 +175,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 offset = filters.Offset,
                 orderby = filters.OrderBy.ToString(),
             });
+
+            builder.ApplyFilter(FilterType.Between, "deleted", false);
 
             if (filters is VeteranFilters veteranFilters)
             {
