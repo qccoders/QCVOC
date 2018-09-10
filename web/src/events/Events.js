@@ -5,22 +5,132 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
+import ContentWrapper from '../shared/ContentWrapper';
+import Snackbar from '@material-ui/core/Snackbar';
+import { Card, CardContent, Typography, CircularProgress, ListSubheader } from '@material-ui/core';
+import EventList from './EventList';
 
 const styles = {
-    root: {
-        flexGrow: 1,
+    fab: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 20,
+        left: 'auto',
+        position: 'fixed',
+        zIndex: 1000
+    },
+    card: {
+        minHeight: 220,
+        maxWidth: 800,
+        margin: 'auto',
+    },
+    refreshSpinner: {
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: 83,
     },
 };
 
+const showCount = 4;
+
 class Events extends Component {
+    state = {
+        events: [],
+        loadApi: {
+            isExecuting: false,
+            isErrored: false,
+        },
+        refreshApi: {
+            isExecuting: false,
+            isErrored: false,
+        },
+        snackbar: {
+            message: '',
+            open: false,
+        },
+        show: showCount
+    }
+
+    componentWillMount = () => {
+        this.refresh('refreshApi');
+    }
+
+    handleEditClick = (event) => {
+        console.log(event);
+    }
+
+    handleSnackbarClose = () => {
+        this.setState({ snackbar: { open: false }});
+    }
+
+    refresh = (apiType) => {
+        this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
+            api.get('/v1/events?offset=0&limit=100&orderBy=ASC')
+            .then(response => {
+                this.setState({ 
+                    events: response.data,
+                    [apiType]: { isExecuting: false, isErrored: false },
+                });
+            }, error => {
+                this.setState({ 
+                    [apiType]: { isExecuting: false, isErrored: true },
+                    snackbar: { message: error.response.data.Message, open: true },
+                });
+            });
+        })
+    }
+
     render() {
+        let { events, loadApi, refreshApi, snackbar } = this.state;
         let classes = this.props.classes;
+
+        // todo: split events into "current" and "past" based on times
 
         return (
             <div className={classes.root}>
-                Events
+                <ContentWrapper api={loadApi}>
+                    <Card className={classes.card}>
+                        <CardContent>
+                            <Typography gutterBottom variant="headline" component="h2">
+                                Events
+                            </Typography>
+                            {refreshApi.isExecuting ?
+                                <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
+                                <div>
+                                    <ListSubheader>Current</ListSubheader>
+                                    <EventList
+                                        events={events}
+                                        onItemClick={this.handleEditClick}
+                                    />
+                                    <ListSubheader>Upcoming</ListSubheader>
+                                    <EventList
+                                        events={events}
+                                        onItemClick={this.handleEditClick}
+                                    />
+                                    <ListSubheader>Past</ListSubheader>
+                                    <EventList
+                                        events={events}
+                                        onItemClick={this.handleEditClick}
+                                    />
+                                </div>
+                            }
+                        </CardContent>
+                    </Card>
+                </ContentWrapper>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
+                    open={snackbar.open}
+                    onClose={this.handleSnackbarClose}
+                    autoHideDuration={3000}
+                    message={<span id="message-id">{snackbar.message}</span>}
+                />
             </div>
         );
     }

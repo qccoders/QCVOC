@@ -160,7 +160,7 @@ class Veterans extends Component {
                 <ContentWrapper api={loadApi}>
                     <Card className={classes.card}>
                         <CardContent>
-                            <Typography gutterBottom variant="headline" componet="h2">
+                            <Typography gutterBottom variant="headline" component="h2">
                                 Veterans
                             </Typography>
                             <TextField
