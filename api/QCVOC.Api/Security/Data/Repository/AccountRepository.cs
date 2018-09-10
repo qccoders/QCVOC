@@ -129,9 +129,9 @@ namespace QCVOC.Api.Security.Data.Repository
                     a1.role,
                     a1.creationdate,
                     a1.creationbyid,
-                    COALESCE(a3.name, '(Deleted user)') AS creationby,
+                    a3.name AS creationby,
                     a1.lastupdatedate,
-                    COALESCE(a2.name, '(Deleted user)') AS lastupdateby,
+                    a2.name AS lastupdateby,
                     a1.lastupdatebyid
                 FROM accounts a1
                 LEFT JOIN accounts a2 ON a1.lastupdatebyid = a2.id

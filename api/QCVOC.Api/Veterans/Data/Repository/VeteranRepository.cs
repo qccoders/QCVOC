@@ -153,14 +153,14 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     firstname,
                     lastname,
                     p.lastupdatedate,
-                    COALESCE(a.name, '(Deleted user)') AS lastupdateby,
+                    a.name AS lastupdateby,
                     p.lastupdatebyid,
                     address,
                     primaryphone,
                     email,
                     enrollmentdate,
                     enrollmentbyid,
-                    COALESCE(b.name, '(Deleted user)') AS enrollmentby
+                    b.name AS enrollmentby
                 FROM veterans p
                 LEFT JOIN accounts a ON p.lastupdatebyid = a.id 
                 LEFT JOIN accounts b ON p.enrollmentbyid = b.id

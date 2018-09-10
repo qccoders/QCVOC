@@ -127,10 +127,10 @@ namespace QCVOC.Api.Events.Data.Repository
                     e.enddate,
                     e.creationdate,
                     e.creationbyid,
-                    COALESCE(a1.name, '(Deleted user)') AS creationby,
+                    a1.name AS creationby,
                     e.lastupdatedate,
                     e.lastupdatebyid,
-                    COALESCE(a2.name, '(Deleted user)') AS lastupdateby
+                    a2.name AS lastupdateby
                 FROM events e
                 LEFT JOIN accounts a1 ON e.creationbyid = a1.id
                 LEFT JOIN accounts a2 ON e.lastupdatebyid = a2.id

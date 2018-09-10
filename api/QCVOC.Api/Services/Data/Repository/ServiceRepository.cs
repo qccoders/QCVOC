@@ -139,10 +139,10 @@ namespace QCVOC.Api.Services.Data.Repository
                     s.id,
                     s.name,
                     s.description,
-                    COALESCE(a.name, '(Deleted user)') AS creationby
+                    a.name AS creationby
                     s.creationbyid,
                     s.creationdate,
-                    COALESCE(b.name, '(Deleted user)') AS lastupdateby
+                    b.name AS lastupdateby
                     s.lastupdatebyid,
                     s.lastupdatedate
                 FROM services s
