@@ -51,7 +51,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     primaryphone,
                     email,
                     enrollmentdate,
-                    enrollmentbyid
+                    enrollmentbyid,
+                    deleted
                 )
                 VALUES (
                     @id,
@@ -64,7 +65,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     @primaryphone,
                     @email,
                     @enrollmentdate,
-                    @enrollmentbyid
+                    @enrollmentbyid,
+                    @deleted
                 )
             ");
 
@@ -81,6 +83,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 email = veteran.Email,
                 enrollmentdate = veteran.EnrollmentDate,
                 enrollmentbyid = veteran.EnrollmentById,
+                deleted = false,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -100,7 +103,9 @@ namespace QCVOC.Api.Veterans.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"
-                DELETE FROM veterans
+                UPDATE veterans
+                SET 
+                    deleted = true
                 WHERE id = @id
             ");
 
@@ -148,14 +153,14 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     firstname,
                     lastname,
                     p.lastupdatedate,
-                    COALESCE(a.name, '(Deleted user)') AS lastupdateby,
+                    a.name AS lastupdateby,
                     p.lastupdatebyid,
                     address,
                     primaryphone,
                     email,
                     enrollmentdate,
                     enrollmentbyid,
-                    COALESCE(b.name, '(Deleted user)') AS enrollmentby
+                    b.name AS enrollmentby
                 FROM veterans p
                 LEFT JOIN accounts a ON p.lastupdatebyid = a.id 
                 LEFT JOIN accounts b ON p.enrollmentbyid = b.id
@@ -170,6 +175,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 offset = filters.Offset,
                 orderby = filters.OrderBy.ToString(),
             });
+
+            builder.ApplyFilter(FilterType.Between, "deleted", false);
 
             if (filters is VeteranFilters veteranFilters)
             {

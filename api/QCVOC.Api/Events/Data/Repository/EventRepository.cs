@@ -41,9 +41,9 @@ namespace QCVOC.Api.Events.Data.Repository
 
             var query = builder.AddTemplate(@"
                 INSERT INTO events
-                    (id, name, startdate, enddate, creationdate, creationbyid, lastupdatedate, lastupdatebyid)
+                    (id, name, startdate, enddate, creationdate, creationbyid, lastupdatedate, lastupdatebyid, deleted)
                 VALUES
-                    (@id, @name, @startdate, @enddate, @creationdate, @creationbyid, @lastupdatedate, @lastupdatebyid)
+                    (@id, @name, @startdate, @enddate, @creationdate, @creationbyid, @lastupdatedate, @lastupdatebyid, @deleted)
             ");
 
             builder.AddParameters(new
@@ -56,6 +56,7 @@ namespace QCVOC.Api.Events.Data.Repository
                 creationbyid = @event.CreationById,
                 lastupdatedate = @event.LastUpdateDate,
                 lastupdatebyid = @event.LastUpdateById,
+                deleted = false,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -75,7 +76,9 @@ namespace QCVOC.Api.Events.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"
-                DELETE FROM events
+                UPDATE events
+                SET
+                    deleted = true
                 WHERE id = @id;
             ");
 
@@ -124,10 +127,10 @@ namespace QCVOC.Api.Events.Data.Repository
                     e.enddate,
                     e.creationdate,
                     e.creationbyid,
-                    COALESCE(a1.name, '(Deleted user)') AS creationby,
+                    a1.name AS creationby,
                     e.lastupdatedate,
                     e.lastupdatebyid,
-                    COALESCE(a2.name, '(Deleted user)') AS lastupdateby
+                    a2.name AS lastupdateby
                 FROM events e
                 LEFT JOIN accounts a1 ON e.creationbyid = a1.id
                 LEFT JOIN accounts a2 ON e.lastupdatebyid = a2.id
@@ -142,6 +145,8 @@ namespace QCVOC.Api.Events.Data.Repository
                 offset = filters.Offset,
                 orderby = filters.OrderBy.ToString(),
             });
+
+            builder.ApplyFilter(FilterType.Equals, "e.deleted", false);
 
             if (filters is EventFilters eventFilters)
             {

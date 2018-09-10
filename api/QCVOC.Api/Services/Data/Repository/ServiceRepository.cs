@@ -47,7 +47,8 @@ namespace QCVOC.Api.Services.Data.Repository
                     creationdate,
                     creationbyid,
                     lastupdatedate,
-                    lastupdatebyid
+                    lastupdatebyid,
+                    deleted
                 )
                 VALUES (
                     @id,
@@ -56,7 +57,8 @@ namespace QCVOC.Api.Services.Data.Repository
                     @creationdate,
                     @creationbyid,  
                     @lastupdatedate,
-                    @lastupdatebyid
+                    @lastupdatebyid,
+                    @deleted
                 )
             ");
 
@@ -69,6 +71,7 @@ namespace QCVOC.Api.Services.Data.Repository
                 creationbyid = service.CreationById,
                 lastupdatedate = service.LastUpdateDate,
                 lastupdatebyid = service.LastUpdateById,
+                deleted = false,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -88,7 +91,9 @@ namespace QCVOC.Api.Services.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"
-                DELETE FROM services
+                UPDATE services
+                SET
+                    deleted = true
                 WHERE id = @id
             ");
 
@@ -134,10 +139,10 @@ namespace QCVOC.Api.Services.Data.Repository
                     s.id,
                     s.name,
                     s.description,
-                    COALESCE(a.name, '(Deleted user)') AS creationby
+                    a.name AS creationby
                     s.creationbyid,
                     s.creationdate,
-                    COALESCE(b.name, '(Deleted user)') AS lastupdateby
+                    b.name AS lastupdateby
                     s.lastupdatebyid,
                     s.lastupdatedate
                 FROM services s
@@ -146,13 +151,16 @@ namespace QCVOC.Api.Services.Data.Repository
                 /**where**/
                 ORDER BY s.name {filters.OrderBy.ToString()}
                 LIMIT @limit OFFSET @offset
-                ");
+            ");
+
             builder.AddParameters(new
             {
                 limit = filters.Limit,
                 offset = filters.Offset,
                 orderby = filters.OrderBy.ToString(),
             });
+
+            builder.ApplyFilter(FilterType.Equals, "s.deleted", false);
 
             if (filters is ServiceFilters serviceFilters)
             {

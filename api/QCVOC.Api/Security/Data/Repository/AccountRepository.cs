@@ -41,9 +41,9 @@ namespace QCVOC.Api.Security.Data.Repository
 
             var query = builder.AddTemplate(@"
                 INSERT INTO accounts
-                    (id, name, passwordhash, passwordresetrequired, role, creationdate, creationbyid, lastupdatedate, lastupdatebyid)
+                    (id, name, passwordhash, passwordresetrequired, role, creationdate, creationbyid, lastupdatedate, lastupdatebyid, deleted)
                 VALUES
-                    (@id, @name, @passwordhash, @passwordresetrequired, @role, @creationdate, @creationbyid, @lastupdatedate, @lastupdatebyid);
+                    (@id, @name, @passwordhash, @passwordresetrequired, @role, @creationdate, @creationbyid, @lastupdatedate, @lastupdatebyid, @deleted);
             ");
 
             builder.AddParameters(new
@@ -57,6 +57,7 @@ namespace QCVOC.Api.Security.Data.Repository
                 creationbyid = account.CreationById,
                 lastupdatedate = account.LastUpdateDate,
                 lastupdatebyid = account.LastUpdateById,
+                deleted = false,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -76,7 +77,9 @@ namespace QCVOC.Api.Security.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"
-                DELETE FROM accounts
+                UPDATE accounts
+                SET 
+                    deleted = true
                 WHERE id = @id;
             ");
 
@@ -126,9 +129,9 @@ namespace QCVOC.Api.Security.Data.Repository
                     a1.role,
                     a1.creationdate,
                     a1.creationbyid,
-                    COALESCE(a3.name, '(Deleted user)') AS creationby,
+                    a3.name AS creationby,
                     a1.lastupdatedate,
-                    COALESCE(a2.name, '(Deleted user)') AS lastupdateby,
+                    a2.name AS lastupdateby,
                     a1.lastupdatebyid
                 FROM accounts a1
                 LEFT JOIN accounts a2 ON a1.lastupdatebyid = a2.id
@@ -144,6 +147,8 @@ namespace QCVOC.Api.Security.Data.Repository
                 offset = filters.Offset,
                 orderby = filters.OrderBy.ToString(),
             });
+
+            builder.ApplyFilter(FilterType.Equals, "a1.deleted", false);
 
             if (filters is AccountFilters accountFilters)
             {
