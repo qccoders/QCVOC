@@ -10,11 +10,31 @@ import api from '../api';
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
-import { Card, CardContent, Typography } from '@material-ui/core';
+import { Card, CardContent, Typography, CircularProgress, ListSubheader } from '@material-ui/core';
+import EventList from './EventList';
 
 const styles = {
-    root: {
-        flexGrow: 1,
+    fab: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 20,
+        left: 'auto',
+        position: 'fixed',
+        zIndex: 1000
+    },
+    card: {
+        minHeight: 220,
+        maxWidth: 800,
+        margin: 'auto',
+    },
+    refreshSpinner: {
+        position: 'fixed',
+        left: 0,
+        right: 0,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: 83,
     },
 };
 
@@ -42,6 +62,10 @@ class Events extends Component {
         this.refresh('refreshApi');
     }
 
+    handleEditClick = (event) => {
+        console.log(event);
+    }
+
     handleSnackbarClose = () => {
         this.setState({ snackbar: { open: false }});
     }
@@ -67,6 +91,8 @@ class Events extends Component {
         let { events, loadApi, refreshApi, snackbar } = this.state;
         let classes = this.props.classes;
 
+        // todo: split events into "current" and "past" based on times
+
         return (
             <div className={classes.root}>
                 <ContentWrapper api={loadApi}>
@@ -75,6 +101,26 @@ class Events extends Component {
                             <Typography gutterBottom variant="headline" component="h2">
                                 Events
                             </Typography>
+                            {refreshApi.isExecuting ?
+                                <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
+                                <div>
+                                    <ListSubheader>Current</ListSubheader>
+                                    <EventList
+                                        events={events}
+                                        onItemClick={this.handleEditClick}
+                                    />
+                                    <ListSubheader>Upcoming</ListSubheader>
+                                    <EventList
+                                        events={events}
+                                        onItemClick={this.handleEditClick}
+                                    />
+                                    <ListSubheader>Past</ListSubheader>
+                                    <EventList
+                                        events={events}
+                                        onItemClick={this.handleEditClick}
+                                    />
+                                </div>
+                            }
                         </CardContent>
                     </Card>
                 </ContentWrapper>
