@@ -1,9 +1,9 @@
-﻿// <copyright file = "ServiceController.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+﻿// <copyright file = "ServicesController.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
 //     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Service.Controller
+namespace QCVOC.Api.Services.Controller
 {
     using System;
     using System.Collections.Generic;
@@ -14,8 +14,8 @@ namespace QCVOC.Api.Service.Controller
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Security;
-    using QCVOC.Api.Service.Data.DTO;
-    using QCVOC.Api.Service.Data.Model;
+    using QCVOC.Api.Services.Data.DTO;
+    using QCVOC.Api.Services.Data.Model;
 
     /// <summary>
     ///     Provides endpoints for manipulation of Service records.
@@ -24,13 +24,13 @@ namespace QCVOC.Api.Service.Controller
     [Route("api/v{version:apiVersion}/[controller]")]
     [Produces("application/json")]
     [Consumes("application/json")]
-    public class ServiceController : Controller
+    public class ServicesController : Controller
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ServiceController"/> class.
+        ///     Initializes a new instance of the <see cref="ServicesController"/> class.
         /// </summary>
         /// <param name="serviceRepository">The respository used for Service data access.</param>
-        public ServiceController(IRepository<Service> serviceRepository)
+        public ServicesController(IRepository<Service> serviceRepository)
         {
             ServiceRepository = serviceRepository;
         }
