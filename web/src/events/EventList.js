@@ -5,6 +5,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
+
 import { sortByProp } from '../util';
 
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
@@ -26,7 +28,7 @@ const EventList = (props) => {
                     </ListItemIcon>
                     <ListItemText
                         primary={e.name}
-                        secondary={e.startDate + ' to ' + e.endDate}
+                        secondary={moment(e.startDate).format('LLLL') + ' to ' + moment(e.endDate).format('h:mm a')}
                     />
                 </ListItem>
             )}
