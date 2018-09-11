@@ -139,10 +139,10 @@ namespace QCVOC.Api.Services.Data.Repository
                     s.id,
                     s.name,
                     s.description,
-                    a.name AS creationby
+                    a.name AS creationby,
                     s.creationbyid,
                     s.creationdate,
-                    b.name AS lastupdateby
+                    b.name AS lastupdateby,
                     s.lastupdatebyid,
                     s.lastupdatedate
                 FROM services s
