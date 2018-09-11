@@ -13,7 +13,9 @@ import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { InsertInvitation } from '@material-ui/icons'
 
 const EventList = (props) => {
-    let { events, onItemClick } = props;
+    let { events, icon, onItemClick } = props;
+
+    // todo: format date with 'from' = a time if the same date as the start, include end date if not 
 
     return (
         <List>
@@ -24,11 +26,11 @@ const EventList = (props) => {
                     onClick={() => onItemClick(e)}
                 >
                     <ListItemIcon>
-                        <InsertInvitation/>
+                        {icon}
                     </ListItemIcon>
                     <ListItemText
                         primary={e.name}
-                        secondary={moment(e.startDate).format('LLLL') + ' to ' + moment(e.endDate).format('h:mm a')}
+                        secondary={moment(e.startDate).format('dddd, MMMM Do') + ' from ' + moment(e.startDate).format('h:mm a') + ' to ' + moment(e.endDate).format('h:mm a')}
                     />
                 </ListItem>
             )}
@@ -38,6 +40,7 @@ const EventList = (props) => {
 
 EventList.propTypes = {
     events: PropTypes.array.isRequired,
+    icon: PropTypes.object.isRequired,
     onItemClick: PropTypes.func.isRequired,
 };
 
