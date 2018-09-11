@@ -16,6 +16,11 @@ namespace QCVOC.Api.Security
     public class RefreshTokenFilters : Filters
     {
         /// <summary>
+        ///     The id of the Refresh Token.
+        /// </summary>
+        public Guid? Id { get; set; }
+
+        /// <summary>
         ///     The Account id by which to filter results.
         /// </summary>
         public Guid? AccountId { get; set; }
