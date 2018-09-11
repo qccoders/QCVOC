@@ -97,7 +97,7 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <param name="refreshToken">The RefreshToken to delete.</param>
         public void Delete(RefreshToken refreshToken)
         {
-            Delete(refreshToken.AccountId);
+            Delete(refreshToken.Id);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace QCVOC.Api.Security.Data.Repository
         /// <returns>The RefreshToken matching the specified id.</returns>
         public RefreshToken Get(Guid id)
         {
-            return GetAll(new RefreshTokenFilters() { AccountId = id }).SingleOrDefault();
+            return GetAll(new RefreshTokenFilters() { Id = id }).SingleOrDefault();
         }
 
         /// <summary>
@@ -139,6 +139,7 @@ namespace QCVOC.Api.Security.Data.Repository
 
             if (filters is RefreshTokenFilters refreshTokenFilters)
             {
+                builder.ApplyFilter(FilterType.Equals, "id", refreshTokenFilters.Id);
                 builder.ApplyFilter(FilterType.Equals, "accountid", refreshTokenFilters.AccountId);
             }
 
