@@ -88,10 +88,16 @@ class Events extends Component {
     }
 
     render() {
-        let { events, loadApi, refreshApi, snackbar } = this.state;
         let classes = this.props.classes;
+        let { events, loadApi, refreshApi, snackbar } = this.state;
 
-        // todo: split events into "current" and "past" based on times
+        events = events.map(e => ({ ...e, startDate: new Date(e.startDate).getTime(), endDate: new Date(e.endDate).getTime() }))
+
+        let now = new Date().getTime();
+
+        let current = events.filter(e => e.startDate <= now && e.endDate >= now);
+        let past = events.filter(e => e.endDate < now);
+        let upcoming = events.filter(e => e.startDate > now);
 
         return (
             <div className={classes.root}>
@@ -106,17 +112,17 @@ class Events extends Component {
                                 <div>
                                     <ListSubheader>Current</ListSubheader>
                                     <EventList
-                                        events={events}
+                                        events={current}
                                         onItemClick={this.handleEditClick}
                                     />
                                     <ListSubheader>Upcoming</ListSubheader>
                                     <EventList
-                                        events={events}
+                                        events={upcoming}
                                         onItemClick={this.handleEditClick}
                                     />
                                     <ListSubheader>Past</ListSubheader>
                                     <EventList
-                                        events={events}
+                                        events={past}
                                         onItemClick={this.handleEditClick}
                                     />
                                 </div>
