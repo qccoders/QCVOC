@@ -10,7 +10,6 @@ import moment from 'moment';
 import { sortByProp } from '../util';
 
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { InsertInvitation } from '@material-ui/icons'
 
 const EventList = (props) => {
     let { events, icon, onItemClick } = props;
