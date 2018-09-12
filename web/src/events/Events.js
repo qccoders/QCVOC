@@ -13,6 +13,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import { Card, CardContent, Typography, CircularProgress, ListSubheader, Button } from '@material-ui/core';
 import { Add, EventAvailable, Event, Today } from '@material-ui/icons';
 import EventList from './EventList';
+import EventDialog from './EventDialog';
 
 const styles = {
     fab: {
@@ -52,6 +53,11 @@ class Events extends Component {
             isExecuting: false,
             isErrored: false,
         },
+        eventDialog: {
+            open: false,
+            intent: 'add',
+            event: undefined,
+        },
         snackbar: {
             message: '',
             open: false,
@@ -68,10 +74,20 @@ class Events extends Component {
     }
 
     handleAddClick = () => {
-
+        this.setState({
+            eventDialog: {
+                open: true,
+                intent: 'add',
+                event: undefined,
+            }
+        })
     }
 
     handleShowMoreClick = () => {
+
+    }
+
+    handleEventDialogClose = (result) => {
 
     }
 
@@ -98,7 +114,7 @@ class Events extends Component {
 
     render() {
         let classes = this.props.classes;
-        let { events, loadApi, refreshApi, snackbar, show } = this.state;
+        let { events, loadApi, refreshApi, snackbar, show, eventDialog } = this.state;
 
         events = events.map(e => ({ ...e, startDate: new Date(e.startDate).getTime(), endDate: new Date(e.endDate).getTime() }))
 
@@ -150,6 +166,12 @@ class Events extends Component {
                     >
                         <Add/>
                     </Button>
+                    <EventDialog
+                        open={eventDialog.open}
+                        intent={eventDialog.intent} 
+                        onClose={this.handleEventDialogClose}
+                        event={eventDialog.event}
+                    />
                 </ContentWrapper>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
