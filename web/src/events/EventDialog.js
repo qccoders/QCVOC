@@ -89,17 +89,25 @@ class EventDialog extends Component {
     handleSaveClick = () => {
         let event = { 
             ...this.state.event,
-            startDate: this.state.event.startDate.format('x'),
-            endDate: this.state.event.endDate.format('x'),
+            startDate: this.state.event.startDate.format(),
+            endDate: this.state.event.endDate.format(),
         }
 
         this.validate().then(result => {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
-                    console.log('add', event)
+                    this.execute(
+                        () => api.post('/v1/events', event),
+                        'addApi',
+                        'Event \'' + event.name + '\' successfully created.'
+                    );
                 }
                 else {
-                    console.log('update', event);
+                    this.execute(
+                        () => api.put('/v1/events' + event.id, event),
+                        'updateApi',
+                        'Event \'' + event.name + '\' successfully updated.'
+                    );
                 }
             }
         });
