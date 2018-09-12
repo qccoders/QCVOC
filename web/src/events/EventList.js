@@ -18,7 +18,7 @@ const EventList = (props) => {
         let start = 'dddd, MMMM Do [from] LT';
         let end = '';
 
-        if (moment(event.startDate).format('L') != moment(event.endDate).format('L')) {
+        if (moment(event.startDate).format('L') !== moment(event.endDate).format('L')) {
             end = 'LT [on] dddd, MMMM Do';
         }
         else {
