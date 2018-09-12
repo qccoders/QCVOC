@@ -12,9 +12,21 @@ import { sortByProp } from '../util';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
 const EventList = (props) => {
-    let { events, icon, onItemClick } = props;
+    const { events, icon, onItemClick } = props;
 
-    // todo: format date with 'from' = a time if the same date as the start, include end date if not 
+    const getDate = (event) => {
+        let start = 'dddd, MMMM Do [from] LT';
+        let end = '';
+
+        if (moment(event.startDate).format('L') != moment(event.endDate).format('L')) {
+            end = 'LT [on] dddd, MMMM Do';
+        }
+        else {
+            end = 'LT';
+        }
+
+        return moment(event.startDate).format(start) + ' to ' + moment(event.endDate).format(end);
+    }
 
     return (
         <List>
@@ -29,7 +41,7 @@ const EventList = (props) => {
                     </ListItemIcon>
                     <ListItemText
                         primary={e.name}
-                        secondary={moment(e.startDate).format('dddd, MMMM Do') + ' from ' + moment(e.startDate).format('h:mm a') + ' to ' + moment(e.endDate).format('h:mm a')}
+                        secondary={getDate(e)}
                     />
                 </ListItem>
             )}
