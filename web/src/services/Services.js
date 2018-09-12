@@ -9,10 +9,20 @@ import api from '../api';
 import { withStyles } from '@material-ui/core/styles';
 
 import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
+import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
+import { Add } from '@material-ui/icons';
 import ServiceList from './ServiceList';
 
 const styles = {
+    fab: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 20,
+        left: 'auto',
+        position: 'fixed',
+        zIndex: 1000
+    },
     card: {
         minHeight: 220,
         maxWidth: 800,
@@ -47,6 +57,10 @@ class Services extends Component {
 
     componentWillMount = () => {
         this.refresh('refreshApi');
+    }
+
+    handleAddClick = () => {
+
     }
 
     handleEditClick = (service) => {
@@ -91,6 +105,14 @@ class Services extends Component {
                             }
                         </CardContent>
                     </Card>
+                    <Button 
+                        variant="fab" 
+                        color="secondary" 
+                        className={classes.fab}
+                        onClick={this.handleAddClick}
+                    >
+                        <Add/>
+                    </Button>
                 </ContentWrapper>
             </div>
         );
