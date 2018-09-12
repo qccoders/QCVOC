@@ -12,7 +12,7 @@ import { sortByProp } from '../util';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
 const EventList = (props) => {
-    const { events, icon, onItemClick } = props;
+    const { events, icon, clickable, onItemClick } = props;
 
     const getDate = (event) => {
         let start = 'dddd, MMMM Do [from] LT';
@@ -33,8 +33,8 @@ const EventList = (props) => {
             {events.sort(sortByProp('startDate')).map(e => 
                 <ListItem 
                     key={e.id}
-                    button
-                    onClick={() => onItemClick(e)}
+                    button={onItemClick !== undefined}
+                    onClick={onItemClick !== undefined ? () => onItemClick(e) : () => {}}
                 >
                     <ListItemIcon>
                         {icon}
@@ -52,7 +52,7 @@ const EventList = (props) => {
 EventList.propTypes = {
     events: PropTypes.array.isRequired,
     icon: PropTypes.object.isRequired,
-    onItemClick: PropTypes.func.isRequired,
+    onItemClick: PropTypes.func,
 };
 
 export default EventList; 
