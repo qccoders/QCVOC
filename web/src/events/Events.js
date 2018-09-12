@@ -10,8 +10,8 @@ import api from '../api';
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
-import { Card, CardContent, Typography, CircularProgress, ListSubheader } from '@material-ui/core';
-import { EventAvailable, Event, Today } from '@material-ui/icons';
+import { Card, CardContent, Typography, CircularProgress, ListSubheader, Button } from '@material-ui/core';
+import { Add, EventAvailable, Event, Today } from '@material-ui/icons';
 import EventList from './EventList';
 
 const styles = {
@@ -67,6 +67,14 @@ class Events extends Component {
         console.log(event);
     }
 
+    handleAddClick = () => {
+
+    }
+
+    handleShowMoreClick = () => {
+
+    }
+
     handleSnackbarClose = () => {
         this.setState({ snackbar: { open: false }});
     }
@@ -90,7 +98,7 @@ class Events extends Component {
 
     render() {
         let classes = this.props.classes;
-        let { events, loadApi, refreshApi, snackbar } = this.state;
+        let { events, loadApi, refreshApi, snackbar, show } = this.state;
 
         events = events.map(e => ({ ...e, startDate: new Date(e.startDate).getTime(), endDate: new Date(e.endDate).getTime() }))
 
@@ -131,8 +139,17 @@ class Events extends Component {
                                     />
                                 </div>
                             }
+                            {past.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                         </CardContent>
                     </Card>
+                    <Button 
+                        variant="fab" 
+                        color="secondary" 
+                        className={classes.fab}
+                        onClick={this.handleAddClick}
+                    >
+                        <Add/>
+                    </Button>
                 </ContentWrapper>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
