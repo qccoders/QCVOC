@@ -178,7 +178,7 @@ class EventDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Enroll' : 'Update')} Event</DialogTitle>
+                <DialogTitle>{(intent === 'add' ? 'Create' : 'Update')} Event</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
