@@ -9,6 +9,7 @@ import api from '../api';
 import { withStyles } from '@material-ui/core/styles';
 
 import ContentWrapper from '../shared/ContentWrapper';
+import Snackbar from '@material-ui/core/Snackbar';
 import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import ServiceList from './ServiceList';
@@ -67,6 +68,10 @@ class Services extends Component {
 
     }
 
+    handleSnackbarClose = () => {
+
+    }
+
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true}}, () => {
             api.get('/v1/services?offset=0&limit=5000&orderBy=ASC')
@@ -114,6 +119,13 @@ class Services extends Component {
                         <Add/>
                     </Button>
                 </ContentWrapper>
+                <Snackbar
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
+                    open={snackbar.open}
+                    onClose={this.handleSnackbarClose}
+                    autoHideDuration={3000}
+                    message={<span id="message-id">{snackbar.message}</span>}
+                />
             </div>
         );
     }
