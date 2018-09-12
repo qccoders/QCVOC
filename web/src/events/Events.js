@@ -88,7 +88,15 @@ class Events extends Component {
     }
 
     handleEventDialogClose = (result) => {
-
+        this.setState({
+            eventDialog: {
+                ...this.state.eventDialog,
+                open: false,
+            }
+        }, () => {
+            if (!result) return;
+            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'))
+        })
     }
 
     handleSnackbarClose = () => {
