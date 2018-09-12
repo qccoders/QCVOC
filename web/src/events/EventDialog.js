@@ -157,7 +157,34 @@ class EventDialog extends Component {
     }
 
     validate = () => {
+        let { name, startDate, endDate } = this.state.event;
+        let result = { ...initialState.validation };
 
+        if (name === '') result.name = 'The Name field is required.';
+        if (startDate === '') result.startDate = 'The Start Date field is required.';
+
+        let start = new Date(startDate);
+        if (!(start instanceof Date) || isNaN(start)) {
+            result.startDate = 'The specified Start Date is not a valid date.';
+        }
+
+        if (endDate === '') result.endDate = 'The End Date field is required.';
+
+        let end = new Date(endDate);
+        if (!(end instanceof Date) || isNaN(end)) {
+            result.endDate = 'The specified End Date is not a valid date.';
+        }
+
+        if (start > end) {
+            result.startDate = result.endDate = 'Start Date must come before End Date.';
+        }
+
+        return new Promise(resolve => {
+            this.setState({ validation: result }, () => {
+                result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
+                resolve(result);
+            });
+        });
     }
 
     render() {
