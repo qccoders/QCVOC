@@ -21,6 +21,7 @@ import api from '../api';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import DateTimePicker from 'material-ui-pickers/DateTimePicker';
 
 const styles = {
     dialog: {
@@ -53,8 +54,8 @@ const initialState = {
     },
     event: {
         name: '',
-        startDate: '',
-        endDate: '',
+        startDate: null,
+        endDate: null,
     },
     validation: {
         name: undefined,
@@ -86,7 +87,22 @@ class EventDialog extends Component {
     }
 
     handleSaveClick = () => {
+        let event = { 
+            ...this.state.event,
+            startDate: this.state.event.startDate.format('x'),
+            endDate: this.state.event.endDate.format('x'),
+        }
 
+        this.validate().then(result => {
+            if (result.isValid) {
+                if (this.props.intent === 'add') {
+                    console.log('add', event)
+                }
+                else {
+                    console.log('update', event);
+                }
+            }
+        });
     }
 
     handleCancelClick = () => {
@@ -101,11 +117,11 @@ class EventDialog extends Component {
         return new Promise().resolve();
     }
 
-    handleChange = (field, event) => {
+    handleChange = (field, value) => {
         this.setState({ 
             event: {
                 ...this.state.event,
-                [field]: event.target.value,
+                [field]: value,
             },
             validation: {
                 ...this.state.validation,
@@ -161,14 +177,14 @@ class EventDialog extends Component {
         let result = { ...initialState.validation };
 
         if (name === '') result.name = 'The Name field is required.';
-        if (startDate === '') result.startDate = 'The Start Date field is required.';
+        if (startDate === null) result.startDate = 'The Start Date field is required.';
 
         let start = new Date(startDate);
         if (!(start instanceof Date) || isNaN(start)) {
             result.startDate = 'The specified Start Date is not a valid date.';
         }
 
-        if (endDate === '') result.endDate = 'The End Date field is required.';
+        if (endDate === null) result.endDate = 'The End Date field is required.';
 
         let end = new Date(endDate);
         if (!(end instanceof Date) || isNaN(end)) {
@@ -214,12 +230,32 @@ class EventDialog extends Component {
                         value={name}
                         type="text"
                         fullWidth
-                        onChange={(event) => this.handleChange('name', event)}
+                        onChange={(event) => this.handleChange('name', event.target.value)}
                         helperText={validation.name}
                         error={validation.name !== undefined}
                         disabled={executing}
                         margin={'normal'}
                     /> 
+                    <DateTimePicker
+                        value={startDate}
+                        fullWidth
+                        label="Start Date"
+                        helperText={validation.startDate}
+                        error={validation.startDate !== undefined}
+                        disabled={executing}
+                        margin={'normal'}
+                        onChange={(event) => this.handleChange('startDate', event)}
+                    />
+                    <DateTimePicker
+                        value={endDate}
+                        fullWidth
+                        label="End Date"
+                        helperText={validation.endDate}
+                        error={validation.endDate !== undefined}
+                        disabled={executing}
+                        margin={'normal'}
+                        onChange={(event) => this.handleChange('endDate', event)}
+                    />
                 </DialogContent>
                 <DialogActions>
                     {intent === 'update' && 
