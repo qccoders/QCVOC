@@ -240,7 +240,7 @@ class VeteranDialog extends Component {
                 <DialogTitle>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
                     <TextField
-                        autofocus
+                        autoFocus
                         id="firstName"
                         label="First Name"
                         value={firstName}
