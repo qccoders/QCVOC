@@ -12,7 +12,7 @@ import { sortByProp } from '../util';
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
 const EventList = (props) => {
-    const { events, icon, onItemClick } = props;
+    const { events, icon, clickable, onItemClick } = props;
 
     const getDate = (event) => {
         let start = moment(event.startDate);
