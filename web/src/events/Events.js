@@ -11,7 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
 import { Card, CardContent, Typography, CircularProgress, ListSubheader } from '@material-ui/core';
-import { EventAvailable, Event, EventBusy } from '@material-ui/icons';
+import { EventAvailable, Event, Today } from '@material-ui/icons';
 import EventList from './EventList';
 
 const styles = {
@@ -114,7 +114,7 @@ class Events extends Component {
                                     <ListSubheader>Current</ListSubheader>
                                     <EventList
                                         events={current}
-                                        icon={<EventAvailable/>}
+                                        icon={<Today/>}
                                         onItemClick={this.handleEditClick}
                                     />
                                     <ListSubheader>Upcoming</ListSubheader>
@@ -126,7 +126,7 @@ class Events extends Component {
                                     <ListSubheader>Past</ListSubheader>
                                     <EventList
                                         events={past}
-                                        icon={<EventBusy/>}
+                                        icon={<EventAvailable/>}
                                         onItemClick={this.handleEditClick}
                                     />
                                 </div>
