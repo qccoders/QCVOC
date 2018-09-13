@@ -13,6 +13,9 @@ import Snackbar from '@material-ui/core/Snackbar';
 import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import ServiceList from './ServiceList';
+import ServiceDialog from './ServiceDialog';
+
+import { sortByProp } from '../util'
 
 const styles = {
     fab: {
@@ -39,6 +42,8 @@ const styles = {
     },
 };
 
+const showCount = 7;
+
 class Services extends Component {
     state = {
         services: [],
@@ -50,10 +55,16 @@ class Services extends Component {
             isExecuting: false,
             isErrored: false,
         },
+        serviceDialog: {
+            open: false,
+            intent: 'add',
+            service: undefined,
+        },
         snackbar: {
             message: '',
             open: false,
         },
+        show: showCount,
     }
 
     componentWillMount = () => {
@@ -61,15 +72,43 @@ class Services extends Component {
     }
 
     handleAddClick = () => {
-
+        this.setState({
+            serviceDialog: {
+                open: true,
+                intent: 'add',
+                service: undefined,
+            }
+        })
     }
 
     handleEditClick = (service) => {
+        this.setState({
+            serviceDialog: {
+                open: true,
+                intent: 'update',
+                service: service,
+            }
+        })
+    }
 
+    handleShowMoreClick = () => {
+        this.setState({ show: this.state.show + showCount });
+    }
+
+    handleServiceDialogClose = (result) => {
+        this.setState({
+            serviceDialog: {
+                ...this.state.serviceDialog,
+                open: false,
+            }
+        }, () => {
+            if (!result) return;
+            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'))
+        })
     }
 
     handleSnackbarClose = () => {
-
+        this.setState({ snackbar: { open: false }});
     }
 
     refresh = (apiType) => {
@@ -91,7 +130,11 @@ class Services extends Component {
 
     render() {
         let { classes } = this.props;
-        let { services, loadApi, refreshApi, snackbar } = this.state;
+        let { services, loadApi, refreshApi, snackbar, show, serviceDialog } = this.state;
+
+        let list = services
+            .sort(sortByProp('name'))
+            .slice(0, show);
 
         return (
             <div>
@@ -104,10 +147,11 @@ class Services extends Component {
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <ServiceList
-                                    services={services}
+                                    services={list}
                                     onItemClick={this.handleEditClick}
                                 />
                             }
+                            {services.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                         </CardContent>
                     </Card>
                     <Button 
@@ -118,6 +162,12 @@ class Services extends Component {
                     >
                         <Add/>
                     </Button>
+                    <ServiceDialog
+                        open={serviceDialog.open}
+                        intent={serviceDialog.intent}
+                        onClose={this.handleServiceDialogClose}
+                        service={serviceDialog.service}
+                    />
                 </ContentWrapper>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
