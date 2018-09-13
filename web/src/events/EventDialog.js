@@ -5,6 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -89,8 +90,8 @@ class EventDialog extends Component {
     handleSaveClick = () => {
         let event = { 
             ...this.state.event,
-            startDate: this.state.event.startDate.format(),
-            endDate: this.state.event.endDate.format(),
+            startDate: moment(this.state.event.startDate).format(),
+            endDate: moment(this.state.event.endDate).format(),
         }
 
         this.validate().then(result => {
@@ -104,7 +105,7 @@ class EventDialog extends Component {
                 }
                 else {
                     this.execute(
-                        () => api.put('/v1/events' + event.id, event),
+                        () => api.put('/v1/events/' + event.id, event),
                         'updateApi',
                         'Event \'' + event.name + '\' successfully updated.'
                     );
@@ -252,7 +253,7 @@ class EventDialog extends Component {
                         error={validation.startDate !== undefined}
                         disabled={executing}
                         margin={'normal'}
-                        onChange={(event) => this.handleChange('startDate', event)}
+                        onChange={(event) => this.handleChange('startDate', event.format())}
                     />
                     <DateTimePicker
                         value={endDate}
@@ -262,7 +263,7 @@ class EventDialog extends Component {
                         error={validation.endDate !== undefined}
                         disabled={executing}
                         margin={'normal'}
-                        onChange={(event) => this.handleChange('endDate', event)}
+                        onChange={(event) => this.handleChange('endDate', event.format())}
                     />
                 </DialogContent>
                 <DialogActions>
