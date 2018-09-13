@@ -87,7 +87,7 @@ namespace QCVOC.Api.Security.Controller
             }
 
             var accountRecord = AccountRepository.GetAll()
-                .Where(a => a.Name == credentials.Name)
+                .Where(a => a.Name.ToLower() == credentials.Name.ToLower())
                 .FirstOrDefault();
 
             if (accountRecord == default(Account))
