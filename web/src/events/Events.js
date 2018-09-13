@@ -40,7 +40,7 @@ const styles = {
     },
 };
 
-const showCount = 4;
+const showCount = 3;
 
 class Events extends Component {
     state = {
@@ -84,7 +84,7 @@ class Events extends Component {
     }
 
     handleShowMoreClick = () => {
-
+        this.setState({ show: this.state.show + showCount });
     }
 
     handleEventDialogClose = (result) => {
@@ -129,8 +129,10 @@ class Events extends Component {
         let now = new Date().getTime();
 
         let current = events.filter(e => e.startDate <= now && e.endDate >= now);
-        let past = events.filter(e => e.endDate < now);
         let upcoming = events.filter(e => e.startDate > now);
+        
+        let past = events.filter(e => e.endDate < now)
+        let shownPastList = past.slice(0, show);
 
         return (
             <div className={classes.root}>
@@ -157,7 +159,7 @@ class Events extends Component {
                                     />
                                     <ListSubheader>Past</ListSubheader>
                                     <EventList
-                                        events={past}
+                                        events={shownPastList}
                                         icon={<EventAvailable/>}
                                     />
                                 </div>
