@@ -167,6 +167,7 @@ class Events extends Component {
                                     <EventList
                                         events={shownPastList}
                                         icon={<EventAvailable/>}
+                                        onItemClick={this.handleEditClick}
                                     />
                                 </div>
                             }
