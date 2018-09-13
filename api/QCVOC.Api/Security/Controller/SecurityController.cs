@@ -88,14 +88,10 @@ namespace QCVOC.Api.Security.Controller
 
             var accountRecord = AccountRepository.GetAll()
                 .Where(a => a.Name.ToLower() == credentials.Name.ToLower())
+                .Where(a => a.PasswordHash == Utility.ComputeSHA512Hash(credentials.Password))
                 .FirstOrDefault();
 
             if (accountRecord == default(Account))
-            {
-                return Unauthorized();
-            }
-
-            if (Utility.ComputeSHA512Hash(credentials.Password) != accountRecord.PasswordHash)
             {
                 return Unauthorized();
             }
