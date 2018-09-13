@@ -16,6 +16,8 @@ import {
     TextField,
 } from '@material-ui/core';
 
+import api from '../api';
+
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
@@ -90,14 +92,14 @@ class ServiceDialog extends Component {
                     this.execute(
                         () => api.post('/v1/services', service),
                         'addApi',
-                        'Service \'' + name + '\' successfully created.'
+                        'Service \'' + service.name + '\' successfully created.'
                     )
                 }
                 else {
                     this.execute(
                         () => api.put('/v1/services/' + service.id, service),
                         'updateApi',
-                        'Service \'' + name + '\' successfully updated.'
+                        'Service \'' + service.name + '\' successfully updated.'
                     );
                 }
             }
@@ -173,7 +175,7 @@ class ServiceDialog extends Component {
 
     validate = () => {
         let { name, description } = this.state.service;
-        let result = { ...initialState.service };
+        let result = { ...initialState.validation };
 
         if (name === '') result.name = "The Name field is required.";
         if (description === '') result.description = "The Description field is required.";
@@ -204,7 +206,7 @@ class ServiceDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Enroll' : 'Update')} Service</DialogTitle>
+                <DialogTitle>{(intent === 'add' ? 'Create' : 'Update')} Service</DialogTitle>
                 <DialogContent>
                     <TextField
                         autofocus
