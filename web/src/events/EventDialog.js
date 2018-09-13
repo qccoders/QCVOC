@@ -123,7 +123,11 @@ class EventDialog extends Component {
     }
 
     handleDeleteConfirmClick = () => {
-        return new Promise().resolve();
+        return this.execute(
+            () => api.delete('/v1/events/' + this.state.event.id),
+            'deleteApi',
+            'Event \'' + this.state.event.name + '\' successfully deleted.'
+        );
     }
 
     handleChange = (field, value) => {
@@ -302,7 +306,7 @@ class EventDialog extends Component {
                     onClose={this.handleDialogClose}
                     suppressCloseOnConfirm
                 >
-                    <p>Are you sure you want to delete Event '{name + ' starting ' + startDate}'?</p>
+                    <p>Are you sure you want to delete Event '{name + ' starting ' + moment(startDate).format('dddd, MMMM Do [at] LT')}?</p>
                 </ConfirmDialog>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
