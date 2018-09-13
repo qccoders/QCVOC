@@ -182,13 +182,14 @@ namespace QCVOC.Api.Events.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"
-            UPDATE events
-            SET
-                name = @name,
-                startdate = @startdate,
-                enddate = @enddate,
-                lastupdatedate = @lastupdatedate,
-                lastupdatebyid = @lastupdatebyid
+                UPDATE events
+                SET
+                    name = @name,
+                    startdate = @startdate,
+                    enddate = @enddate,
+                    lastupdatedate = @lastupdatedate,
+                    lastupdatebyid = @lastupdatebyid
+                WHERE id = @id
             ");
 
             builder.AddParameters(new
@@ -198,6 +199,7 @@ namespace QCVOC.Api.Events.Data.Repository
                 enddate = @event.EndDate,
                 lastupdatedate = @event.LastUpdateDate,
                 lastupdatebyid = @event.LastUpdateById,
+                id = @event.Id,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
