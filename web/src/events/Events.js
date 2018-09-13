@@ -70,7 +70,13 @@ class Events extends Component {
     }
 
     handleEditClick = (event) => {
-        console.log(event);
+        this.setState({
+            eventDialog: {
+                open: true,
+                intent: 'update',
+                event: event,
+            }
+        });
     }
 
     handleAddClick = () => {
@@ -80,7 +86,7 @@ class Events extends Component {
                 intent: 'add',
                 event: undefined,
             }
-        })
+        });
     }
 
     handleShowMoreClick = () => {
