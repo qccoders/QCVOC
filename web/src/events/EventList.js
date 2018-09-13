@@ -5,28 +5,46 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
+
 import { sortByProp } from '../util';
 
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { InsertInvitation } from '@material-ui/icons'
 
 const EventList = (props) => {
-    let { events, onItemClick } = props;
+    const { events, icon, onItemClick } = props;
+
+    const getDate = (event) => {
+        let start = moment(event.startDate);
+        let end = moment(event.endDate);
+
+        let startFmt = 'dddd, MMMM Do [from] LT';
+        let endFmt = '';
+
+        if (start.format('L') !== end.format('L')) {
+            endFmt = 'LT [on] dddd, MMMM Do';
+        }
+        else {
+            endFmt = 'LT';
+        }
+
+        return start.local().format(startFmt) + ' to ' + end.local().format(endFmt);
+    }
 
     return (
         <List>
             {events.sort(sortByProp('startDate')).map(e => 
                 <ListItem 
                     key={e.id}
-                    button
-                    onClick={() => onItemClick(e)}
+                    button={onItemClick !== undefined}
+                    onClick={onItemClick !== undefined ? () => onItemClick(e) : () => {}}
                 >
                     <ListItemIcon>
-                        <InsertInvitation/>
+                        {icon}
                     </ListItemIcon>
                     <ListItemText
                         primary={e.name}
-                        secondary={e.startDate + ' to ' + e.endDate}
+                        secondary={getDate(e)}
                     />
                 </ListItem>
             )}
@@ -36,7 +54,8 @@ const EventList = (props) => {
 
 EventList.propTypes = {
     events: PropTypes.array.isRequired,
-    onItemClick: PropTypes.func.isRequired,
+    icon: PropTypes.object.isRequired,
+    onItemClick: PropTypes.func,
 };
 
 export default EventList; 

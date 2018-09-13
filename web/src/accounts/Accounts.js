@@ -45,7 +45,7 @@ const styles = {
         right: 0,
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: 43,
+        marginTop: 68,
     },
 };
 

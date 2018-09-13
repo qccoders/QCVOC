@@ -10,8 +10,10 @@ import api from '../api';
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
-import { Card, CardContent, Typography, CircularProgress, ListSubheader } from '@material-ui/core';
+import { Card, CardContent, Typography, CircularProgress, ListSubheader, Button } from '@material-ui/core';
+import { Add, EventAvailable, Event, Today } from '@material-ui/icons';
 import EventList from './EventList';
+import EventDialog from './EventDialog';
 
 const styles = {
     fab: {
@@ -34,11 +36,11 @@ const styles = {
         right: 0,
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: 83,
+        marginTop: 68,
     },
 };
 
-const showCount = 4;
+const showCount = 3;
 
 class Events extends Component {
     state = {
@@ -50,6 +52,11 @@ class Events extends Component {
         refreshApi: {
             isExecuting: false,
             isErrored: false,
+        },
+        eventDialog: {
+            open: false,
+            intent: 'add',
+            event: undefined,
         },
         snackbar: {
             message: '',
@@ -63,7 +70,39 @@ class Events extends Component {
     }
 
     handleEditClick = (event) => {
-        console.log(event);
+        this.setState({
+            eventDialog: {
+                open: true,
+                intent: 'update',
+                event: event,
+            }
+        });
+    }
+
+    handleAddClick = () => {
+        this.setState({
+            eventDialog: {
+                open: true,
+                intent: 'add',
+                event: undefined,
+            }
+        });
+    }
+
+    handleShowMoreClick = () => {
+        this.setState({ show: this.state.show + showCount });
+    }
+
+    handleEventDialogClose = (result) => {
+        this.setState({
+            eventDialog: {
+                ...this.state.eventDialog,
+                open: false,
+            }
+        }, () => {
+            if (!result) return;
+            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'))
+        })
     }
 
     handleSnackbarClose = () => {
@@ -88,10 +127,18 @@ class Events extends Component {
     }
 
     render() {
-        let { events, loadApi, refreshApi, snackbar } = this.state;
         let classes = this.props.classes;
+        let { events, loadApi, refreshApi, snackbar, show, eventDialog } = this.state;
 
-        // todo: split events into "current" and "past" based on times
+        events = events.map(e => ({ ...e, startDate: new Date(e.startDate).getTime(), endDate: new Date(e.endDate).getTime() }))
+
+        let now = new Date().getTime();
+
+        let current = events.filter(e => e.startDate <= now && e.endDate >= now);
+        let upcoming = events.filter(e => e.startDate > now);
+        
+        let past = events.filter(e => e.endDate < now)
+        let shownPastList = past.slice(0, show);
 
         return (
             <div className={classes.root}>
@@ -106,23 +153,41 @@ class Events extends Component {
                                 <div>
                                     <ListSubheader>Current</ListSubheader>
                                     <EventList
-                                        events={events}
+                                        events={current}
+                                        icon={<Today/>}
                                         onItemClick={this.handleEditClick}
                                     />
                                     <ListSubheader>Upcoming</ListSubheader>
                                     <EventList
-                                        events={events}
+                                        events={upcoming}
+                                        icon={<Event/>}
                                         onItemClick={this.handleEditClick}
                                     />
                                     <ListSubheader>Past</ListSubheader>
                                     <EventList
-                                        events={events}
+                                        events={shownPastList}
+                                        icon={<EventAvailable/>}
                                         onItemClick={this.handleEditClick}
                                     />
                                 </div>
                             }
+                            {past.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                         </CardContent>
                     </Card>
+                    <Button 
+                        variant="fab" 
+                        color="secondary" 
+                        className={classes.fab}
+                        onClick={this.handleAddClick}
+                    >
+                        <Add/>
+                    </Button>
+                    <EventDialog
+                        open={eventDialog.open}
+                        intent={eventDialog.intent} 
+                        onClose={this.handleEventDialogClose}
+                        event={eventDialog.event}
+                    />
                 </ContentWrapper>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}

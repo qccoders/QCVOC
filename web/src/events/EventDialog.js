@@ -5,6 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -16,12 +17,12 @@ import {
     TextField,
 } from '@material-ui/core';
 
-import { validateEmail, validatePhoneNumber } from '../util';
 import api from '../api';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import DateTimePicker from 'material-ui-pickers/DateTimePicker';
 
 const styles = {
     dialog: {
@@ -52,21 +53,15 @@ const initialState = {
         isExecuting: false,
         isErrored: false,
     },
-    veteran: {
-        cardNumber: '',
-        firstName: '',
-        lastName: '',
-        address: '',
-        primaryPhone: '',
-        email: '',
+    event: {
+        name: '',
+        startDate: null,
+        endDate: null,
     },
     validation: {
-        cardNumber: undefined,
-        firstName: undefined,
-        lastName: undefined,
-        address: undefined,
-        primaryPhone: undefined,
-        email: undefined,
+        name: undefined,
+        startDate: undefined,
+        endDate: undefined,
     },
     snackbar: {
         message: '',
@@ -77,15 +72,15 @@ const initialState = {
     },
 }
 
-class VeteranDialog extends Component {
+class EventDialog extends Component {
     state = initialState;
 
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
                 ...initialState, 
-                veteran: nextProps.veteran ? nextProps.veteran : { 
-                    ...initialState.veteran, 
+                event: nextProps.event ? nextProps.event : { 
+                    ...initialState.event, 
                 },
                 validation: initialState.validation,
             });
@@ -93,26 +88,26 @@ class VeteranDialog extends Component {
     }
 
     handleSaveClick = () => {
-        let veteran = { ...this.state.veteran }
-        let fullName = veteran.firstName + ' ' + veteran.lastName;
-
-        if (veteran.email === '') delete veteran.email;
-        if (veteran.cardNumber === '') delete veteran.cardNumber;
+        let event = { 
+            ...this.state.event,
+            startDate: moment(this.state.event.startDate).format(),
+            endDate: moment(this.state.event.endDate).format(),
+        }
 
         this.validate().then(result => {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => api.post('/v1/veterans', veteran),
-                        'addApi', 
-                        'Veteran \'' + fullName + '\' successfully enrolled.'
-                    )
+                        () => api.post('/v1/events', event),
+                        'addApi',
+                        'Event \'' + event.name + '\' successfully created.'
+                    );
                 }
                 else {
                     this.execute(
-                        () => api.put('/v1/veterans/' + veteran.id, veteran), 
-                        'updateApi', 
-                        'Veteran \'' + fullName +  '\' successfully updated.'
+                        () => api.put('/v1/events/' + event.id, event),
+                        'updateApi',
+                        'Event \'' + event.name + '\' successfully updated.'
                     );
                 }
             }
@@ -129,17 +124,17 @@ class VeteranDialog extends Component {
 
     handleDeleteConfirmClick = () => {
         return this.execute(
-            () => api.delete('/v1/veterans/' + this.state.veteran.id),
-            'deleteApi', 
-            'Veteran \'' + this.state.veteran.firstName + ' ' + this.state.veteran.lastName +  '\' successfully deleted.'
+            () => api.delete('/v1/events/' + this.state.event.id),
+            'deleteApi',
+            'Event \'' + this.state.event.name + '\' successfully deleted.'
         );
     }
 
-    handleChange = (field, event) => {
+    handleChange = (field, value) => {
         this.setState({ 
-            veteran: {
-                ...this.state.veteran,
-                [field]: event.target.value,
+            event: {
+                ...this.state.event,
+                [field]: value,
             },
             validation: {
                 ...this.state.validation,
@@ -191,37 +186,39 @@ class VeteranDialog extends Component {
     }
 
     validate = () => {
-        let { cardNumber, firstName, lastName, address, primaryPhone, email } = this.state.veteran;
+        let { name, startDate, endDate } = this.state.event;
         let result = { ...initialState.validation };
 
-        if (cardNumber !== '' && (isNaN(cardNumber) || cardNumber < 1000 || cardNumber > 9999)) result.cardNumber = 'The Card Number field must be a number between 1000 and 9999.';
-        if (firstName === '') result.firstName = 'The First Name field is required.';
-        if (lastName === '') result.lastName = 'The Last Name field is required.';
-        if (address === '') result.address = 'The Address field is required.';
-        if (address !== '' && address.length < 5) result.address = 'The Address field must be a minimum of 5 characters.';
+        if (name === '') result.name = 'The Name field is required.';
+        if (startDate === null) result.startDate = 'The Start Date field is required.';
 
-        if (primaryPhone === '') {
-            result.primaryPhone = 'The Primary Phone field is required.';
-        }
-        else if (!validatePhoneNumber(primaryPhone)) {
-            result.primaryPhone = 'Enter a valid phone number in the format (555) 555-5555.';
+        let start = new Date(startDate);
+        if (!(start instanceof Date) || isNaN(start)) {
+            result.startDate = 'The specified Start Date is not a valid date.';
         }
 
-        if ((email !== '' && email !== undefined) && !validateEmail(email)) {
-            result.email = 'Enter a valid email address.';
+        if (endDate === null) result.endDate = 'The End Date field is required.';
+
+        let end = new Date(endDate);
+        if (!(end instanceof Date) || isNaN(end)) {
+            result.endDate = 'The specified End Date is not a valid date.';
+        }
+
+        if (start > end) {
+            result.startDate = result.endDate = 'Start Date must come before End Date.';
         }
 
         return new Promise(resolve => {
             this.setState({ validation: result }, () => {
                 result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
-            });                
-        })
+            });
+        });
     }
 
     render() {
         let { classes, intent, open } = this.props;
-        let { cardNumber, firstName, lastName, address, primaryPhone, email } = this.state.veteran;
+        let { name, startDate, endDate } = this.state.event;
         let validation = this.state.validation;
 
         let adding = this.state.addApi.isExecuting;
@@ -237,80 +234,40 @@ class VeteranDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
+                <DialogTitle>{(intent === 'add' ? 'Create' : 'Update')} Event</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
-                        id="firstName"
-                        label="First Name"
-                        value={firstName}
+                        id="name"
+                        label="Name"
+                        value={name}
                         type="text"
                         fullWidth
-                        onChange={(event) => this.handleChange('firstName', event)}
-                        helperText={validation.firstName}
-                        error={validation.firstName !== undefined}
+                        onChange={(event) => this.handleChange('name', event.target.value)}
+                        helperText={validation.name}
+                        error={validation.name !== undefined}
                         disabled={executing}
                         margin={'normal'}
+                    /> 
+                    <DateTimePicker
+                        value={startDate}
+                        fullWidth
+                        label="Start Date"
+                        helperText={validation.startDate}
+                        error={validation.startDate !== undefined}
+                        disabled={executing}
+                        margin={'normal'}
+                        onChange={(event) => this.handleChange('startDate', event.format())}
                     />
-                    <TextField                        
-                        id="lastName"
-                        label="Last Name"
-                        value={lastName}
-                        type="text"
+                    <DateTimePicker
+                        value={endDate}
                         fullWidth
-                        onChange={(event) => this.handleChange('lastName', event)}
-                        helperText={validation.lastName}
-                        error={validation.lastName !== undefined}
+                        label="End Date"
+                        helperText={validation.endDate}
+                        error={validation.endDate !== undefined}
                         disabled={executing}
                         margin={'normal'}
-                    />
-                    <TextField                        
-                        id="address"
-                        label="Address"
-                        value={address}
-                        type="text"
-                        fullWidth
-                        onChange={(event) => this.handleChange('address', event)}
-                        helperText={validation.address}
-                        error={validation.address !== undefined}
-                        disabled={executing}
-                        margin={'normal'}
-                    />
-                    <TextField                        
-                        id="email"
-                        label="Email"
-                        value={email}
-                        type="text"
-                        fullWidth
-                        onChange={(event) => this.handleChange('email', event)}
-                        helperText={validation.email}
-                        error={validation.email !== undefined}
-                        disabled={executing}
-                        margin={'normal'}
-                    />
-                    <TextField                        
-                        id="primaryPhone"
-                        label="Primary Phone"
-                        value={primaryPhone}
-                        type="text"
-                        fullWidth
-                        onChange={(event) => this.handleChange('primaryPhone', event)}
-                        helperText={validation.primaryPhone}
-                        error={validation.primaryPhone !== undefined}
-                        disabled={executing}
-                        margin={'normal'}
-                    />
-                    <TextField
-                        id="cardNumber"
-                        label="Card Number"
-                        value={cardNumber}
-                        type="text"
-                        fullWidth
-                        onChange={(event) => this.handleChange('cardNumber', event)}
-                        helperText={validation.cardNumber}
-                        error={validation.cardNumber !== undefined}
-                        disabled={executing}
-                        margin={'normal'}
+                        onChange={(event) => this.handleChange('endDate', event.format())}
                     />
                 </DialogContent>
                 <DialogActions>
@@ -342,14 +299,14 @@ class VeteranDialog extends Component {
                     </Button>
                 </DialogActions>
                 <ConfirmDialog
-                    title={'Confirm Veteran Deletion'}
+                    title={'Confirm Event Deletion'}
                     prompt={'Delete'}
                     open={this.state.confirmDialog.open}
                     onConfirm={this.handleDeleteConfirmClick}
                     onClose={this.handleDialogClose}
                     suppressCloseOnConfirm
                 >
-                    <p>Are you sure you want to delete Veteran '{firstName + ' ' + lastName}'?</p>
+                    <p>Are you sure you want to delete Event '{name + ' starting ' + moment(startDate).format('dddd, MMMM Do [at] LT')}?</p>
                 </ConfirmDialog>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
@@ -363,12 +320,12 @@ class VeteranDialog extends Component {
     }
 }
 
-VeteranDialog.propTypes = {
+EventDialog.propTypes = {
     classes: PropTypes.object.isRequired,
     intent: PropTypes.oneOf([ 'add', 'update' ]).isRequired,
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    veteran: PropTypes.object,
+    event: PropTypes.object,
 };
 
-export default withStyles(styles)(VeteranDialog); 
+export default withStyles(styles)(EventDialog); 
