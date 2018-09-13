@@ -560,7 +560,9 @@ namespace QCVOC.Api.Security.Controller
                 return false;
             }
 
-            return AccountRepository.GetAll(new AccountFilters() { Name = name }).Any();
+            return AccountRepository.GetAll()
+                .Where(a => a.Name.ToLower() == name.ToLower())
+                .Any();
         }
 
         private bool AccountNameExistsExcludingId(string name, Guid id)
@@ -570,7 +572,9 @@ namespace QCVOC.Api.Security.Controller
                 return false;
             }
 
-            return AccountRepository.GetAll(new AccountFilters() { Name = name }).Any(a => a.Id != id);
+            return AccountRepository.GetAll()
+                .Where(a => a.Name.ToLower() == name.ToLower())
+                .Any(a => a.Id != id);
         }
     }
 }
