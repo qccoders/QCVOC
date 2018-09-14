@@ -43,7 +43,7 @@ matrix:
       provider: lambda
       function_name: QCVOC-PROD
       region: us-east-1
-      role: arn:aws:iam::578324725290:role/service-role/QCVOC-Prod-Lambda
+      role: arn:aws:iam::620048899897:role/service-role/QCVOC-Prod-Lambda
       runtime: dotnetcore2.1
       timeout: 30
       memory_size: 256
