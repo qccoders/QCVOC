@@ -10,9 +10,15 @@ import { AppBar as MaterialAppBar } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
+const styles = {
+    marginBottom: {
+        marginBottom: 10
+    }
+}
+
 const AppBar = (props) => {
     return (
-        <MaterialAppBar position="static" color="primary">
+        <MaterialAppBar position="static" color="primary" style={styles.marginBottom}>
             <Toolbar>
                 {props.drawerToggleButton}
                 <Typography variant="title" color="inherit">
