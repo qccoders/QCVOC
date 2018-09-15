@@ -55,6 +55,7 @@ namespace QCVOC.Api.Veterans.Data.DTO
         /// <summary>
         ///     Gets or sets the method used to verify eligibility of the Veteran.
         /// </summary>
+        [Required]
         public VerificationMethod VerificationMethod { get; set; }
     }
 }
