@@ -25,6 +25,7 @@ import Events from '../events/Events';
 import LoginForm from '../security/LoginForm';
 import LinkList from './LinkList';
 import { CircularProgress, ListSubheader } from '@material-ui/core';
+import { getEnvironment } from '../util';
 
 const styles = {
     root: {
@@ -123,6 +124,8 @@ class App extends Component {
         let { isExecuting, isErrored } = this.state.api;
         let { accessToken, role } = this.state.credentials;
 
+        let env = getEnvironment();
+
         return (
             <div className={classes.root}>
                 {isExecuting || isErrored ? <CircularProgress size={20} style={styles.spinner}/>: 
@@ -131,6 +134,7 @@ class App extends Component {
                             <AppBar 
                                 title='QCVOC' 
                                 drawerToggleButton={<DrawerToggleButton onToggleClick={this.handleToggleDrawer}/>}
+                                color={env.color}
                             >
                                 <SecurityMenu 
                                     credentials={this.state.credentials} 
@@ -143,7 +147,7 @@ class App extends Component {
                                 onClose={this.handleToggleDrawer}
                                 PaperProps={{style: styles.drawer}}
                             >
-                                <AppBar title='QCVOC'/>
+                                <AppBar title='QCVOC' color={env.color}/>
                                 <LinkList onLinkClick={this.handleToggleDrawer}>
                                     <Link to='/veterans' icon={<People/>}>Veterans</Link>
                                     <Link to='/events' icon={<InsertInvitation/>}>Events</Link>
