@@ -51,5 +51,10 @@ namespace QCVOC.Api.Veterans.Data.DTO
         [Required]
         [Phone]
         public string PrimaryPhone { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the method used to verify eligibility of the Veteran.
+        /// </summary>
+        public VerificationMethod VerificationMethod { get; set; }
     }
 }
