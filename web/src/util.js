@@ -2,6 +2,9 @@
     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
+
+import { PROD, DEV } from './environments';
+
 export const sortByProp = (prop, predicate = 'asc') => {
     return (a, b) => {
         a = a[prop];
@@ -18,6 +21,14 @@ export const sortByProp = (prop, predicate = 'asc') => {
             return 0;
         }
     }
+}
+
+export const getEnvironment = () => {
+    if (window.location.hostname !== PROD.hostname) {
+        return DEV;
+    }
+
+    return PROD;
 }
 
 export const getGuid = () => {

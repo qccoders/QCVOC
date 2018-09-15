@@ -12,7 +12,7 @@ import Typography from '@material-ui/core/Typography';
 
 const AppBar = (props) => {
     return (
-        <MaterialAppBar position="static" color="primary">
+        <MaterialAppBar position="static" color={props.color ? props.color : "primary"}>
             <Toolbar>
                 {props.drawerToggleButton}
                 <Typography variant="title" color="inherit">
@@ -28,6 +28,7 @@ AppBar.propTypes = {
     title: PropTypes.string,
     drawerToggleButton: PropTypes.object,
     children: PropTypes.object,
+    color: PropTypes.string,
 };
 
 export default AppBar; 
