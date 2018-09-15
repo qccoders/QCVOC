@@ -5,9 +5,9 @@
 
 import axios from 'axios';
 import { getCredentials, updateCredentials, deleteCredentials } from './credentialStore';
-import { API_ROOT } from './constants';
+import { getEnvironment } from './util';
 
-axios.defaults.baseURL = API_ROOT;
+axios.defaults.baseURL = getEnvironment().apiRoot;
 
 const api = axios.create();
 

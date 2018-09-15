@@ -87,15 +87,11 @@ namespace QCVOC.Api.Security.Controller
             }
 
             var accountRecord = AccountRepository.GetAll()
-                .Where(a => a.Name == credentials.Name)
+                .Where(a => a.Name.ToLower() == credentials.Name.ToLower())
+                .Where(a => a.PasswordHash == Utility.ComputeSHA512Hash(credentials.Password))
                 .FirstOrDefault();
 
             if (accountRecord == default(Account))
-            {
-                return Unauthorized();
-            }
-
-            if (Utility.ComputeSHA512Hash(credentials.Password) != accountRecord.PasswordHash)
             {
                 return Unauthorized();
             }
@@ -560,7 +556,9 @@ namespace QCVOC.Api.Security.Controller
                 return false;
             }
 
-            return AccountRepository.GetAll(new AccountFilters() { Name = name }).Any();
+            return AccountRepository.GetAll()
+                .Where(a => a.Name.ToLower() == name.ToLower())
+                .Any();
         }
 
         private bool AccountNameExistsExcludingId(string name, Guid id)
@@ -570,7 +568,9 @@ namespace QCVOC.Api.Security.Controller
                 return false;
             }
 
-            return AccountRepository.GetAll(new AccountFilters() { Name = name }).Any(a => a.Id != id);
+            return AccountRepository.GetAll()
+                .Where(a => a.Name.ToLower() == name.ToLower())
+                .Any(a => a.Id != id);
         }
     }
 }

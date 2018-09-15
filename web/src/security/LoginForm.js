@@ -6,7 +6,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-import { API_ROOT } from '../constants';
+import { getEnvironment } from '../util';
 import { withStyles } from '@material-ui/core/styles';
 
 import { Card, CardContent, CardActions, CircularProgress } from '@material-ui/core';
@@ -108,7 +108,7 @@ class LoginForm extends Component {
             validation: { name: undefined, password: undefined },
             
         }, () => {
-            axios.post(API_ROOT + '/v1/security/login', this.state)
+            axios.post(getEnvironment().apiRoot + '/v1/security/login', this.state)
             .then(
                 response => {
                     this.props.onLogin(response.data, this.state.rememberMe);
