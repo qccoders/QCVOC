@@ -145,6 +145,7 @@ namespace QCVOC.Api.Veterans.Controller
                 LastUpdateById = User.GetId(),
                 CardNumber = veteran.CardNumber,
                 PrimaryPhone = veteran.PrimaryPhone,
+                VerificationMethod = veteran.VerificationMethod,
             };
 
             try
@@ -228,6 +229,7 @@ namespace QCVOC.Api.Veterans.Controller
                 LastUpdateById = User.GetId(),
                 CardNumber = veteran.CardNumber,
                 PrimaryPhone = veteran.PrimaryPhone,
+                VerificationMethod = veteran.VerificationMethod,
             };
 
             try

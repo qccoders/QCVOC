@@ -86,6 +86,11 @@ namespace QCVOC.Api.Veterans
         public int? CardNumber { get; set; }
 
         /// <summary>
+        ///     The method used to verify eligibility of the Veteran.
+        /// </summary>
+        public VerificationMethod? VerificationMethod { get; set; }
+
+        /// <summary>
         ///     The primary phone number of the Veteran.
         /// </summary>
         public string PrimaryPhone { get; set; }
