@@ -244,7 +244,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 primaryPhone = veteran.PrimaryPhone,
                 email = veteran.Email,
                 id = veteran.Id,
-                verificatiomethod = veteran.VerificationMethod,
+                verificatiomethod = veteran.VerificationMethod.ToString(),
             });
 
             using (var db = ConnectionFactory.CreateConnection())
