@@ -14,6 +14,10 @@ import {
     Button,
     DialogContent,
     TextField,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
 } from '@material-ui/core';
 
 import { validateEmail, validatePhoneNumber } from '../util';
@@ -33,6 +37,9 @@ const styles = {
     },
     deleteButton: {
         marginRight: 'auto',
+    },
+    verificationSelect: {
+        marginTop: 15,
     },
     spinner: {
         position: 'fixed',
@@ -59,6 +66,7 @@ const initialState = {
         address: '',
         primaryPhone: '',
         email: '',
+        verificationMethod: '',
     },
     validation: {
         cardNumber: undefined,
@@ -67,6 +75,7 @@ const initialState = {
         address: undefined,
         primaryPhone: undefined,
         email: undefined,
+        verificationMethod: undefined,
     },
     snackbar: {
         message: '',
@@ -221,7 +230,7 @@ class VeteranDialog extends Component {
 
     render() {
         let { classes, intent, open } = this.props;
-        let { cardNumber, firstName, lastName, address, primaryPhone, email } = this.state.veteran;
+        let { cardNumber, firstName, lastName, address, primaryPhone, email, verificationMethod } = this.state.veteran;
         let validation = this.state.validation;
 
         let adding = this.state.addApi.isExecuting;
@@ -312,6 +321,22 @@ class VeteranDialog extends Component {
                         disabled={executing}
                         margin={'normal'}
                     />
+                    <FormControl 
+                        className={classes.verificationSelect}
+                        fullWidth
+                        disabled={executing}
+                    >
+                        <InputLabel>Verification Method</InputLabel>
+                        <Select
+                            value={verificationMethod}
+                            onChange={(event) => this.handleChange('verificationMethod', event)}
+                            fullWidth
+                        >
+                            <MenuItem value={1}>State ID and DD214</MenuItem>
+                            <MenuItem value={2}>Iowa Veteran's Driver's License</MenuItem>
+                            <MenuItem value={3}>Active Military ID</MenuItem>
+                        </Select>
+                    </FormControl>
                 </DialogContent>
                 <DialogActions>
                     {intent === 'update' && 
