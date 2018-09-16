@@ -108,7 +108,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
             var query = builder.AddTemplate(@"
                 UPDATE veterans
                 SET 
-                    deleted = true
+                    deleted = true,
+                    cardnumber = NULL
                 WHERE id = @id
             ");
 
@@ -243,7 +244,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 primaryPhone = veteran.PrimaryPhone,
                 email = veteran.Email,
                 id = veteran.Id,
-                verificatiomethod = veteran.VerificationMethod,
+                verificationmethod = veteran.VerificationMethod.ToString(),
             });
 
             using (var db = ConnectionFactory.CreateConnection())
