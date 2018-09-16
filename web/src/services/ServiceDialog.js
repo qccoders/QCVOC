@@ -284,7 +284,7 @@ class ServiceDialog extends Component {
     }
 }
 
-ServiceDialog.PropTypes = {
+ServiceDialog.propTypes = {
     classes: PropTypes.object.isRequired,
     intent: PropTypes.oneOf([ 'add', 'update' ]).isRequired,
     open: PropTypes.bool.isRequired,
