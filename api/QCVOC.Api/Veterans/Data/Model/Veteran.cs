@@ -83,6 +83,11 @@ namespace QCVOC.Api.Veterans.Data.Model
         public string PrimaryPhone { get; set; }
 
         /// <summary>
+        ///     Gets or sets the method used to verify eligibility of the Veteran.
+        /// </summary>
+        public VerificationMethod VerificationMethod { get; set; }
+
+        /// <summary>
         ///     Compares two Veteran instances.
         /// </summary>
         /// <param name="veteran">The Veteran to which to compare.</param>
@@ -106,6 +111,7 @@ namespace QCVOC.Api.Veterans.Data.Model
             && this.Email == veteran.Email
             && this.EnrollmentById == veteran.EnrollmentById
             && this.EnrollmentBy == veteran.EnrollmentBy
+            && this.VerificationMethod == veteran.VerificationMethod
             && this.EnrollmentDate - veteran.EnrollmentDate <= TimeSpan.FromSeconds(1);
         }
     }

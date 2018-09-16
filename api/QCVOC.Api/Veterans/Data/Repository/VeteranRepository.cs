@@ -52,7 +52,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     email,
                     enrollmentdate,
                     enrollmentbyid,
-                    deleted
+                    deleted,
+                    verificationmethod
                 )
                 VALUES (
                     @id,
@@ -66,7 +67,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     @email,
                     @enrollmentdate,
                     @enrollmentbyid,
-                    @deleted
+                    @deleted,
+                    @verificationmethod
                 )
             ");
 
@@ -84,6 +86,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 enrollmentdate = veteran.EnrollmentDate,
                 enrollmentbyid = veteran.EnrollmentById,
                 deleted = false,
+                verificationmethod = veteran.VerificationMethod.ToString(),
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -160,7 +163,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     v.email,
                     v.enrollmentdate,
                     v.enrollmentbyid,
-                    b.name AS enrollmentby
+                    b.name AS enrollmentby,
+                    v.verificationmethod
                 FROM veterans v
                 LEFT JOIN accounts a ON v.lastupdatebyid = a.id 
                 LEFT JOIN accounts b ON v.enrollmentbyid = b.id
@@ -194,7 +198,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     .ApplyFilter(FilterType.Equals, "v.lastupdatebyid", veteranFilters.LastUpdateById)
                     .ApplyFilter(FilterType.Equals, "lastupdateby", veteranFilters.LastUpdateBy)
                     .ApplyFilter(FilterType.Equals, "v.cardnumber", veteranFilters.CardNumber)
-                    .ApplyFilter(FilterType.Equals, "v.primaryphone", veteranFilters.PrimaryPhone);
+                    .ApplyFilter(FilterType.Equals, "v.primaryphone", veteranFilters.PrimaryPhone)
+                    .ApplyFilter(FilterType.In, "v.verificationmethod", veteranFilters.VerificationMethod?.ToString());
             }
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -222,7 +227,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     lastupdatebyid = @lastupdatebyid,
                     address = @address,
                     primaryphone = @primaryphone,
-                    email = @email
+                    email = @email,
+                    verificationmethod = @verificationmethod
                 WHERE id = @id
             ");
 
@@ -237,6 +243,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 primaryPhone = veteran.PrimaryPhone,
                 email = veteran.Email,
                 id = veteran.Id,
+                verificatiomethod = veteran.VerificationMethod,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
