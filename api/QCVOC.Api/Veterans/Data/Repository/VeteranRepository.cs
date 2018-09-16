@@ -108,7 +108,8 @@ namespace QCVOC.Api.Veterans.Data.Repository
             var query = builder.AddTemplate(@"
                 UPDATE veterans
                 SET 
-                    deleted = true
+                    deleted = true,
+                    cardnumber = NULL
                 WHERE id = @id
             ");
 
