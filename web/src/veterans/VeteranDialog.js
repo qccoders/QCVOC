@@ -81,9 +81,7 @@ const initialState = {
         message: '',
         open: false,
     },
-    confirmDialog: {
-        open: false,
-    },
+    confirmDialog: undefined,
 }
 
 class VeteranDialog extends Component {
@@ -118,11 +116,16 @@ class VeteranDialog extends Component {
                     )
                 }
                 else {
-                    this.execute(
-                        () => api.put('/v1/veterans/' + veteran.id, veteran), 
-                        'updateApi', 
-                        'Veteran \'' + fullName +  '\' successfully updated.'
-                    );
+                    if (this.props.veteran.cardNumber 
+                        && this.props.veteran.cardNumber !== veteran.cardNumber) {
+                        this.setState({ confirmDialog: 'changeCardNumber' });
+                    } else {
+                        this.execute(
+                            () => api.put('/v1/veterans/' + veteran.id, veteran), 
+                            'updateApi', 
+                            'Veteran \'' + fullName +  '\' successfully updated.'
+                        );
+                    }
                 }
             }
         });
@@ -133,7 +136,7 @@ class VeteranDialog extends Component {
     }
 
     handleDeleteClick = () => {
-        this.setState({ confirmDialog: { open: true }});
+        this.setState({ confirmDialog: 'delete'});
     }
 
     handleDeleteConfirmClick = () => {
@@ -142,6 +145,17 @@ class VeteranDialog extends Component {
             'deleteApi', 
             'Veteran \'' + this.state.veteran.firstName + ' ' + this.state.veteran.lastName +  '\' successfully deleted.'
         );
+    }
+
+    handleUpdateConfirmClick = () => {
+        let veteran = { ...this.state.veteran }
+        let fullName = veteran.firstName + ' ' + veteran.lastName;
+
+        return this.execute(
+            () => api.put('/v1/veterans/' + veteran.id, veteran), 
+            'updateApi', 
+            'Veteran \'' + fullName +  '\' successfully updated.'
+            );
     }
 
     handleChange = (field, event) => {
@@ -158,7 +172,7 @@ class VeteranDialog extends Component {
     }
 
     handleDialogClose = (result) => {
-        this.setState({ confirmDialog: { open: false }});
+        this.setState({ confirmDialog: undefined});
     }
 
     handleSnackbarClose = () => {
@@ -370,12 +384,22 @@ class VeteranDialog extends Component {
                 <ConfirmDialog
                     title={'Confirm Veteran Deletion'}
                     prompt={'Delete'}
-                    open={this.state.confirmDialog.open}
+                    open={this.state.confirmDialog === 'delete'}
                     onConfirm={this.handleDeleteConfirmClick}
                     onClose={this.handleDialogClose}
                     suppressCloseOnConfirm
                 >
                     <p>Are you sure you want to delete Veteran '{firstName + ' ' + lastName}'?</p>
+                </ConfirmDialog>
+                <ConfirmDialog
+                    title={'Confirm Card Number Change'}
+                    prompt={'Change'}
+                    open={this.state.confirmDialog === 'changeCardNumber'}
+                    onConfirm={this.handleUpdateConfirmClick}
+                    onClose={this.handleDialogClose}
+                    suppressCloseOnConfirm
+                >
+                    <p>Are you sure you want to change this Veteran's card number? The old card will no longer work.</p>
                 </ConfirmDialog>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
