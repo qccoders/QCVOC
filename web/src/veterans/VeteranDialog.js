@@ -66,7 +66,7 @@ const initialState = {
         address: '',
         primaryPhone: '',
         email: '',
-        verificationMethod: '',
+        verificationMethod: 'Unverified',
     },
     validation: {
         cardNumber: undefined,
@@ -332,9 +332,10 @@ class VeteranDialog extends Component {
                             onChange={(event) => this.handleChange('verificationMethod', event)}
                             fullWidth
                         >
-                            <MenuItem value={1}>State ID and DD214</MenuItem>
-                            <MenuItem value={2}>Iowa Veteran's Driver's License</MenuItem>
-                            <MenuItem value={3}>Active Military ID</MenuItem>
+                            <MenuItem value={'Unverified'}>Unverified</MenuItem>
+                            <MenuItem value={'StateIdAndDD214'}>State ID and DD214</MenuItem>
+                            <MenuItem value={'IowaVeteranDL'}>Iowa Veteran's Driver's License</MenuItem>
+                            <MenuItem value={'MilitaryId'}>Active Military ID</MenuItem>
                         </Select>
                     </FormControl>
                 </DialogContent>
