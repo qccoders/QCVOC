@@ -246,6 +246,7 @@ class VeteranDialog extends Component {
         let { classes, intent, open } = this.props;
         let { cardNumber, firstName, lastName, address, primaryPhone, email, verificationMethod } = this.state.veteran;
         let validation = this.state.validation;
+        let oldCardNumber = this.props.veteran ? this.props.veteran.cardNumber : '';
 
         let adding = this.state.addApi.isExecuting;
         let updating = this.state.updateApi.isExecuting;
@@ -399,7 +400,7 @@ class VeteranDialog extends Component {
                     onClose={this.handleDialogClose}
                     suppressCloseOnConfirm
                 >
-                    <p>Are you sure you want to change this Veteran's card number? The old card will no longer work.</p>
+                    <p>Are you sure you want to change this Veteran's card number to {cardNumber}? The previous card, {oldCardNumber}, will no longer function.</p>
                 </ConfirmDialog>
                 <Snackbar
                     anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
