@@ -169,7 +169,7 @@ class VeteranDialog extends Component {
         let canView = false
         const userRole = getUserRole()
 
-        if (userRole === 'Supervisors' || userRole === 'Administrators') {
+        if (userRole === 'Supervisor' || userRole === 'Administrator') {
             canView = true
         }
 
@@ -351,7 +351,7 @@ class VeteranDialog extends Component {
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    {intent === 'update' || this.userCanView && 
+                    {intent === 'update' && this.userCanView() && 
                         <Button 
                             onClick={this.handleDeleteClick} 
                             color="primary" 
