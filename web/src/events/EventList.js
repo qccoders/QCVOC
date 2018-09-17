@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import { sortByProp } from '../util';
+import { sortByProp, userCanView } from '../util';
 
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
@@ -36,8 +36,8 @@ const EventList = (props) => {
             {events.sort(sortByProp('startDate')).map(e => 
                 <ListItem 
                     key={e.id}
-                    button={onItemClick !== undefined}
-                    onClick={onItemClick !== undefined ? () => onItemClick(e) : () => {}}
+                    button={onItemClick !== undefined && userCanView() }
+                    onClick={onItemClick !== undefined && userCanView() ? () => onItemClick(e) : () => {}}
                 >
                     <ListItemIcon>
                         {icon}
