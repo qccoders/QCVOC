@@ -4,6 +4,7 @@
 */
 
 import { PROD, DEV } from './environments';
+import { getCredentials } from './credentialStore';
 
 export const sortByProp = (prop, predicate = 'asc') => {
     return (a, b) => {
@@ -53,8 +54,13 @@ export const validatePhoneNumber = (phoneNumber) => {
     return re.test(phoneNumber);
 }
 
-export const getUserRole = () => {
-    const userRole = JSON.parse(localStorage.getItem('qcvoc-credentials')).role
+export const userCanView = () => {
+    let canView = false
+    const credentials = getCredentials()
 
-    return userRole;
+    if (credentials.role === 'Supervisor' || credentials.role === 'Administrator') {
+        canView = true
+    }
+
+    return canView
 }

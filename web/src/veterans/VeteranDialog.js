@@ -20,7 +20,7 @@ import {
     MenuItem,
 } from '@material-ui/core';
 
-import { validateEmail, validatePhoneNumber, getUserRole } from '../util';
+import { validateEmail, validatePhoneNumber, userCanView } from '../util';
 import api from '../api';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -177,17 +177,6 @@ class VeteranDialog extends Component {
 
     handleSnackbarClose = () => {
         this.setState({ snackbar: { open: false }});
-    }
-
-    userCanView = () => {
-        let canView = false
-        const userRole = getUserRole()
-
-        if (userRole === 'Supervisor' || userRole === 'Administrator') {
-            canView = true
-        }
-
-        return canView
     }
 
     execute = (action, api, successMessage) => {
@@ -366,7 +355,7 @@ class VeteranDialog extends Component {
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    {intent === 'update' && this.userCanView() && 
+                    {intent === 'update' && userCanView() && 
                         <Button 
                             onClick={this.handleDeleteClick} 
                             color="primary" 
