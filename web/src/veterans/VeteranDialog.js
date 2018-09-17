@@ -20,7 +20,7 @@ import {
     MenuItem,
 } from '@material-ui/core';
 
-import { validateEmail, validatePhoneNumber } from '../util';
+import { validateEmail, validatePhoneNumber, userCanView } from '../util';
 import api from '../api';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -355,7 +355,7 @@ class VeteranDialog extends Component {
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    {intent === 'update' && 
+                    {intent === 'update' && userCanView() && 
                         <Button 
                             onClick={this.handleDeleteClick} 
                             color="primary" 
@@ -419,7 +419,7 @@ VeteranDialog.propTypes = {
     intent: PropTypes.oneOf([ 'add', 'update' ]).isRequired,
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    veteran: PropTypes.object,
+    veteran: PropTypes.object
 };
 
 export default withStyles(styles)(VeteranDialog); 
