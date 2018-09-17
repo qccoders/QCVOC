@@ -46,7 +46,7 @@ namespace QCVOC.Api.Scans.Data.Model
         public Guid ScanById { get; set; }
 
         /// <summary>
-        ///     Gets or sets the data on which the Scan was performed.
+        ///     Gets or sets the date on which the Scan was performed.
         /// </summary>
         public DateTime ScanDate { get; set; }
 
