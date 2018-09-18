@@ -17,7 +17,7 @@ namespace QCVOC.Api.Services.Data.Repository
     /// <summary>
     ///     Provides data access for <see cref="Service"/>.
     /// </summary>
-    public class ServiceRepository : IRepository<Service>
+    public class ServiceRepository : ISingleKeyRepository<Service>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="ServiceRepository"/> class.
