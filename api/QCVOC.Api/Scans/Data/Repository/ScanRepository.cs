@@ -30,6 +30,11 @@ namespace QCVOC.Api.Scans.Data.Repository
 
         private IDbConnectionFactory ConnectionFactory { get; }
 
+        /// <summary>
+        ///     Creates a new Scan from the specified <paramref name="scan"/>.
+        /// </summary>
+        /// <param name="scan">The Scan to create.</param>
+        /// <returns>The created Scan.</returns>
         public Scan Create(Scan scan)
         {
             var builder = new SqlBuilder();
