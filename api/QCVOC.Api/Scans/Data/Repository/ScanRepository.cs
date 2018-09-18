@@ -7,6 +7,7 @@ namespace QCVOC.Api.Scans.Data.Repository
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Dapper;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
@@ -71,12 +72,52 @@ namespace QCVOC.Api.Scans.Data.Repository
 
         public Scan Get(Guid eventId, Guid veteranId, Guid? serviceId)
         {
-            throw new NotImplementedException();
+            return GetAll(new ScanFilters() { EventId = eventId, VeteranId = veteranId, ServiceId = serviceId })
+                .SingleOrDefault();
         }
 
         public IEnumerable<Scan> GetAll(Filters filters = null)
         {
-            throw new NotImplementedException();
+            filters = filters ?? new Filters();
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate($@"
+                SELECT
+                    s.eventid,
+                    s.veteranid,
+                    s.serviceid,
+                    s.plusone, 
+                    s.scandate, 
+                    s.scanbyid
+                FROM scans s
+                LEFT JOIN accounts a ON s.scanbyid = a.id
+                /**where**/
+                ORDER BY s.scandate {filters.OrderBy.ToString()}
+                LIMIT @limit OFFSET @offset
+            ");
+
+            builder.AddParameters(new
+            {
+                limit = filters.Limit,
+                offset = filters.Offset,
+                orderby = filters.OrderBy.ToString(),
+            });
+
+            builder.ApplyFilter(FilterType.Equals, "s.deleted", false);
+
+            if (filters is ScanFilters scanFilters)
+            {
+                builder
+                    .ApplyFilter(FilterType.Equals, "s.eventid", scanFilters.EventId)
+                    .ApplyFilter(FilterType.Equals, "s.veteranid", scanFilters.VeteranId)
+                    .ApplyFilter(FilterType.Equals, "s.serviceid", scanFilters.ServiceId)
+                    .ApplyFilter(FilterType.Equals, "s.plusone", scanFilters.PlusOne);
+            }
+
+            using (var db = ConnectionFactory.CreateConnection())
+            {
+                return db.Query<Scan>(query.RawSql, query.Parameters);
+            }
         }
 
         public Scan Update(Scan resource)
