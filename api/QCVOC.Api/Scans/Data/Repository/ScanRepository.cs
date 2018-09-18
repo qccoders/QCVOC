@@ -65,14 +65,45 @@ namespace QCVOC.Api.Scans.Data.Repository
             return Get(scan.EventId, scan.VeteranId, scan.ServiceId);
         }
 
-        public void Delete(Scan resource)
+        /// <summary>
+        ///     Deletes the specified <paramref name="scan"/>.
+        /// </summary>
+        /// <param name="scan">The Scan to delete.</param>
+        public void Delete(Scan scan)
         {
-            throw new NotImplementedException();
+            Delete(scan.EventId, scan.VeteranId, scan.ServiceId);
         }
 
+        /// <summary>
+        ///     Deletes the Scan matching the specified key.
+        /// </summary>
+        /// <param name="eventId">The Event id of the scan.</param>
+        /// <param name="veteranId">The Veteran id of the scan.</param>
+        /// <param name="serviceId">The optional Service id of the scan.</param>
         public void Delete(Guid eventId, Guid veteranId, Guid? serviceId)
         {
-            throw new NotImplementedException();
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate($@"
+                UPDATE events
+                SET
+                    deleted = true
+                WHERE eventid = @eventid
+                AND veteranid = @veteranid
+                {(serviceId != null ? "AND serviceid = @serviceid" : string.Empty)}
+            ");
+
+            builder.AddParameters(new
+            {
+                eventid = eventId,
+                veteranid = veteranId,
+                serviceid = serviceId,
+            });
+
+            using (var db = ConnectionFactory.CreateConnection())
+            {
+                db.Execute(query.RawSql, query.Parameters);
+            }
         }
 
         /// <summary>
