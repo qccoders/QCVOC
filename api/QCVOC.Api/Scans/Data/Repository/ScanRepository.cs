@@ -70,12 +70,24 @@ namespace QCVOC.Api.Scans.Data.Repository
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        ///     Retrieves the Scan with the specified key.
+        /// </summary>
+        /// <param name="eventId">The Event id of the scan.</param>
+        /// <param name="veteranId">The Veteran id of the scan.</param>
+        /// <param name="serviceId">The optional Service id of the scan.</param>
+        /// <returns>The Scan with the specified key.</returns>
         public Scan Get(Guid eventId, Guid veteranId, Guid? serviceId)
         {
             return GetAll(new ScanFilters() { EventId = eventId, VeteranId = veteranId, ServiceId = serviceId })
                 .SingleOrDefault();
         }
 
+        /// <summary>
+        ///     Retrieves all Scans after applying optional <paramref name="filters"/>.
+        /// </summary>
+        /// <param name="filters">Optional query filters.</param>
+        /// <returns>A list of Scans.</returns>
         public IEnumerable<Scan> GetAll(Filters filters = null)
         {
             filters = filters ?? new Filters();
@@ -120,9 +132,16 @@ namespace QCVOC.Api.Scans.Data.Repository
             }
         }
 
-        public Scan Update(Scan resource)
+        /// <summary>
+        ///     Not implemented; Scan records are immutable.
+        /// </summary>
+        /// <param name="scan">N/A</param>
+        /// <returns>Nothing</returns>
+        /// <exception cref="NotImplementedException">Thrown on invocation.</exception>
+        [Obsolete("Scan records may not be updated.", true)]
+        public Scan Update(Scan scan)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Scan records may not be updated.");
         }
     }
 }
