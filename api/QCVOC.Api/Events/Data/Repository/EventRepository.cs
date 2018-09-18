@@ -17,7 +17,7 @@ namespace QCVOC.Api.Events.Data.Repository
     /// <summary>
     ///     Provides data access for <see cref="Event"/>.
     /// </summary>
-    public class EventRepository : IRepository<Event>
+    public class EventRepository : ISingleKeyRepository<Event>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="EventRepository"/> class.

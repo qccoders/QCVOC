@@ -28,12 +28,12 @@ namespace QCVOC.Api.Events.Controller
         ///     Initializes a new instance of the <see cref="EventsController"/> class.
         /// </summary>
         /// <param name="eventRepository">The repository used for Event data access.</param>
-        public EventsController(IRepository<Event> eventRepository)
+        public EventsController(ISingleKeyRepository<Event> eventRepository)
         {
             EventRepository = eventRepository;
         }
 
-        private IRepository<Event> EventRepository { get; }
+        private ISingleKeyRepository<Event> EventRepository { get; }
 
         /// <summary>
         ///     Returns a list of Events.
