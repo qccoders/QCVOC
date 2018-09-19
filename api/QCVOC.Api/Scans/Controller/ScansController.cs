@@ -53,13 +53,18 @@ namespace QCVOC.Api.Scans.Controller
         /// </summary>
         /// <param name="scan">The scan context.</param>
         /// <returns>See attributes.</returns>
+        /// <response code="200">The Veteran is already checked in.</response>
+        /// <response code="201">The Veteran was checked in.</response>
+        /// <response code="400">The specified Scan was invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="404">Either the specified Veteran or Event was invalid.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost("checkIn")]
         [Authorize]
         [ProducesResponseType(typeof(Scan), 200)]
         [ProducesResponseType(typeof(Scan), 201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
-        [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult CheckIn([FromBody]CheckInScanRequest scan)
