@@ -12,8 +12,10 @@ namespace QCVOC.Api.Scans.Controller
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Events.Data.Model;
     using QCVOC.Api.Scans.Data.DTO;
     using QCVOC.Api.Scans.Data.Model;
+    using QCVOC.Api.Veterans.Data.Model;
 
     /// <summary>
     ///     Provides endpoints for manipulation of Scan records.
@@ -28,25 +30,37 @@ namespace QCVOC.Api.Scans.Controller
         ///     Initializes a new instance of the <see cref="ScansController"/> class.
         /// </summary>
         /// <param name="scanRepository">The repository used for Scan data access.</param>
-        public ScansController(ITripleKeyRepository<Scan> scanRepository)
+        /// <param name="eventRepository">The repository used for Event data access.</param>
+        /// <param name="veteranRepository">The repository used for Veteran data access.</param>
+        public ScansController(ITripleKeyRepository<Scan> scanRepository, ISingleKeyRepository<Event> eventRepository, ISingleKeyRepository<Veteran> veteranRepository)
         {
             ScanRepository = scanRepository;
+            EventRepository = eventRepository;
+            VeteranRepository = veteranRepository;
         }
 
         private ITripleKeyRepository<Scan> ScanRepository { get; set; }
+        private ISingleKeyRepository<Event> EventRepository { get; }
+        private ISingleKeyRepository<Veteran> VeteranRepository { get; set; }
 
         public IActionResult GetAll([FromQuery]ScanFilters filters)
         {
             return Ok(ScanRepository.GetAll(filters));
         }
 
-        [HttpPost("checkin")]
+        /// <summary>
+        ///     Checks a Veteran in to an Event.
+        /// </summary>
+        /// <param name="scan">The scan context.</param>
+        /// <returns>See attributes.</returns>
+        [HttpPost("checkIn")]
         [Authorize]
         [ProducesResponseType(typeof(Scan), 200)]
         [ProducesResponseType(typeof(Scan), 201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult CheckIn([FromBody]CheckInScanRequest scan)
         {
@@ -55,6 +69,8 @@ namespace QCVOC.Api.Scans.Controller
                 return BadRequest(ModelState);
             }
 
+            // check to see if the Veteran has already checked in for this event.
+            // if so, return HTTP 200/OK
             var checkInScan = ScanRepository.GetAll(new ScanFilters()
             {
                 EventId = scan.EventId,
@@ -62,23 +78,46 @@ namespace QCVOC.Api.Scans.Controller
                 ServiceId = null,
             }).SingleOrDefault();
 
-            if (checkInScan == default(Scan))
+            if (checkInScan != default(Scan))
             {
-                var scanRecord = new Scan()
-                {
-                    EventId = (Guid)scan.EventId,
-                    VeteranId = (Guid)scan.VeteranId,
-                    ServiceId = null,
-                    PlusOne = scan.PlusOne,
-                    ScanById = User.GetId(),
-                    ScanDate = DateTime.UtcNow,
-                };
+                return Ok(checkInScan);
+            }
 
+            // ensure that the specified Event exists.  we don't care about timing.
+            var @event = EventRepository.Get((Guid)scan.EventId);
+
+            if (@event == default(Event))
+            {
+                return NotFound();
+            }
+
+            // ensure that the specified Veteran exists.
+            var veteran = VeteranRepository.Get((Guid)scan.VeteranId);
+
+            if (veteran == default(Veteran))
+            {
+                return NotFound();
+            }
+
+            var scanRecord = new Scan()
+            {
+                EventId = (Guid)scan.EventId,
+                VeteranId = (Guid)scan.VeteranId,
+                ServiceId = null,
+                PlusOne = scan.PlusOne,
+                ScanById = User.GetId(),
+                ScanDate = DateTime.UtcNow,
+            };
+
+            try
+            {
                 var createdScan = ScanRepository.Create(scanRecord);
                 return StatusCode(201, createdScan);
             }
-
-            return Ok(checkInScan);
+            catch (Exception ex)
+            {
+                throw new Exception($"Error checking the Veteran in to the Event: {ex.Message}.  See inner Exception for details.", ex);
+            }
         }
 
         public IActionResult Create([FromBody]ServiceScanRequest scan)
