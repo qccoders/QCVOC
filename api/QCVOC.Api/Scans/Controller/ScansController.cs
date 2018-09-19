@@ -7,7 +7,9 @@ namespace QCVOC.Api.Scans.Controller
 {
     using System;
     using System.Linq;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Scans.Data.DTO;
@@ -38,7 +40,15 @@ namespace QCVOC.Api.Scans.Controller
             return Ok(ScanRepository.GetAll(filters));
         }
 
-        public IActionResult Create([FromBody]ScanRequest scan)
+        [HttpPost("checkin")]
+        [Authorize]
+        [ProducesResponseType(typeof(Scan), 200)]
+        [ProducesResponseType(typeof(Scan), 201)]
+        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult CheckIn([FromBody]CheckInScanRequest scan)
         {
             if (!ModelState.IsValid)
             {
@@ -54,17 +64,26 @@ namespace QCVOC.Api.Scans.Controller
 
             if (checkInScan == default(Scan))
             {
-                if (scan.ServiceId != null)
+                var scanRecord = new Scan()
                 {
-                    return StatusCode(403, "The Veteran has not yet checked in.");
-                }
-                else
-                {
-                    // create check in scan record
-                    Scan createdScan = default(Scan);
-                    return StatusCode(201, createdScan);
-                }
+                    EventId = (Guid)scan.EventId,
+                    VeteranId = (Guid)scan.VeteranId,
+                    ServiceId = null,
+                    PlusOne = scan.PlusOne,
+                    ScanById = User.GetId(),
+                    ScanDate = DateTime.UtcNow,
+                };
+
+                var createdScan = ScanRepository.Create(scanRecord);
+                return StatusCode(201, createdScan);
             }
+
+            return Ok(checkInScan);
+        }
+
+        public IActionResult Create([FromBody]ServiceScanRequest scan)
+        {
+
 
             var previousScan = ScanRepository.GetAll(new ScanFilters()
             {
