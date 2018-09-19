@@ -6,6 +6,7 @@
 namespace QCVOC.Api.Scans.Controller
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -43,6 +44,19 @@ namespace QCVOC.Api.Scans.Controller
         private ISingleKeyRepository<Event> EventRepository { get; }
         private ISingleKeyRepository<Veteran> VeteranRepository { get; set; }
 
+        /// <summary>
+        ///     Returns a list of Scans.
+        /// </summary>
+        /// <param name="filters">Optional filtering and pagination options.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The list was retrieved successfully.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpGet("")]
+        [Authorize]
+        [ProducesResponseType(typeof(IEnumerable<Scan>), 200)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult GetAll([FromQuery]ScanFilters filters)
         {
             return Ok(ScanRepository.GetAll(filters));
