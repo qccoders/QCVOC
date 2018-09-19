@@ -5,8 +5,12 @@
 
 namespace QCVOC.Api.Scans.Controller
 {
+    using System;
+    using System.Linq;
     using Microsoft.AspNetCore.Mvc;
+    using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
+    using QCVOC.Api.Scans.Data.DTO;
     using QCVOC.Api.Scans.Data.Model;
 
     /// <summary>
@@ -28,5 +32,56 @@ namespace QCVOC.Api.Scans.Controller
         }
 
         private ITripleKeyRepository<Scan> ScanRepository { get; set; }
+
+        public IActionResult GetAll([FromQuery]ScanFilters filters)
+        {
+            return Ok(ScanRepository.GetAll(filters));
+        }
+
+        public IActionResult Create([FromBody]ScanRequest scan)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var checkInScan = ScanRepository.GetAll(new ScanFilters()
+            {
+                EventId = scan.EventId,
+                VeteranId = scan.VeteranId,
+                ServiceId = null,
+            }).SingleOrDefault();
+
+            if (checkInScan == default(Scan))
+            {
+                if (scan.ServiceId != null)
+                {
+                    return StatusCode(403, "The Veteran has not yet checked in.");
+                }
+                else
+                {
+                    // create check in scan record
+                    Scan createdScan = default(Scan);
+                    return StatusCode(201, createdScan);
+                }
+            }
+
+            var previousScan = ScanRepository.GetAll(new ScanFilters()
+            {
+                EventId = scan.EventId,
+                VeteranId = scan.VeteranId,
+                ServiceId = scan.ServiceId,
+            });
+
+            var scanRecord = new Scan()
+            {
+                EventId = (Guid)scan.EventId,
+                VeteranId = (Guid)scan.VeteranId,
+                ServiceId = (Guid)scan.ServiceId,
+                PlusOne = (bool)scan.PlusOne,
+                ScanById = User.GetId(),
+                ScanDate = DateTime.UtcNow,
+            };
+        }
     }
 }
