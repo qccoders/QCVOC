@@ -20,10 +20,10 @@ namespace QCVOC.Api.Scans.Data.DTO
         public Guid? EventId { get; set; }
 
         /// <summary>
-        ///     Gets or sets the id of the Veteran.
+        ///     Gets or sets the Veteran's card number.
         /// </summary>
         [Required]
-        public Guid? VeteranId { get; set; }
+        public int CardNumber { get; set; }
 
         /// <summary>
         ///     Gets or sets the id of the Service.
