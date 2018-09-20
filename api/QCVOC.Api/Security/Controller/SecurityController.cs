@@ -34,7 +34,7 @@ namespace QCVOC.Api.Security.Controller
         /// <param name="tokenFactory">The factory used to create new tokens.</param>
         /// <param name="tokenValidator">The validator used to validate tokens.</param>
         /// <param name="refreshTokenRepository">The repository used for RefreshToken data access.</param>
-        public SecurityController(IRepository<Account> accountRepository, ITokenFactory tokenFactory, ITokenValidator tokenValidator, IRepository<RefreshToken> refreshTokenRepository)
+        public SecurityController(ISingleKeyRepository<Account> accountRepository, ITokenFactory tokenFactory, ITokenValidator tokenValidator, ISingleKeyRepository<RefreshToken> refreshTokenRepository)
         {
             AccountRepository = accountRepository;
             TokenFactory = tokenFactory;
@@ -42,8 +42,8 @@ namespace QCVOC.Api.Security.Controller
             TokenValidator = tokenValidator;
         }
 
-        private IRepository<Account> AccountRepository { get; set; }
-        private IRepository<RefreshToken> RefreshTokenRepository { get; set; }
+        private ISingleKeyRepository<Account> AccountRepository { get; set; }
+        private ISingleKeyRepository<RefreshToken> RefreshTokenRepository { get; set; }
         private ITokenFactory TokenFactory { get; set; }
         private ITokenValidator TokenValidator { get; set; }
 

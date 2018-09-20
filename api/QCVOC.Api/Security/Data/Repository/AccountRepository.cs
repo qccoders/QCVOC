@@ -17,7 +17,7 @@ namespace QCVOC.Api.Security.Data.Repository
     /// <summary>
     ///     Provides data access for <see cref="Account"/>.
     /// </summary>
-    public class AccountRepository : IRepository<Account>
+    public class AccountRepository : ISingleKeyRepository<Account>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="AccountRepository"/> class.

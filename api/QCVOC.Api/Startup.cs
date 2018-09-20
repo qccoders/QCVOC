@@ -30,6 +30,8 @@ namespace QCVOC.Api
     using QCVOC.Api.Common.Middleware;
     using QCVOC.Api.Events.Data.Model;
     using QCVOC.Api.Events.Data.Repository;
+    using QCVOC.Api.Scans.Data.Model;
+    using QCVOC.Api.Scans.Data.Repository;
     using QCVOC.Api.Security;
     using QCVOC.Api.Security.Data.Model;
     using QCVOC.Api.Security.Data.Repository;
@@ -99,16 +101,18 @@ namespace QCVOC.Api
             services.AddSingleton<IDbConnectionFactory, NpgsqlDbConnectionFactory>(serviceProvider =>
                 new NpgsqlDbConnectionFactory(connectionString));
 
-            services.AddScoped<IRepository<Account>, AccountRepository>(serviceProvider =>
+            services.AddScoped<ISingleKeyRepository<Account>, AccountRepository>(serviceProvider =>
                 new AccountRepository(serviceProvider.GetService<IDbConnectionFactory>()));
-            services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>(serviceProvider =>
+            services.AddScoped<ISingleKeyRepository<RefreshToken>, RefreshTokenRepository>(serviceProvider =>
                 new RefreshTokenRepository(serviceProvider.GetService<IDbConnectionFactory>()));
-            services.AddScoped<IRepository<Veteran>, VeteranRepository>(serviceProvider =>
+            services.AddScoped<ISingleKeyRepository<Veteran>, VeteranRepository>(serviceProvider =>
                 new VeteranRepository(serviceProvider.GetService<IDbConnectionFactory>()));
-            services.AddScoped<IRepository<Service>, ServiceRepository>(serviceProvider =>
+            services.AddScoped<ISingleKeyRepository<Service>, ServiceRepository>(serviceProvider =>
                 new ServiceRepository(serviceProvider.GetService<IDbConnectionFactory>()));
-            services.AddScoped<IRepository<Event>, EventRepository>(serviceProvider =>
+            services.AddScoped<ISingleKeyRepository<Event>, EventRepository>(serviceProvider =>
                 new EventRepository(serviceProvider.GetService<IDbConnectionFactory>()));
+            services.AddScoped<ITripleKeyRepository<Scan>, ScanRepository>(serviceProvider =>
+                new ScanRepository(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => ConfigureJwtBearerOptions(options));

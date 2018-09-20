@@ -17,7 +17,7 @@ namespace QCVOC.Api.Security.Data.Repository
     /// <summary>
     ///     Provides data access for <see cref="RefreshToken"/>.
     /// </summary>
-    public class RefreshTokenRepository : IRepository<RefreshToken>
+    public class RefreshTokenRepository : ISingleKeyRepository<RefreshToken>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="RefreshTokenRepository"/> class.

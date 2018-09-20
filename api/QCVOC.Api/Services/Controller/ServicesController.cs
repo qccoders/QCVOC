@@ -30,12 +30,12 @@ namespace QCVOC.Api.Services.Controller
         ///     Initializes a new instance of the <see cref="ServicesController"/> class.
         /// </summary>
         /// <param name="serviceRepository">The respository used for Service data access.</param>
-        public ServicesController(IRepository<Service> serviceRepository)
+        public ServicesController(ISingleKeyRepository<Service> serviceRepository)
         {
             ServiceRepository = serviceRepository;
         }
 
-        private IRepository<Service> ServiceRepository { get; set; }
+        private ISingleKeyRepository<Service> ServiceRepository { get; set; }
 
         /// <summary>
         ///     Returns a list of Services.
