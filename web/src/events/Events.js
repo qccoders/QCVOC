@@ -14,6 +14,7 @@ import { Card, CardContent, Typography, CircularProgress, ListSubheader, Button 
 import { Add, EventAvailable, Event, Today } from '@material-ui/icons';
 import EventList from './EventList';
 import EventDialog from './EventDialog';
+import { userCanView } from '../util';
 
 const styles = {
     fab: {
@@ -174,6 +175,7 @@ class Events extends Component {
                             {past.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                         </CardContent>
                     </Card>
+                    { userCanView() &&
                     <Button 
                         variant="fab" 
                         color="secondary" 
@@ -182,6 +184,7 @@ class Events extends Component {
                     >
                         <Add/>
                     </Button>
+                    }
                     <EventDialog
                         open={eventDialog.open}
                         intent={eventDialog.intent} 

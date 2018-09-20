@@ -4,6 +4,7 @@
 */
 
 import { PROD, DEV } from './environments';
+import { getCredentials } from './credentialStore';
 
 export const sortByProp = (prop, predicate = 'asc') => {
     return (a, b) => {
@@ -45,10 +46,21 @@ export const validateEmail = (email) => {
     // eslint-disable-next-line
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
-};
+}
 
 export const validatePhoneNumber = (phoneNumber) => {
     // eslint-disable-next-line
     var re = /\(\d{3}\) \d{3}-\d{4}/;
     return re.test(phoneNumber);
+}
+
+export const userCanView = () => {
+    let canView = false
+    const credentials = getCredentials()
+
+    if (credentials.role === 'Supervisor' || credentials.role === 'Administrator') {
+        canView = true
+    }
+
+    return canView
 }
