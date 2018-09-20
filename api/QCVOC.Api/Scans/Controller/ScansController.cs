@@ -16,6 +16,7 @@ namespace QCVOC.Api.Scans.Controller
     using QCVOC.Api.Events.Data.Model;
     using QCVOC.Api.Scans.Data.DTO;
     using QCVOC.Api.Scans.Data.Model;
+    using QCVOC.Api.Veterans;
     using QCVOC.Api.Veterans.Data.Model;
 
     /// <summary>
@@ -88,12 +89,26 @@ namespace QCVOC.Api.Scans.Controller
                 return BadRequest(ModelState);
             }
 
-            // check to see if the Veteran has already checked in for this event.
-            // if so, return HTTP 200/OK
+            var @event = EventRepository.Get((Guid)scan.EventId);
+
+            if (@event == default(Event))
+            {
+                return NotFound();
+            }
+
+            var veteran = VeteranRepository
+                .GetAll(new VeteranFilters() { CardNumber = scan.CardNumber })
+                .SingleOrDefault();
+
+            if (veteran == default(Veteran))
+            {
+                return NotFound();
+            }
+
             var checkInScan = ScanRepository.GetAll(new ScanFilters()
             {
                 EventId = scan.EventId,
-                VeteranId = scan.VeteranId,
+                VeteranId = veteran.Id,
                 ServiceId = null,
             }).SingleOrDefault();
 
@@ -102,26 +117,10 @@ namespace QCVOC.Api.Scans.Controller
                 return Ok(checkInScan);
             }
 
-            // ensure that the specified Event exists.  we don't care about timing.
-            var @event = EventRepository.Get((Guid)scan.EventId);
-
-            if (@event == default(Event))
-            {
-                return NotFound();
-            }
-
-            // ensure that the specified Veteran exists.
-            var veteran = VeteranRepository.Get((Guid)scan.VeteranId);
-
-            if (veteran == default(Veteran))
-            {
-                return NotFound();
-            }
-
             var scanRecord = new Scan()
             {
                 EventId = (Guid)scan.EventId,
-                VeteranId = (Guid)scan.VeteranId,
+                VeteranId = veteran.Id,
                 ServiceId = null,
                 PlusOne = scan.PlusOne,
                 ScanById = User.GetId(),
