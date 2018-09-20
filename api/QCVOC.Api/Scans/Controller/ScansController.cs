@@ -72,6 +72,7 @@ namespace QCVOC.Api.Scans.Controller
         /// <response code="201">The Veteran was checked in.</response>
         /// <response code="400">The specified Scan was invalid.</response>
         /// <response code="401">Unauthorized.</response>
+        /// <response code="403">The Veteran has not checked in for the Event.</response>
         /// <response code="404">Either the specified Veteran or Event was invalid.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost("")]
@@ -80,6 +81,7 @@ namespace QCVOC.Api.Scans.Controller
         [ProducesResponseType(typeof(Scan), 201)]
         [ProducesResponseType(typeof(ModelStateDictionary), 400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Scan([FromBody]ScanRequest scan)
@@ -115,6 +117,21 @@ namespace QCVOC.Api.Scans.Controller
             if (previousScan != default(Scan))
             {
                 return Ok(previousScan);
+            }
+
+            if (scan.ServiceId != null)
+            {
+                var checkedIn = ScanRepository.GetAll(new ScanFilters()
+                {
+                    EventId = scan.EventId,
+                    VeteranId = veteran.Id,
+                    ServiceId = null,
+                }).Any();
+
+                if (!checkedIn)
+                {
+                    return StatusCode(403, "The Veteran has not checked in for this Event.");
+                }
             }
 
             var scanRecord = new Scan()
