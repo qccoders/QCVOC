@@ -95,7 +95,7 @@ namespace QCVOC.Api.Scans.Controller
 
             if (@event == default(Event))
             {
-                return NotFound();
+                StatusCode(403, "The specified Event is not found.");
             }
 
             var veteran = VeteranRepository
@@ -104,34 +104,19 @@ namespace QCVOC.Api.Scans.Controller
 
             if (veteran == default(Veteran))
             {
-                return NotFound();
+                return StatusCode(403, "The specified Card Id doesn't match an enrolled Veteran.");
             }
 
-            var previousScan = ScanRepository.GetAll(new ScanFilters()
-            {
-                EventId = scan.EventId,
-                VeteranId = veteran.Id,
-                ServiceId = scan.ServiceId,
-            }).SingleOrDefault();
+            var previousScans = ScanRepository.GetAll(new ScanFilters() { EventId = scan.EventId, VeteranId = veteran.Id });
 
-            if (previousScan != default(Scan))
+            if (scan.ServiceId != null && !previousScans.Where(s => s.ServiceId == null).Any())
             {
-                return Ok(previousScan);
+                return StatusCode(403, "The Veteran has not checked in for this Event.");
             }
 
-            if (scan.ServiceId != null)
+            if (previousScans.Where(s => s.ServiceId == scan.ServiceId).Any())
             {
-                var checkedIn = ScanRepository.GetAll(new ScanFilters()
-                {
-                    EventId = scan.EventId,
-                    VeteranId = veteran.Id,
-                    ServiceId = null,
-                }).Any();
-
-                if (!checkedIn)
-                {
-                    return StatusCode(403, "The Veteran has not checked in for this Event.");
-                }
+                return StatusCode(201, previousScans.Where(s => s.ServiceId == scan.ServiceId).SingleOrDefault());
             }
 
             var scanRecord = new Scan()
