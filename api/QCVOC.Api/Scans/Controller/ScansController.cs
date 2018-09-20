@@ -64,7 +64,7 @@ namespace QCVOC.Api.Scans.Controller
         }
 
         /// <summary>
-        ///     Checks a Veteran in to an Event.
+        ///     Performs an Event Scan.
         /// </summary>
         /// <param name="scan">The scan context.</param>
         /// <returns>See attributes.</returns>
@@ -74,7 +74,7 @@ namespace QCVOC.Api.Scans.Controller
         /// <response code="401">Unauthorized.</response>
         /// <response code="404">Either the specified Veteran or Event was invalid.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
-        [HttpPost("checkIn")]
+        [HttpPost("")]
         [Authorize]
         [ProducesResponseType(typeof(Scan), 200)]
         [ProducesResponseType(typeof(Scan), 201)]
@@ -82,7 +82,7 @@ namespace QCVOC.Api.Scans.Controller
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult CheckIn([FromBody]CheckInScanRequest scan)
+        public IActionResult Scan([FromBody]ScanRequest scan)
         {
             if (!ModelState.IsValid)
             {
@@ -105,23 +105,23 @@ namespace QCVOC.Api.Scans.Controller
                 return NotFound();
             }
 
-            var checkInScan = ScanRepository.GetAll(new ScanFilters()
+            var previousScan = ScanRepository.GetAll(new ScanFilters()
             {
                 EventId = scan.EventId,
                 VeteranId = veteran.Id,
-                ServiceId = null,
+                ServiceId = scan.ServiceId,
             }).SingleOrDefault();
 
-            if (checkInScan != default(Scan))
+            if (previousScan != default(Scan))
             {
-                return Ok(checkInScan);
+                return Ok(previousScan);
             }
 
             var scanRecord = new Scan()
             {
                 EventId = (Guid)scan.EventId,
                 VeteranId = veteran.Id,
-                ServiceId = null,
+                ServiceId = scan.ServiceId,
                 PlusOne = scan.PlusOne,
                 ScanById = User.GetId(),
                 ScanDate = DateTime.UtcNow,
@@ -134,30 +134,8 @@ namespace QCVOC.Api.Scans.Controller
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error checking the Veteran in to the Event: {ex.Message}.  See inner Exception for details.", ex);
+                throw new Exception($"Error processing Scan: {ex.Message}.  See inner Exception for details.", ex);
             }
-        }
-
-        public IActionResult Create([FromBody]ServiceScanRequest scan)
-        {
-
-
-            var previousScan = ScanRepository.GetAll(new ScanFilters()
-            {
-                EventId = scan.EventId,
-                VeteranId = scan.VeteranId,
-                ServiceId = scan.ServiceId,
-            });
-
-            var scanRecord = new Scan()
-            {
-                EventId = (Guid)scan.EventId,
-                VeteranId = (Guid)scan.VeteranId,
-                ServiceId = (Guid)scan.ServiceId,
-                PlusOne = (bool)scan.PlusOne,
-                ScanById = User.GetId(),
-                ScanDate = DateTime.UtcNow,
-            };
         }
     }
 }
