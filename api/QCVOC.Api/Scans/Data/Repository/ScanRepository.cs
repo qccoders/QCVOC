@@ -136,7 +136,8 @@ namespace QCVOC.Api.Scans.Data.Repository
                     s.serviceid,
                     s.plusone, 
                     s.scandate, 
-                    s.scanbyid
+                    s.scanbyid,
+                    a.name AS scanby
                 FROM scans s
                 LEFT JOIN accounts a ON s.scanbyid = a.id
                 /**where**/
