@@ -109,21 +109,21 @@ namespace QCVOC.Api.Scans.Controller
 
             var previousScans = ScanRepository.GetAll(new ScanFilters() { EventId = scan.EventId, VeteranId = veteran.Id });
 
-            if (scan.ServiceId != null && !previousScans.Where(s => s.ServiceId == null).Any())
+            if (scan.ServiceId == Guid.Empty && !previousScans.Where(s => s.ServiceId == Guid.Empty).Any())
             {
                 return StatusCode(403, "The Veteran has not checked in for this Event.");
             }
 
             if (previousScans.Where(s => s.ServiceId == scan.ServiceId).Any())
             {
-                return StatusCode(201, previousScans.Where(s => s.ServiceId == scan.ServiceId).SingleOrDefault());
+                return StatusCode(200, previousScans.Where(s => s.ServiceId == scan.ServiceId).SingleOrDefault());
             }
 
             var scanRecord = new Scan()
             {
                 EventId = (Guid)scan.EventId,
                 VeteranId = veteran.Id,
-                ServiceId = scan.ServiceId ?? Guid.Empty,
+                ServiceId = scan.ServiceId,
                 PlusOne = scan.PlusOne,
                 ScanById = User.GetId(),
                 ScanDate = DateTime.UtcNow,
