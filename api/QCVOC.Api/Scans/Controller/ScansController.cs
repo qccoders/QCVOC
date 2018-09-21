@@ -123,7 +123,7 @@ namespace QCVOC.Api.Scans.Controller
             {
                 EventId = (Guid)scan.EventId,
                 VeteranId = veteran.Id,
-                ServiceId = scan.ServiceId,
+                ServiceId = scan.ServiceId ?? Guid.Empty,
                 PlusOne = scan.PlusOne,
                 ScanById = User.GetId(),
                 ScanDate = DateTime.UtcNow,
