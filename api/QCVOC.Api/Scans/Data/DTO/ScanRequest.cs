@@ -31,7 +31,7 @@ namespace QCVOC.Api.Scans.Data.DTO
         /// <remarks>
         ///     If null, represents a check-in Scan.
         /// </remarks>
-        public Guid? ServiceId { get; set; }
+        public Guid ServiceId { get; set; }
 
         /// <summary>
         ///     Gets or sets a value indicating whether the Veteran brought a guest.
