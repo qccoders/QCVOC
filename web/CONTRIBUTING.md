@@ -14,9 +14,9 @@ This project is maintained for free and for a non profit organization, and we re
 
 ## Contribution Workflow
 
-1. Assign yourself to the issue that you'll be working on.  If there's no issue, your pull request is likely
-   to be rejected until one is created and prioritized.  Move the issue into the 'In progress' column on the project
-   board, if you have the necessary access.
+1. Assign yourself to the issue that you'll be working on.  Move the issue into the 'In progress' column on the project
+   board, if you have the necessary access.  If there's no issue associated with the work you'd like to do, your pull request is likely
+   to be rejected until one is created and prioritized.  
 2. Clone the repository and `git checkout develop` to ensure you are on the development branch.
 3. Create a new branch for your change with `git checkout -b <your-branch-name>` be descriptive, but terse.
 4. Make your changes.  When finished, push your branch with `git push origin --set-upstream <your-branch-name>`.
