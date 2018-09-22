@@ -183,7 +183,7 @@ namespace QCVOC.Api.Scans.Data.Repository
                 SET
                     plusone = @plusone,
                     scandate = @scandate,
-                    scanby = @scanby
+                    scanbyid = @scanbyid
                 WHERE eventid = @eventid
                 AND veteranid = @veteranid
                 AND serviceid = @serviceid
@@ -193,7 +193,7 @@ namespace QCVOC.Api.Scans.Data.Repository
             {
                 plusone = scan.PlusOne,
                 scandate = scan.ScanDate,
-                scanby = scan.ScanById,
+                scanbyid = scan.ScanById,
                 eventid = scan.EventId,
                 veteranid = scan.VeteranId,
                 serviceid = scan.ServiceId,
