@@ -27,38 +27,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
 
-const styles = {
-    dialog: {
-        width: 320,
-        marginRight: 'auto',
-        marginLeft: 'auto',
-        marginTop: 50,
-        height: 'fit-content',
-    },
-    deleteButton: {
-        marginRight: 'auto',
-    },
-    verificationSelect: {
-        marginTop: 15,
-    },
-    spinner: {
-        position: 'fixed',
-    },
-};
-
 const initialState = {
-    addApi: {
-        isExecuting: false,
-        isErrored: false,
-    },
-    deleteApi: {
-        isExecuting: false,
-        isErrored: false,
-    },
-    updateApi: {
-        isExecuting: false,
-        isErrored: false,
-    },
     veteran: {
         cardNumber: '',
         firstName: '',
@@ -76,10 +45,6 @@ const initialState = {
         primaryPhone: undefined,
         email: undefined,
         verificationMethod: undefined,
-    },
-    snackbar: {
-        message: '',
-        open: false,
     },
     confirmDialog: undefined,
 }

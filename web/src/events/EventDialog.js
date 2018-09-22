@@ -24,35 +24,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import DateTimePicker from 'material-ui-pickers/DateTimePicker';
 
-const styles = {
-    dialog: {
-        width: 320,
-        marginRight: 'auto',
-        marginLeft: 'auto',
-        marginTop: 50,
-        height: 'fit-content',
-    },
-    deleteButton: {
-        marginRight: 'auto',
-    },
-    spinner: {
-        position: 'fixed',
-    },
-};
-
 const initialState = {
-    addApi: {
-        isExecuting: false,
-        isErrored: false,
-    },
-    deleteApi: {
-        isExecuting: false,
-        isErrored: false,
-    },
-    updateApi: {
-        isExecuting: false,
-        isErrored: false,
-    },
     event: {
         name: '',
         startDate: null,
@@ -62,13 +34,6 @@ const initialState = {
         name: undefined,
         startDate: undefined,
         endDate: undefined,
-    },
-    snackbar: {
-        message: '',
-        open: false,
-    },
-    confirmDialog: {
-        open: false,
     },
 }
 
@@ -118,9 +83,7 @@ class EventDialog extends Component {
         this.props.onClose();
     }
 
-    handleDeleteClick = () => {
-        this.setState({ confirmDialog: { open: true }});
-    }
+   
 
     handleDeleteConfirmClick = () => {
         return this.execute(
