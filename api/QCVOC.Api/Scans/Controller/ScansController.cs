@@ -107,18 +107,6 @@ namespace QCVOC.Api.Scans.Controller
                 return StatusCode(403, "The specified Card Id doesn't match an enrolled Veteran.");
             }
 
-            var previousScans = ScanRepository.GetAll(new ScanFilters() { EventId = scan.EventId, VeteranId = veteran.Id });
-
-            if (scan.ServiceId == Guid.Empty && !previousScans.Where(s => s.ServiceId == Guid.Empty).Any())
-            {
-                return StatusCode(403, "The Veteran has not checked in for this Event.");
-            }
-
-            if (previousScans.Where(s => s.ServiceId == scan.ServiceId).Any())
-            {
-                return StatusCode(200, previousScans.Where(s => s.ServiceId == scan.ServiceId).SingleOrDefault());
-            }
-
             var scanRecord = new Scan()
             {
                 EventId = (Guid)scan.EventId,
@@ -129,10 +117,58 @@ namespace QCVOC.Api.Scans.Controller
                 ScanDate = DateTime.UtcNow,
             };
 
+            var previousScans = ScanRepository.GetAll(new ScanFilters() { EventId = scan.EventId, VeteranId = veteran.Id });
+
+            if (scan.ServiceId == Guid.Empty)
+            {
+                var existingCheckIn = previousScans.Where(s => s.ServiceId == Guid.Empty).SingleOrDefault();
+
+                if (existingCheckIn == default(Scan))
+                {
+                    return CreateScan(scanRecord);
+                }
+                else if (existingCheckIn.PlusOne != scan.PlusOne)
+                {
+                    return UpdateScan(scanRecord);
+                }
+                else
+                {
+                    return StatusCode(200, existingCheckIn);
+                }
+            }
+
+            if (!previousScans.Where(s => s.ServiceId == Guid.Empty).Any())
+            {
+                return StatusCode(403, "The Veteran has not checked in for this Event.");
+            }
+
+            if (previousScans.Where(s => s.ServiceId == scan.ServiceId).Any())
+            {
+                return StatusCode(200, previousScans.Where(s => s.ServiceId == scan.ServiceId).SingleOrDefault());
+            }
+
+            return CreateScan(scanRecord);
+        }
+
+        private IActionResult CreateScan(Scan scan)
+        {
             try
             {
-                var createdScan = ScanRepository.Create(scanRecord);
+                var createdScan = ScanRepository.Create(scan);
                 return StatusCode(201, createdScan);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error processing Scan: {ex.Message}.  See inner Exception for details.", ex);
+            }
+        }
+
+        private IActionResult UpdateScan(Scan scan)
+        {
+            try
+            {
+                var updatedScan = ScanRepository.Update(scan);
+                return StatusCode(201, updatedScan);
             }
             catch (Exception ex)
             {
