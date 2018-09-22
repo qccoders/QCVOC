@@ -68,8 +68,8 @@ namespace QCVOC.Api.Scans.Controller
         /// </summary>
         /// <param name="scan">The scan context.</param>
         /// <returns>See attributes.</returns>
-        /// <response code="200">The Veteran is already checked in.</response>
-        /// <response code="201">The Veteran was checked in.</response>
+        /// <response code="200">The Scan has already been recorded.</response>
+        /// <response code="201">The Scan was recorded or updated.</response>
         /// <response code="400">The specified Scan was invalid.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="403">The Veteran has not checked in for the Event.</response>
