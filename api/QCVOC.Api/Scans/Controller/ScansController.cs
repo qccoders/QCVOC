@@ -16,6 +16,7 @@ namespace QCVOC.Api.Scans.Controller
     using QCVOC.Api.Events.Data.Model;
     using QCVOC.Api.Scans.Data.DTO;
     using QCVOC.Api.Scans.Data.Model;
+    using QCVOC.Api.Services.Data.Model;
     using QCVOC.Api.Veterans;
     using QCVOC.Api.Veterans.Data.Model;
 
@@ -34,16 +35,19 @@ namespace QCVOC.Api.Scans.Controller
         /// <param name="scanRepository">The repository used for Scan data access.</param>
         /// <param name="eventRepository">The repository used for Event data access.</param>
         /// <param name="veteranRepository">The repository used for Veteran data access.</param>
-        public ScansController(ITripleKeyRepository<Scan> scanRepository, ISingleKeyRepository<Event> eventRepository, ISingleKeyRepository<Veteran> veteranRepository)
+        /// <param name="serviceRepository">The repository used for Service data access.</param>
+        public ScansController(ITripleKeyRepository<Scan> scanRepository, ISingleKeyRepository<Event> eventRepository, ISingleKeyRepository<Veteran> veteranRepository, ISingleKeyRepository<Service> serviceRepository)
         {
             ScanRepository = scanRepository;
             EventRepository = eventRepository;
             VeteranRepository = veteranRepository;
+            ServiceRepository = ServiceRepository;
         }
 
         private ITripleKeyRepository<Scan> ScanRepository { get; set; }
         private ISingleKeyRepository<Event> EventRepository { get; }
         private ISingleKeyRepository<Veteran> VeteranRepository { get; set; }
+        private ISingleKeyRepository<Service> ServiceRepository { get; set; }
 
         /// <summary>
         ///     Returns a list of Scans.
@@ -73,7 +77,7 @@ namespace QCVOC.Api.Scans.Controller
         /// <response code="400">The specified Scan was invalid.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="403">The Veteran has not checked in for the Event.</response>
-        /// <response code="404">Either the specified Veteran or Event was invalid.</response>
+        /// <response code="404">The specified Veteran, Event or Service was invalid.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost("")]
         [Authorize]
@@ -95,7 +99,7 @@ namespace QCVOC.Api.Scans.Controller
 
             if (@event == default(Event))
             {
-                StatusCode(403, "The specified Event is not found.");
+                StatusCode(404, "The specified Event could not be found.");
             }
 
             var veteran = VeteranRepository
@@ -104,7 +108,7 @@ namespace QCVOC.Api.Scans.Controller
 
             if (veteran == default(Veteran))
             {
-                return StatusCode(403, "The specified Card Id doesn't match an enrolled Veteran.");
+                return StatusCode(404, "The specified Card Id doesn't match an enrolled Veteran.");
             }
 
             var scanRecord = new Scan()
@@ -135,6 +139,13 @@ namespace QCVOC.Api.Scans.Controller
                 {
                     return StatusCode(200, existingCheckIn);
                 }
+            }
+
+            var service = ServiceRepository.Get(scan.ServiceId);
+
+            if (service == default(Service))
+            {
+                return StatusCode(404, "The specified Service could not be found.");
             }
 
             if (!previousScans.Where(s => s.ServiceId == Guid.Empty).Any())
