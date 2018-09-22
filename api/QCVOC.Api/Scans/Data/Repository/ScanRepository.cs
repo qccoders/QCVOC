@@ -170,15 +170,41 @@ namespace QCVOC.Api.Scans.Data.Repository
         }
 
         /// <summary>
-        ///     Not implemented; Scan records are immutable.
+        ///     Updates the specified <paramref name="scan"/>.
         /// </summary>
-        /// <param name="scan">N/A</param>
-        /// <returns>Nothing</returns>
-        /// <exception cref="NotImplementedException">Thrown on invocation.</exception>
-        [Obsolete("Scan records may not be updated.", true)]
+        /// <param name="scan">the Scan to update.</param>
+        /// <returns>The updated Scan.</returns>
         public Scan Update(Scan scan)
         {
-            throw new NotImplementedException("Scan records may not be updated.");
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
+                UPDATE scans
+                SET
+                    plusone = @plusone,
+                    scandate = @scandate,
+                    scanbyid = @scanbyid
+                WHERE eventid = @eventid
+                AND veteranid = @veteranid
+                AND serviceid = @serviceid
+            ");
+
+            builder.AddParameters(new
+            {
+                plusone = scan.PlusOne,
+                scandate = scan.ScanDate,
+                scanbyid = scan.ScanById,
+                eventid = scan.EventId,
+                veteranid = scan.VeteranId,
+                serviceid = scan.ServiceId,
+            });
+
+            using (var db = ConnectionFactory.CreateConnection())
+            {
+                db.Execute(query.RawSql, query.Parameters);
+            }
+
+            return Get(scan.EventId, scan.VeteranId, scan.ServiceId);
         }
     }
 }
