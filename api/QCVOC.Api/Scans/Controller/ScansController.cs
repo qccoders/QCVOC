@@ -41,7 +41,7 @@ namespace QCVOC.Api.Scans.Controller
             ScanRepository = scanRepository;
             EventRepository = eventRepository;
             VeteranRepository = veteranRepository;
-            ServiceRepository = ServiceRepository;
+            ServiceRepository = serviceRepository;
         }
 
         private ITripleKeyRepository<Scan> ScanRepository { get; set; }
