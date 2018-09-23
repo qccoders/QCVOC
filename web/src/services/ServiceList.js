@@ -6,7 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { List, ListItem, ListItemIcon, ListItemText, ListSubheader } from '@material-ui/core';
-import { Shop } from '@material-ui/icons'
+import { Shop, Work } from '@material-ui/icons'
 
 const ServiceList = (props) => {
     let { services, onItemClick } = props;
@@ -35,7 +35,7 @@ const ServiceList = (props) => {
             {systemDefined.map(s =>
                 <ListItem key={s.id}>
                     <ListItemIcon>
-                        <Shop/>
+                        <Work/>
                     </ListItemIcon>
                     <ListItemText
                         primary={s.name}
