@@ -33,11 +33,7 @@ const ServiceList = (props) => {
             )}
             <ListSubheader>System Defined</ListSubheader>
             {systemDefined.map(s =>
-                <ListItem
-                    key={s.id}
-                    button
-                    onClick={() => onItemClick(s)}
-                >
+                <ListItem key={s.id}>
                     <ListItemIcon>
                         <Shop/>
                     </ListItemIcon>
