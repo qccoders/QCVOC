@@ -209,7 +209,7 @@ class ServiceDialog extends Component {
                 <DialogTitle>{(intent === 'add' ? 'Create' : 'Update')} Service</DialogTitle>
                 <DialogContent>
                     <TextField
-                        autofocus
+                        autoFocus
                         id="name"
                         label="Name"
                         value={name}
