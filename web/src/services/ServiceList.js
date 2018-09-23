@@ -15,7 +15,7 @@ const ServiceList = (props) => {
 
     return (
         <List>
-            <ListSubheader>User Defined</ListSubheader>
+            {userDefined && userDefined.length > 0 && <ListSubheader>User Defined</ListSubheader>}
             {userDefined.map(s =>
                 <ListItem
                     key={s.id}
