@@ -27,7 +27,7 @@ const styles = {
         zIndex: 1000
     },
     card: {
-        minHeight: 220,
+        minHeight: 272,
         maxWidth: 800,
         margin: 'auto',
     },
