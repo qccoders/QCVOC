@@ -88,6 +88,11 @@ namespace QCVOC.Api.Services.Data.Repository
         /// <param name="id">The id of the Service to delete.</param>
         public void Delete(Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                throw new InvalidOperationException("The Check In Service may not be deleted.");
+            }
+
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"
@@ -189,6 +194,11 @@ namespace QCVOC.Api.Services.Data.Repository
         /// <returns>The updated Service.</returns>
         public Service Update(Service service)
         {
+            if (service.Id == Guid.Empty)
+            {
+                throw new InvalidOperationException("The Check In Service may not be modified.");
+            }
+
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate(@"

@@ -5,15 +5,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { Shop } from '@material-ui/icons'
+import { List, ListItem, ListItemIcon, ListItemText, ListSubheader } from '@material-ui/core';
+import { Shop, Work } from '@material-ui/icons'
 
 const ServiceList = (props) => {
     let { services, onItemClick } = props;
+    let userDefined = services.filter(s => s.id !== '00000000-0000-0000-0000-000000000000');
+    let systemDefined = services.filter(s => s.id === '00000000-0000-0000-0000-000000000000');
 
     return (
         <List>
-            {services.map(s =>
+            {userDefined && userDefined.length > 0 && <ListSubheader>User Defined</ListSubheader>}
+            {userDefined.map(s =>
                 <ListItem
                     key={s.id}
                     button
@@ -21,6 +24,18 @@ const ServiceList = (props) => {
                 >
                     <ListItemIcon>
                         <Shop/>
+                    </ListItemIcon>
+                    <ListItemText
+                        primary={s.name}
+                        secondary={s.description}
+                    />
+                </ListItem>
+            )}
+            <ListSubheader>System Defined</ListSubheader>
+            {systemDefined.map(s =>
+                <ListItem key={s.id}>
+                    <ListItemIcon>
+                        <Work/>
                     </ListItemIcon>
                     <ListItemText
                         primary={s.name}
