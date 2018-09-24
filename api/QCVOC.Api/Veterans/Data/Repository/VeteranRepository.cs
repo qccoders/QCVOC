@@ -17,7 +17,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
     /// <summary>
     ///     Provides data access for <see cref="Veteran"/>.
     /// </summary>
-    public class VeteranRepository : IRepository<Veteran>
+    public class VeteranRepository : ISingleKeyRepository<Veteran>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="VeteranRepository"/> class.

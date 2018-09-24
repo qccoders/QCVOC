@@ -5,7 +5,6 @@
 
 namespace QCVOC.Api.Common.Data.Repository
 {
-    using System;
     using System.Collections.Generic;
 
     /// <summary>
@@ -22,23 +21,10 @@ namespace QCVOC.Api.Common.Data.Repository
         T Create(T resource);
 
         /// <summary>
-        ///     Deletes the resource matching the specified <paramref name="id"/>.
-        /// </summary>
-        /// <param name="id">The id of the resource to delete.</param>
-        void Delete(Guid id);
-
-        /// <summary>
         ///     Deletes the specified <paramref name="resource"/>.
         /// </summary>
         /// <param name="resource">The resource to delete.</param>
         void Delete(T resource);
-
-        /// <summary>
-        ///     Retrieves the resource matching the specified <paramref name="id"/>.
-        /// </summary>
-        /// <param name="id">The id of the resource to retrieve.</param>
-        /// <returns>The resource matching the specified id.</returns>
-        T Get(Guid id);
 
         /// <summary>
         ///     Retrieves a list of all resources in the collection.

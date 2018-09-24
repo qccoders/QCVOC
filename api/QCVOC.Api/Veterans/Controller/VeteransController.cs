@@ -30,12 +30,12 @@ namespace QCVOC.Api.Veterans.Controller
         ///     Initializes a new instance of the <see cref="VeteransController"/> class.
         /// </summary>
         /// <param name="veteranRepository">The repository used for Veteran data access.</param>
-        public VeteransController(IRepository<Veteran> veteranRepository)
+        public VeteransController(ISingleKeyRepository<Veteran> veteranRepository)
         {
             VeteranRepository = veteranRepository;
         }
 
-        private IRepository<Veteran> VeteranRepository { get; set; }
+        private ISingleKeyRepository<Veteran> VeteranRepository { get; set; }
 
         /// <summary>
         ///     Returns a list of Veterans.
