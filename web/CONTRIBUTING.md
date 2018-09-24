@@ -60,7 +60,9 @@ On Windows, a browser should open and should navigate to the application.  By de
 
 ### Back End
 
-Open the project in the `api` folder in Visual Studio.  On the toolbar, click the drop-down button next to `IIS Express` and select `QCVOC.Api` from the resulting list.  This will tell Visual Studio to debug using the dotnet console command.  Click the debug (green arrow) button to start debugging.  A console should appear, displaying the following:
+To debug the back end locally, you'll need to create the environment variable `QCVOC_DbConnectionString` and set it to the connection string for the development database.  Visit us on Slack to discuss this.
+
+Open the project in the 'api' folder in Visual Studio.  On the toolbar, click the drop-down button next to 'IIS Express' and select 'QCVOC.Api' from the resulting list.  This will tell Visual Studio to debug using the dotnet console command.  Click the debug (green arrow) button to start debugging.  A console should appear, displaying the following:
 
 ```
 Hosting environment: Development
