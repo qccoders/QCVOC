@@ -13,7 +13,7 @@ import { Card, CardContent, Typography, CircularProgress } from '@material-ui/co
 
 const styles = {
     card: {
-        minHeight: 272,
+        height: 'calc(100vh - 115px)',
         maxWidth: 800,
         margin: 'auto',
     },
@@ -41,6 +41,7 @@ class Scanner extends Component {
 
     render() {
         let classes = this.props.classes;
+        let { loadApi, refreshApi } = this.state;
 
         return (
             <div className={classes.root}>
