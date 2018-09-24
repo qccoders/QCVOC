@@ -24,6 +24,7 @@ import Services from '../services/Services';
 import Events from '../events/Events';
 import LoginForm from '../security/LoginForm';
 import LinkList from './LinkList';
+import Scanner from '../scans/Scanner';
 import { CircularProgress, ListSubheader } from '@material-ui/core';
 import { getEnvironment } from '../util';
 
@@ -167,6 +168,7 @@ class App extends Component {
                                 <Route path='/veterans' component={Veterans}/>
                                 <Route path='/services' component={Services}/>
                                 <Route path='/events' component={Events}/>
+                                <Route path='/scanner' component={Scanner}/>
                             </Switch>
                         </div> :
                         <LoginForm onLogin={this.handleLogin}/>
