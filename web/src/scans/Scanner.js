@@ -10,6 +10,7 @@ import api from '../api';
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
+import { red, green, orange } from '@material-ui/core/colors';
 
 const styles = {
     card: {
@@ -37,16 +38,35 @@ class Scanner extends Component {
             isExecuting: false,
             isErrored: false,
         },
+        scan: {
+            result: undefined,
+            message: undefined,
+        },
+    }
+
+    getScanColor = (result) => {
+        switch(result) {
+            case undefined:
+                return undefined;
+            case 201:
+                return green['A700'];
+            case 200:
+                return orange['A700'];
+            default:
+                return red['A700'];
+        }
     }
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi } = this.state;
+        let { loadApi, refreshApi, scan } = this.state;
+
+        let color = this.getScanColor(scan.result);
 
         return (
             <div className={classes.root}>
                 <ContentWrapper api={loadApi}>
-                    <Card className={classes.card}>
+                    <Card className={classes.card} style={{backgroundColor: color}}>
                         <CardContent>
                             <Typography gutterBottom variant="headline" component="h2">
                                 Scanner
