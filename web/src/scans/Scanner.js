@@ -28,21 +28,23 @@ const styles = {
     },
 };
 
+const initialState = {
+    loadApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
+    refreshApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
+    scan: {
+        result: undefined,
+        message: undefined,
+    },
+}
+
 class Scanner extends Component {
-    state = {
-        loadApi: {
-            isExecuting: false,
-            isErrored: false,
-        },
-        refreshApi: {
-            isExecuting: false,
-            isErrored: false,
-        },
-        scan: {
-            result: undefined,
-            message: undefined,
-        },
-    }
+    state = initialState;
 
     getScanColor = (result) => {
         switch(result) {
@@ -58,7 +60,11 @@ class Scanner extends Component {
     }
 
     handleScan = (result, message) => {
-        this.setState({ scan: { result: result, message: message }}, );
+        this.setState({ scan: { result: result, message: message }}, () => {
+            setTimeout(() => {
+                this.setState({ scan: initialState.scan });
+            }, 2500);
+        });
     }
 
     render() {
