@@ -9,7 +9,7 @@ import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
+import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
 import { red, green, orange } from '@material-ui/core/colors';
 
 const styles = {
@@ -57,6 +57,10 @@ class Scanner extends Component {
         }
     }
 
+    handleScan = (result, message) => {
+        this.setState({ scan: { result: result, message: message }}, );
+    }
+
     render() {
         let classes = this.props.classes;
         let { loadApi, refreshApi, scan } = this.state;
@@ -74,7 +78,9 @@ class Scanner extends Component {
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <div>
-                                    Scan stuff here
+                                    <Button onClick={() => this.handleScan(200, 'Already scanned')}>200</Button>
+                                    <Button onClick={() => this.handleScan(201, 'Scan created')}>201</Button>
+                                    <Button onClick={() => this.handleScan(403, 'Bad scan')}>403</Button>
                                 </div>
                             }
                         </CardContent>
