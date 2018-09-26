@@ -79,7 +79,7 @@ namespace QCVOC.Api.Scans.Controller
         /// <response code="403">The Veteran has not checked in for the Event.</response>
         /// <response code="404">The specified Veteran, Event or Service was invalid.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
-        [HttpPost("")]
+        [HttpPut("")]
         [Authorize]
         [ProducesResponseType(typeof(Scan), 200)]
         [ProducesResponseType(typeof(Scan), 201)]
