@@ -9,10 +9,21 @@ import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
+import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
+import { SpeakerPhone } from '@material-ui/icons';
 import { red, green, orange } from '@material-ui/core/colors';
+import { isMobileAttached, initiateMobileScan } from '../mobile';
 
 const styles = {
+    fab: {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 20,
+        left: 'auto',
+        position: 'fixed',
+        zIndex: 1000
+    },
     card: {
         height: 'calc(100vh - 115px)',
         maxWidth: 800,
@@ -66,6 +77,15 @@ class Scanner extends Component {
         });
     }
 
+    handleScanClick = () => {
+        if (isMobileAttached()) {
+            initiateMobileScan();
+        }
+        else {
+            // TODO: manual input of barcode
+        }
+    }
+
     handleScanResponse = (response) => {
         this.setState({ scan: { result: response.status, message: response.body }}, () => {
             setTimeout(() => {
@@ -108,6 +128,14 @@ class Scanner extends Component {
                             }
                         </CardContent>
                     </Card>
+                    <Button 
+                        variant="fab" 
+                        color="secondary" 
+                        className={classes.fab}
+                        onClick={this.handleScanClick}
+                    >
+                        <SpeakerPhone/>
+                    </Button>
                 </ContentWrapper>
             </div>
         );
