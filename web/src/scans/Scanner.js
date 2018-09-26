@@ -9,7 +9,7 @@ import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
+import { Card, CardContent, Typography, CircularProgress } from '@material-ui/core';
 import { red, green, orange } from '@material-ui/core/colors';
 
 const styles = {
@@ -37,6 +37,10 @@ const initialState = {
         isExecuting: false,
         isErrored: false,
     },
+    scanner: {
+        event: 'c6cb5299-e1d7-440f-a5c7-fe4969d54e15',
+        service: undefined,
+    },
     scan: {
         result: undefined,
         message: undefined,
@@ -45,6 +49,30 @@ const initialState = {
 
 class Scanner extends Component {
     state = initialState;
+
+    componentDidMount = () => {
+        window.barcodeScanned = this.handleBarcodeScanned;
+    }
+
+    handleBarcodeScanned = (barcode) => {
+        let { event, service } = this.state.scanner;
+        let scan = { eventId: event, serviceId: service, cardNumber: barcode };
+
+        api.post('/v1/scans', scan)
+        .then(response => {
+            this.handleScanResponse(response);
+        }).catch(error => {
+            this.handleScanResponse(error.response);
+        });
+    }
+
+    handleScanResponse = (response) => {
+        this.setState({ scan: { result: response.status, message: response.body }}, () => {
+            setTimeout(() => {
+                this.setState({ scan: initialState.scan });
+            }, 2500);
+        });
+    }
 
     getScanColor = (result) => {
         switch(result) {
@@ -57,14 +85,6 @@ class Scanner extends Component {
             default:
                 return red['A700'];
         }
-    }
-
-    handleScan = (result, message) => {
-        this.setState({ scan: { result: result, message: message }}, () => {
-            setTimeout(() => {
-                this.setState({ scan: initialState.scan });
-            }, 2500);
-        });
     }
 
     render() {
@@ -84,9 +104,6 @@ class Scanner extends Component {
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <div>
-                                    <Button onClick={() => this.handleScan(200, 'Already scanned')}>200</Button>
-                                    <Button onClick={() => this.handleScan(201, 'Scan created')}>201</Button>
-                                    <Button onClick={() => this.handleScan(403, 'Bad scan')}>403</Button>
                                 </div>
                             }
                         </CardContent>
