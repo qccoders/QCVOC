@@ -58,7 +58,7 @@ class Scanner extends Component {
         let { event, service } = this.state.scanner;
         let scan = { eventId: event, serviceId: service, cardNumber: barcode };
 
-        api.post('/v1/scans', scan)
+        api.put('/v1/scans', scan)
         .then(response => {
             this.handleScanResponse(response);
         }).catch(error => {
