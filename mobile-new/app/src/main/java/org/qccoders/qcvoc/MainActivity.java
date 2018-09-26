@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         webview.setWebViewClient(new WebViewClient());
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
-        webview.loadUrl("http://dev.qcvoc.qccoders.org");
+		webview.loadUrl("http://dev.qcvoc.qccoders.org");
     }
 
     @JavascriptInterface
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MainActivity", barcode.displayValue);
 
             webview.evaluateJavascript(
-                    "window[barcodeScanned](" + barcode.displayValue + ");",
+                    "window.barcodeScanned(" + barcode.displayValue + ");",
                     null);
         }
     }
