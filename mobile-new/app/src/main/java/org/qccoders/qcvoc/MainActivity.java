@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         webview.setWebViewClient(new WebViewClient());
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
-		webview.loadUrl("http://dev.qcvoc.qccoders.org");
+        webview.loadUrl("http://qcvoc-dev.s3-website-us-east-1.amazonaws.com");
     }
 
     @JavascriptInterface
