@@ -137,9 +137,11 @@ namespace QCVOC.Api.Scans.Data.Repository
                     s.plusone, 
                     s.scandate, 
                     s.scanbyid,
-                    a.name AS scanby
+                    a.name AS scanby,
+                    v.firstname || ' ' || v.lastname AS veteran
                 FROM scans s
                 LEFT JOIN accounts a ON s.scanbyid = a.id
+                INNER JOIN veterans v ON s.veteranid = v.id
                 /**where**/
                 ORDER BY s.scandate {filters.OrderBy.ToString()}
                 LIMIT @limit OFFSET @offset
@@ -160,7 +162,8 @@ namespace QCVOC.Api.Scans.Data.Repository
                     .ApplyFilter(FilterType.Equals, "s.eventid", scanFilters.EventId)
                     .ApplyFilter(FilterType.Equals, "s.veteranid", scanFilters.VeteranId)
                     .ApplyFilter(FilterType.Equals, "s.serviceid", scanFilters.ServiceId)
-                    .ApplyFilter(FilterType.Equals, "s.plusone", scanFilters.PlusOne);
+                    .ApplyFilter(FilterType.Equals, "s.plusone", scanFilters.PlusOne)
+                    .ApplyFilter(FilterType.Equals, "v.firstname || ' ' || v.lastname", scanFilters.Veteran);
             }
 
             using (var db = ConnectionFactory.CreateConnection())
