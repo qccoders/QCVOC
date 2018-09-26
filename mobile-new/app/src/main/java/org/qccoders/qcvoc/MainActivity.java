@@ -45,17 +45,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data != null) {
-            KeyCharacterMap keymap = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD);
-
             Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-            String outputString = "^" + barcode.displayValue + "$";
-            KeyEvent[] outputKeyEvents = keymap.getEvents(outputString.toCharArray());
 
-            Log.d("MainActivity", outputString);
+            Log.d("MainActivity", barcode.displayValue);
 
-            for (int i = 0; i < outputKeyEvents.length; i++) {
-                dispatchKeyEvent(outputKeyEvents[i]);
-            }
+            webview.evaluateJavascript(
+                    "window[barcodeScanned](" + barcode.displayValue + ");",
+                    null);
         }
     }
 }
