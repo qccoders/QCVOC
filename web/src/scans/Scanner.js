@@ -11,9 +11,10 @@ import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
-import { SpeakerPhone } from '@material-ui/icons';
+import { SpeakerPhone, Today } from '@material-ui/icons';
 import { red, green, orange } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
+import EventList from '../events/EventList';
 
 const styles = {
     fab: {
@@ -50,7 +51,7 @@ const initialState = {
         isErrored: false,
     },
     scanner: {
-        event: 'c6cb5299-e1d7-440f-a5c7-fe4969d54e15',
+        event: undefined,
         service: undefined,
     },
     scan: {
@@ -71,7 +72,7 @@ class Scanner extends Component {
 
     handleBarcodeScanned = (barcode) => {
         let { event, service } = this.state.scanner;
-        let scan = { eventId: event, serviceId: service, cardNumber: barcode };
+        let scan = { eventId: event && event.id, serviceId: service && service.id, cardNumber: barcode };
 
         api.put('/v1/scans', scan)
         .then(response => {
@@ -129,11 +130,27 @@ class Scanner extends Component {
         }
     }
 
+    getTitle = (scanner) => {
+        let { event, service } = scanner;
+
+        if (event === undefined) return 'Select Event';
+        if (service === undefined) return 'Select Service';
+        return service.name;
+    }
+
+    handleEventItemClick = (event) => {
+        this.setState({ scanner: { ...this.state.scanner, event: event }});
+    }
+
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scan } = this.state;
+        let { loadApi, refreshApi, scanner, scan, events } = this.state;
 
         let color = this.getScanColor(scan.result);
+        let title = this.getTitle(scanner);
+
+        let eventSelected = scanner.event !== undefined;
+        let serviceSelected = scanner.service !== undefined;
 
         return (
             <div className={classes.root}>
@@ -141,23 +158,28 @@ class Scanner extends Component {
                     <Card className={classes.card} style={{backgroundColor: color}}>
                         <CardContent>
                             <Typography gutterBottom variant="headline" component="h2">
-                                Scanner
+                                {title}
                             </Typography>
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <div>
+                                    {!eventSelected && <EventList
+                                        events={events}
+                                        icon={<Today/>}
+                                        onItemClick={this.handleEventItemClick}
+                                    />}
                                 </div>
                             }
                         </CardContent>
                     </Card>
-                    <Button 
+                    {serviceSelected && <Button 
                         variant="fab" 
                         color="secondary" 
                         className={classes.fab}
                         onClick={this.handleScanClick}
                     >
                         <SpeakerPhone/>
-                    </Button>
+                    </Button>}
                 </ContentWrapper>
             </div>
         );
