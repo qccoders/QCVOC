@@ -15,6 +15,7 @@ import { SpeakerPhone, Today } from '@material-ui/icons';
 import { red, green, orange } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import EventList from '../events/EventList';
+import ServiceList from '../services/ServiceList';
 
 const styles = {
     fab: {
@@ -59,6 +60,7 @@ const initialState = {
         message: undefined,
     },
     events: [],
+    services: [],
 }
 
 class Scanner extends Component {
@@ -117,6 +119,21 @@ class Scanner extends Component {
         });
     }
 
+    fetchServices = (apiType) => {
+        this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
+            api.get('/v1/services')
+            .then(response => {
+                this.setState({ 
+                    services: response.data,
+                    [apiType]: { isExecuting: false, isErrored: false },
+                });
+            })
+            .catch(error => {
+                this.setState({ [apiType]: { isExecuting: false, isErrored: true }});
+            });
+        });
+    }
+
     getScanColor = (result) => {
         switch(result) {
             case undefined:
@@ -130,24 +147,31 @@ class Scanner extends Component {
         }
     }
 
-    getTitle = (scanner) => {
+    getSubtitle = (scanner) => {
         let { event, service } = scanner;
 
         if (event === undefined) return 'Select Event';
         if (service === undefined) return 'Select Service';
-        return service.name;
+        return service.name + ' Scanner';
     }
 
     handleEventItemClick = (event) => {
-        this.setState({ scanner: { ...this.state.scanner, event: event }});
+        this.setState({ scanner: { ...this.state.scanner, event: event }}, () => {
+            this.fetchServices('refreshApi');
+        });
+    }
+
+    handleServiceItemClick = (service) => {
+        this.setState({ scanner: { ...this.state.scanner, service: service }});
     }
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanner, scan, events } = this.state;
+        let { loadApi, refreshApi, scanner, scan, events, services } = this.state;
 
         let color = this.getScanColor(scan.result);
-        let title = this.getTitle(scanner);
+        let title = (scanner.service ? scanner.service + ' ' : '') + 'Scanner';
+        let subtitle = this.getSubtitle(scanner);
 
         let eventSelected = scanner.event !== undefined;
         let serviceSelected = scanner.service !== undefined;
@@ -160,6 +184,9 @@ class Scanner extends Component {
                             <Typography gutterBottom variant="headline" component="h2">
                                 {title}
                             </Typography>
+                            <Typography gutterBottom variant="headline" component="h2">
+                                {subtitle}
+                            </Typography>
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <div>
@@ -167,6 +194,10 @@ class Scanner extends Component {
                                         events={events}
                                         icon={<Today/>}
                                         onItemClick={this.handleEventItemClick}
+                                    />}
+                                    {!serviceSelected && eventSelected && <ServiceList
+                                        services={services}
+                                        onItemClick={this.handleServiceItemClick}
                                     />}
                                 </div>
                             }
