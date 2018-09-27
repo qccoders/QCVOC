@@ -6,6 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import api from '../api';
+import moment from 'moment';
 
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
@@ -56,6 +57,7 @@ const initialState = {
         result: undefined,
         message: undefined,
     },
+    events: [],
 }
 
 class Scanner extends Component {
@@ -63,6 +65,8 @@ class Scanner extends Component {
 
     componentDidMount = () => {
         window.barcodeScanned = this.handleBarcodeScanned;
+
+        this.fetchEvents('refreshApi');
     }
 
     handleBarcodeScanned = (barcode) => {
@@ -91,6 +95,24 @@ class Scanner extends Component {
             setTimeout(() => {
                 this.setState({ scan: initialState.scan });
             }, 2500);
+        });
+    }
+
+    fetchEvents = (apiType) => {
+        let start = moment().startOf('day').format();
+        let end = moment().endOf('day').format();
+
+        this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
+            api.get('/v1/events?dateStart=' + start + '&dateEnd=' + end)
+            .then(response => {
+                this.setState({ 
+                    events: response.data,
+                    [apiType]: { isExecuting: false, isErrored: false },
+                });
+            })
+            .catch(error => {
+                this.setState({ [apiType]: { isExecuting: false, isErrored: true }});
+            });
         });
     }
 
