@@ -147,12 +147,12 @@ class Scanner extends Component {
         }
     }
 
-    getSubtitle = (scanner) => {
+    getTitle = (scanner) => {
         let { event, service } = scanner;
 
         if (event === undefined) return 'Select Event';
         if (service === undefined) return 'Select Service';
-        return undefined;
+        return (scanner.service ? scanner.service.name + ' ' : '') + 'Scanner';
     }
 
     handleEventItemClick = (event) => {
@@ -170,8 +170,7 @@ class Scanner extends Component {
         let { loadApi, refreshApi, scanner, scan, events, services } = this.state;
 
         let color = this.getScanColor(scan.result);
-        let title = (scanner.service ? scanner.service.name + ' ' : '') + 'Scanner';
-        let subtitle = this.getSubtitle(scanner);
+        let title = this.getTitle(scanner);
 
         let eventSelected = scanner.event !== undefined;
         let serviceSelected = scanner.service !== undefined;
@@ -184,9 +183,6 @@ class Scanner extends Component {
                             <Typography gutterBottom variant="headline" component="h2">
                                 {title}
                             </Typography>
-                            {subtitle && <Typography gutterBottom variant="title" component="h2">
-                                {subtitle}
-                            </Typography>}
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <div>
