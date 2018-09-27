@@ -6,6 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { sortByProp } from '../util';
 
 const ServiceList = (props) => {
     let { services, onItemClick, icon } = props;
@@ -13,7 +14,7 @@ const ServiceList = (props) => {
 
     return (
         <List>
-            {services.map(s =>
+            {services.sort(sortByProp('name')).map(s =>
                 <ListItem
                     key={s.id}
                     button={clickable}

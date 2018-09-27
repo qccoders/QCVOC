@@ -16,8 +16,6 @@ import ServiceList from './ServiceList';
 import ServiceDialog from './ServiceDialog';
 import { Shop, Work } from '@material-ui/icons'
 
-import { sortByProp } from '../util'
-
 const styles = {
     fab: {
         margin: 0,
@@ -124,9 +122,7 @@ class Services extends Component {
 
     render() {
         let { classes } = this.props;
-        let { services, loadApi, refreshApi, snackbar, show, serviceDialog } = this.state;
-
-        services = services.sort(sortByProp('name'));
+        let { services, loadApi, refreshApi, snackbar, serviceDialog } = this.state;
 
         let userDefined = services.filter(s => s.id !== '00000000-0000-0000-0000-000000000000');
         let systemDefined = services.filter(s => s.id === '00000000-0000-0000-0000-000000000000');
