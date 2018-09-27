@@ -35,6 +35,7 @@ const ServiceList = (props) => {
             {systemDefined.map(s =>
                 <ListItem 
                     key={s.id}
+                    button={systemDefinedClickable}
                     onClick={systemDefinedClickable ? () => onItemClick(s) : undefined}
                 >
                     <ListItemIcon>
