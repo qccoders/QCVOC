@@ -9,13 +9,13 @@ import { List, ListItem, ListItemIcon, ListItemText, ListSubheader } from '@mate
 import { Shop, Work } from '@material-ui/icons'
 
 const ServiceList = (props) => {
-    let { services, onItemClick } = props;
+    let { services, onItemClick, showSubheaders, systemDefinedClickable } = props;
     let userDefined = services.filter(s => s.id !== '00000000-0000-0000-0000-000000000000');
     let systemDefined = services.filter(s => s.id === '00000000-0000-0000-0000-000000000000');
 
     return (
         <List>
-            {userDefined && userDefined.length > 0 && <ListSubheader>User Defined</ListSubheader>}
+            {showSubheaders && userDefined && userDefined.length > 0 && <ListSubheader>User Defined</ListSubheader>}
             {userDefined.map(s =>
                 <ListItem
                     key={s.id}
@@ -31,9 +31,12 @@ const ServiceList = (props) => {
                     />
                 </ListItem>
             )}
-            <ListSubheader>System Defined</ListSubheader>
+            {showSubheaders && <ListSubheader>System Defined</ListSubheader>}
             {systemDefined.map(s =>
-                <ListItem key={s.id}>
+                <ListItem 
+                    key={s.id}
+                    onClick={systemDefinedClickable ? () => onItemClick(s) : undefined}
+                >
                     <ListItemIcon>
                         <Work/>
                     </ListItemIcon>
@@ -50,6 +53,13 @@ const ServiceList = (props) => {
 ServiceList.propTypes = {
     services: PropTypes.array.isRequired,
     onItemClick: PropTypes.func.isRequired,
+    showSubheaders: PropTypes.bool,
+    systemDefinedClickable: PropTypes.bool,
+};
+
+ServiceList.defaultProps = {
+    showSubheaders: true,
+    systemDefinedClickable: false,
 };
 
 export default ServiceList;
