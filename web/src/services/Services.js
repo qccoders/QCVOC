@@ -14,6 +14,7 @@ import { Card, CardContent, Typography, CircularProgress, Button, ListSubheader 
 import { Add } from '@material-ui/icons';
 import ServiceList from './ServiceList';
 import ServiceDialog from './ServiceDialog';
+import { Shop, Work } from '@material-ui/icons'
 
 import { sortByProp } from '../util'
 
@@ -144,11 +145,13 @@ class Services extends Component {
                                     {userDefined && userDefined.length > 0 && <ListSubheader>User Defined</ListSubheader>}
                                     <ServiceList
                                         services={userDefined}
+                                        icon={<Shop/>}
                                         onItemClick={this.handleEditClick}
                                     />
                                     <ListSubheader>System Defined</ListSubheader>
                                     <ServiceList
                                         services={systemDefined}
+                                        icon={<Work/>}
                                     />
                                 </div>
                             }
