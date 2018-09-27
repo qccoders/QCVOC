@@ -197,6 +197,8 @@ class Scanner extends Component {
                                     />}
                                     {!serviceSelected && eventSelected && <ServiceList
                                         services={services}
+                                        showSubheaders={false}
+                                        systemDefinedClickable={true}
                                         onItemClick={this.handleServiceItemClick}
                                     />}
                                 </div>
