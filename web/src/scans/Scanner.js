@@ -11,7 +11,7 @@ import moment from 'moment';
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
-import { SpeakerPhone, Today } from '@material-ui/icons';
+import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
 import { red, green, orange } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import EventList from '../events/EventList';
@@ -193,8 +193,7 @@ class Scanner extends Component {
                                     />}
                                     {!serviceSelected && eventSelected && <ServiceList
                                         services={services}
-                                        showSubheaders={false}
-                                        systemDefinedClickable={true}
+                                        icon={<Shop/>}
                                         onItemClick={this.handleServiceItemClick}
                                     />}
                                 </div>
