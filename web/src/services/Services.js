@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import ContentWrapper from '../shared/ContentWrapper';
 import Snackbar from '@material-ui/core/Snackbar';
-import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
+import { Card, CardContent, Typography, CircularProgress, Button, ListSubheader } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import ServiceList from './ServiceList';
 import ServiceDialog from './ServiceDialog';
@@ -42,8 +42,6 @@ const styles = {
     },
 };
 
-const showCount = 7;
-
 class Services extends Component {
     state = {
         services: [],
@@ -64,7 +62,6 @@ class Services extends Component {
             message: '',
             open: false,
         },
-        show: showCount,
     }
 
     componentWillMount = () => {
@@ -89,10 +86,6 @@ class Services extends Component {
                 service: service,
             }
         })
-    }
-
-    handleShowMoreClick = () => {
-        this.setState({ show: this.state.show + showCount });
     }
 
     handleServiceDialogClose = (result) => {
@@ -132,9 +125,10 @@ class Services extends Component {
         let { classes } = this.props;
         let { services, loadApi, refreshApi, snackbar, show, serviceDialog } = this.state;
 
-        let list = services
-            .sort(sortByProp('name'))
-            .slice(0, show);
+        services = services.sort(sortByProp('name'));
+
+        let userDefined = services.filter(s => s.id !== '00000000-0000-0000-0000-000000000000');
+        let systemDefined = services.filter(s => s.id === '00000000-0000-0000-0000-000000000000');
 
         return (
             <div>
@@ -146,12 +140,18 @@ class Services extends Component {
                             </Typography>
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
-                                <ServiceList
-                                    services={list}
-                                    onItemClick={this.handleEditClick}
-                                />
+                                <div>
+                                    {userDefined && userDefined.length > 0 && <ListSubheader>User Defined</ListSubheader>}
+                                    <ServiceList
+                                        services={userDefined}
+                                        onItemClick={this.handleEditClick}
+                                    />
+                                    <ListSubheader>System Defined</ListSubheader>
+                                    <ServiceList
+                                        services={systemDefined}
+                                    />
+                                </div>
                             }
-                            {services.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                         </CardContent>
                     </Card>
                     <Button 
