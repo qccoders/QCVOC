@@ -62,8 +62,8 @@ const initialState = {
         service: undefined,
     },
     scan: {
-        result: undefined,
-        message: undefined,
+        status: undefined,
+        data: undefined,
     },
     events: [],
     services: [],
@@ -100,7 +100,7 @@ class Scanner extends Component {
     }
 
     handleScanResponse = (response) => {
-        this.setState({ scan: { result: response.status, message: response.body }}, () => {
+        this.setState({ scan: { status: response.status, data: response.data }}, () => {
             setTimeout(() => {
                 this.setState({ scan: initialState.scan });
             }, 2500);
@@ -140,8 +140,8 @@ class Scanner extends Component {
         });
     }
 
-    getScanColor = (result) => {
-        switch(result) {
+    getScanColor = (scan) => {
+        switch(scan.status) {
             case undefined:
                 return undefined;
             case 201:
@@ -161,6 +161,10 @@ class Scanner extends Component {
         return (scanner.service ? scanner.service.name + ' ' : '') + 'Scanner';
     }
 
+    getScanDisplay = (scan) => {
+        return <pre>{JSON.stringify(scan, null, 2)}</pre>;
+    }
+
     handleEventItemClick = (event) => {
         this.setState({ scanner: { ...this.state.scanner, event: event }}, () => {
             this.fetchServices('refreshApi');
@@ -175,8 +179,9 @@ class Scanner extends Component {
         let classes = this.props.classes;
         let { loadApi, refreshApi, scanner, scan, events, services } = this.state;
 
-        let color = this.getScanColor(scan.result);
         let title = this.getTitle(scanner);
+        let color = this.getScanColor(scan);
+        let display = this.getScanDisplay(scan);
 
         let eventSelected = scanner.event !== undefined;
         let serviceSelected = scanner.service !== undefined;
@@ -208,7 +213,9 @@ class Scanner extends Component {
                                     }
                                     {serviceSelected && eventSelected &&
                                         <div className={classes.displayBox}>
-                                            <Button disabled>Ready to Scan</Button>
+                                            {!scan.status ? <Button disabled>Ready to Scan</Button> :
+                                                display
+                                            }
                                         </div>
                                     }
                                 </div>
