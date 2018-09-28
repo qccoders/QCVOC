@@ -12,7 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
-import { red, green, orange } from '@material-ui/core/colors';
+import { red, green, yellow } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import EventList from '../events/EventList';
 import ServiceList from '../services/ServiceList';
@@ -147,7 +147,7 @@ class Scanner extends Component {
             case 201:
                 return green['A700'];
             case 200:
-                return orange['A700'];
+                return yellow['A700'];
             default:
                 return red['A700'];
         }
