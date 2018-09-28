@@ -12,7 +12,7 @@ import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
-import { red, green, orange } from '@material-ui/core/colors';
+import { red, green, yellow } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import EventList from '../events/EventList';
 import ServiceList from '../services/ServiceList';
@@ -62,8 +62,8 @@ const initialState = {
         service: undefined,
     },
     scan: {
-        result: undefined,
-        message: undefined,
+        status: undefined,
+        data: undefined,
     },
     events: [],
     services: [],
@@ -100,7 +100,7 @@ class Scanner extends Component {
     }
 
     handleScanResponse = (response) => {
-        this.setState({ scan: { result: response.status, message: response.body }}, () => {
+        this.setState({ scan: { status: response.status, data: response.data }}, () => {
             setTimeout(() => {
                 this.setState({ scan: initialState.scan });
             }, 2500);
@@ -140,14 +140,14 @@ class Scanner extends Component {
         });
     }
 
-    getScanColor = (result) => {
-        switch(result) {
+    getScanColor = (scan) => {
+        switch(scan.status) {
             case undefined:
                 return undefined;
             case 201:
                 return green['A700'];
             case 200:
-                return orange['A700'];
+                return yellow['A700'];
             default:
                 return red['A700'];
         }
@@ -159,6 +159,10 @@ class Scanner extends Component {
         if (event === undefined) return 'Select Event';
         if (service === undefined) return 'Select Service';
         return (scanner.service ? scanner.service.name + ' ' : '') + 'Scanner';
+    }
+
+    getScanDisplay = (scan) => {
+        return <pre>{JSON.stringify(scan, null, 2)}</pre>;
     }
 
     handleEventItemClick = (event) => {
@@ -175,8 +179,9 @@ class Scanner extends Component {
         let classes = this.props.classes;
         let { loadApi, refreshApi, scanner, scan, events, services } = this.state;
 
-        let color = this.getScanColor(scan.result);
         let title = this.getTitle(scanner);
+        let color = this.getScanColor(scan);
+        let display = this.getScanDisplay(scan);
 
         let eventSelected = scanner.event !== undefined;
         let serviceSelected = scanner.service !== undefined;
@@ -208,7 +213,9 @@ class Scanner extends Component {
                                     }
                                     {serviceSelected && eventSelected &&
                                         <div className={classes.displayBox}>
-                                            <Button disabled>Ready to Scan</Button>
+                                            {!scan.status ? <Button disabled>Ready to Scan</Button> :
+                                                display
+                                            }
                                         </div>
                                     }
                                 </div>
