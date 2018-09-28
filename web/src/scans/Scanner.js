@@ -208,9 +208,7 @@ class Scanner extends Component {
                                     }
                                     {serviceSelected && eventSelected &&
                                         <div className={classes.displayBox}>
-                                            <Typography variant="caption" gutterBottom style={{textAlign: 'center'}}>
-                                                Ready to Scan
-                                            </Typography>
+                                            <Button disabled>Ready to Scan</Button>
                                         </div>
                                     }
                                 </div>
