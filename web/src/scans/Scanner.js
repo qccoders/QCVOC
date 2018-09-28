@@ -40,6 +40,12 @@ const styles = {
         marginRight: 'auto',
         marginTop: 68,
     },
+    displayBox: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 'calc(100vh - 188px)',
+    },
 };
 
 const initialState = {
@@ -186,16 +192,27 @@ class Scanner extends Component {
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <div>
-                                    {!eventSelected && <EventList
-                                        events={events}
-                                        icon={<Today/>}
-                                        onItemClick={this.handleEventItemClick}
-                                    />}
-                                    {!serviceSelected && eventSelected && <ServiceList
-                                        services={services}
-                                        icon={<Shop/>}
-                                        onItemClick={this.handleServiceItemClick}
-                                    />}
+                                    {!eventSelected && 
+                                        <EventList
+                                            events={events}
+                                            icon={<Today/>}
+                                            onItemClick={this.handleEventItemClick}
+                                        />
+                                    }
+                                    {!serviceSelected && eventSelected && 
+                                        <ServiceList
+                                            services={services}
+                                            icon={<Shop/>}
+                                            onItemClick={this.handleServiceItemClick}
+                                        />
+                                    }
+                                    {serviceSelected && eventSelected &&
+                                        <div className={classes.displayBox}>
+                                            <Typography variant="caption" gutterBottom style={{textAlign: 'center'}}>
+                                                Ready to Scan
+                                            </Typography>
+                                        </div>
+                                    }
                                 </div>
                             }
                         </CardContent>
