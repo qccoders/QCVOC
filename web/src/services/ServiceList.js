@@ -5,37 +5,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { List, ListItem, ListItemIcon, ListItemText, ListSubheader } from '@material-ui/core';
-import { Shop, Work } from '@material-ui/icons'
+import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { sortByProp } from '../util';
 
 const ServiceList = (props) => {
-    let { services, onItemClick } = props;
-    let userDefined = services.filter(s => s.id !== '00000000-0000-0000-0000-000000000000');
-    let systemDefined = services.filter(s => s.id === '00000000-0000-0000-0000-000000000000');
+    let { services, onItemClick, icon } = props;
+    let clickable = onItemClick !== undefined;
 
     return (
         <List>
-            {userDefined && userDefined.length > 0 && <ListSubheader>User Defined</ListSubheader>}
-            {userDefined.map(s =>
+            {services.sort(sortByProp('name')).map(s =>
                 <ListItem
                     key={s.id}
-                    button
-                    onClick={() => onItemClick(s)}
+                    button={clickable}
+                    onClick={clickable ? () => onItemClick(s) : undefined}
                 >
                     <ListItemIcon>
-                        <Shop/>
-                    </ListItemIcon>
-                    <ListItemText
-                        primary={s.name}
-                        secondary={s.description}
-                    />
-                </ListItem>
-            )}
-            <ListSubheader>System Defined</ListSubheader>
-            {systemDefined.map(s =>
-                <ListItem key={s.id}>
-                    <ListItemIcon>
-                        <Work/>
+                        {icon}
                     </ListItemIcon>
                     <ListItemText
                         primary={s.name}
@@ -50,6 +36,7 @@ const ServiceList = (props) => {
 ServiceList.propTypes = {
     services: PropTypes.array.isRequired,
     onItemClick: PropTypes.func.isRequired,
+    icon: PropTypes.object.isRequired,
 };
 
 export default ServiceList;
