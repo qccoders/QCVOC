@@ -160,9 +160,9 @@ namespace QCVOC.Api.Events.Data.Repository
                     var dates = new { start = eventFilters.DateStart, end = eventFilters.DateEnd };
 
                     builder
-                        .Where("e.startdate BETWEEN @start AND @end", dates)
+                        .OrWhere("e.startdate BETWEEN @start AND @end", dates)
                         .OrWhere("e.enddate BETWEEN @start AND @end", dates)
-                        .OrWhere("(e.startdate < @start AND e.enddate > @end)", dates);
+                        .OrWhere("e.startdate < @start AND e.enddate > @end", dates);
                 }
             }
 
