@@ -26,26 +26,6 @@ namespace QCVOC.Api.Veterans
         public string Email { get; set; }
 
         /// <summary>
-        ///     Gets the name of the user which enrolled the Veteran.
-        /// </summary>
-        public string EnrollmentBy { get; }
-
-        /// <summary>
-        ///     The id of the user which enrolled the Veteran.
-        /// </summary>
-        public string EnrollmentById { get; set; }
-
-        /// <summary>
-        ///     The starting time of an enrollment date range.
-        /// </summary>
-        public DateTime? EnrollmentDateStart { get; set; }
-
-        /// <summary>
-        ///     The ending time of an enrollment date range.
-        /// </summary>
-        public DateTime? EnrollmentDateEnd { get; set; }
-
-        /// <summary>
         ///     The first name of the Veteran.
         /// </summary>
         public string FirstName { get; set; }
@@ -59,26 +39,6 @@ namespace QCVOC.Api.Veterans
         ///     The last name of the Veteran.
         /// </summary>
         public string LastName { get; set; }
-
-        /// <summary>
-        ///     The starting time of a last updated date range.
-        /// </summary>
-        public DateTime? LastUpdateDateStart { get; set; }
-
-        /// <summary>
-        ///     The ending time of a last updated date range.
-        /// </summary>
-        public DateTime? LastUpdateDateEnd { get; set; }
-
-        /// <summary>
-        ///     The name of the user which performed the last update.
-        /// </summary>
-        public string LastUpdateBy { get; set; }
-
-        /// <summary>
-        ///     The id of the user which performed the last update.
-        /// </summary>
-        public Guid? LastUpdateById { get; set; }
 
         /// <summary>
         ///     The number of the card presently assigned to the Veteran.

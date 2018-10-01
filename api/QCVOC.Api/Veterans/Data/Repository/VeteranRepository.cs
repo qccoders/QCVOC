@@ -188,16 +188,9 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 builder
                     .ApplyFilter(FilterType.Equals, "v.address", veteranFilters.Address)
                     .ApplyFilter(FilterType.Equals, "v.email", veteranFilters.Email)
-                    .ApplyFilter(FilterType.Between, "v.enrollmentdate", veteranFilters.EnrollmentDateStart, veteranFilters.EnrollmentDateEnd)
-                    .ApplyFilter(FilterType.Equals, "v.enrollmentbyid", veteranFilters.EnrollmentById)
-                    .ApplyFilter(FilterType.Equals, "enrollmentby", veteranFilters.EnrollmentBy)
                     .ApplyFilter(FilterType.Equals, "v.firstname", veteranFilters.FirstName)
                     .ApplyFilter(FilterType.Equals, "v.id", veteranFilters.Id)
                     .ApplyFilter(FilterType.Equals, "v.lastname", veteranFilters.LastName)
-                    .ApplyFilter(FilterType.Between, "v.lastupdatedate", veteranFilters.LastUpdateDateStart, veteranFilters.LastUpdateDateEnd)
-                    .ApplyFilter(FilterType.Equals, "a.name", veteranFilters.LastUpdateBy)
-                    .ApplyFilter(FilterType.Equals, "v.lastupdatebyid", veteranFilters.LastUpdateById)
-                    .ApplyFilter(FilterType.Equals, "lastupdateby", veteranFilters.LastUpdateBy)
                     .ApplyFilter(FilterType.Equals, "v.cardnumber", veteranFilters.CardNumber)
                     .ApplyFilter(FilterType.Equals, "v.primaryphone", veteranFilters.PrimaryPhone)
                     .ApplyFilter(FilterType.In, "v.verificationmethod", veteranFilters.VerificationMethod?.ToString());
