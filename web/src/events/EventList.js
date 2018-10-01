@@ -33,9 +33,9 @@ const EventList = (props) => {
 
     return (
         <List>
-            {events.sort(sortByProp('startDate')).map(e => 
+            {events.sort(sortByProp('startDate')).map((e, index) => 
                 <ListItem 
-                    key={e.id}
+                    key={index}
                     button={onItemClick !== undefined && userCanView() }
                     onClick={onItemClick !== undefined && userCanView() ? () => onItemClick(e) : () => {}}
                 >
