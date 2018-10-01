@@ -165,7 +165,23 @@ class Scanner extends Component {
         return <pre>{JSON.stringify(scan, null, 2)}</pre>;
     }
 
+    getDailyEvent = () => {
+        let start = moment().startOf('day').add(8, 'hours');
+        let end = moment().startOf('day').add(8, 'hours').add(7, 'hours');
+
+        return {
+            id: undefined,
+            name: 'Daily Event for ' + start.format('M/DD/YY'),
+            startDate: start.format(),
+            endDate: end.format(),
+        };
+    }
+
     handleEventItemClick = (event) => {
+        if (event.id === undefined) {
+            console.log('create event here');
+        }
+
         this.setState({ scanner: { ...this.state.scanner, event: event }}, () => {
             this.fetchServices('refreshApi');
         });
@@ -185,6 +201,8 @@ class Scanner extends Component {
 
         let eventSelected = scanner.event !== undefined;
         let serviceSelected = scanner.service !== undefined;
+
+        events = events.concat(this.getDailyEvent());
 
         return (
             <div className={classes.root}>
