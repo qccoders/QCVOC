@@ -172,13 +172,7 @@ namespace QCVOC.Api.Services.Data.Repository
                 builder
                     .ApplyFilter(FilterType.Equals, "s.id", serviceFilters.Id)
                     .ApplyFilter(FilterType.Equals, "s.name", serviceFilters.Name)
-                    .ApplyFilter(FilterType.Equals, "s.description", serviceFilters.Description)
-                    .ApplyFilter(FilterType.Equals, "creationby", serviceFilters.CreationBy)
-                    .ApplyFilter(FilterType.Equals, "creationbyid", serviceFilters.CreationById)
-                    .ApplyFilter(FilterType.Between, "creationdate", serviceFilters.CreationDateStart, serviceFilters.CreationDateEnd)
-                    .ApplyFilter(FilterType.Equals, "lastupdateby", serviceFilters.LastUpdateBy)
-                    .ApplyFilter(FilterType.Equals, "lastupdatebyid", serviceFilters.LastUpdateById)
-                    .ApplyFilter(FilterType.Between, "lastupdatedate", serviceFilters.LastUpdateDateStart, serviceFilters.LastUpdateDateEnd);
+                    .ApplyFilter(FilterType.Equals, "s.description", serviceFilters.Description);
             }
 
             using (var db = ConnectionFactory.CreateConnection())

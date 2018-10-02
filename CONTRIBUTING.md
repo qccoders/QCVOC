@@ -14,9 +14,9 @@ This project is maintained for free and for a non profit organization, and we re
 
 ## Contribution Workflow
 
-1. Assign yourself to the issue that you'll be working on.  If there's no issue, your pull request is likely
-   to be rejected until one is created and prioritized.  Move the issue into the 'In progress' column on the project
-   board, if you have the necessary access.
+1. Assign yourself to the issue that you'll be working on.  Move the issue into the 'In progress' column on the project
+   board, if you have the necessary access.  If there's no issue associated with the work you'd like to do, your pull request is likely
+   to be rejected until one is created and prioritized.  
 2. Clone the repository and `git checkout develop` to ensure you are on the development branch.
 3. Create a new branch for your change with `git checkout -b <your-branch-name>` be descriptive, but terse.
 4. Make your changes.  When finished, push your branch with `git push origin --set-upstream <your-branch-name>`.
@@ -48,7 +48,7 @@ You're free to use whichever development tools you prefer.  If you don't yet hav
 ## Debugging
 ### Front End
 
-Front debugging is most easily expressed as a series of console commands, executed from the root folder of the repository:
+Front end debugging is most easily expressed as a series of console commands, executed from the root folder of the repository:
 
 ```
 cd web
@@ -56,8 +56,22 @@ npm install
 npm start
 ```
 
-On Windows, a browser should open and should navigate to the application.  By default the development back end will be used for debugging.
+On Windows, a browser should open and should navigate to the application.  By default the development environment will be used for debugging.
 
 ### Back End
 
-TBD
+To debug the back end locally, you'll need to create the environment variable `QCVOC_DbConnectionString` and set it to the connection string for the development database.  Visit us on Slack to discuss this.
+
+Open the project in the 'api' folder in Visual Studio.  On the toolbar, click the drop-down button next to 'IIS Express' and select 'QCVOC.Api' from the resulting list.  This will tell Visual Studio to debug using the dotnet console command.  Click the debug (green arrow) button to start debugging.  A console should appear, displaying the following:
+
+```
+Hosting environment: Development
+Content root path: C:\Users\JP.WHATNET\source\QCVOC\api\QCVOC.Api
+Now listening on: https://localhost:5001
+Now listening on: http://localhost:5000
+Application started. Press Ctrl+C to shut down.
+```
+
+Open a browser and navigate to http://localhost:5000/swagger to interact with the api via Swagger UI.
+
+Expand the `/security/login` POST operation and execute it, providing your credentials.  Copy the `accessToken` value from the result, then click on the green 'Authorize' button near the top of the screen to set your session authorization.  Enter `Bearer <accessToken>` into the box and click Login.  All future requests will be authenticated using this token.
