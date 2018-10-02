@@ -165,9 +165,40 @@ class Scanner extends Component {
         return <pre>{JSON.stringify(scan, null, 2)}</pre>;
     }
 
+    getDailyEvent = () => {
+        let start = moment().startOf('day').add(8, 'hours');
+        let end = moment().startOf('day').add(8, 'hours').add(7, 'hours');
+
+        return {
+            id: undefined,
+            name: 'Daily Event for ' + start.format('M/DD/YY'),
+            startDate: start.format(),
+            endDate: end.format(),
+        };
+    }
+
     handleEventItemClick = (event) => {
-        this.setState({ scanner: { ...this.state.scanner, event: event }}, () => {
-            this.fetchServices('refreshApi');
+        new Promise((resolve, reject) => {
+            if (event.id === undefined) {
+                this.setState({ 
+                    refreshApi: { ...this.state.refreshApi, isExecuting: true }                   
+                }, () => {
+                    api.post('/v1/events', event)
+                    .then(response => {
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        reject(error.response);
+                    });
+                });
+            }
+            else {
+                resolve(event);
+            }
+        }).then(event => {
+            this.setState({ scanner: { ...this.state.scanner, event: event }}, () => {
+                this.fetchServices('refreshApi');
+            });
         });
     }
 
@@ -185,6 +216,13 @@ class Scanner extends Component {
 
         let eventSelected = scanner.event !== undefined;
         let serviceSelected = scanner.service !== undefined;
+
+        let dailyEvent = this.getDailyEvent();
+        let dailyEventExists = events.find(e => e.name === dailyEvent.name);
+
+        if (dailyEventExists === undefined) {
+            events = events.concat(dailyEvent);
+        }
 
         return (
             <div className={classes.root}>
