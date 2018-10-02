@@ -14,9 +14,9 @@ const ServiceList = (props) => {
 
     return (
         <List>
-            {services.sort(sortByProp('name')).map(s =>
+            {services.sort(sortByProp('name')).map((s, index) =>
                 <ListItem
-                    key={s.id}
+                    key={index}
                     button={clickable}
                     onClick={clickable ? () => onItemClick(s) : undefined}
                 >
