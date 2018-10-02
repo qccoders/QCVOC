@@ -47,10 +47,12 @@ const styles = {
         height: 'calc(100vh - 188px)',
     },
     iconMenu: {
-        position: 'absolute',
-        right: 0,
-        top: 10,
+        float: 'right',
+        marginTop: -8,
     },
+    title: {
+        display: 'inline',
+    }
 };
 
 const initialState = {
@@ -235,7 +237,7 @@ class Scanner extends Component {
                     <Card className={classes.card} style={{backgroundColor: color}}>
                         <CardContent>
                             <div>
-                                <Typography gutterBottom variant="headline" component="h2" classname={classes.title}>
+                                <Typography gutterBottom variant="headline" component="h2" className={classes.title}>
                                     {title}
                                 </Typography>
                                 <IconButton className={classes.iconMenu}>
