@@ -156,11 +156,7 @@ namespace QCVOC.Api.Security.Data.Repository
                     .ApplyFilter(FilterType.Equals, "a1.id", accountFilters.Id)
                     .ApplyFilter(FilterType.Equals, "a1.name", accountFilters.Name)
                     .ApplyFilter(FilterType.Equals, "a1.passwordresetrequired", accountFilters.PasswordResetRequired)
-                    .ApplyFilter(FilterType.Equals, "a1.role", accountFilters.Role?.ToString())
-                    .ApplyFilter(FilterType.Between, "a1.creationdate", accountFilters.CreationDateStart, accountFilters.CreationDateEnd)
-                    .ApplyFilter(FilterType.Equals, "a1.creationbyid", accountFilters.CreationById)
-                    .ApplyFilter(FilterType.Between, "a1.lastupdatedate", accountFilters.LastUpdateDateStart, accountFilters.LastUpdateDateEnd)
-                    .ApplyFilter(FilterType.Equals, "a1.lastupdatebyid", accountFilters.LastUpdateById);
+                    .ApplyFilter(FilterType.Equals, "a1.role", accountFilters.Role?.ToString());
             }
 
             using (var db = ConnectionFactory.CreateConnection())
