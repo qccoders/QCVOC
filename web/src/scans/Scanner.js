@@ -178,12 +178,27 @@ class Scanner extends Component {
     }
 
     handleEventItemClick = (event) => {
-        if (event.id === undefined) {
-            console.log('create event here');
-        }
-
-        this.setState({ scanner: { ...this.state.scanner, event: event }}, () => {
-            this.fetchServices('refreshApi');
+        new Promise((resolve, reject) => {
+            if (event.id === undefined) {
+                this.setState({ 
+                    refreshApi: { ...this.state.refreshApi, isExecuting: true }                   
+                }, () => {
+                    api.post('/v1/events', event)
+                    .then(response => {
+                        resolve(response.data);
+                    })
+                    .catch(error => {
+                        reject(error.response);
+                    });
+                });
+            }
+            else {
+                resolve(event);
+            }
+        }).then(event => {
+            this.setState({ scanner: { ...this.state.scanner, event: event }}, () => {
+                this.fetchServices('refreshApi');
+            });
         });
     }
 
@@ -202,7 +217,12 @@ class Scanner extends Component {
         let eventSelected = scanner.event !== undefined;
         let serviceSelected = scanner.service !== undefined;
 
-        events = events.concat(this.getDailyEvent());
+        let dailyEvent = this.getDailyEvent();
+        let dailyEventExists = events.find(e => e.name === dailyEvent.name);
+
+        if (dailyEventExists === undefined) {
+            events = events.concat(dailyEvent);
+        }
 
         return (
             <div className={classes.root}>
