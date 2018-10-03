@@ -6,32 +6,50 @@
 package org.qccoders.qcvoc;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyCharacterMap;
-import android.view.KeyEvent;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity;
 import com.google.android.gms.vision.barcode.Barcode;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webview;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        progressBar = findViewById(R.id.loading_spinner);
+        progressBar.setVisibility(View.GONE);
+
         webview = findViewById(R.id.webView);
+        webview.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                super.onPageStarted(view, url, favicon);
+                progressBar.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                progressBar.setVisibility(View.GONE);
+            }
+        });
+
         webview.addJavascriptInterface(this, "Android");
-        webview.setWebViewClient(new WebViewClient());
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
-        webview.loadUrl("http://dev.qcvoc.qccoders.org");
+        webview.loadUrl("http://qcvoc-dev.s3-website-us-east-1.amazonaws.com");
     }
 
     @JavascriptInterface
@@ -45,17 +63,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data != null) {
-            KeyCharacterMap keymap = KeyCharacterMap.load(KeyCharacterMap.VIRTUAL_KEYBOARD);
-
             Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-            String outputString = "^" + barcode.displayValue + "$";
-            KeyEvent[] outputKeyEvents = keymap.getEvents(outputString.toCharArray());
 
-            Log.d("MainActivity", outputString);
+            Log.d("MainActivity", barcode.displayValue);
 
-            for (int i = 0; i < outputKeyEvents.length; i++) {
-                dispatchKeyEvent(outputKeyEvents[i]);
-            }
+            webview.evaluateJavascript(
+                    "window.barcodeScanned(" + barcode.displayValue + ");",
+                    null);
         }
     }
 }
