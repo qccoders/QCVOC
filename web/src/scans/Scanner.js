@@ -16,6 +16,7 @@ import { red, green, yellow } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import EventList from '../events/EventList';
 import ServiceList from '../services/ServiceList';
+import ScannerMenu from './ScannerMenu';
 
 const styles = {
     fab: {
@@ -240,9 +241,7 @@ class Scanner extends Component {
                                 <Typography gutterBottom variant="headline" component="h2" className={classes.title}>
                                     {title}
                                 </Typography>
-                                <IconButton className={classes.iconMenu}>
-                                    <MoreVert/>
-                                </IconButton>
+                                <ScannerMenu/>
                             </div>
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
