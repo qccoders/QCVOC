@@ -10,8 +10,8 @@ import moment from 'moment';
 
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress, Button, IconButton } from '@material-ui/core';
-import { SpeakerPhone, Today, Shop, MoreVert } from '@material-ui/icons';
+import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
+import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
 import { red, green, yellow } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import EventList from '../events/EventList';
@@ -46,10 +46,6 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         height: 'calc(100vh - 188px)',
-    },
-    iconMenu: {
-        float: 'right',
-        marginTop: -8,
     },
     title: {
         display: 'inline',
@@ -238,6 +234,7 @@ class Scanner extends Component {
                     <Card className={classes.card} style={{backgroundColor: color}}>
                         <CardContent>
                             <div>
+                                {/* todo: move this to a component */}
                                 <Typography gutterBottom variant="headline" component="h2" className={classes.title}>
                                     {title}
                                 </Typography>
