@@ -50,7 +50,7 @@ export const validateEmail = (email) => {
 
 export const validatePhoneNumber = (phoneNumber) => {
     // eslint-disable-next-line
-    var re = /\(\d{3}\) \d{3}-\d{4}/;
+    var re = /^[1-9][0-9]{9}$/;
     return re.test(phoneNumber);
 }
 

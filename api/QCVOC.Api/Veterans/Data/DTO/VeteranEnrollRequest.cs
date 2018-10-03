@@ -49,7 +49,7 @@ namespace QCVOC.Api.Veterans.Data.DTO
         ///     Gets or sets the primary phone number of the Veteran.
         /// </summary>
         [Required]
-        [Phone]
+        [RegularExpression(@"^[1-9][0-9]{9}$")]
         public string PrimaryPhone { get; set; }
 
         /// <summary>
