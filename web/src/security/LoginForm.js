@@ -66,10 +66,6 @@ const initialState = {
         isExecuting: false,
         isErrored: false,
     },
-    validation: {
-        name: undefined,
-        password: undefined,
-    },
     snackbar: {
         message: '',
         open: false,
@@ -91,10 +87,6 @@ class LoginForm extends Component {
         this.setState({ 
             ...this.state, 
             [field]: value,
-            validation: {
-                ...this.state.validation,
-                [field]: undefined,
-            },
         });
     }
 
@@ -105,7 +97,6 @@ class LoginForm extends Component {
     handleLoginClick = () => {
         this.setState({ 
             api: { isExecuting: true },
-            validation: { name: undefined, password: undefined },
             
         }, () => {
             axios.post(getEnvironment().apiRoot + '/v1/security/login', this.state)
@@ -115,23 +106,8 @@ class LoginForm extends Component {
                 }, 
                 error => {
                     this.setState({ api: { isExecuting: false, isErrored: true }}, () => {
-                        if (error.response && error.response.status === 400) {
-                            if (error.response.data) {
-                                let validation = this.state.validation;
-
-                                if (error.response.data.Password && error.response.data.Password.length > 0) {
-                                    validation.password = error.response.data.Password[0];
-                                    this.passwordInput.focus();
-                                }
-                                if (error.response.data.Name && error.response.data.Name.length > 0) {
-                                    validation.name = error.response.data.Name[0];
-                                    this.nameInput.focus();
-                                }
-
-                                this.setState({ validation: validation });
-                            }
-                        }
-                        else if (error.response && error.response.status === 401) {
+                        if (error.response
+                            && (error.response.status === 400 || error.response.status === 401)) {
                             this.setState({ 
                                 password: '', 
                                 snackbar: { 
@@ -177,8 +153,6 @@ class LoginForm extends Component {
                             label="Name"
                             className={classes.textField}
                             value={this.state.name}
-                            error={this.state.validation.name !== undefined}
-                            helperText={this.state.validation.name}
                             margin="normal"
                             disabled={isExecuting}
                             onChange={(event) => this.handleChange('name', event.target.value)}
@@ -193,8 +167,6 @@ class LoginForm extends Component {
                             autoComplete="current-password"
                             margin="normal"
                             disabled={isExecuting}
-                            error={this.state.validation.password !== undefined}
-                            helperText={this.state.validation.password}
                             onChange={(event) => this.handleChange('password', event.target.value)}
                             inputRef={ref => this.passwordInput = ref}
                         />
