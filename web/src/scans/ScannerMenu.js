@@ -8,7 +8,7 @@ import PropTypes from 'proptypes';
 import { withStyles } from '@material-ui/core/styles';
 
 import IconButton from '@material-ui/core/IconButton';
-import { LockOpen, MoreVert }  from '@material-ui/icons';
+import { MoreVert, Replay }  from '@material-ui/icons';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
@@ -67,7 +67,7 @@ class ScannerMenu extends Component {
                 >
                     <MenuItem onClick={this.handleResetPasswordClick}>
                         <ListItemIcon>
-                            <LockOpen/>
+                            <Replay/>
                         </ListItemIcon>
                         <ListItemText>
                             Reset Scanner
