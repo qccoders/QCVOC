@@ -5,6 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'proptypes';
+import { withStyles } from '@material-ui/core/styles';
 
 import IconButton from '@material-ui/core/IconButton';
 import { LockOpen, MoreVert }  from '@material-ui/icons';
@@ -15,17 +16,7 @@ const styles = {
     container: {
         display: 'inline',
     },
-    caption: {
-        marginRight: 5,
-        display: 'inline'
-    },
-    icon: {
-        fontSize: 29,
-    },
-    menu: {
-        marginTop: 40,
-    },
-    iconMenu: {
+    iconButton: {
         float: 'right',
         marginTop: -8,
     },
@@ -57,13 +48,14 @@ class ScannerMenu extends Component {
     }
 
     render() {
+        let { classes } = this.props;
         let { menu } = this.state;
 
         return (
-            <div style={styles.container}>
+            <div className={classes.container}>
                 <IconButton
                     color="inherit"
-                    style={styles.iconMenu}
+                    className={classes.iconButton}
                     onClick={this.handleMenuClick}
                 >
                     <MoreVert/>
@@ -72,7 +64,6 @@ class ScannerMenu extends Component {
                     open={menu.open}
                     anchorEl={menu.anchorEl}
                     onClose={this.handleMenuClose}
-                    style={styles.menu}
                 >
                     <MenuItem onClick={this.handleResetPasswordClick}>
                         <ListItemIcon>
@@ -102,4 +93,4 @@ ScannerMenu.propTypes = {
     onReset: PropTypes.func.isRequired,
 }
 
-export default ScannerMenu; 
+export default withStyles(styles)(ScannerMenu); 
