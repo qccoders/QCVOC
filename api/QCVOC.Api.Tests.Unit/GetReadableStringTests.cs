@@ -15,6 +15,7 @@
 
             Assert.Equal(string.Empty, result);
         }
+
         [Fact]
         public void SingleError()
         {
