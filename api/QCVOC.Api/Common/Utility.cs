@@ -179,7 +179,7 @@ namespace QCVOC.Api.Common
         /// <returns>The formatted error string.</returns>
         public static string GetReadableString(this ModelStateDictionary dictionary)
         {
-            if (dictionary.IsValid)
+            if (dictionary == null || dictionary.IsValid)
             {
                 return string.Empty;
             }
