@@ -47,6 +47,16 @@ class ScannerMenu extends Component {
         this.setState({ confirmDialog: { open: false }});
     }
 
+    handleResetScannerClick = () => {
+        this.setState({ menu: { open: false }, confirmDialog: { open: true }});
+    }
+
+    resetScanner = () => {
+        return new Promise((resolve) => {
+            this.props.resetScanner(resolve);
+        });
+    }
+
     render() {
         let { classes } = this.props;
         let { menu } = this.state;
@@ -65,7 +75,7 @@ class ScannerMenu extends Component {
                     anchorEl={menu.anchorEl}
                     onClose={this.handleMenuClose}
                 >
-                    <MenuItem onClick={this.handleResetPasswordClick}>
+                    <MenuItem onClick={this.handleResetScannerClick}>
                         <ListItemIcon>
                             <Replay/>
                         </ListItemIcon>
@@ -78,9 +88,8 @@ class ScannerMenu extends Component {
                     title={'Confirm Reset'}
                     prompt={'Reset'}
                     open={this.state.confirmDialog.open}
-                    onConfirm={this.props.onReset}
+                    onConfirm={this.resetScanner}
                     onClose={this.handleConfirmDialogClose}
-                    suppressCloseOnConfirm
                 >
                     <p>Are you sure you want reset the Scanner?</p>
                 </ConfirmDialog>
@@ -90,7 +99,7 @@ class ScannerMenu extends Component {
 }
 
 ScannerMenu.propTypes = {
-    onReset: PropTypes.func.isRequired,
+    resetScanner: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(ScannerMenu); 
