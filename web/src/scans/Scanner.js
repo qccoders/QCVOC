@@ -249,6 +249,7 @@ class Scanner extends Component {
                                 </Typography>
                                 <ScannerMenu 
                                     visible={scanner.event !== undefined}
+                                    configured={scanner.event !== undefined && scanner.service !== undefined}
                                     resetScanner={this.resetScanner}
                                 />
                             </div>
