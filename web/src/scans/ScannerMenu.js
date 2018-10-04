@@ -58,18 +58,18 @@ class ScannerMenu extends Component {
     }
 
     render() {
-        let { classes } = this.props;
+        let { classes, visible } = this.props;
         let { menu } = this.state;
 
         return (
             <div className={classes.container}>
-                <IconButton
+                {visible && <IconButton
                     color="inherit"
                     className={classes.iconButton}
                     onClick={this.handleMenuClick}
                 >
                     <MoreVert/>
-                </IconButton>
+                </IconButton>}
                 <Menu
                     open={menu.open}
                     anchorEl={menu.anchorEl}
@@ -99,7 +99,12 @@ class ScannerMenu extends Component {
 }
 
 ScannerMenu.propTypes = {
+    visible: PropTypes.bool,
     resetScanner: PropTypes.func.isRequired,
+}
+
+ScannerMenu.defaultProps = {
+    visible: true,
 }
 
 export default withStyles(styles)(ScannerMenu); 
