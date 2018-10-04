@@ -76,14 +76,14 @@ namespace QCVOC.Api.Security.Controller
         [HttpPost("login")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(TokenResponse), 200)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Login([FromBody]TokenRequest credentials)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             var accountRecord = AccountRepository.GetAll()
@@ -280,7 +280,7 @@ namespace QCVOC.Api.Security.Controller
         [HttpPost("accounts")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(AccountResponse), 201)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(typeof(string), 403)]
         [ProducesResponseType(typeof(string), 409)]
@@ -289,7 +289,7 @@ namespace QCVOC.Api.Security.Controller
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             if ((account.Role == Role.Administrator || account.Role == Role.Supervisor) && !User.IsInRole(nameof(Role.Administrator)))
@@ -342,7 +342,7 @@ namespace QCVOC.Api.Security.Controller
         [HttpPatch("accounts/{id}")]
         [Authorize]
         [ProducesResponseType(typeof(AccountResponse), 200)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(typeof(string), 403)]
         [ProducesResponseType(404)]
@@ -352,7 +352,7 @@ namespace QCVOC.Api.Security.Controller
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             var accountToUpdate = AccountRepository.Get(id);

@@ -95,7 +95,7 @@ namespace QCVOC.Api.Veterans.Controller
         [HttpPost("")]
         [Authorize]
         [ProducesResponseType(typeof(Veteran), 201)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(409)]
         [ProducesResponseType(typeof(Exception), 500)]
@@ -103,7 +103,7 @@ namespace QCVOC.Api.Veterans.Controller
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             var existingVeteran = Enumerable.Empty<Veteran>();
@@ -173,7 +173,7 @@ namespace QCVOC.Api.Veterans.Controller
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(Veteran), 200)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(string), 409)]
@@ -182,7 +182,7 @@ namespace QCVOC.Api.Veterans.Controller
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             var veteranToUpdate = VeteranRepository.Get(id);
