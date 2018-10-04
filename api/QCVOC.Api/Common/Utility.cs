@@ -179,6 +179,10 @@ namespace QCVOC.Api.Common
         /// <returns>The formatted error string.</returns>
         public static string GetReadableString(this ModelStateDictionary dictionary)
         {
+            if (dictionary.IsValid)
+            {
+                return string.Empty;
+            }
             var fields = dictionary.Keys
                 .Select(key => (key, dictionary.Root.GetModelStateForProperty(key)))
                 .Select(field => field.Item1 + ": " +
