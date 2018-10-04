@@ -242,7 +242,10 @@ class Scanner extends Component {
                                 <Typography gutterBottom variant="headline" component="h2" className={classes.title}>
                                     {title}
                                 </Typography>
-                                <ScannerMenu resetScanner={this.resetScanner}/>
+                                <ScannerMenu 
+                                    visible={scanner.event !== undefined}
+                                    resetScanner={this.resetScanner}
+                                />
                             </div>
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
