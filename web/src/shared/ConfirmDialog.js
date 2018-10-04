@@ -38,10 +38,11 @@ class ConfirmDialog extends Component {
         this.setState({ api: { ...this.state.api, isExecuting: true }}, () => {
             this.props.onConfirm()
             .then(response => {
-                if (!this.props.suppressCloseOnConfirm) {
-                    this.setState({ api: { isExecuting: false, isErrored: false }});
-                    this.props.onClose({ cancelled: false }) 
-                }
+                this.setState({ api: { isExecuting: false, isErrored: false }}, () => {
+                    if (!this.props.suppressCloseOnConfirm) {
+                        this.props.onClose({ cancelled: false }) 
+                    }
+                });
             }, error => {
                 this.setState({ api: { isExecuting: false, isErrored: true }});
                 this.props.onClose({ cancelled: false }) 
