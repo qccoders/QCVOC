@@ -6,9 +6,17 @@
 
     public class GetReadableStringTests
     {
+        [Fact]
+        public void NullDictionary()
+        {
+            ModelStateDictionary modelState = null;
+            string result = modelState.GetReadableString();
+
+            Assert.Equal(string.Empty, result);
+        }
 
         [Fact]
-        public void BaseCase()
+        public void ValidDictionary()
         {
             ModelStateDictionary modelState = new ModelStateDictionary();
             string result = modelState.GetReadableString();
