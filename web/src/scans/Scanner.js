@@ -16,6 +16,7 @@ import { red, green, yellow } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import EventList from '../events/EventList';
 import ServiceList from '../services/ServiceList';
+import ScannerMenu from './ScannerMenu';
 
 const styles = {
     fab: {
@@ -46,6 +47,9 @@ const styles = {
         alignItems: 'center',
         height: 'calc(100vh - 188px)',
     },
+    title: {
+        display: 'inline',
+    }
 };
 
 const initialState = {
@@ -105,6 +109,10 @@ class Scanner extends Component {
                 this.setState({ scan: initialState.scan });
             }, 2500);
         });
+    }
+
+    resetScanner = (resolve) => { 
+        this.setState({ scanner: initialState.scanner }, () => resolve());
     }
 
     fetchEvents = (apiType) => {
@@ -229,9 +237,16 @@ class Scanner extends Component {
                 <ContentWrapper api={loadApi}>
                     <Card className={classes.card} style={{backgroundColor: color}}>
                         <CardContent>
-                            <Typography gutterBottom variant="headline" component="h2">
-                                {title}
-                            </Typography>
+                            <div>
+                                {/* todo: move this to a component */}
+                                <Typography gutterBottom variant="headline" component="h2" className={classes.title}>
+                                    {title}
+                                </Typography>
+                                <ScannerMenu 
+                                    visible={scanner.event !== undefined}
+                                    resetScanner={this.resetScanner}
+                                />
+                            </div>
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
                                 <div>
