@@ -93,7 +93,7 @@ namespace QCVOC.Api.Events.Controller
         [HttpPost("")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(Event), 201)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(409)]
         [ProducesResponseType(typeof(Exception), 500)]
@@ -101,7 +101,7 @@ namespace QCVOC.Api.Events.Controller
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             var eventRecord = new Event()
@@ -142,7 +142,7 @@ namespace QCVOC.Api.Events.Controller
         [HttpPut("{id}")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(Event), 200)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -151,7 +151,7 @@ namespace QCVOC.Api.Events.Controller
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             var eventToUpdate = EventRepository.Get(id);

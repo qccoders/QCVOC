@@ -95,7 +95,7 @@ namespace QCVOC.Api.Services.Controller
         [HttpPost("")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(Service), 201)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(409)]
         [ProducesResponseType(typeof(Exception), 500)]
@@ -103,7 +103,7 @@ namespace QCVOC.Api.Services.Controller
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             var existingService = ServiceRepository.GetAll(new ServiceFilters()
@@ -153,7 +153,7 @@ namespace QCVOC.Api.Services.Controller
         [HttpPut("{id}")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(Service), 200)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(string), 409)]
@@ -162,7 +162,7 @@ namespace QCVOC.Api.Services.Controller
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             var serviceToUpdate = ServiceRepository.Get(id);
