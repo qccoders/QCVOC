@@ -227,7 +227,7 @@ class VeteranDialog extends Component {
             result.primaryPhone = 'The Primary Phone field is required.';
         }
         else if (!validatePhoneNumber(primaryPhone)) {
-            result.primaryPhone = 'Enter a valid phone number in the format (555) 555-5555.';
+            result.primaryPhone = 'Enter a valid phone number in the format \'555555555\'';
         }
 
         if ((email !== '' && email !== undefined) && !validateEmail(email)) {
