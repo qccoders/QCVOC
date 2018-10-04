@@ -111,6 +111,10 @@ class Scanner extends Component {
         });
     }
 
+    resetScanner = (resolve) => { 
+        this.setState({ scanner: initialState.scanner }, () => resolve());
+    }
+
     fetchEvents = (apiType) => {
         let start = moment().startOf('day').format();
         let end = moment().endOf('day').format();
@@ -238,7 +242,7 @@ class Scanner extends Component {
                                 <Typography gutterBottom variant="headline" component="h2" className={classes.title}>
                                     {title}
                                 </Typography>
-                                <ScannerMenu/>
+                                <ScannerMenu resetScanner={this.resetScanner}/>
                             </div>
                             {refreshApi.isExecuting ?
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
