@@ -6,6 +6,15 @@
 
     public class GetReadableStringTests
     {
+
+        [Fact]
+        public void BaseCase()
+        {
+            ModelStateDictionary modelState = new ModelStateDictionary();
+            string result = modelState.GetReadableString();
+
+            Assert.Equal(string.Empty, result);
+        }
         [Fact]
         public void SingleError()
         {
