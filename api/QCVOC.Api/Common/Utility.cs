@@ -7,8 +7,10 @@ namespace QCVOC.Api.Common
 {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Security.Cryptography;
     using System.Text;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Microsoft.Extensions.Configuration;
 
     /// <summary>
@@ -168,6 +170,24 @@ namespace QCVOC.Api.Common
             }
 
             return (T)Convert.ChangeType(retVal, typeof(T));
+        }
+
+        /// <summary>
+        ///     Converts a ModelStateDictionary into a human-readable format.
+        /// </summary>
+        /// <param name="dictionary">The ModelStateDictionary to format.</param>
+        /// <returns>The formatted error string.</returns>
+        public static string GetReadableString(this ModelStateDictionary dictionary)
+        {
+            var fields = dictionary.Keys
+                .Select(key => (key, dictionary.Root.GetModelStateForProperty(key)))
+                .Select(field => field.Item1 + ": " +
+                    field.Item2.Errors
+                        .Select(error => error.ErrorMessage)
+                        .Select(error => error.TrimEnd('.'))
+                        .Aggregate((a, b) => a + ", " + b));
+
+            return fields.Aggregate((a, b) => a + "; " + b);
         }
     }
 }
