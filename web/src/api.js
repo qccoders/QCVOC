@@ -4,8 +4,7 @@
 */
 
 import axios from 'axios';
-
-import { getCredentials, updateCredentials, deleteCredentials } from './credentialStore';
+import { getCredentials, updateCredentials, deleteCredentials } from './credentials';
 import { getEnvironment } from './util';
 
 axios.defaults.baseURL = getEnvironment().apiRoot;
