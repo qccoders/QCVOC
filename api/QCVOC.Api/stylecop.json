@@ -16,7 +16,7 @@
     "documentationRules": {
       "documentPrivateElements": false,
       "documentPrivateFields": false,
-      "companyName": "QC Coders (JP Dillingham, Nick Acosta, Will Burklund, Brian Hankins, et. al.)",
+      "companyName": "QC Coders.",
       "copyrightText": "    Copyright (c) {companyName}. All rights reserved. Licensed under the {licenseName} license. See {licenseFile} file\n    in the project root for full license information.",
       "variables": {
         "licenseName": "GPLv3",
