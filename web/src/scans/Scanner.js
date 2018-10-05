@@ -112,23 +112,28 @@ class Scanner extends Component {
     }
 
     resetScanner = (resolve) => { 
-        this.setState({ scanner: initialState.scanner }, () => resolve());
+        this.fetchEvents('refreshApi')
+        .then(() => {
+            this.setState({ scanner: initialState.scanner }, () => resolve());
+        });
     }
 
     fetchEvents = (apiType) => {
         let start = moment().startOf('day').format();
         let end = moment().endOf('day').format();
 
-        this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            api.get('/v1/events?dateStart=' + start + '&dateEnd=' + end)
-            .then(response => {
-                this.setState({ 
-                    events: response.data,
-                    [apiType]: { isExecuting: false, isErrored: false },
+        return new Promise((resolve, reject) => { 
+            this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
+                api.get('/v1/events?dateStart=' + start + '&dateEnd=' + end)
+                .then(response => {
+                    this.setState({ 
+                        events: response.data,
+                        [apiType]: { isExecuting: false, isErrored: false },
+                    }, () => resolve());
+                })
+                .catch(error => {
+                    this.setState({ [apiType]: { isExecuting: false, isErrored: true }}, () => reject());
                 });
-            })
-            .catch(error => {
-                this.setState({ [apiType]: { isExecuting: false, isErrored: true }});
             });
         });
     }
