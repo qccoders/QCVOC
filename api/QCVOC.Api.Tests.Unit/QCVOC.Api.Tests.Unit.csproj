@@ -32,4 +32,8 @@
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\QCVOC.Api\QCVOC.Api.csproj" />
+  </ItemGroup>
+
 </Project>
