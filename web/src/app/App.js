@@ -6,7 +6,7 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentialStore';
+import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentials';
 import api from '../api';
 
 import { withStyles } from '@material-ui/core/styles';

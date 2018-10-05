@@ -4,7 +4,7 @@
 */
 
 import axios from 'axios';
-import { getCredentials, updateCredentials, deleteCredentials } from './credentialStore';
+import { getCredentials, updateCredentials, deleteCredentials } from './credentials';
 import { API_ROOT } from './constants';
 
 axios.defaults.baseURL = API_ROOT;

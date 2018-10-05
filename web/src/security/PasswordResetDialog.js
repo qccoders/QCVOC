@@ -19,7 +19,7 @@ import {
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { getCredentials } from '../credentialStore';
+import { getCredentials } from '../credentials';
 
 const styles = {
     dialog: {
