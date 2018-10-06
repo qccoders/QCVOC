@@ -71,6 +71,7 @@ const initialState = {
     },
     events: [],
     services: [],
+    history: [],
 }
 
 class Scanner extends Component {
@@ -89,7 +90,7 @@ class Scanner extends Component {
         api.put('/v1/scans', scan)
         .then(response => {
             this.handleScanResponse(response);
-        }).catch(error => {
+        }, error => {
             this.handleScanResponse(error.response);
         });
     }
@@ -104,7 +105,16 @@ class Scanner extends Component {
     }
 
     handleScanResponse = (response) => {
-        this.setState({ scan: { status: response.status, data: response.data }}, () => {
+        let scan = { status: response.status, data: response.data };
+
+        let history = this.state.history.slice(0);
+        history.unshift(scan);
+        history = history.slice(0,5);
+
+        this.setState({ 
+            scan: scan,
+            history: history,
+        }, () => {
             setTimeout(() => {
                 this.setState({ scan: initialState.scan });
             }, 2500);
