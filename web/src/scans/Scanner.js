@@ -20,7 +20,7 @@ import ScannerMenu from './ScannerMenu';
 import ScannerHistoryDialog from './ScannerHistoryDialog';
 import { getScanResult } from './scannerUtil';
 
-const historyLimit = 20;
+const historyLimit = 5;
 
 const styles = {
     fab: {
