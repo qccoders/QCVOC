@@ -18,6 +18,8 @@ import EventList from '../events/EventList';
 import ServiceList from '../services/ServiceList';
 import ScannerMenu from './ScannerMenu';
 
+import ScannerHistoryDialog from './ScannerHistoryDialog';
+
 const historyLimit = 20;
 
 const styles = {
@@ -74,6 +76,9 @@ const initialState = {
     events: [],
     services: [],
     history: [],
+    historyDialog: {
+        open: false,
+    },
 }
 
 class Scanner extends Component {
@@ -233,7 +238,7 @@ class Scanner extends Component {
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanner, scan, events, services } = this.state;
+        let { loadApi, refreshApi, scanner, scan, events, services, history, historyDialog } = this.state;
 
         let title = this.getTitle(scanner);
         let color = this.getScanColor(scan);
@@ -263,6 +268,7 @@ class Scanner extends Component {
                                     visible={scanner.event !== undefined}
                                     configured={scanner.event !== undefined && scanner.service !== undefined}
                                     resetScanner={this.resetScanner}
+                                    viewHistory={() => this.setState({ historyDialog: { open: true }})}
                                 />
                             </div>
                             {refreshApi.isExecuting ?
@@ -301,6 +307,11 @@ class Scanner extends Component {
                     >
                         <SpeakerPhone/>
                     </Button>}
+                    <ScannerHistoryDialog
+                        open={historyDialog.open}
+                        history={history}
+                        onClose={() => this.setState({ historyDialog: { open: false }})}
+                    />
                 </ContentWrapper>
             </div>
         );
