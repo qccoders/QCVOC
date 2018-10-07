@@ -12,13 +12,13 @@ import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
-import { red, green, yellow } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import EventList from '../events/EventList';
 import ServiceList from '../services/ServiceList';
 import ScannerMenu from './ScannerMenu';
 
 import ScannerHistoryDialog from './ScannerHistoryDialog';
+import { getScanResult } from './scannerUtil';
 
 const historyLimit = 20;
 
@@ -170,19 +170,6 @@ class Scanner extends Component {
         });
     }
 
-    getScanColor = (scan) => {
-        switch(scan.status) {
-            case undefined:
-                return undefined;
-            case 201:
-                return green['A700'];
-            case 200:
-                return yellow['A700'];
-            default:
-                return red['A700'];
-        }
-    }
-
     getTitle = (scanner) => {
         let { event, service } = scanner;
 
@@ -241,7 +228,6 @@ class Scanner extends Component {
         let { loadApi, refreshApi, scanner, scan, events, services, history, historyDialog } = this.state;
 
         let title = this.getTitle(scanner);
-        let color = this.getScanColor(scan);
         let display = this.getScanDisplay(scan);
 
         let eventSelected = scanner.event !== undefined;
@@ -254,10 +240,12 @@ class Scanner extends Component {
             events = events.concat(dailyEvent);
         }
 
+        let scanResult = getScanResult(scan);
+
         return (
             <div className={classes.root}>
                 <ContentWrapper api={loadApi}>
-                    <Card className={classes.card} style={{backgroundColor: color}}>
+                    <Card className={classes.card} style={{ backgroundColor: (scanResult && scanResult.color) || undefined }}>
                         <CardContent>
                             <div>
                                 {/* todo: move this to a component */}
