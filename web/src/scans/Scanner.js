@@ -12,11 +12,15 @@ import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
-import { red, green, yellow } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import EventList from '../events/EventList';
 import ServiceList from '../services/ServiceList';
 import ScannerMenu from './ScannerMenu';
+
+import ScannerHistoryDialog from './ScannerHistoryDialog';
+import { getScanResult } from './scannerUtil';
+
+const historyLimit = 5;
 
 const styles = {
     fab: {
@@ -71,6 +75,10 @@ const initialState = {
     },
     events: [],
     services: [],
+    history: [],
+    historyDialog: {
+        open: false,
+    },
 }
 
 class Scanner extends Component {
@@ -88,9 +96,9 @@ class Scanner extends Component {
 
         api.put('/v1/scans', scan)
         .then(response => {
-            this.handleScanResponse(response);
-        }).catch(error => {
-            this.handleScanResponse(error.response);
+            this.handleScanResponse(barcode, response);
+        }, error => {
+            this.handleScanResponse(barcode, error.response);
         });
     }
 
@@ -103,8 +111,17 @@ class Scanner extends Component {
         }
     }
 
-    handleScanResponse = (response) => {
-        this.setState({ scan: { status: response.status, data: response.data }}, () => {
+    handleScanResponse = (cardNumber, response) => {
+        let scan = { cardNumber: cardNumber, status: response.status, response: response.data };
+
+        let history = this.state.history.slice(0);
+        history.unshift(scan);
+        history = history.slice(0, historyLimit);
+
+        this.setState({ 
+            scan: scan,
+            history: history,
+        }, () => {
             setTimeout(() => {
                 this.setState({ scan: initialState.scan });
             }, 2500);
@@ -151,19 +168,6 @@ class Scanner extends Component {
                 this.setState({ [apiType]: { isExecuting: false, isErrored: true }});
             });
         });
-    }
-
-    getScanColor = (scan) => {
-        switch(scan.status) {
-            case undefined:
-                return undefined;
-            case 201:
-                return green['A700'];
-            case 200:
-                return yellow['A700'];
-            default:
-                return red['A700'];
-        }
     }
 
     getTitle = (scanner) => {
@@ -221,10 +225,9 @@ class Scanner extends Component {
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanner, scan, events, services } = this.state;
+        let { loadApi, refreshApi, scanner, scan, events, services, history, historyDialog } = this.state;
 
         let title = this.getTitle(scanner);
-        let color = this.getScanColor(scan);
         let display = this.getScanDisplay(scan);
 
         let eventSelected = scanner.event !== undefined;
@@ -237,10 +240,12 @@ class Scanner extends Component {
             events = events.concat(dailyEvent);
         }
 
+        let scanResult = getScanResult(scan);
+
         return (
             <div className={classes.root}>
                 <ContentWrapper api={loadApi}>
-                    <Card className={classes.card} style={{backgroundColor: color}}>
+                    <Card className={classes.card} style={{ backgroundColor: (scanResult && scanResult.color) || undefined }}>
                         <CardContent>
                             <div>
                                 {/* todo: move this to a component */}
@@ -249,7 +254,9 @@ class Scanner extends Component {
                                 </Typography>
                                 <ScannerMenu 
                                     visible={scanner.event !== undefined}
+                                    configured={scanner.event !== undefined && scanner.service !== undefined}
                                     resetScanner={this.resetScanner}
+                                    viewHistory={() => this.setState({ historyDialog: { open: true }})}
                                 />
                             </div>
                             {refreshApi.isExecuting ?
@@ -288,6 +295,11 @@ class Scanner extends Component {
                     >
                         <SpeakerPhone/>
                     </Button>}
+                    <ScannerHistoryDialog
+                        open={historyDialog.open}
+                        history={history}
+                        onClose={() => this.setState({ historyDialog: { open: false }})}
+                    />
                 </ContentWrapper>
             </div>
         );

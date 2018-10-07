@@ -8,7 +8,7 @@ import PropTypes from 'proptypes';
 import { withStyles } from '@material-ui/core/styles';
 
 import IconButton from '@material-ui/core/IconButton';
-import { MoreVert, Replay }  from '@material-ui/icons';
+import { MoreVert, Replay, History }  from '@material-ui/icons';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
@@ -51,6 +51,12 @@ class ScannerMenu extends Component {
         this.setState({ menu: { open: false }, confirmDialog: { open: true }});
     }
 
+    handleHistoryClick = () => {
+        this.setState({ menu: { open: false }}, () => {
+            this.props.viewHistory();
+        });
+    }
+
     resetScanner = () => {
         return new Promise((resolve) => {
             this.props.resetScanner(resolve);
@@ -58,7 +64,7 @@ class ScannerMenu extends Component {
     }
 
     render() {
-        let { classes, visible } = this.props;
+        let { classes, visible, configured } = this.props;
         let { menu } = this.state;
 
         return (
@@ -75,6 +81,16 @@ class ScannerMenu extends Component {
                     anchorEl={menu.anchorEl}
                     onClose={this.handleMenuClose}
                 >
+                    {configured && 
+                        <MenuItem onClick={this.handleHistoryClick}>
+                            <ListItemIcon>
+                                <History/>
+                            </ListItemIcon>
+                            <ListItemText>
+                                View Scan History
+                            </ListItemText>
+                        </MenuItem>
+                    }
                     <MenuItem onClick={this.handleResetScannerClick}>
                         <ListItemIcon>
                             <Replay/>
@@ -100,11 +116,14 @@ class ScannerMenu extends Component {
 
 ScannerMenu.propTypes = {
     visible: PropTypes.bool,
+    configured: PropTypes.bool,
     resetScanner: PropTypes.func.isRequired,
+    viewHistory: PropTypes.func.isRequired,
 }
 
 ScannerMenu.defaultProps = {
     visible: true,
+    configured: false,
 }
 
 export default withStyles(styles)(ScannerMenu); 
