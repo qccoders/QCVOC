@@ -89,9 +89,9 @@ class Scanner extends Component {
 
         api.put('/v1/scans', scan)
         .then(response => {
-            this.handleScanResponse(response);
+            this.handleScanResponse(barcode, response);
         }, error => {
-            this.handleScanResponse(error.response);
+            this.handleScanResponse(barcode, error.response);
         });
     }
 
@@ -104,13 +104,13 @@ class Scanner extends Component {
         }
     }
 
-    handleScanResponse = (response) => {
-        let scan = { status: response.status, data: response.data };
+    handleScanResponse = (cardNumber, response) => {
+        let scan = { cardNumber: cardNumber, status: response.status, data: response.data };
 
         let history = this.state.history.slice(0);
         history.unshift(scan);
         history = history.slice(0,5);
-
+        console.log(history)
         this.setState({ 
             scan: scan,
             history: history,
