@@ -51,6 +51,12 @@ class ScannerMenu extends Component {
         this.setState({ menu: { open: false }, confirmDialog: { open: true }});
     }
 
+    handleHistoryClick = () => {
+        this.setState({ menu: { open: false }}, () => {
+            this.props.viewHistory();
+        });
+    }
+
     resetScanner = () => {
         return new Promise((resolve) => {
             this.props.resetScanner(resolve);
@@ -112,6 +118,7 @@ ScannerMenu.propTypes = {
     visible: PropTypes.bool,
     configured: PropTypes.bool,
     resetScanner: PropTypes.func.isRequired,
+    viewHistory: PropTypes.func.isRequired,
 }
 
 ScannerMenu.defaultProps = {
