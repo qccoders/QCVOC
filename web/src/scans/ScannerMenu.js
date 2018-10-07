@@ -87,7 +87,7 @@ class ScannerMenu extends Component {
                                 <History/>
                             </ListItemIcon>
                             <ListItemText>
-                                Scan History
+                                View Scan History
                             </ListItemText>
                         </MenuItem>
                     }
