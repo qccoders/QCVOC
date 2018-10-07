@@ -1,10 +1,11 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { getScanResult } from './scannerUtil';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -13,6 +14,10 @@ import {
     DialogActions,
     Button,
     DialogContent,
+    List,
+    ListItem,
+    ListItemText,
+    Avatar,
 } from '@material-ui/core';
 
 const styles = {
@@ -29,19 +34,30 @@ class ScannerHistoryDialog extends Component {
     handleCancelClick = () => {
         this.props.onClose();
     }
-
+    
     render() {
-        let { classes, open } = this.props;
+        let { classes, open, history } = this.props;
         
         return (
             <Dialog 
                 open={open}
                 onClose={this.handleCancelClick}
                 PaperProps={{ className: classes.dialog }}
-                scroll={'body'}
+                scroll={'body'}                
             >
                 <DialogTitle>Scanner History</DialogTitle>
                 <DialogContent>
+                    <List>
+                        {history.map((scan, index) => 
+                            <ListItem key={index}>
+                                <Avatar style={{ backgroundColor: getScanResult(scan).color }}>{getScanResult(scan).icon}</Avatar>
+                                <ListItemText 
+                                    primary={scan.response.veteran ? scan.response.veteran : scan.cardNumber}
+                                    secondary={getScanResult(scan).message}
+                                />
+                            </ListItem>
+                        )}
+                    </List>
                 </DialogContent>
                 <DialogActions>
                     <Button 
