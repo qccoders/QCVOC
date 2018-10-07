@@ -18,6 +18,8 @@ import EventList from '../events/EventList';
 import ServiceList from '../services/ServiceList';
 import ScannerMenu from './ScannerMenu';
 
+const historyLimit = 20;
+
 const styles = {
     fab: {
         margin: 0,
@@ -109,8 +111,8 @@ class Scanner extends Component {
 
         let history = this.state.history.slice(0);
         history.unshift(scan);
-        history = history.slice(0,5);
-        console.log(history)
+        history = history.slice(0, historyLimit);
+
         this.setState({ 
             scan: scan,
             history: history,
