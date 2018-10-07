@@ -105,7 +105,7 @@ class Scanner extends Component {
     }
 
     handleScanResponse = (cardNumber, response) => {
-        let scan = { cardNumber: cardNumber, status: response.status, data: response.data };
+        let scan = { cardNumber: cardNumber, status: response.status, response: response.data };
 
         let history = this.state.history.slice(0);
         history.unshift(scan);
