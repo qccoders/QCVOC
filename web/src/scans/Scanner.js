@@ -19,6 +19,7 @@ import ScannerMenu from './ScannerMenu';
 
 import ScannerHistoryDialog from './ScannerHistoryDialog';
 import { getScanResult } from './scannerUtil';
+import ManualScanDialog from './ManualScanDialog';
 
 const historyLimit = 5;
 
@@ -79,6 +80,9 @@ const initialState = {
     historyDialog: {
         open: false,
     },
+    scanDialog: {
+        open: false,
+    },
 }
 
 class Scanner extends Component {
@@ -107,7 +111,7 @@ class Scanner extends Component {
             initiateMobileScan();
         }
         else {
-            // TODO: manual input of barcode
+            this.setState({ scanDialog: { open: true }});
         }
     }
 
@@ -225,7 +229,7 @@ class Scanner extends Component {
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanner, scan, events, services, history, historyDialog } = this.state;
+        let { loadApi, refreshApi, scanner, scan, events, services, history, historyDialog, scanDialog } = this.state;
 
         let title = this.getTitle(scanner);
         let display = this.getScanDisplay(scan);
@@ -295,6 +299,10 @@ class Scanner extends Component {
                     >
                         <SpeakerPhone/>
                     </Button>}
+                    <ManualScanDialog
+                        open={scanDialog.open}
+                        onClose={() => this.setState({ scanDialog: { open: false }})}
+                    />
                     <ScannerHistoryDialog
                         open={historyDialog.open}
                         history={history}
