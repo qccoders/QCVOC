@@ -12,6 +12,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import Dialog from '@material-ui/core/Dialog';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
+import { withStyles } from '@material-ui/core/styles';
+
 const initialState = {
     api: {
         isExecuting: false,
@@ -22,7 +24,14 @@ const initialState = {
 const styles = {
     spinner: {
         position: 'fixed',
-    }
+    },
+    dialog: {
+        width: 320,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginTop: 50,
+        height: 'fit-content',
+    },
 }
 
 class ConfirmDialog extends Component {
@@ -38,10 +47,11 @@ class ConfirmDialog extends Component {
         this.setState({ api: { ...this.state.api, isExecuting: true }}, () => {
             this.props.onConfirm()
             .then(response => {
-                if (!this.props.suppressCloseOnConfirm) {
-                    this.setState({ api: { isExecuting: false, isErrored: false }});
-                    this.props.onClose({ cancelled: false }) 
-                }
+                this.setState({ api: { isExecuting: false, isErrored: false }}, () => {
+                    if (!this.props.suppressCloseOnConfirm) {
+                        this.props.onClose({ cancelled: false }) 
+                    }
+                });
             }, error => {
                 this.setState({ api: { isExecuting: false, isErrored: true }});
                 this.props.onClose({ cancelled: false }) 
@@ -55,12 +65,16 @@ class ConfirmDialog extends Component {
 
     render() {
         let additionalProps = { ...this.props };
+        
+        delete additionalProps.classes;
         delete additionalProps.onConfirm;
         delete additionalProps.suppressCloseOnConfirm;
 
         return (
             <Dialog
+                PaperProps={{ className: this.props.classes.dialog }}
                 {...additionalProps}
+                scroll={'body'}
             >
                 <DialogTitle>{this.props.title}</DialogTitle>
                 <DialogContent>
@@ -95,4 +109,4 @@ ConfirmDialog.propTypes = {
     suppressCloseOnConfirm: PropTypes.bool,
 };
 
-export default ConfirmDialog;
+export default withStyles(styles)(ConfirmDialog);

@@ -12,10 +12,16 @@ import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
 import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
-import { red, green, yellow } from '@material-ui/core/colors';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import EventList from '../events/EventList';
 import ServiceList from '../services/ServiceList';
+import ScannerMenu from './ScannerMenu';
+
+import ScannerHistoryDialog from './ScannerHistoryDialog';
+import { getScanResult } from './scannerUtil';
+import ManualScanDialog from './ManualScanDialog';
+
+const historyLimit = 5;
 
 const styles = {
     fab: {
@@ -40,12 +46,26 @@ const styles = {
         marginRight: 'auto',
         marginTop: 68,
     },
+    scanSpinner: {
+        position: 'fixed',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        marginTop: 'auto',
+        marginBottom: 'auto',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+    },
     displayBox: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         height: 'calc(100vh - 188px)',
     },
+    title: {
+        display: 'inline',
+    }
 };
 
 const initialState = {
@@ -54,6 +74,10 @@ const initialState = {
         isErrored: false,
     },
     refreshApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
+    scanApi: {
         isExecuting: false,
         isErrored: false,
     },
@@ -67,6 +91,13 @@ const initialState = {
     },
     events: [],
     services: [],
+    history: [],
+    historyDialog: {
+        open: false,
+    },
+    scanDialog: {
+        open: false,
+    },
 }
 
 class Scanner extends Component {
@@ -79,14 +110,26 @@ class Scanner extends Component {
     }
 
     handleBarcodeScanned = (barcode) => {
+        if (barcode === undefined) return;
+
         let { event, service } = this.state.scanner;
         let scan = { eventId: event && event.id, serviceId: service && service.id, cardNumber: barcode };
 
-        api.put('/v1/scans', scan)
-        .then(response => {
-            this.handleScanResponse(response);
-        }).catch(error => {
-            this.handleScanResponse(error.response);
+        this.setState({ 
+            scan: initialState.scan,
+            scanDialog: { open: false },
+            scanApi: { ...this.state.scanApi, isExecuting: true }
+        }, () => {
+            api.put('/v1/scans', scan)
+            .then(response => {
+                this.setState({ scanApi: { isExecuting: false, isErrored: false }}, () => {
+                    this.handleScanResponse(barcode, response);
+                });
+            }, error => {
+                this.setState({ scanApi: { isExecuting: false, isErrored: true }}, () => {
+                    this.handleScanResponse(barcode, error.response);
+                });
+            });
         });
     }
 
@@ -95,15 +138,39 @@ class Scanner extends Component {
             initiateMobileScan();
         }
         else {
-            // TODO: manual input of barcode
+            this.setState({ scanDialog: { open: true }});
         }
     }
 
-    handleScanResponse = (response) => {
-        this.setState({ scan: { status: response.status, data: response.data }}, () => {
+    handleScanDialogClose = (result) => {
+        this.setState({ scanDialog: { open: false }}, () => {
+            if (result !== undefined) {
+                this.handleBarcodeScanned(result);
+            }
+        });
+    }
+
+    handleScanResponse = (cardNumber, response) => {
+        let scan = { cardNumber: cardNumber, status: response.status, response: response.data };
+
+        let history = this.state.history.slice(0);
+        history.unshift(scan);
+        history = history.slice(0, historyLimit);
+
+        this.setState({ 
+            scan: scan,
+            history: history,
+        }, () => {
             setTimeout(() => {
                 this.setState({ scan: initialState.scan });
             }, 2500);
+        });
+    }
+
+    resetScanner = (resolve) => { 
+        this.fetchEvents('refreshApi')
+        .then(() => {
+            this.setState({ scanner: initialState.scanner }, () => resolve());
         });
     }
 
@@ -111,16 +178,18 @@ class Scanner extends Component {
         let start = moment().startOf('day').format();
         let end = moment().endOf('day').format();
 
-        this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            api.get('/v1/events?dateStart=' + start + '&dateEnd=' + end)
-            .then(response => {
-                this.setState({ 
-                    events: response.data,
-                    [apiType]: { isExecuting: false, isErrored: false },
+        return new Promise((resolve, reject) => { 
+            this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
+                api.get('/v1/events?dateStart=' + start + '&dateEnd=' + end)
+                .then(response => {
+                    this.setState({ 
+                        events: response.data,
+                        [apiType]: { isExecuting: false, isErrored: false },
+                    }, () => resolve());
+                })
+                .catch(error => {
+                    this.setState({ [apiType]: { isExecuting: false, isErrored: true }}, () => reject());
                 });
-            })
-            .catch(error => {
-                this.setState({ [apiType]: { isExecuting: false, isErrored: true }});
             });
         });
     }
@@ -138,19 +207,6 @@ class Scanner extends Component {
                 this.setState({ [apiType]: { isExecuting: false, isErrored: true }});
             });
         });
-    }
-
-    getScanColor = (scan) => {
-        switch(scan.status) {
-            case undefined:
-                return undefined;
-            case 201:
-                return green['A700'];
-            case 200:
-                return yellow['A700'];
-            default:
-                return red['A700'];
-        }
     }
 
     getTitle = (scanner) => {
@@ -208,10 +264,9 @@ class Scanner extends Component {
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanner, scan, events, services } = this.state;
+        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, history, historyDialog, scanDialog } = this.state;
 
         let title = this.getTitle(scanner);
-        let color = this.getScanColor(scan);
         let display = this.getScanDisplay(scan);
 
         let eventSelected = scanner.event !== undefined;
@@ -224,39 +279,51 @@ class Scanner extends Component {
             events = events.concat(dailyEvent);
         }
 
+        let scanResult = getScanResult(scan);
+
         return (
             <div className={classes.root}>
                 <ContentWrapper api={loadApi}>
-                    <Card className={classes.card} style={{backgroundColor: color}}>
+                    <Card className={classes.card} style={{ backgroundColor: (scanResult && scanResult.color) || undefined }}>
                         <CardContent>
-                            <Typography gutterBottom variant="headline" component="h2">
-                                {title}
-                            </Typography>
-                            {refreshApi.isExecuting ?
-                                <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
-                                <div>
-                                    {!eventSelected && 
-                                        <EventList
-                                            events={events}
-                                            icon={<Today/>}
-                                            onItemClick={this.handleEventItemClick}
-                                        />
-                                    }
-                                    {!serviceSelected && eventSelected && 
-                                        <ServiceList
-                                            services={services}
-                                            icon={<Shop/>}
-                                            onItemClick={this.handleServiceItemClick}
-                                        />
-                                    }
-                                    {serviceSelected && eventSelected &&
-                                        <div className={classes.displayBox}>
-                                            {!scan.status ? <Button disabled>Ready to Scan</Button> :
-                                                display
-                                            }
-                                        </div>
-                                    }
-                                </div>
+                            <div>
+                                {/* todo: move this to a component */}
+                                <Typography gutterBottom variant="headline" component="h2" className={classes.title}>
+                                    {title}
+                                </Typography>
+                                <ScannerMenu 
+                                    visible={scanner.event !== undefined}
+                                    configured={scanner.event !== undefined && scanner.service !== undefined}
+                                    resetScanner={this.resetScanner}
+                                    viewHistory={() => this.setState({ historyDialog: { open: true }})}
+                                />
+                            </div>
+                            {scanApi.isExecuting ? <CircularProgress thickness={7.2} size={72} color={'secondary'} className={classes.scanSpinner}/> :
+                                refreshApi.isExecuting ?
+                                    <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
+                                    <div>
+                                        {!eventSelected && 
+                                            <EventList
+                                                events={events}
+                                                icon={<Today/>}
+                                                onItemClick={this.handleEventItemClick}
+                                            />
+                                        }
+                                        {!serviceSelected && eventSelected && 
+                                            <ServiceList
+                                                services={services}
+                                                icon={<Shop/>}
+                                                onItemClick={this.handleServiceItemClick}
+                                            />
+                                        }
+                                        {serviceSelected && eventSelected &&
+                                            <div className={classes.displayBox}>
+                                                {!scan.status ? <Button disabled>Ready to Scan</Button> :
+                                                    display
+                                                }
+                                            </div>
+                                        }
+                                    </div>
                             }
                         </CardContent>
                     </Card>
@@ -268,6 +335,15 @@ class Scanner extends Component {
                     >
                         <SpeakerPhone/>
                     </Button>}
+                    <ManualScanDialog
+                        open={scanDialog.open}
+                        onClose={this.handleScanDialogClose}
+                    />
+                    <ScannerHistoryDialog
+                        open={historyDialog.open}
+                        history={history}
+                        onClose={() => this.setState({ historyDialog: { open: false }})}
+                    />
                 </ContentWrapper>
             </div>
         );

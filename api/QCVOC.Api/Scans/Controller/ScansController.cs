@@ -83,7 +83,7 @@ namespace QCVOC.Api.Scans.Controller
         [Authorize]
         [ProducesResponseType(typeof(Scan), 200)]
         [ProducesResponseType(typeof(Scan), 201)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -92,7 +92,7 @@ namespace QCVOC.Api.Scans.Controller
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             var @event = EventRepository.Get((Guid)scan.EventId);

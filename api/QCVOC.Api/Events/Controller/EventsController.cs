@@ -7,9 +7,9 @@ namespace QCVOC.Api.Events.Controller
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Events.Data.Model;
@@ -89,19 +89,30 @@ namespace QCVOC.Api.Events.Controller
         /// <response code="400">The specified Event was invalid.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="403">The user has insufficient rights to perform this operation.</response>
+        /// <response code="409">The specified Event conflicts with an existing event.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPost("")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(Event), 201)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
+        [ProducesResponseType(403)]
         [ProducesResponseType(409)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Create([FromBody]EventRequest @event)
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
+            }
+
+            var existingEvent = EventRepository
+                .GetAll(new EventFilters() { Name = @event.Name })
+                .Any(e => e.StartDate == @event.StartDate && e.EndDate == e.EndDate);
+
+            if (existingEvent)
+            {
+                return Conflict("The specified Event already exists.");
             }
 
             var eventRecord = new Event()
@@ -142,7 +153,7 @@ namespace QCVOC.Api.Events.Controller
         [HttpPut("{id}")]
         [Authorize(Roles = nameof(Role.Administrator) + "," + nameof(Role.Supervisor))]
         [ProducesResponseType(typeof(Event), 200)]
-        [ProducesResponseType(typeof(ModelStateDictionary), 400)]
+        [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
@@ -151,7 +162,7 @@ namespace QCVOC.Api.Events.Controller
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest(ModelState.GetReadableString());
             }
 
             var eventToUpdate = EventRepository.Get(id);
