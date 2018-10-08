@@ -30,21 +30,19 @@ api.interceptors.response.use(config => {
     let creds = getCredentials();
 
     if (error.response.status === 401 && creds && creds.refreshToken) {
-        let originalError = error;
         let data = JSON.stringify(creds.refreshToken);
         let headers = { headers: { 'Content-Type': 'application/json' }};
 
         // use 'axios' here instead of the 'api' instance we created to bypass our interceptors
-        // and avoid an endless loop should either of these two calls result in a 401.
+        // and avoid an endless loop should this call result in a 401.
         return axios.post('/v1/security/refresh', data, headers)
             .then(response => {
                 updateCredentials(response.data);
                 request.headers.Authorization = response.data.tokenType + ' ' + response.data.accessToken;
-                return axios(request);
+                return api(request);
             }, error => {
                 deleteCredentials();
                 window.location.reload(true);
-                logError(originalError);
                 return Promise.reject(error);
             }
         );
