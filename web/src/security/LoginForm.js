@@ -118,7 +118,6 @@ class LoginForm extends Component {
                             });
                         }
                         else {
-                            console.log(error)
                             this.setState({ 
                                 snackbar: { 
                                     message: 'Error: ' + error.message,
