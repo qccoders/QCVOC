@@ -142,6 +142,14 @@ class Scanner extends Component {
         }
     }
 
+    handleScanDialogClose = (result) => {
+        this.setState({ scanDialog: { open: false }}, () => {
+            if (result !== undefined) {
+                this.handleBarcodeScanned(result);
+            }
+        });
+    }
+
     handleScanResponse = (cardNumber, response) => {
         let scan = { cardNumber: cardNumber, status: response.status, response: response.data };
 
@@ -329,7 +337,7 @@ class Scanner extends Component {
                     </Button>}
                     <ManualScanDialog
                         open={scanDialog.open}
-                        onClose={this.handleBarcodeScanned}
+                        onClose={this.handleScanDialogClose}
                     />
                     <ScannerHistoryDialog
                         open={historyDialog.open}
