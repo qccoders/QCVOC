@@ -26,7 +26,11 @@ const styles = {
 
 class ManualScanDialog extends Component {
     handleCancelClick = () => {
-        this.props.onClose();
+        this.props.onClose(undefined);
+    }
+
+    handleEnterClick = () => {
+        this.props.onClose(1111);
     }
     
     render() {
