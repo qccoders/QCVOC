@@ -4,9 +4,8 @@
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import axios from 'axios';
+import api from '../api';
 
-import { getEnvironment } from '../util';
 import { withStyles } from '@material-ui/core/styles';
 
 import { Card, CardContent, CardActions, CircularProgress } from '@material-ui/core';
@@ -99,7 +98,7 @@ class LoginForm extends Component {
             api: { isExecuting: true },
             
         }, () => {
-            axios.post(getEnvironment().apiRoot + '/v1/security/login', this.state)
+            api.post('/v1/security/login', this.state)
             .then(
                 response => {
                     this.props.onLogin(response.data, this.state.rememberMe);
@@ -119,7 +118,6 @@ class LoginForm extends Component {
                             });
                         }
                         else {
-                            console.log(error)
                             this.setState({ 
                                 snackbar: { 
                                     message: 'Error: ' + error.message,
