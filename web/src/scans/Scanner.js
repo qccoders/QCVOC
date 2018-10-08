@@ -46,6 +46,17 @@ const styles = {
         marginRight: 'auto',
         marginTop: 68,
     },
+    scanSpinner: {
+        position: 'fixed',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        marginTop: 'auto',
+        marginBottom: 'auto',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+    },
     displayBox: {
         display: 'flex',
         justifyContent: 'center',
@@ -63,6 +74,10 @@ const initialState = {
         isErrored: false,
     },
     refreshApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
+    scanApi: {
         isExecuting: false,
         isErrored: false,
     },
@@ -95,14 +110,26 @@ class Scanner extends Component {
     }
 
     handleBarcodeScanned = (barcode) => {
+        if (barcode === undefined) return;
+
         let { event, service } = this.state.scanner;
         let scan = { eventId: event && event.id, serviceId: service && service.id, cardNumber: barcode };
 
-        api.put('/v1/scans', scan)
-        .then(response => {
-            this.handleScanResponse(barcode, response);
-        }, error => {
-            this.handleScanResponse(barcode, error.response);
+        this.setState({ 
+            scan: initialState.scan,
+            scanDialog: { open: false },
+            scanApi: { ...this.state.scanApi, isExecuting: true }
+        }, () => {
+            api.put('/v1/scans', scan)
+            .then(response => {
+                this.setState({ scanApi: { isExecuting: false, isErrored: false }}, () => {
+                    this.handleScanResponse(barcode, response);
+                });
+            }, error => {
+                this.setState({ scanApi: { isExecuting: false, isErrored: true }}, () => {
+                    this.handleScanResponse(barcode, error.response);
+                });
+            });
         });
     }
 
@@ -229,7 +256,7 @@ class Scanner extends Component {
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanner, scan, events, services, history, historyDialog, scanDialog } = this.state;
+        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, history, historyDialog, scanDialog } = this.state;
 
         let title = this.getTitle(scanner);
         let display = this.getScanDisplay(scan);
@@ -263,31 +290,32 @@ class Scanner extends Component {
                                     viewHistory={() => this.setState({ historyDialog: { open: true }})}
                                 />
                             </div>
-                            {refreshApi.isExecuting ?
-                                <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
-                                <div>
-                                    {!eventSelected && 
-                                        <EventList
-                                            events={events}
-                                            icon={<Today/>}
-                                            onItemClick={this.handleEventItemClick}
-                                        />
-                                    }
-                                    {!serviceSelected && eventSelected && 
-                                        <ServiceList
-                                            services={services}
-                                            icon={<Shop/>}
-                                            onItemClick={this.handleServiceItemClick}
-                                        />
-                                    }
-                                    {serviceSelected && eventSelected &&
-                                        <div className={classes.displayBox}>
-                                            {!scan.status ? <Button disabled>Ready to Scan</Button> :
-                                                display
-                                            }
-                                        </div>
-                                    }
-                                </div>
+                            {scanApi.isExecuting ? <CircularProgress thickness={7.2} size={72} color={'secondary'} className={classes.scanSpinner}/> :
+                                refreshApi.isExecuting ?
+                                    <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
+                                    <div>
+                                        {!eventSelected && 
+                                            <EventList
+                                                events={events}
+                                                icon={<Today/>}
+                                                onItemClick={this.handleEventItemClick}
+                                            />
+                                        }
+                                        {!serviceSelected && eventSelected && 
+                                            <ServiceList
+                                                services={services}
+                                                icon={<Shop/>}
+                                                onItemClick={this.handleServiceItemClick}
+                                            />
+                                        }
+                                        {serviceSelected && eventSelected &&
+                                            <div className={classes.displayBox}>
+                                                {!scan.status ? <Button disabled>Ready to Scan</Button> :
+                                                    display
+                                                }
+                                            </div>
+                                        }
+                                    </div>
                             }
                         </CardContent>
                     </Card>
@@ -301,7 +329,7 @@ class Scanner extends Component {
                     </Button>}
                     <ManualScanDialog
                         open={scanDialog.open}
-                        onClose={() => this.setState({ scanDialog: { open: false }})}
+                        onClose={this.handleBarcodeScanned}
                     />
                     <ScannerHistoryDialog
                         open={historyDialog.open}
