@@ -1,5 +1,11 @@
+/*
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    in the project root for full license information.
+*/
+
 import React, { Component } from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
+import api from '../api';
 
 const ServiceContext = React.createContext();
 
@@ -10,7 +16,7 @@ const initialState = {
     }
 }
 
-class ServiceProvider extends Component {
+class ContextProvider extends Component {
     state = initialState;
 
     showMessage = (message) => {
@@ -42,6 +48,12 @@ class ServiceProvider extends Component {
         );  
     }
 
+    apiDelete = (...args) => { return this.apiCall(api.delete, ...args); }
+    apiGet    = (...args) => { return this.apiCall(api.get,    ...args); }
+    apiPatch  = (...args) => { return this.apiCall(api.patch,  ...args); }
+    apiPost   = (...args) => { return this.apiCall(api.post,   ...args); }
+    apiPut    = (...args) => { return this.apiCall(api.put,    ...args); }
+
     handleSnackbarClose = () => {
         this.setState({ snackbar: { message: '', open: false }});
     }
@@ -50,18 +62,23 @@ class ServiceProvider extends Component {
         return (
             <ServiceContext.Provider value={{
                 showMessage: this.showMessage,
-                apiCall: this.apiCall}}>
+                apiDelete: this.apiDelete,
+                apiGet: this.apiGet,
+                apiPatch: this.apiPatch,
+                apiPost: this.apiPost,
+                apiPut: this.apiPut}}
+            >
                 <div>
-        	        {this.props.children}
+                    {this.props.children}
                     <Snackbar
-	                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-      	                open={this.state.snackbar.open}
- 	  	                onClose={this.handleSnackbarClose}
-          		        autoHideDuration={3000}
-              		    message={<span id="message-id">{this.state.snackbar.message}</span>}
-            	    />
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
+                        open={this.state.snackbar.open}
+                        onClose={this.handleSnackbarClose}
+                        autoHideDuration={3000}
+                        message={<span id="message-id">{this.state.snackbar.message}</span>}
+                    />
                 </div>
-	        </ServiceContext.Provider>
+            </ServiceContext.Provider>
         );
     }
 }
@@ -76,4 +93,4 @@ export const withContext = (Component) => {
     };
 }
 
-export default ServiceProvider;
+export default ContextProvider;

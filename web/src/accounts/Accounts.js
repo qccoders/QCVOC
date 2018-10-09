@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import api from '../api';
+import { withContext } from '../shared/ServiceContext';
 
 import AccountList from './AccountList';
 import ContentWrapper from '../shared/ContentWrapper';
@@ -21,7 +21,6 @@ import {
 } from '@material-ui/core';
 import { Add } from '@material-ui/icons'
 
-import Snackbar from '@material-ui/core/Snackbar';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
@@ -69,10 +68,6 @@ class Accounts extends Component {
             open: false,
             account: undefined,
         },
-        snackbar: {
-            message: '',
-            open: false,
-        },
     };
 
     componentWillMount = () => {
@@ -81,7 +76,7 @@ class Accounts extends Component {
 
     refresh = (apiType) => {
         this.setState({ ...this.state, [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            api.get('/v1/security/accounts')
+            this.props.context.apiGet('/v1/security/accounts')
             .then(response => {
                 this.setState({ 
                     accounts: response.data,
@@ -91,7 +86,6 @@ class Accounts extends Component {
                 this.setState({ 
                     ...this.state, 
                     [apiType]: { isExecuting: false, isErrored: true },
-                    snackbar: { message: error.response.data, open: true },
                 });
             });
         })
@@ -133,7 +127,8 @@ class Accounts extends Component {
             }
         }, () => {
             if (result) {
-                this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'));
+                this.props.context.showMessage(result);
+                this.refresh('refreshApi');
             }
         })
     }
@@ -146,13 +141,10 @@ class Accounts extends Component {
             }
         }, () => {
             if (result) {
-                this.setState({ snackbar: { message: result, open: true }}, () => this.props.onPasswordReset());
+                this.props.context.showMessage(result);
+                this.props.onPasswordReset();
             }
         })
-    }
-
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
     }
 
     render() {
@@ -197,13 +189,6 @@ class Accounts extends Component {
                         onClose={this.handlePasswordResetDialogClose}
                     />
                 </ContentWrapper>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={this.state.snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{this.state.snackbar.message}</span>}
-                />
             </div>            
         );
     }
@@ -213,4 +198,4 @@ Accounts.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Accounts); 
+export default withStyles(styles)(withContext(Accounts)); 

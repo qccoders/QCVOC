@@ -5,7 +5,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import api from '../api';
 import { withContext } from '../shared/ServiceContext';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -114,14 +113,14 @@ class AccountDialog extends Component {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => api.post('/v1/security/accounts', account),
+                        () => this.props.context.apiPost('/v1/security/accounts', account),
                         'addApi', 
                         'Account \'' + account.name + '\' successfully created.'
                     )
                 }
                 else {
                     this.execute(
-                        () => api.patch('/v1/security/accounts/' + account.id, account), 
+                        () => this.props.context.apiPatch('/v1/security/accounts/' + account.id, account), 
                         'updateApi', 
                         'Account \'' + account.name + '\' successfully updated.'
                     );
@@ -138,7 +137,7 @@ class AccountDialog extends Component {
         let account = this.state.account;
 
         return this.execute(
-            () => api.delete('/v1/security/accounts/' + account.id), 
+            () => this.props.context.apiDelete('/v1/security/accounts/' + account.id), 
             'deleteApi', 
             'Account \'' + account.name + '\' successfully deleted.'
         );
@@ -151,7 +150,7 @@ class AccountDialog extends Component {
     execute = (action, api, successMessage) => {
         return new Promise((resolve, reject) => {
             this.setState({ [api]: { isExecuting: true }}, () => {
-                this.props.context.apiCall(action, this.state.account)
+                action(this.state.account)
                 .then(response => {
                     this.setState({
                         [api]: { isExecuting: false, isErrored: false }
@@ -328,4 +327,4 @@ AccountDialog.propTypes = {
     account: PropTypes.object,
 };
 
-export default withContext(withStyles(styles)(AccountDialog)); 
+export default withStyles(styles)(withContext(AccountDialog)); 
