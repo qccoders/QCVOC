@@ -8,9 +8,9 @@ import PropTypes from 'proptypes';
 import { withStyles } from '@material-ui/core/styles';
 
 import IconButton from '@material-ui/core/IconButton';
-import { MoreVert, Replay, History }  from '@material-ui/icons';
+import { MoreVert, Replay, History, ArrowBack }  from '@material-ui/icons';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Menu, MenuItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core';
 
 const styles = {
     container: {
@@ -40,7 +40,7 @@ class ScannerMenu extends Component {
     }
 
     handleMenuClose = () => {
-        this.setState({ menu: { open: false }});
+        this.close();
     }
 
     handleConfirmDialogClose = (result) => {
@@ -48,13 +48,15 @@ class ScannerMenu extends Component {
     }
 
     handleResetScannerClick = () => {
-        this.setState({ menu: { open: false }, confirmDialog: { open: true }});
+        this.close().then(() => this.setState({ confirmDialog: { open: true }}));
     }
 
     handleHistoryClick = () => {
-        this.setState({ menu: { open: false }}, () => {
-            this.props.viewHistory();
-        });
+        this.close().then(() => this.props.viewHistory());
+    }
+
+    handleClearLastScanClick = () => {
+        this.close().then(() => this.props.clearLastScan());
     }
 
     resetScanner = () => {
@@ -63,8 +65,14 @@ class ScannerMenu extends Component {
         });
     }
 
+    close = () => {
+        return new Promise(resolve => {
+            this.setState({ menu: { open: false }}, () => resolve());
+        })
+    }
+
     render() {
-        let { classes, visible, configured } = this.props;
+        let { classes, visible, configured, lastScan } = this.props;
         let { menu } = this.state;
 
         return (
@@ -82,18 +90,29 @@ class ScannerMenu extends Component {
                     onClose={this.handleMenuClose}
                 >
                     {configured && 
-                        <MenuItem onClick={this.handleHistoryClick}>
-                            <ListItemIcon>
-                                <History/>
-                            </ListItemIcon>
-                            <ListItemText>
-                                View Scan History
-                            </ListItemText>
-                        </MenuItem>
+                        <div style={{ outline: 'none' }}>
+                            {lastScan && lastScan.status && <MenuItem onClick={this.handleClearLastScanClick}>
+                                <ListItemIcon>
+                                    <Replay/>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    Clear Last Scan
+                                </ListItemText>
+                            </MenuItem>}
+                            <MenuItem onClick={this.handleHistoryClick}>
+                                <ListItemIcon>
+                                    <History/>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    View Scan History
+                                </ListItemText>
+                            </MenuItem>
+                        </div>
                     }
+                    <Divider/>
                     <MenuItem onClick={this.handleResetScannerClick}>
                         <ListItemIcon>
-                            <Replay/>
+                            <ArrowBack/>
                         </ListItemIcon>
                         <ListItemText>
                             Reset Scanner
@@ -118,6 +137,8 @@ ScannerMenu.propTypes = {
     visible: PropTypes.bool,
     configured: PropTypes.bool,
     resetScanner: PropTypes.func.isRequired,
+    lastScan: PropTypes.object,
+    clearLastScan: PropTypes.func.isRequired,
     viewHistory: PropTypes.func.isRequired,
 }
 

@@ -86,8 +86,9 @@ const initialState = {
         service: undefined,
     },
     scan: {
+        cardNumber: undefined,
         status: undefined,
-        data: undefined,
+        response: undefined,
     },
     events: [],
     services: [],
@@ -160,10 +161,6 @@ class Scanner extends Component {
         this.setState({ 
             scan: scan,
             history: history,
-        }, () => {
-            setTimeout(() => {
-                this.setState({ scan: initialState.scan });
-            }, 2500);
         });
     }
 
@@ -172,6 +169,10 @@ class Scanner extends Component {
         .then(() => {
             this.setState({ scanner: initialState.scanner }, () => resolve());
         });
+    }
+
+    clearLastScan = () => {
+        this.setState({ scan: initialState.scan });
     }
 
     fetchEvents = (apiType) => {
@@ -294,6 +295,8 @@ class Scanner extends Component {
                                 <ScannerMenu 
                                     visible={scanner.event !== undefined}
                                     configured={scanner.event !== undefined && scanner.service !== undefined}
+                                    lastScan={scan}
+                                    clearLastScan={this.clearLastScan}
                                     resetScanner={this.resetScanner}
                                     viewHistory={() => this.setState({ historyDialog: { open: true }})}
                                 />
