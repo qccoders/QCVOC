@@ -40,7 +40,7 @@ class ScannerMenu extends Component {
     }
 
     handleMenuClose = () => {
-        this.setState({ menu: { open: false }});
+        this.close();
     }
 
     handleConfirmDialogClose = (result) => {
@@ -48,25 +48,27 @@ class ScannerMenu extends Component {
     }
 
     handleResetScannerClick = () => {
-        this.setState({ menu: { open: false }, confirmDialog: { open: true }});
+        this.close().then(() => this.setState({ confirmDialog: { open: true }}));
     }
 
     handleHistoryClick = () => {
-        this.setState({ menu: { open: false }}, () => {
-            this.props.viewHistory();
-        });
+        this.close().then(() => this.props.viewHistory());
     }
 
     handleClearLastScanClick = () => {
-        this.setState({ menu: { open: false }}, () => {
-            this.props.clearLastScan();
-        })
+        this.close().then(() => this.props.clearLastScan());
     }
 
     resetScanner = () => {
         return new Promise((resolve) => {
             this.props.resetScanner(resolve);
         });
+    }
+
+    close = () => {
+        return new Promise(resolve => {
+            this.setState({ menu: { open: false }}, () => resolve());
+        })
     }
 
     render() {
