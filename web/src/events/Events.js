@@ -26,7 +26,7 @@ const styles = {
         zIndex: 1000
     },
     card: {
-        minHeight: 272,
+        minHeight: 273,
         maxWidth: 800,
         margin: 'auto',
     },
@@ -36,7 +36,7 @@ const styles = {
         right: 0,
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: 68,
+        marginTop: 80,
     },
 };
 
@@ -159,9 +159,9 @@ class Events extends Component {
                                         icon={<EventAvailable/>}
                                         onItemClick={userCanView() ? this.handleEditClick : undefined}
                                     />
+                                    {past.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                                 </div>
                             }
-                            {past.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                         </CardContent>
                     </Card>
                     { userCanView() &&
