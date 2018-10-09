@@ -10,7 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import { MoreVert, Replay, History, ArrowBack }  from '@material-ui/icons';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Menu, MenuItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core';
 
 const styles = {
     container: {
@@ -107,6 +107,7 @@ class ScannerMenu extends Component {
                             </MenuItem>
                         </div>
                     }
+                    <Divider/>
                     <MenuItem onClick={this.handleResetScannerClick}>
                         <ListItemIcon>
                             <ArrowBack/>
