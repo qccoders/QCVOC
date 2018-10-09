@@ -2,9 +2,12 @@
     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
+
 import React, { Component } from 'react';
 import PropTypes from 'proptypes';
 import api from '../api';
+
+import './style.css';
 
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
@@ -24,9 +27,6 @@ const styles = {
     },
     icon: {
         fontSize: 29,
-    },
-    menu: {
-        marginTop: 40,
     },
 }
 
@@ -121,7 +121,7 @@ class SecurityMenu extends Component {
                     open={menu.open}
                     anchorEl={menu.anchorEl}
                     onClose={this.handleMenuClose}
-                    style={styles.menu}
+                    className={'menu'}
                 >
                     <MenuItem onClick={this.handleResetPasswordClick}>
                         <ListItemIcon>
