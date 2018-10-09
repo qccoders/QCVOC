@@ -170,6 +170,10 @@ class Scanner extends Component {
         });
     }
 
+    clearLastScan = () => {
+        this.setState({ scan: initialState.scan });
+    }
+
     fetchEvents = (apiType) => {
         let start = moment().startOf('day').format();
         let end = moment().endOf('day').format();
