@@ -10,7 +10,6 @@ namespace QCVOC.Api.Scans.Controller
     using System.Linq;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Events.Data.Model;
@@ -108,7 +107,7 @@ namespace QCVOC.Api.Scans.Controller
 
             if (veteran == default(Veteran))
             {
-                return StatusCode(404, "The specified Card Id doesn't match an enrolled Veteran.");
+                return StatusCode(404, $"Card Number {scan.CardNumber} doesn't match an enrolled Veteran.");
             }
 
             var scanRecord = new Scan()
