@@ -8,7 +8,7 @@ import PropTypes from 'proptypes';
 import { withStyles } from '@material-ui/core/styles';
 
 import IconButton from '@material-ui/core/IconButton';
-import { MoreVert, Replay, History }  from '@material-ui/icons';
+import { MoreVert, Replay, History, ArrowBack }  from '@material-ui/icons';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
 
@@ -70,7 +70,7 @@ class ScannerMenu extends Component {
     }
 
     render() {
-        let { classes, visible, configured } = this.props;
+        let { classes, visible, configured, lastScan } = this.props;
         let { menu } = this.state;
 
         return (
@@ -88,15 +88,15 @@ class ScannerMenu extends Component {
                     onClose={this.handleMenuClose}
                 >
                     {configured && 
-                        <div>
-                            <MenuItem onClick={this.handleClearLastScanClick}>
+                        <div style={{ outline: 'none' }}>
+                            {lastScan && lastScan.status && <MenuItem onClick={this.handleClearLastScanClick}>
                                 <ListItemIcon>
-                                    <History/>
+                                    <Replay/>
                                 </ListItemIcon>
                                 <ListItemText>
                                     Clear Last Scan
                                 </ListItemText>
-                            </MenuItem>
+                            </MenuItem>}
                             <MenuItem onClick={this.handleHistoryClick}>
                                 <ListItemIcon>
                                     <History/>
@@ -109,7 +109,7 @@ class ScannerMenu extends Component {
                     }
                     <MenuItem onClick={this.handleResetScannerClick}>
                         <ListItemIcon>
-                            <Replay/>
+                            <ArrowBack/>
                         </ListItemIcon>
                         <ListItemText>
                             Reset Scanner
@@ -134,6 +134,8 @@ ScannerMenu.propTypes = {
     visible: PropTypes.bool,
     configured: PropTypes.bool,
     resetScanner: PropTypes.func.isRequired,
+    lastScan: PropTypes.object,
+    clearLastScan: PropTypes.func.isRequired,
     viewHistory: PropTypes.func.isRequired,
 }
 
