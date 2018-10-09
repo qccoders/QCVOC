@@ -6,6 +6,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import api from '../api';
+import { withContext } from '../shared/ServiceContext';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -22,7 +23,6 @@ import {
 } from '@material-ui/core';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
 
 
@@ -69,10 +69,6 @@ const initialState = {
         role: undefined,
         password: undefined,
         password2: undefined,
-    },
-    snackbar: {
-        message: '',
-        open: false,
     },
     confirmDialog: {
         open: false,
@@ -152,14 +148,10 @@ class AccountDialog extends Component {
         this.setState({ confirmDialog: { open: false }});
     }
 
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
-    }
-
     execute = (action, api, successMessage) => {
         return new Promise((resolve, reject) => {
             this.setState({ [api]: { isExecuting: true }}, () => {
-                action(this.state.account)
+                this.props.context.apiCall(action, this.state.account)
                 .then(response => {
                     this.setState({
                         [api]: { isExecuting: false, isErrored: false }
@@ -168,22 +160,8 @@ class AccountDialog extends Component {
                         resolve(response);
                     })
                 }, error => {
-                    var body = error && error.response && error.response.data ? error.response.data : error;
-
-                    if (typeof(body) !== 'string') {
-                        var keys = Object.keys(body);
-    
-                        if (keys.length > 0) {
-                            body = body[keys[0]];
-                        }
-                    }
-
                     this.setState({ 
-                        [api]: { isExecuting: false, isErrored: true },
-                        snackbar: {
-                            message: body,
-                            open: true,
-                        },
+                        [api]: { isExecuting: false, isErrored: true }
                     }, () => reject(error));
                 })
             })
@@ -337,13 +315,6 @@ class AccountDialog extends Component {
                 >
                     <p>Are you sure you want to delete account '{this.state.account.name}'?</p>
                 </ConfirmDialog>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={this.state.snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{this.state.snackbar.message}</span>}
-                />
             </Dialog>
         );
     }
@@ -357,4 +328,4 @@ AccountDialog.propTypes = {
     account: PropTypes.object,
 };
 
-export default withStyles(styles)(AccountDialog); 
+export default withContext(withStyles(styles)(AccountDialog)); 
