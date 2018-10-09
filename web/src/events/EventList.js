@@ -36,8 +36,8 @@ const EventList = (props) => {
             {events.sort(sortByProp('startDate')).map((e, index) => 
                 <ListItem 
                     key={index}
-                    button={onItemClick !== undefined && userCanView() }
-                    onClick={onItemClick !== undefined && userCanView() ? () => onItemClick(e) : () => {}}
+                    button={onItemClick !== undefined}
+                    onClick={onItemClick !== undefined ? () => onItemClick(e) : () => {}}
                 >
                     <ListItemIcon>
                         {icon}

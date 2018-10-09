@@ -156,19 +156,19 @@ class Events extends Component {
                                     <EventList
                                         events={current}
                                         icon={<Today/>}
-                                        onItemClick={this.handleEditClick}
+                                        onItemClick={userCanView() ? this.handleEditClick : undefined}
                                     />
                                     <ListSubheader>Upcoming</ListSubheader>
                                     <EventList
                                         events={upcoming}
                                         icon={<Event/>}
-                                        onItemClick={this.handleEditClick}
+                                        onItemClick={userCanView() ? this.handleEditClick : undefined}
                                     />
                                     <ListSubheader>Past</ListSubheader>
                                     <EventList
                                         events={shownPastList}
                                         icon={<EventAvailable/>}
-                                        onItemClick={this.handleEditClick}
+                                        onItemClick={userCanView() ? this.handleEditClick : undefined}
                                     />
                                 </div>
                             }
