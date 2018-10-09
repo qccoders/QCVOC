@@ -170,13 +170,15 @@ class Veterans extends Component {
                             />
                             {refreshApi.isExecuting ? 
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
-                                <VeteranList
-                                    veterans={shownList}
-                                    displayId={searchById}
-                                    onItemClick={this.handleEditClick}
-                                />
+                                <div>
+                                    <VeteranList
+                                        veterans={shownList}
+                                        displayId={searchById}
+                                        onItemClick={this.handleEditClick}
+                                    />
+                                    {list.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
+                                </div>
                             }
-                            {list.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                         </CardContent>
                     </Card>
                     <Button 
