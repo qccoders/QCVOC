@@ -160,10 +160,6 @@ class Scanner extends Component {
         this.setState({ 
             scan: scan,
             history: history,
-        }, () => {
-            setTimeout(() => {
-                this.setState({ scan: initialState.scan });
-            }, 2500);
         });
     }
 
