@@ -26,7 +26,7 @@ const styles = {
         zIndex: 1000
     },
     card: {
-        minHeight: 220,
+        minHeight: 230,
         maxWidth: 800,
         margin: 'auto',
     },
@@ -36,7 +36,7 @@ const styles = {
         right: 0,
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: 72,
+        marginTop: 59,
     },
 };
 
