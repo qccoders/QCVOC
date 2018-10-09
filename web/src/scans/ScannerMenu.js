@@ -57,6 +57,12 @@ class ScannerMenu extends Component {
         });
     }
 
+    handleClearLastScanClick = () => {
+        this.setState({ menu: { open: false }}, () => {
+            this.props.clearLastScan();
+        })
+    }
+
     resetScanner = () => {
         return new Promise((resolve) => {
             this.props.resetScanner(resolve);
@@ -82,14 +88,24 @@ class ScannerMenu extends Component {
                     onClose={this.handleMenuClose}
                 >
                     {configured && 
-                        <MenuItem onClick={this.handleHistoryClick}>
-                            <ListItemIcon>
-                                <History/>
-                            </ListItemIcon>
-                            <ListItemText>
-                                View Scan History
-                            </ListItemText>
-                        </MenuItem>
+                        <div>
+                            <MenuItem onClick={this.handleClearLastScanClick}>
+                                <ListItemIcon>
+                                    <History/>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    Clear Last Scan
+                                </ListItemText>
+                            </MenuItem>
+                            <MenuItem onClick={this.handleHistoryClick}>
+                                <ListItemIcon>
+                                    <History/>
+                                </ListItemIcon>
+                                <ListItemText>
+                                    View Scan History
+                                </ListItemText>
+                            </MenuItem>
+                        </div>
                     }
                     <MenuItem onClick={this.handleResetScannerClick}>
                         <ListItemIcon>
