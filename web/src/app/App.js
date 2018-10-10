@@ -123,7 +123,7 @@ class App extends Component {
     render() {
         let classes = this.props.classes;
         let { isExecuting, isErrored } = this.state.api;
-        let { accessToken, role } = this.state.credentials;
+        let { accessToken } = this.state.credentials;
 
         let env = getEnvironment();
 
