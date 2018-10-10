@@ -113,14 +113,14 @@ class AccountDialog extends Component {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => this.props.context.apiPost('/v1/security/accounts', account),
+                        () => this.props.context.api.post('/v1/security/accounts', account),
                         'addApi', 
                         'Account \'' + account.name + '\' successfully created.'
                     )
                 }
                 else {
                     this.execute(
-                        () => this.props.context.apiPatch('/v1/security/accounts/' + account.id, account), 
+                        () => this.props.context.api.patch('/v1/security/accounts/' + account.id, account), 
                         'updateApi', 
                         'Account \'' + account.name + '\' successfully updated.'
                     );
@@ -137,7 +137,7 @@ class AccountDialog extends Component {
         let account = this.state.account;
 
         return this.execute(
-            () => this.props.context.apiDelete('/v1/security/accounts/' + account.id), 
+            () => this.props.context.api.delete('/v1/security/accounts/' + account.id), 
             'deleteApi', 
             'Account \'' + account.name + '\' successfully deleted.'
         );

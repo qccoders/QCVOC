@@ -76,7 +76,7 @@ class Accounts extends Component {
 
     refresh = (apiType) => {
         this.setState({ ...this.state, [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            this.props.context.apiGet('/v1/security/accounts')
+            this.props.context.api.get('/v1/security/accounts')
             .then(response => {
                 this.setState({ 
                     accounts: response.data,

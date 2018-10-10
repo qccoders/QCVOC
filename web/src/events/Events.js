@@ -104,7 +104,7 @@ class Events extends Component {
 
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            this.props.context.apiGet('/v1/events?offset=0&limit=100&orderBy=ASC')
+            this.props.context.api.get('/v1/events?offset=0&limit=100&orderBy=ASC')
             .then(response => {
                 this.setState({ 
                     events: response.data,

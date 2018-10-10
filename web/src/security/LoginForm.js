@@ -89,7 +89,7 @@ class LoginForm extends Component {
             api: { isExecuting: true },
             
         }, () => {
-            this.props.context.apiPost('/v1/security/login', this.state)
+            this.props.context.api.post('/v1/security/login', this.state)
             .then(
                 response => {
                     this.props.onLogin(response.data, this.state.rememberMe);

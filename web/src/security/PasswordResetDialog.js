@@ -130,7 +130,7 @@ class PasswordResetDialog extends Component {
                 delete account.name;
                 delete account.password2;
 
-                this.props.context.apiPatch('/v1/security/accounts/' + account.id, account)
+                this.props.context.api.patch('/v1/security/accounts/' + account.id, account)
                 .then(response => {
                     this.setState({
                         updateApi: { isExecuting: false, isErrored: false }

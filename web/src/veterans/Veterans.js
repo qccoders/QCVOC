@@ -120,7 +120,7 @@ class Veterans extends Component {
 
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            this.props.context.apiGet('/v1/veterans?offset=0&limit=5000&orderBy=ASC')
+            this.props.context.api.get('/v1/veterans?offset=0&limit=5000&orderBy=ASC')
             .then(response => {
                 this.setState({ 
                     veterans: response.data.map(p => ({ ...p, cardNumber: p.cardNumber || '' })),

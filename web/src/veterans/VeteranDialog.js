@@ -105,7 +105,7 @@ class VeteranDialog extends Component {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => this.props.context.apiPost('/v1/veterans', veteran),
+                        () => this.props.context.api.post('/v1/veterans', veteran),
                         'addApi', 
                         'Veteran \'' + fullName + '\' successfully enrolled.'
                     )
@@ -116,7 +116,7 @@ class VeteranDialog extends Component {
                         this.setState({ confirmDialog: 'changeCardNumber' });
                     } else {
                         this.execute(
-                            () => this.props.context.apiPut('/v1/veterans/' + veteran.id, veteran), 
+                            () => this.props.context.api.put('/v1/veterans/' + veteran.id, veteran), 
                             'updateApi', 
                             'Veteran \'' + fullName +  '\' successfully updated.'
                         );
@@ -136,7 +136,7 @@ class VeteranDialog extends Component {
 
     handleDeleteConfirmClick = () => {
         return this.execute(
-            () => this.props.context.apiDelete('/v1/veterans/' + this.state.veteran.id),
+            () => this.props.context.api.delete('/v1/veterans/' + this.state.veteran.id),
             'deleteApi', 
             'Veteran \'' + this.state.veteran.firstName + ' ' + this.state.veteran.lastName +  '\' successfully deleted.'
         );
@@ -147,7 +147,7 @@ class VeteranDialog extends Component {
         let fullName = veteran.firstName + ' ' + veteran.lastName;
 
         return this.execute(
-            () => this.props.context.apiPut('/v1/veterans/' + veteran.id, veteran), 
+            () => this.props.context.api.put('/v1/veterans/' + veteran.id, veteran), 
             'updateApi', 
             'Veteran \'' + fullName +  '\' successfully updated.'
             );

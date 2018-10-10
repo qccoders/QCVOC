@@ -73,7 +73,7 @@ class App extends Component {
     componentDidMount = () => {
         if (getCredentials()) {
             this.setState({ api: { ...this.state.api, isExecuting: true }}, () => {
-                this.props.context.apiGet('/v1/security').then(() => {
+                this.props.context.api.get('/v1/security').then(() => {
                     this.setState({ 
                         api: { isExecuting: false, isErrored: false },
                         credentials: getCredentials() 

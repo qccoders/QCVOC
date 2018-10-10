@@ -93,14 +93,14 @@ class EventDialog extends Component {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => this.props.context.apiPost('/v1/events', event),
+                        () => this.props.context.api.post('/v1/events', event),
                         'addApi',
                         'Event \'' + event.name + '\' successfully created.'
                     );
                 }
                 else {
                     this.execute(
-                        () => this.props.context.apiPut('/v1/events/' + event.id, event),
+                        () => this.props.context.api.put('/v1/events/' + event.id, event),
                         'updateApi',
                         'Event \'' + event.name + '\' successfully updated.'
                     );
@@ -119,7 +119,7 @@ class EventDialog extends Component {
 
     handleDeleteConfirmClick = () => {
         return this.execute(
-            () => this.props.context.apiDelete('/v1/events/' + this.state.event.id),
+            () => this.props.context.api.delete('/v1/events/' + this.state.event.id),
             'deleteApi',
             'Event \'' + this.state.event.name + '\' successfully deleted.'
         );

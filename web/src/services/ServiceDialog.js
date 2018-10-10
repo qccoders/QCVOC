@@ -85,14 +85,14 @@ class ServiceDialog extends Component {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => this.props.context.apiPost('/v1/services', service),
+                        () => this.props.context.api.post('/v1/services', service),
                         'addApi',
                         'Service \'' + service.name + '\' successfully created.'
                     )
                 }
                 else {
                     this.execute(
-                        () => this.props.context.apiPut('/v1/services/' + service.id, service),
+                        () => this.props.context.api.put('/v1/services/' + service.id, service),
                         'updateApi',
                         'Service \'' + service.name + '\' successfully updated.'
                     );
@@ -111,7 +111,7 @@ class ServiceDialog extends Component {
 
     handleDeleteConfirmClick = () => {
         return this.execute(
-            () => this.props.context.apiDelete('/v1/services/' + this.state.service.id),
+            () => this.props.context.api.delete('/v1/services/' + this.state.service.id),
             'deleteApi',
             'Service \'' + this.state.service.name + '\' successfully deleted.'
         );

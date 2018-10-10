@@ -48,7 +48,7 @@ class SecurityMenu extends Component {
     state = initialState;
 
     logout = () => {
-        return this.props.context.apiPost('v1/security/logout')
+        return this.props.context.api.post('v1/security/logout')
         .then(() => this.props.onLogout());
     }
 

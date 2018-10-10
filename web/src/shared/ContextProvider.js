@@ -48,11 +48,13 @@ class ContextProvider extends Component {
         );  
     }
 
-    apiDelete = (...args) => { return this.apiCall(api.delete, ...args); }
-    apiGet    = (...args) => { return this.apiCall(api.get,    ...args); }
-    apiPatch  = (...args) => { return this.apiCall(api.patch,  ...args); }
-    apiPost   = (...args) => { return this.apiCall(api.post,   ...args); }
-    apiPut    = (...args) => { return this.apiCall(api.put,    ...args); }
+    api = {
+        delete: (...args) => { return this.apiCall(api.delete, ...args); },
+        get:    (...args) => { return this.apiCall(api.get,    ...args); },
+        patch:  (...args) => { return this.apiCall(api.patch,  ...args); },
+        post:   (...args) => { return this.apiCall(api.post,   ...args); },
+        put:    (...args) => { return this.apiCall(api.put,    ...args); }
+    }
 
     handleSnackbarClose = () => {
         this.setState({ snackbar: { message: '', open: false }});
@@ -62,11 +64,7 @@ class ContextProvider extends Component {
         return (
             <Context.Provider value={{
                 showMessage: this.showMessage,
-                apiDelete: this.apiDelete,
-                apiGet: this.apiGet,
-                apiPatch: this.apiPatch,
-                apiPost: this.apiPost,
-                apiPut: this.apiPut}}
+                api: this.api}}
             >
                 <div>
                     {this.props.children}

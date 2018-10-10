@@ -121,7 +121,7 @@ class Scanner extends Component {
             scanDialog: { open: false },
             scanApi: { ...this.state.scanApi, isExecuting: true }
         }, () => {
-            this.props.context.apiPut('/v1/scans', scan)
+            this.props.context.api.put('/v1/scans', scan)
             .then(response => {
                 this.setState({ scanApi: { isExecuting: false, isErrored: false }}, () => {
                     this.handleScanResponse(barcode, response);
@@ -181,7 +181,7 @@ class Scanner extends Component {
 
         return new Promise((resolve, reject) => { 
             this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-                this.props.context.apiGet('/v1/events?dateStart=' + start + '&dateEnd=' + end)
+                this.props.context.api.get('/v1/events?dateStart=' + start + '&dateEnd=' + end)
                 .then(response => {
                     this.setState({ 
                         events: response.data,
@@ -197,7 +197,7 @@ class Scanner extends Component {
 
     fetchServices = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            this.props.context.apiGet('/v1/services')
+            this.props.context.api.get('/v1/services')
             .then(response => {
                 this.setState({ 
                     services: response.data,
@@ -240,7 +240,7 @@ class Scanner extends Component {
                 this.setState({ 
                     refreshApi: { ...this.state.refreshApi, isExecuting: true }                   
                 }, () => {
-                    this.props.context.apiPost('/v1/events', event)
+                    this.props.context.api.post('/v1/events', event)
                     .then(response => {
                         resolve(response.data);
                     })
