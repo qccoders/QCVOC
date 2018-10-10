@@ -99,7 +99,6 @@ class LoginForm extends Component {
                         if (error.response
                             && (error.response.status === 400 || error.response.status === 401)) {
                             this.setState({ password: '', }, () => {
-                                this.props.context.showMessage('Login failed.');
                                 this.passwordInput.focus();
                             });
                         }
