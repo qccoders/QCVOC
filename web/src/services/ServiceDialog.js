@@ -16,10 +16,9 @@ import {
     TextField,
 } from '@material-ui/core';
 
-import api from '../api';
+import { withContext } from '../shared/ServiceContext';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
 
 const styles = {
@@ -59,10 +58,6 @@ const initialState = {
         name: undefined,
         description: undefined,
     },
-    snackbar: {
-        message: '',
-        open: false,
-    },
     confirmDialog: {
         open: false,
     },
@@ -90,14 +85,14 @@ class ServiceDialog extends Component {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => api.post('/v1/services', service),
+                        () => this.props.context.apiPost('/v1/services', service),
                         'addApi',
                         'Service \'' + service.name + '\' successfully created.'
                     )
                 }
                 else {
                     this.execute(
-                        () => api.put('/v1/services/' + service.id, service),
+                        () => this.props.context.apiPut('/v1/services/' + service.id, service),
                         'updateApi',
                         'Service \'' + service.name + '\' successfully updated.'
                     );
@@ -116,7 +111,7 @@ class ServiceDialog extends Component {
 
     handleDeleteConfirmClick = () => {
         return this.execute(
-            () => api.delete('/v1/services/' + this.state.service.id),
+            () => this.props.context.apiDelete('/v1/services/' + this.state.service.id),
             'deleteApi',
             'Service \'' + this.state.service.name + '\' successfully deleted.'
         );
@@ -136,7 +131,7 @@ class ServiceDialog extends Component {
     }
 
     handleDialogClose = (result) => {
-        this.setState({ snackbar: { open: false }});
+        this.setState({ confirmDialog: { open: false }});
     }
 
     execute = (action, api, successMessage) => {
@@ -151,23 +146,7 @@ class ServiceDialog extends Component {
                         resolve(response);
                     })
                 }, error => {
-                    var body = error && error.response && error.response.data ? error.response.data : error;
-
-                    if (typeof(body) !== 'string') {
-                        var keys = Object.keys(body);
-
-                        if (keys.length > 0) {
-                            body = body[keys[0]];
-                        }
-                    }
-
-                    this.setState({
-                        [api]: { isExecuting: false, isErrored: true },
-                        snackbar: {
-                            message: body,
-                            open: true,
-                        },
-                    }, () => reject(error));
+                    this.setState({ [api]: { isExecuting: false, isErrored: true } }, () => reject(error));
                 })
             })
         })
@@ -272,13 +251,6 @@ class ServiceDialog extends Component {
                 >
                     <p>Are you sure you want to delete Service '{name}'?</p>
                 </ConfirmDialog>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={this.state.snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{this.state.snackbar.message}</span>}
-                />
             </Dialog>
         );
     }
@@ -292,4 +264,4 @@ ServiceDialog.propTypes = {
     service: PropTypes.object,
 };
 
-export default withStyles(styles)(ServiceDialog);
+export default withStyles(styles)(withContext(ServiceDialog));
