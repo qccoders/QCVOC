@@ -26,7 +26,7 @@ import LoginForm from '../security/LoginForm';
 import LinkList from './LinkList';
 import Scanner from '../scans/Scanner';
 import { CircularProgress, ListSubheader } from '@material-ui/core';
-import { getEnvironment } from '../util';
+import { getEnvironment, userCanView } from '../util';
 
 const styles = {
     root: {
@@ -153,7 +153,7 @@ class App extends Component {
                                     <Link to='/veterans' icon={<People/>}>Veterans</Link>
                                     <Link to='/events' icon={<InsertInvitation/>}>Events</Link>
                                     <Link to='/scanner' icon={<SpeakerPhone/>}>Scanner</Link>
-                                    {(role === 'Administrator' || role === 'Supervisor') && 
+                                    {userCanView() && 
                                         <div>
                                             <ListSubheader>Administration</ListSubheader>                               
                                             <Link to='/services' icon={<Assignment/>}>Services</Link>
