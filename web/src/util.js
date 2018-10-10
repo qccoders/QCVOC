@@ -58,7 +58,8 @@ export const userCanView = () => {
     let canView = false
     const credentials = getCredentials()
 
-    if (credentials.role === 'Supervisor' || credentials.role === 'Administrator') {
+    if (credentials
+        && (credentials.role === 'Supervisor' || credentials.role === 'Administrator')) {
         canView = true
     }
 
