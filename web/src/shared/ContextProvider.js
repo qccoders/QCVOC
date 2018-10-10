@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
 import api from '../api';
 
-const ServiceContext = React.createContext();
+const Context = React.createContext();
 
 const initialState = {
 	snackbar: {
@@ -60,7 +60,7 @@ class ContextProvider extends Component {
 
     render() {
         return (
-            <ServiceContext.Provider value={{
+            <Context.Provider value={{
                 showMessage: this.showMessage,
                 apiDelete: this.apiDelete,
                 apiGet: this.apiGet,
@@ -78,7 +78,7 @@ class ContextProvider extends Component {
                         message={<span id="message-id">{this.state.snackbar.message}</span>}
                     />
                 </div>
-            </ServiceContext.Provider>
+            </Context.Provider>
         );
     }
 }
@@ -86,9 +86,9 @@ class ContextProvider extends Component {
 export const withContext = (Component) => {
     return (props) => {
         return (
-            <ServiceContext.Consumer>
+            <Context.Consumer>
                 {context => (<Component {...props} context={context} />)}
-            </ServiceContext.Consumer>
+            </Context.Consumer>
         );
     };
 }
