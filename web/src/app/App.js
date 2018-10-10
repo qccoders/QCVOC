@@ -167,8 +167,12 @@ class App extends Component {
                                 <Route path='/veterans' component={Veterans}/>
                                 <Route path='/events' component={Events}/>
                                 <Route path='/scanner' component={Scanner}/>
-                                <Route path='/services' component={Services}/>
-                                <Route path='/accounts' render={(props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>}/>
+                                {userCanView() &&
+                                    <div>
+                                        <Route path='/services' component={Services}/>
+                                        <Route path='/accounts' render={(props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>}/>
+                                    </div>
+                                }
                             </Switch>
                         </div> :
                         <LoginForm onLogin={this.handleLogin}/>
