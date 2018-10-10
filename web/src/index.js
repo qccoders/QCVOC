@@ -7,6 +7,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
 import MomentUtils from 'material-ui-pickers/utils/moment-utils';
+import ContextProvider from './shared/ContextProvider';
 
 import './index.css';
 import App from './app/App';
@@ -14,7 +15,9 @@ import App from './app/App';
 ReactDOM.render(
     <BrowserRouter>
         <MuiPickersUtilsProvider utils={MomentUtils}>
-            <App />
+            <ContextProvider>
+                <App />
+            </ContextProvider>
         </MuiPickersUtilsProvider>
     </BrowserRouter>,
     document.getElementById('root')

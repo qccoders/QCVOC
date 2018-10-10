@@ -5,11 +5,10 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import api from '../api';
+import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 import ContentWrapper from '../shared/ContentWrapper';
-import Snackbar from '@material-ui/core/Snackbar';
 import { Card, CardContent, Typography, CircularProgress, ListSubheader, Button } from '@material-ui/core';
 import { Add, EventAvailable, Event, Today } from '@material-ui/icons';
 import EventList from './EventList';
@@ -59,10 +58,6 @@ class Events extends Component {
             intent: 'add',
             event: undefined,
         },
-        snackbar: {
-            message: '',
-            open: false,
-        },
         show: showCount
     }
 
@@ -102,34 +97,28 @@ class Events extends Component {
             }
         }, () => {
             if (!result) return;
-            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'))
+            this.props.context.showMessage(result);
+            this.refresh('refreshApi');
         })
-    }
-
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
     }
 
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            api.get('/v1/events?offset=0&limit=100&orderBy=ASC')
+            this.props.context.api.get('/v1/events?offset=0&limit=100&orderBy=ASC')
             .then(response => {
                 this.setState({ 
                     events: response.data,
                     [apiType]: { isExecuting: false, isErrored: false },
                 });
             }, error => {
-                this.setState({ 
-                    [apiType]: { isExecuting: false, isErrored: true },
-                    snackbar: { message: error.response.data.Message, open: true },
-                });
+                this.setState({ [apiType]: { isExecuting: false, isErrored: true } });
             });
         })
     }
 
     render() {
         let classes = this.props.classes;
-        let { events, loadApi, refreshApi, snackbar, show, eventDialog } = this.state;
+        let { events, loadApi, refreshApi, show, eventDialog } = this.state;
 
         events = events.map(e => ({ ...e, startDate: new Date(e.startDate).getTime(), endDate: new Date(e.endDate).getTime() }))
 
@@ -192,13 +181,6 @@ class Events extends Component {
                         event={eventDialog.event}
                     />
                 </ContentWrapper>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{snackbar.message}</span>}
-                />
             </div>
         );
     }
@@ -208,4 +190,4 @@ Events.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Events); 
+export default withStyles(styles)(withContext(Events)); 

@@ -4,7 +4,7 @@
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import api from '../api';
+import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -17,7 +17,6 @@ import {
 } from '@material-ui/core';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import { getCredentials } from '../credentialStore';
 
@@ -48,10 +47,6 @@ const initialState = {
     validation: {
         password: undefined,
         password2: undefined,
-    },
-    snackbar: {
-        message: '',
-        open: false,
     },
     confirmDialog: {
         open: false,
@@ -122,10 +117,6 @@ class PasswordResetDialog extends Component {
         return this.updatePassword();
     }
 
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
-    }
-
     handleDialogClose = () => {
         this.setState({ confirmDialog: { open: false }});
     }
@@ -139,7 +130,7 @@ class PasswordResetDialog extends Component {
                 delete account.name;
                 delete account.password2;
 
-                api.patch('/v1/security/accounts/' + account.id, account)
+                this.props.context.api.patch('/v1/security/accounts/' + account.id, account)
                 .then(response => {
                     this.setState({
                         updateApi: { isExecuting: false, isErrored: false }
@@ -148,22 +139,8 @@ class PasswordResetDialog extends Component {
                         resolve(response);
                     })
                 }, error => {
-                    var body = error && error.response && error.response.data ? error.response.data : error;
-
-                    if (typeof(body) !== 'string') {
-                        var keys = Object.keys(body);
-    
-                        if (keys.length > 0) {
-                            body = body[keys[0]];
-                        }
-                    }
-
                     this.setState({ 
                         updateApi: { isExecuting: false, isErrored: true },
-                        snackbar: {
-                            message: body,
-                            open: true,
-                        },
                     }, () => reject(error));
                 })
             })
@@ -262,13 +239,6 @@ class PasswordResetDialog extends Component {
                         <p>The user will be prompted to change their password at the next log in.</p>
                     </div>
                 </ConfirmDialog>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={this.state.snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{this.state.snackbar.message}</span>}
-                />
             </Dialog>
         );
     }
@@ -281,4 +251,4 @@ PasswordResetDialog.propTypes = {
     account: PropTypes.object,
 };
 
-export default withStyles(styles)(PasswordResetDialog); 
+export default withStyles(styles)(withContext(PasswordResetDialog)); 

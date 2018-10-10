@@ -17,10 +17,9 @@ import {
     TextField,
 } from '@material-ui/core';
 
-import api from '../api';
+import { withContext } from '../shared/ContextProvider';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import DateTimePicker from 'material-ui-pickers/DateTimePicker';
 
@@ -63,10 +62,6 @@ const initialState = {
         startDate: undefined,
         endDate: undefined,
     },
-    snackbar: {
-        message: '',
-        open: false,
-    },
     confirmDialog: {
         open: false,
     },
@@ -98,14 +93,14 @@ class EventDialog extends Component {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => api.post('/v1/events', event),
+                        () => this.props.context.api.post('/v1/events', event),
                         'addApi',
                         'Event \'' + event.name + '\' successfully created.'
                     );
                 }
                 else {
                     this.execute(
-                        () => api.put('/v1/events/' + event.id, event),
+                        () => this.props.context.api.put('/v1/events/' + event.id, event),
                         'updateApi',
                         'Event \'' + event.name + '\' successfully updated.'
                     );
@@ -124,7 +119,7 @@ class EventDialog extends Component {
 
     handleDeleteConfirmClick = () => {
         return this.execute(
-            () => api.delete('/v1/events/' + this.state.event.id),
+            () => this.props.context.api.delete('/v1/events/' + this.state.event.id),
             'deleteApi',
             'Event \'' + this.state.event.name + '\' successfully deleted.'
         );
@@ -145,10 +140,6 @@ class EventDialog extends Component {
 
     handleDialogClose = (result) => {
         this.setState({ confirmDialog: { open: false }});
-    }
-
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
     }
 
     execute = (action, api, successMessage) => {
@@ -174,11 +165,7 @@ class EventDialog extends Component {
                     }
 
                     this.setState({ 
-                        [api]: { isExecuting: false, isErrored: true },
-                        snackbar: {
-                            message: body,
-                            open: true,
-                        },
+                        [api]: { isExecuting: false, isErrored: true }
                     }, () => reject(error));
                 })
             })
@@ -308,13 +295,6 @@ class EventDialog extends Component {
                 >
                     <p>Are you sure you want to delete Event '{name + ' starting ' + moment(startDate).format('dddd, MMMM Do [at] LT')}?</p>
                 </ConfirmDialog>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={this.state.snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{this.state.snackbar.message}</span>}
-                />
             </Dialog>
         );
     }
@@ -328,4 +308,4 @@ EventDialog.propTypes = {
     event: PropTypes.object,
 };
 
-export default withStyles(styles)(EventDialog); 
+export default withStyles(styles)(withContext(EventDialog)); 

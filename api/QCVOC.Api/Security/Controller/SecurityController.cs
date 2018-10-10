@@ -77,7 +77,7 @@ namespace QCVOC.Api.Security.Controller
         [AllowAnonymous]
         [ProducesResponseType(typeof(TokenResponse), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(string), 401)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Login([FromBody]TokenRequest credentials)
         {
@@ -93,7 +93,7 @@ namespace QCVOC.Api.Security.Controller
 
             if (accountRecord == default(Account))
             {
-                return Unauthorized();
+                return StatusCode(401, "Login failed.");
             }
 
             PurgeExpiredRefreshTokensFor(accountRecord.Id);
