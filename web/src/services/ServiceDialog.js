@@ -16,7 +16,7 @@ import {
     TextField,
 } from '@material-ui/core';
 
-import { withContext } from '../shared/ServiceContext';
+import { withContext } from '../shared/ContextProvider';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ConfirmDialog from '../shared/ConfirmDialog';

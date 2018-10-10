@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ServiceContext';
+import { withContext } from '../shared/ContextProvider';
 
 import AccountList from './AccountList';
 import ContentWrapper from '../shared/ContentWrapper';

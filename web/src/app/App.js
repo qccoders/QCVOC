@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentialStore';
-import { withContext } from '../shared/ServiceContext';
+import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 import { People, VerifiedUser, Assignment, InsertInvitation, SpeakerPhone } from '@material-ui/icons';

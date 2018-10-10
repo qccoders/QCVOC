@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'proptypes';
-import { withContext } from '../shared/ServiceContext';
+import { withContext } from '../shared/ContextProvider';
 
 import './style.css';
 

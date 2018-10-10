@@ -4,7 +4,7 @@
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ServiceContext';
+import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
