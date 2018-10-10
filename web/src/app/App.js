@@ -164,11 +164,11 @@ class App extends Component {
                             </Drawer>
                             <Switch>
                                 <Route exact path='/' component={Veterans}/>
-                                <Route path='/accounts' render={(props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>}/>
                                 <Route path='/veterans' component={Veterans}/>
-                                <Route path='/services' component={Services}/>
                                 <Route path='/events' component={Events}/>
                                 <Route path='/scanner' component={Scanner}/>
+                                <Route path='/services' component={Services}/>
+                                <Route path='/accounts' render={(props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>}/>
                             </Switch>
                         </div> :
                         <LoginForm onLogin={this.handleLogin}/>
