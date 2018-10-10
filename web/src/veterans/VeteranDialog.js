@@ -21,10 +21,9 @@ import {
 } from '@material-ui/core';
 
 import { validateEmail, validatePhoneNumber, userCanView } from '../util';
-import api from '../api';
+import { withContext } from '../shared/ServiceContext';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
 
 const styles = {
@@ -77,10 +76,6 @@ const initialState = {
         email: undefined,
         verificationMethod: undefined,
     },
-    snackbar: {
-        message: '',
-        open: false,
-    },
     confirmDialog: undefined,
 }
 
@@ -110,7 +105,7 @@ class VeteranDialog extends Component {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => api.post('/v1/veterans', veteran),
+                        () => this.props.context.apiPost('/v1/veterans', veteran),
                         'addApi', 
                         'Veteran \'' + fullName + '\' successfully enrolled.'
                     )
@@ -121,7 +116,7 @@ class VeteranDialog extends Component {
                         this.setState({ confirmDialog: 'changeCardNumber' });
                     } else {
                         this.execute(
-                            () => api.put('/v1/veterans/' + veteran.id, veteran), 
+                            () => this.props.context.apiPut('/v1/veterans/' + veteran.id, veteran), 
                             'updateApi', 
                             'Veteran \'' + fullName +  '\' successfully updated.'
                         );
@@ -141,7 +136,7 @@ class VeteranDialog extends Component {
 
     handleDeleteConfirmClick = () => {
         return this.execute(
-            () => api.delete('/v1/veterans/' + this.state.veteran.id),
+            () => this.props.context.apiDelete('/v1/veterans/' + this.state.veteran.id),
             'deleteApi', 
             'Veteran \'' + this.state.veteran.firstName + ' ' + this.state.veteran.lastName +  '\' successfully deleted.'
         );
@@ -152,7 +147,7 @@ class VeteranDialog extends Component {
         let fullName = veteran.firstName + ' ' + veteran.lastName;
 
         return this.execute(
-            () => api.put('/v1/veterans/' + veteran.id, veteran), 
+            () => this.props.context.apiPut('/v1/veterans/' + veteran.id, veteran), 
             'updateApi', 
             'Veteran \'' + fullName +  '\' successfully updated.'
             );
@@ -175,10 +170,6 @@ class VeteranDialog extends Component {
         this.setState({ confirmDialog: undefined});
     }
 
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
-    }
-
     execute = (action, api, successMessage) => {
         return new Promise((resolve, reject) => {
             this.setState({ [api]: { isExecuting: true }}, () => {
@@ -191,22 +182,8 @@ class VeteranDialog extends Component {
                         resolve(response);
                     })
                 }, error => {
-                    var body = error && error.response && error.response.data ? error.response.data : error;
-
-                    if (typeof(body) !== 'string') {
-                        var keys = Object.keys(body);
-    
-                        if (keys.length > 0) {
-                            body = body[keys[0]];
-                        }
-                    }
-
                     this.setState({ 
                         [api]: { isExecuting: false, isErrored: true },
-                        snackbar: {
-                            message: body,
-                            open: true,
-                        },
                     }, () => reject(error));
                 })
             })
@@ -402,13 +379,6 @@ class VeteranDialog extends Component {
                 >
                     <p>Are you sure you want to change this Veteran's card number to {cardNumber}? The previous card, {oldCardNumber}, will no longer function.</p>
                 </ConfirmDialog>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={this.state.snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{this.state.snackbar.message}</span>}
-                />
             </Dialog>
         );
     }
@@ -422,4 +392,4 @@ VeteranDialog.propTypes = {
     veteran: PropTypes.object
 };
 
-export default withStyles(styles)(VeteranDialog); 
+export default withStyles(styles)(withContext(VeteranDialog)); 
