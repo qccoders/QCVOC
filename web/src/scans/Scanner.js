@@ -44,7 +44,7 @@ const styles = {
         right: 0,
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: 68,
+        marginTop: 27,
     },
     scanSpinner: {
         position: 'fixed',
