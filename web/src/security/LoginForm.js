@@ -4,7 +4,7 @@
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import api from '../api';
+import { withContext } from '../shared/ServiceContext';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -13,7 +13,6 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Snackbar from '@material-ui/core/Snackbar';
 
 import logo from '../assets/qcvo.png';
 
@@ -65,10 +64,6 @@ const initialState = {
         isExecuting: false,
         isErrored: false,
     },
-    snackbar: {
-        message: '',
-        open: false,
-    },
 }
 
 class LoginForm extends Component {
@@ -89,16 +84,12 @@ class LoginForm extends Component {
         });
     }
 
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
-    }
-
     handleLoginClick = () => {
         this.setState({ 
             api: { isExecuting: true },
             
         }, () => {
-            api.post('/v1/security/login', this.state)
+            this.props.context.apiPost('/v1/security/login', this.state)
             .then(
                 response => {
                     this.props.onLogin(response.data, this.state.rememberMe);
@@ -107,22 +98,9 @@ class LoginForm extends Component {
                     this.setState({ api: { isExecuting: false, isErrored: true }}, () => {
                         if (error.response
                             && (error.response.status === 400 || error.response.status === 401)) {
-                            this.setState({ 
-                                password: '', 
-                                snackbar: { 
-                                    message: 'Login failed.',
-                                    open: true,
-                                }
-                            }, () => {
+                            this.setState({ password: '', }, () => {
+                                this.props.context.showMessage('Login failed.');
                                 this.passwordInput.focus();
-                            });
-                        }
-                        else {
-                            this.setState({ 
-                                snackbar: { 
-                                    message: 'Error: ' + error.message,
-                                    open: true 
-                                }
                             });
                         }
                     });
@@ -195,13 +173,6 @@ class LoginForm extends Component {
                         </Button>
                     </CardActions>
                 </Card>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={this.state.snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{this.state.snackbar.message}</span>}
-                />
             </div>
         );
     }
@@ -212,4 +183,4 @@ LoginForm.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(LoginForm); 
+export default withStyles(styles)(withContext(LoginForm)); 
