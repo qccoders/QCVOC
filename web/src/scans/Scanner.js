@@ -215,7 +215,7 @@ class Scanner extends Component {
 
         let result = getScanResult(scan);
 
-        return <div>{result.icon}</div>;
+        return <div>{React.cloneElement(result.icon, { style: { fontSize: 72 }})}</div>;
     }
 
     getDailyEvent = () => {
