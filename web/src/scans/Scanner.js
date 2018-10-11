@@ -50,6 +50,7 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        textAlign: 'center',
         height: 'calc(100vh - 188px)',
         width: '100%',
     },
