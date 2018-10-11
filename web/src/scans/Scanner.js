@@ -214,13 +214,13 @@ class Scanner extends Component {
 
         let { veteran, plusOne } = scan.response;
         let { message, icon } = getScanResult(scan);
-        icon = React.cloneElement(icon, { style: { fontSize: 72 }});
 
-        console.log(scan);
+        icon = React.cloneElement(icon, { style: { fontSize: 72 }});
+        let title = veteran ? veteran + (plusOne ? ' + 1': '') : scan.cardNumber;
 
         return (
             <div>
-                <div>{veteran}</div>
+                <div>{title}</div>
                 {icon}
                 <div>{message}</div>
             </div>
