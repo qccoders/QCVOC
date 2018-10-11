@@ -211,9 +211,19 @@ class Scanner extends Component {
     getScanDisplay = (scan) => {
         if (scan === undefined || scan.status === undefined) return;
 
-        let result = getScanResult(scan);
+        let { veteran, plusOne } = scan.response;
+        let { message, icon } = getScanResult(scan);
+        icon = React.cloneElement(icon, { style: { fontSize: 72 }});
 
-        return <div>{React.cloneElement(result.icon, { style: { fontSize: 72 }})}</div>;
+        console.log(scan);
+
+        return (
+            <div>
+                <div>{veteran}</div>
+                {icon}
+                <div>{message}</div>
+            </div>
+        );
     }
 
     getDailyEvent = () => {
