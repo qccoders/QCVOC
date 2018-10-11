@@ -17,8 +17,6 @@ import EventList from '../events/EventList';
 import ServiceList from '../services/ServiceList';
 import ScannerMenu from './ScannerMenu';
 
-import { Done, Clear, Pause } from '@material-ui/icons';
-
 import ScannerHistoryDialog from './ScannerHistoryDialog';
 import { getScanResult } from './scannerUtil';
 import ManualScanDialog from './ManualScanDialog';
