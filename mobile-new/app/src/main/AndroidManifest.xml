@@ -3,7 +3,6 @@
     package="org.qccoders.qcvoc">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-feature android:name="android.hardware.Camera"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
