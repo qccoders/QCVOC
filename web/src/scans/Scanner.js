@@ -46,22 +46,13 @@ const styles = {
         marginRight: 'auto',
         marginTop: 27,
     },
-    scanSpinner: {
-        position: 'fixed',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        marginTop: 'auto',
-        marginBottom: 'auto',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-    },
     displayBox: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        textAlign: 'center',
         height: 'calc(100vh - 188px)',
+        width: '100%',
     },
     title: {
         display: 'inline',
@@ -219,7 +210,22 @@ class Scanner extends Component {
     }
 
     getScanDisplay = (scan) => {
-        return <pre>{JSON.stringify(scan, null, 2)}</pre>;
+        if (scan === undefined || scan.status === undefined) return;
+
+        let { veteran, plusOne } = scan.response;
+        let { message, icon } = getScanResult(scan);
+
+        icon = React.cloneElement(icon, { style: { fontSize: 72 }});
+        let title = veteran ? veteran : scan.cardNumber;
+
+        return (
+            <div>
+                <Typography component="h2" variant="display2" gutterBottom>{title}</Typography>
+                {plusOne && <Typography component="h2" variant="display1" gutterBottom>+1</Typography>}
+                {icon}
+                <Typography style={{ marginTop: 20 }} variant="title" gutterBottom>{message}</Typography>
+            </div>
+        );
     }
 
     getDailyEvent = () => {
@@ -301,32 +307,32 @@ class Scanner extends Component {
                                     viewHistory={() => this.setState({ historyDialog: { open: true }})}
                                 />
                             </div>
-                            {scanApi.isExecuting ? <CircularProgress thickness={7.2} size={72} color={'secondary'} className={classes.scanSpinner}/> :
-                                refreshApi.isExecuting ?
-                                    <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
-                                    <div>
-                                        {!eventSelected && 
-                                            <EventList
-                                                events={events}
-                                                icon={<Today/>}
-                                                onItemClick={this.handleEventItemClick}
-                                            />
-                                        }
-                                        {!serviceSelected && eventSelected && 
-                                            <ServiceList
-                                                services={services}
-                                                icon={<Shop/>}
-                                                onItemClick={this.handleServiceItemClick}
-                                            />
-                                        }
-                                        {serviceSelected && eventSelected &&
-                                            <div className={classes.displayBox}>
-                                                {!scan.status ? <Button disabled>Ready to Scan</Button> :
+                            {refreshApi.isExecuting ?
+                                <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
+                                <div>
+                                    {!eventSelected && 
+                                        <EventList
+                                            events={events}
+                                            icon={<Today/>}
+                                            onItemClick={this.handleEventItemClick}
+                                        />
+                                    }
+                                    {!serviceSelected && eventSelected && 
+                                        <ServiceList
+                                            services={services}
+                                            icon={<Shop/>}
+                                            onItemClick={this.handleServiceItemClick}
+                                        />
+                                    }
+                                    {serviceSelected && eventSelected &&
+                                        <div className={classes.displayBox}>
+                                            {scanApi.isExecuting ? <CircularProgress thickness={5} size={60} color={'secondary'}/> :
+                                                !scan.status ? <Button disabled>Ready to Scan</Button> :
                                                     display
-                                                }
-                                            </div>
-                                        }
-                                    </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
                             }
                         </CardContent>
                     </Card>
