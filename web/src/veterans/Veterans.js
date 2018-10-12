@@ -24,7 +24,7 @@ const styles = {
         bottom: 20,
         left: 'auto',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
     },
     card: {
         minHeight: 220,
@@ -45,7 +45,7 @@ const styles = {
     searchInput: {
         marginLeft: 25,
         marginRight: 25,
-    }
+    },
 };
 
 const showCount = 7;
@@ -80,8 +80,8 @@ class Veterans extends Component {
                 open: true,
                 intent: 'add',
                 veteran: undefined,
-            }
-        })
+            },
+        });
     }
     
     handleEditClick = (veteran) => {
@@ -90,8 +90,8 @@ class Veterans extends Component {
                 open: true,
                 intent: 'update',
                 veteran: veteran,
-            }
-        })
+            },
+        });
     }
 
     handleShowMoreClick = () => {
@@ -110,12 +110,12 @@ class Veterans extends Component {
             veteranDialog: {
                 ...this.state.veteranDialog,
                 open: false,
-            }
+            },
         }, () => {
             if (!result) return;
             this.props.context.showMessage(result);
             this.refresh('refreshApi');
-        })
+        });
     }
 
     refresh = (apiType) => {
@@ -131,7 +131,7 @@ class Veterans extends Component {
                     [apiType]: { isExecuting: false, isErrored: true },
                 });
             });
-        })
+        });
     }
 
     render() {

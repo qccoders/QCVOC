@@ -51,7 +51,7 @@ api.interceptors.response.use(config => {
         logError(error);
         return Promise.reject(error);
     }
-})
+});
 
 const logError = (error) => {
     if (error.response) {
@@ -64,6 +64,6 @@ const logError = (error) => {
         console.log('Error: ', error.message);
     }
     console.log(error.config);
-}
+};
 
 export default api;

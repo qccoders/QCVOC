@@ -65,7 +65,7 @@ const initialState = {
     drawer: {
         open: false,
     },
-}
+};
 
 class App extends Component {
     state = initialState;
@@ -76,16 +76,16 @@ class App extends Component {
                 this.props.context.api.get('/v1/security').then(() => {
                     this.setState({ 
                         api: { isExecuting: false, isErrored: false },
-                        credentials: getCredentials() 
+                        credentials: getCredentials(), 
                     });
                 })
                 .catch(error => {
                     this.setState({ 
                         credentials: initialState.credentials,
-                        api: { isExecuting: false, isErrored: true }
+                        api: { isExecuting: false, isErrored: true },
                     });
                 });
-            })
+            });
         }
     }
 
@@ -116,7 +116,7 @@ class App extends Component {
 
     handlePasswordReset = () => {
         this.setState({ 
-            credentials: { ...this.state.credentials, passwordResetRequired: false }
+            credentials: { ...this.state.credentials, passwordResetRequired: false },
         }, () => updateCredentials(this.state.credentials));
     }
 

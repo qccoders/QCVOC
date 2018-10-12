@@ -23,7 +23,7 @@ const styles = {
         bottom: 20,
         left: 'auto',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
     },
     card: {
         minHeight: 273,
@@ -58,7 +58,7 @@ class Events extends Component {
             intent: 'add',
             event: undefined,
         },
-        show: showCount
+        show: showCount,
     }
 
     componentWillMount = () => {
@@ -71,7 +71,7 @@ class Events extends Component {
                 open: true,
                 intent: 'update',
                 event: event,
-            }
+            },
         });
     }
 
@@ -81,7 +81,7 @@ class Events extends Component {
                 open: true,
                 intent: 'add',
                 event: undefined,
-            }
+            },
         });
     }
 
@@ -94,12 +94,12 @@ class Events extends Component {
             eventDialog: {
                 ...this.state.eventDialog,
                 open: false,
-            }
+            },
         }, () => {
             if (!result) return;
             this.props.context.showMessage(result);
             this.refresh('refreshApi');
-        })
+        });
     }
 
     refresh = (apiType) => {
@@ -113,21 +113,21 @@ class Events extends Component {
             }, error => {
                 this.setState({ [apiType]: { isExecuting: false, isErrored: true } });
             });
-        })
+        });
     }
 
     render() {
         let classes = this.props.classes;
         let { events, loadApi, refreshApi, show, eventDialog } = this.state;
 
-        events = events.map(e => ({ ...e, startDate: new Date(e.startDate).getTime(), endDate: new Date(e.endDate).getTime() }))
+        events = events.map(e => ({ ...e, startDate: new Date(e.startDate).getTime(), endDate: new Date(e.endDate).getTime() }));
 
         let now = new Date().getTime();
 
         let current = events.filter(e => e.startDate <= now && e.endDate >= now);
         let upcoming = events.filter(e => e.startDate > now);
         
-        let past = events.filter(e => e.endDate < now)
+        let past = events.filter(e => e.endDate < now);
         let shownPastList = past.slice(0, show);
 
         return (

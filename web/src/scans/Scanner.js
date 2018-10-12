@@ -31,7 +31,7 @@ const styles = {
         bottom: 20,
         left: 'auto',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
     },
     card: {
         height: 'calc(100vh - 115px)',
@@ -56,7 +56,7 @@ const styles = {
     },
     title: {
         display: 'inline',
-    }
+    },
 };
 
 const initialState = {
@@ -90,7 +90,7 @@ const initialState = {
     scanDialog: {
         open: false,
     },
-}
+};
 
 class Scanner extends Component {
     state = initialState;
@@ -110,7 +110,7 @@ class Scanner extends Component {
         this.setState({ 
             scan: initialState.scan,
             scanDialog: { open: false },
-            scanApi: { ...this.state.scanApi, isExecuting: true }
+            scanApi: { ...this.state.scanApi, isExecuting: true },
         }, () => {
             this.props.context.api.put('/v1/scans', scan)
             .then(response => {
@@ -244,7 +244,7 @@ class Scanner extends Component {
         new Promise((resolve, reject) => {
             if (event.id === undefined) {
                 this.setState({ 
-                    refreshApi: { ...this.state.refreshApi, isExecuting: true }                   
+                    refreshApi: { ...this.state.refreshApi, isExecuting: true },                   
                 }, () => {
                     this.props.context.api.post('/v1/events', event)
                     .then(response => {

@@ -13,14 +13,14 @@ const initialState = {
 	snackbar: {
         message: '',
         open: false,
-    }
-}
+    },
+};
 
 class ContextProvider extends Component {
     state = initialState;
 
     showMessage = (message) => {
-        this.setState({ snackbar: { open: true, message: message }})
+        this.setState({ snackbar: { open: true, message: message }});
     }
 
     showErrorMessage = (error) => {
@@ -53,7 +53,7 @@ class ContextProvider extends Component {
         get:    (...args) => { return this.apiCall(api.get,    ...args); },
         patch:  (...args) => { return this.apiCall(api.patch,  ...args); },
         post:   (...args) => { return this.apiCall(api.post,   ...args); },
-        put:    (...args) => { return this.apiCall(api.put,    ...args); }
+        put:    (...args) => { return this.apiCall(api.put,    ...args); },
     }
 
     handleSnackbarClose = () => {
@@ -89,6 +89,6 @@ export const withContext = (Component) => {
             </Context.Consumer>
         );
     };
-}
+};
 
 export default ContextProvider;

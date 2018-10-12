@@ -5,18 +5,18 @@
 
 export const isMobileAttached = () => {
     return isAndroidAttached();
-}
+};
 
 export const isAndroidAttached = () => {
     return window["Android"] !== undefined;
-}
+};
 
 export const initiateMobileScan = () => {
     if (isAndroidAttached()) {
         initiateAndroidScan();
     }
-}
+};
 
 export const initiateAndroidScan = () => {
     window["Android"]["scanBarcode"]();
-}
+};

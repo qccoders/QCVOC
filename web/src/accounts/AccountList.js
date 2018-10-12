@@ -50,7 +50,7 @@ const AccountList = (props) => {
             }
         </List>
     );
-}
+};
 
 AccountList.propTypes = {
     accounts: PropTypes.array.isRequired,

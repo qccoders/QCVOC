@@ -13,7 +13,7 @@ import { Card, CardContent, Typography, CircularProgress, Button, ListSubheader 
 import { Add } from '@material-ui/icons';
 import ServiceList from './ServiceList';
 import ServiceDialog from './ServiceDialog';
-import { Shop, Work } from '@material-ui/icons'
+import { Shop, Work } from '@material-ui/icons';
 
 const styles = {
     fab: {
@@ -23,7 +23,7 @@ const styles = {
         bottom: 20,
         left: 'auto',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
     },
     card: {
         minHeight: 230,
@@ -68,8 +68,8 @@ class Services extends Component {
                 open: true,
                 intent: 'add',
                 service: undefined,
-            }
-        })
+            },
+        });
     }
 
     handleEditClick = (service) => {
@@ -78,8 +78,8 @@ class Services extends Component {
                 open: true,
                 intent: 'update',
                 service: service,
-            }
-        })
+            },
+        });
     }
 
     handleServiceDialogClose = (result) => {
@@ -87,12 +87,12 @@ class Services extends Component {
             serviceDialog: {
                 ...this.state.serviceDialog,
                 open: false,
-            }
+            },
         }, () => {
             if (!result) return;
             this.props.context.showMessage(result);
             this.refresh('refreshApi');
-        })
+        });
     }
 
     refresh = (apiType) => {
@@ -105,10 +105,10 @@ class Services extends Component {
                 });
             }, error => {
                 this.setState({
-                    [apiType]: { isExecuting: false, isErrored: true }
+                    [apiType]: { isExecuting: false, isErrored: true },
                 });
             });
-        })
+        });
     }
 
     render() {

@@ -18,8 +18,8 @@ const initialState = {
     api: {
         isExecuting: false,
         isErrored: false,
-    }
-}
+    },
+};
 
 const styles = {
     spinner: {
@@ -32,7 +32,7 @@ const styles = {
         marginTop: 50,
         height: 'fit-content',
     },
-}
+};
 
 class ConfirmDialog extends Component {
     state = initialState;
@@ -49,18 +49,18 @@ class ConfirmDialog extends Component {
             .then(response => {
                 this.setState({ api: { isExecuting: false, isErrored: false }}, () => {
                     if (!this.props.suppressCloseOnConfirm) {
-                        this.props.onClose({ cancelled: false }) 
+                        this.props.onClose({ cancelled: false }); 
                     }
                 });
             }, error => {
                 this.setState({ api: { isExecuting: false, isErrored: true }});
-                this.props.onClose({ cancelled: false }) 
-            })
-        })
+                this.props.onClose({ cancelled: false }); 
+            });
+        });
     }
 
     handleCancelClick = () => {
-        this.setState(initialState, () => this.props.onClose({ cancelled: true }))
+        this.setState(initialState, () => this.props.onClose({ cancelled: true }));
     }
 
     render() {

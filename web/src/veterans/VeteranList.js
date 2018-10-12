@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { sortByProp } from '../util';
 
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { Person } from '@material-ui/icons'
+import { Person } from '@material-ui/icons';
 
 const VeteranList = (props) => {
     let { veterans, displayId, onItemClick } = props;
@@ -31,7 +31,7 @@ const VeteranList = (props) => {
             )}
         </List>
     );
-}
+};
 
 VeteranList.propTypes = {
     veterans: PropTypes.array.isRequired,

@@ -28,7 +28,7 @@ const styles = {
         display: 'grid',
         textAlign: 'center',
         padding: 20,
-        minHeight: 470
+        minHeight: 470,
     },
     card: {
         minWidth: 180,
@@ -64,7 +64,7 @@ const initialState = {
         isExecuting: false,
         isErrored: false,
     },
-}
+};
 
 class LoginForm extends Component {
     state = initialState;
@@ -98,14 +98,14 @@ class LoginForm extends Component {
                     this.setState({ api: { isExecuting: false, isErrored: true }}, () => {
                         if (error.response
                             && (error.response.status === 400 || error.response.status === 401)) {
-                            this.setState({ password: '', }, () => {
+                            this.setState({ password: '' }, () => {
                                 this.passwordInput.focus();
                             });
                         }
                     });
                 }
             );
-        })
+        });
     }
 
     handleKeyPress = (event) => {

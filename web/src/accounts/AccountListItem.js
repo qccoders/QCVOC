@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, IconButton } from '@material-ui/core';
-import { Person, Star, SupervisorAccount, LockOpen } from '@material-ui/icons'
+import { Person, Star, SupervisorAccount, LockOpen } from '@material-ui/icons';
 
 const getUserIcon = (role) => {
     switch (role) {
@@ -18,7 +18,7 @@ const getUserIcon = (role) => {
         default:
             return <Person/>;
     }
-}
+};
 
 const AccountListItem = (props) => {
     let { account, onItemClick, onItemResetClick } = props;
@@ -42,7 +42,7 @@ const AccountListItem = (props) => {
             </ListItemSecondaryAction>
         </ListItem>
     );
-}
+};
 
 AccountListItem.propTypes = {
     account: PropTypes.object.isRequired,

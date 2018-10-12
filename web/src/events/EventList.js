@@ -29,7 +29,7 @@ const EventList = (props) => {
         }
 
         return start.local().format(startFmt) + ' to ' + end.local().format(endFmt);
-    }
+    };
 
     return (
         <List>
@@ -50,7 +50,7 @@ const EventList = (props) => {
             )}
         </List>
     );
-}
+};
 
 EventList.propTypes = {
     events: PropTypes.array.isRequired,

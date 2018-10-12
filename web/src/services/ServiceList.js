@@ -31,7 +31,7 @@ const ServiceList = (props) => {
             )}
         </List>
     );
-}
+};
 
 ServiceList.propTypes = {
     services: PropTypes.array.isRequired,
