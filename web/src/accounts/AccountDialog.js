@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import api from '../api';
+import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -22,7 +22,6 @@ import {
 } from '@material-ui/core';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Snackbar from '@material-ui/core/Snackbar';
 import ConfirmDialog from '../shared/ConfirmDialog';
 
 
@@ -70,10 +69,6 @@ const initialState = {
         password: undefined,
         password2: undefined,
     },
-    snackbar: {
-        message: '',
-        open: false,
-    },
     confirmDialog: {
         open: false,
     },
@@ -118,14 +113,14 @@ class AccountDialog extends Component {
             if (result.isValid) {
                 if (this.props.intent === 'add') {
                     this.execute(
-                        () => api.post('/v1/security/accounts', account),
+                        () => this.props.context.api.post('/v1/security/accounts', account),
                         'addApi', 
                         'Account \'' + account.name + '\' successfully created.'
                     )
                 }
                 else {
                     this.execute(
-                        () => api.patch('/v1/security/accounts/' + account.id, account), 
+                        () => this.props.context.api.patch('/v1/security/accounts/' + account.id, account), 
                         'updateApi', 
                         'Account \'' + account.name + '\' successfully updated.'
                     );
@@ -142,7 +137,7 @@ class AccountDialog extends Component {
         let account = this.state.account;
 
         return this.execute(
-            () => api.delete('/v1/security/accounts/' + account.id), 
+            () => this.props.context.api.delete('/v1/security/accounts/' + account.id), 
             'deleteApi', 
             'Account \'' + account.name + '\' successfully deleted.'
         );
@@ -150,10 +145,6 @@ class AccountDialog extends Component {
 
     handleDialogClose = (result) => {
         this.setState({ confirmDialog: { open: false }});
-    }
-
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
     }
 
     execute = (action, api, successMessage) => {
@@ -168,22 +159,8 @@ class AccountDialog extends Component {
                         resolve(response);
                     })
                 }, error => {
-                    var body = error && error.response && error.response.data ? error.response.data : error;
-
-                    if (typeof(body) !== 'string') {
-                        var keys = Object.keys(body);
-    
-                        if (keys.length > 0) {
-                            body = body[keys[0]];
-                        }
-                    }
-
                     this.setState({ 
-                        [api]: { isExecuting: false, isErrored: true },
-                        snackbar: {
-                            message: body,
-                            open: true,
-                        },
+                        [api]: { isExecuting: false, isErrored: true }
                     }, () => reject(error));
                 })
             })
@@ -337,13 +314,6 @@ class AccountDialog extends Component {
                 >
                     <p>Are you sure you want to delete account '{this.state.account.name}'?</p>
                 </ConfirmDialog>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={this.state.snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{this.state.snackbar.message}</span>}
-                />
             </Dialog>
         );
     }
@@ -357,4 +327,4 @@ AccountDialog.propTypes = {
     account: PropTypes.object,
 };
 
-export default withStyles(styles)(AccountDialog); 
+export default withStyles(styles)(withContext(AccountDialog)); 

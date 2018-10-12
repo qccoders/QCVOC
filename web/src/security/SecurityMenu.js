@@ -2,15 +2,18 @@
     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
+
 import React, { Component } from 'react';
 import PropTypes from 'proptypes';
-import api from '../api';
+import { withContext } from '../shared/ContextProvider';
+
+import './style.css';
 
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import { LockOpen, ExitToApp, AccountCircle }  from '@material-ui/icons';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { Badge, Menu, MenuItem, Snackbar, ListItemIcon, ListItemText } from '@material-ui/core';
+import { Badge, Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import PasswordResetDialog from '../security/PasswordResetDialog';
 
 const styles = {
@@ -24,9 +27,6 @@ const styles = {
     },
     icon: {
         fontSize: 29,
-    },
-    menu: {
-        marginTop: 40,
     },
 }
 
@@ -42,17 +42,13 @@ const initialState = {
         anchorEl: undefined,
         open: false,
     },
-    snackbar: {
-        open: false,
-        message: undefined,
-    },
 };
 
 class SecurityMenu extends Component {
     state = initialState;
 
     logout = () => {
-        return api.post('v1/security/logout')
+        return this.props.context.api.post('v1/security/logout')
         .then(() => this.props.onLogout());
     }
 
@@ -85,16 +81,13 @@ class SecurityMenu extends Component {
         this.setState({ confirmDialog: { open: false }});
     }
 
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
-    }
-
     handlePasswordResetDialogClose = (result) => {
         this.setState({
             passwordResetDialog: { open: false },
         }, () => { 
             if (result) { 
-                this.setState({ snackbar: { message: result, open: true }}, () => this.props.onPasswordReset());
+                this.props.context.showMessage(result);
+                this.props.onPasswordReset();
             }
         });
     }
@@ -121,7 +114,7 @@ class SecurityMenu extends Component {
                     open={menu.open}
                     anchorEl={menu.anchorEl}
                     onClose={this.handleMenuClose}
-                    style={styles.menu}
+                    className={'menu'}
                 >
                     <MenuItem onClick={this.handleResetPasswordClick}>
                         <ListItemIcon>
@@ -160,13 +153,6 @@ class SecurityMenu extends Component {
                     account={passwordResetDialog.account}
                     onClose={this.handlePasswordResetDialogClose}
                 />
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={this.state.snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{this.state.snackbar.message}</span>}
-                />
             </div>
         );
     }
@@ -178,4 +164,4 @@ SecurityMenu.propTypes = {
     onPasswordReset: PropTypes.func.isRequired,
 }
 
-export default SecurityMenu; 
+export default withContext(SecurityMenu); 

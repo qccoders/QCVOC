@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentialStore';
-import api from '../api';
+import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 import { People, VerifiedUser, Assignment, InsertInvitation, SpeakerPhone } from '@material-ui/icons';
@@ -26,7 +26,7 @@ import LoginForm from '../security/LoginForm';
 import LinkList from './LinkList';
 import Scanner from '../scans/Scanner';
 import { CircularProgress, ListSubheader } from '@material-ui/core';
-import { getEnvironment } from '../util';
+import { getEnvironment, userCanView } from '../util';
 
 const styles = {
     root: {
@@ -73,7 +73,7 @@ class App extends Component {
     componentDidMount = () => {
         if (getCredentials()) {
             this.setState({ api: { ...this.state.api, isExecuting: true }}, () => {
-                api.get('/v1/security').then(() => {
+                this.props.context.api.get('/v1/security').then(() => {
                     this.setState({ 
                         api: { isExecuting: false, isErrored: false },
                         credentials: getCredentials() 
@@ -123,7 +123,7 @@ class App extends Component {
     render() {
         let classes = this.props.classes;
         let { isExecuting, isErrored } = this.state.api;
-        let { accessToken, role } = this.state.credentials;
+        let { accessToken } = this.state.credentials;
 
         let env = getEnvironment();
 
@@ -153,7 +153,7 @@ class App extends Component {
                                     <Link to='/veterans' icon={<People/>}>Veterans</Link>
                                     <Link to='/events' icon={<InsertInvitation/>}>Events</Link>
                                     <Link to='/scanner' icon={<SpeakerPhone/>}>Scanner</Link>
-                                    {(role === 'Administrator' || role === 'Supervisor') && 
+                                    {userCanView() && 
                                         <div>
                                             <ListSubheader>Administration</ListSubheader>                               
                                             <Link to='/services' icon={<Assignment/>}>Services</Link>
@@ -164,11 +164,15 @@ class App extends Component {
                             </Drawer>
                             <Switch>
                                 <Route exact path='/' component={Veterans}/>
-                                <Route path='/accounts' render={(props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>}/>
                                 <Route path='/veterans' component={Veterans}/>
-                                <Route path='/services' component={Services}/>
                                 <Route path='/events' component={Events}/>
                                 <Route path='/scanner' component={Scanner}/>
+                                {userCanView() &&
+                                    <div>
+                                        <Route path='/services' component={Services}/>
+                                        <Route path='/accounts' render={(props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>}/>
+                                    </div>
+                                }
                             </Switch>
                         </div> :
                         <LoginForm onLogin={this.handleLogin}/>
@@ -182,4 +186,4 @@ App.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withRouter(withStyles(styles)(App)); 
+export default withRouter(withStyles(styles)(withContext(App))); 

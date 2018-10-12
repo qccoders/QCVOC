@@ -1,0 +1,14 @@
+/*
+    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    in the project root for full license information.
+*/
+
+.menu {
+    margin-top: 40px;
+}
+
+@media screen and (max-width: 599px) {
+    .menu {
+        margin-top: 32px;
+    }
+}

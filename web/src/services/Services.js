@@ -4,12 +4,11 @@
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import api from '../api';
+import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 
 import ContentWrapper from '../shared/ContentWrapper';
-import Snackbar from '@material-ui/core/Snackbar';
 import { Card, CardContent, Typography, CircularProgress, Button, ListSubheader } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 import ServiceList from './ServiceList';
@@ -27,7 +26,7 @@ const styles = {
         zIndex: 1000
     },
     card: {
-        minHeight: 220,
+        minHeight: 230,
         maxWidth: 800,
         margin: 'auto',
     },
@@ -37,7 +36,7 @@ const styles = {
         right: 0,
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: 72,
+        marginTop: 59,
     },
 };
 
@@ -56,10 +55,6 @@ class Services extends Component {
             open: false,
             intent: 'add',
             service: undefined,
-        },
-        snackbar: {
-            message: '',
-            open: false,
         },
     }
 
@@ -95,17 +90,14 @@ class Services extends Component {
             }
         }, () => {
             if (!result) return;
-            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'))
+            this.props.context.showMessage(result);
+            this.refresh('refreshApi');
         })
-    }
-
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
     }
 
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true}}, () => {
-            api.get('/v1/services?offset=0&limit=5000&orderBy=ASC')
+            this.props.context.api.get('/v1/services?offset=0&limit=5000&orderBy=ASC')
             .then(response => {
                 this.setState({
                     services: response.data,
@@ -113,8 +105,7 @@ class Services extends Component {
                 });
             }, error => {
                 this.setState({
-                    [apiType]: { isExecuting: false, isErrored: true },
-                    snackbar: { message: error.response.data.Message, open: true },
+                    [apiType]: { isExecuting: false, isErrored: true }
                 });
             });
         })
@@ -122,7 +113,7 @@ class Services extends Component {
 
     render() {
         let { classes } = this.props;
-        let { services, loadApi, refreshApi, snackbar, serviceDialog } = this.state;
+        let { services, loadApi, refreshApi, serviceDialog } = this.state;
 
         let userDefined = services.filter(s => s.id !== '00000000-0000-0000-0000-000000000000');
         let systemDefined = services.filter(s => s.id === '00000000-0000-0000-0000-000000000000');
@@ -168,13 +159,6 @@ class Services extends Component {
                         service={serviceDialog.service}
                     />
                 </ContentWrapper>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{snackbar.message}</span>}
-                />
             </div>
         );
     }
@@ -184,4 +168,4 @@ Services.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Services); 
+export default withStyles(styles)(withContext(Services)); 

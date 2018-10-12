@@ -4,12 +4,11 @@
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import api from '../api';
+import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 
 import ContentWrapper from '../shared/ContentWrapper';
-import Snackbar from '@material-ui/core/Snackbar';
 import { Card, CardContent, Typography, CircularProgress, Button, TextField, InputAdornment } from '@material-ui/core';
 import { Add, Search } from '@material-ui/icons';
 import VeteranList from './VeteranList';
@@ -67,10 +66,6 @@ class Veterans extends Component {
             intent: 'add',
             veteran: undefined,
         },
-        snackbar: {
-            message: '',
-            open: false,
-        },
         filter: '',
         show: showCount,
     }
@@ -118,17 +113,14 @@ class Veterans extends Component {
             }
         }, () => {
             if (!result) return;
-            this.setState({ snackbar: { message: result, open: true }}, () => this.refresh('refreshApi'))
+            this.props.context.showMessage(result);
+            this.refresh('refreshApi');
         })
-    }
-
-    handleSnackbarClose = () => {
-        this.setState({ snackbar: { open: false }});
     }
 
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            api.get('/v1/veterans?offset=0&limit=5000&orderBy=ASC')
+            this.props.context.api.get('/v1/veterans?offset=0&limit=5000&orderBy=ASC')
             .then(response => {
                 this.setState({ 
                     veterans: response.data.map(p => ({ ...p, cardNumber: p.cardNumber || '' })),
@@ -137,7 +129,6 @@ class Veterans extends Component {
             }, error => {
                 this.setState({ 
                     [apiType]: { isExecuting: false, isErrored: true },
-                    snackbar: { message: error.response.data.Message, open: true },
                 });
             });
         })
@@ -145,7 +136,7 @@ class Veterans extends Component {
 
     render() {
         let { classes } = this.props;
-        let { veterans, loadApi, refreshApi, snackbar, show, veteranDialog } = this.state;
+        let { veterans, loadApi, refreshApi, show, veteranDialog } = this.state;
 
         let searchById = this.state.filter !== undefined && this.state.filter !== '' && !isNaN(this.state.filter);
 
@@ -179,13 +170,15 @@ class Veterans extends Component {
                             />
                             {refreshApi.isExecuting ? 
                                 <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
-                                <VeteranList
-                                    veterans={shownList}
-                                    displayId={searchById}
-                                    onItemClick={this.handleEditClick}
-                                />
+                                <div>
+                                    <VeteranList
+                                        veterans={shownList}
+                                        displayId={searchById}
+                                        onItemClick={this.handleEditClick}
+                                    />
+                                    {list.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
+                                </div>
                             }
-                            {list.length > show && <Button fullWidth onClick={this.handleShowMoreClick}>Show More</Button>}
                         </CardContent>
                     </Card>
                     <Button 
@@ -203,13 +196,6 @@ class Veterans extends Component {
                         veteran={veteranDialog.veteran}
                     />
                 </ContentWrapper>
-                <Snackbar
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'center'}}
-                    open={snackbar.open}
-                    onClose={this.handleSnackbarClose}
-                    autoHideDuration={3000}
-                    message={<span id="message-id">{snackbar.message}</span>}
-                />
             </div>
         );
     }
@@ -219,4 +205,4 @@ Veterans.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Veterans); 
+export default withStyles(styles)(withContext(Veterans)); 

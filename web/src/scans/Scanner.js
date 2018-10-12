@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import api from '../api';
+import { withContext } from '../shared/ContextProvider';
 import moment from 'moment';
 
 import { withStyles } from '@material-ui/core/styles';
@@ -44,24 +44,15 @@ const styles = {
         right: 0,
         marginLeft: 'auto',
         marginRight: 'auto',
-        marginTop: 68,
-    },
-    scanSpinner: {
-        position: 'fixed',
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        marginTop: 'auto',
-        marginBottom: 'auto',
-        marginLeft: 'auto',
-        marginRight: 'auto',
+        marginTop: 27,
     },
     displayBox: {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        textAlign: 'center',
         height: 'calc(100vh - 188px)',
+        width: '100%',
     },
     title: {
         display: 'inline',
@@ -86,8 +77,9 @@ const initialState = {
         service: undefined,
     },
     scan: {
+        cardNumber: undefined,
         status: undefined,
-        data: undefined,
+        response: undefined,
     },
     events: [],
     services: [],
@@ -120,7 +112,7 @@ class Scanner extends Component {
             scanDialog: { open: false },
             scanApi: { ...this.state.scanApi, isExecuting: true }
         }, () => {
-            api.put('/v1/scans', scan)
+            this.props.context.api.put('/v1/scans', scan)
             .then(response => {
                 this.setState({ scanApi: { isExecuting: false, isErrored: false }}, () => {
                     this.handleScanResponse(barcode, response);
@@ -160,10 +152,6 @@ class Scanner extends Component {
         this.setState({ 
             scan: scan,
             history: history,
-        }, () => {
-            setTimeout(() => {
-                this.setState({ scan: initialState.scan });
-            }, 2500);
         });
     }
 
@@ -174,13 +162,17 @@ class Scanner extends Component {
         });
     }
 
+    clearLastScan = () => {
+        this.setState({ scan: initialState.scan });
+    }
+
     fetchEvents = (apiType) => {
         let start = moment().startOf('day').format();
         let end = moment().endOf('day').format();
 
         return new Promise((resolve, reject) => { 
             this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-                api.get('/v1/events?dateStart=' + start + '&dateEnd=' + end)
+                this.props.context.api.get('/v1/events?dateStart=' + start + '&dateEnd=' + end)
                 .then(response => {
                     this.setState({ 
                         events: response.data,
@@ -196,7 +188,7 @@ class Scanner extends Component {
 
     fetchServices = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true }}, () => {
-            api.get('/v1/services')
+            this.props.context.api.get('/v1/services')
             .then(response => {
                 this.setState({ 
                     services: response.data,
@@ -218,7 +210,22 @@ class Scanner extends Component {
     }
 
     getScanDisplay = (scan) => {
-        return <pre>{JSON.stringify(scan, null, 2)}</pre>;
+        if (scan === undefined || scan.status === undefined) return;
+
+        let { veteran, plusOne } = scan.response;
+        let { message, icon } = getScanResult(scan);
+
+        icon = React.cloneElement(icon, { style: { fontSize: 72 }});
+        let title = veteran ? veteran : scan.cardNumber;
+
+        return (
+            <div>
+                <Typography component="h2" variant="display2" gutterBottom>{title}</Typography>
+                {plusOne && <Typography component="h2" variant="display1" gutterBottom>+1</Typography>}
+                {icon}
+                <Typography style={{ marginTop: 20 }} variant="title" gutterBottom>{message}</Typography>
+            </div>
+        );
     }
 
     getDailyEvent = () => {
@@ -239,7 +246,7 @@ class Scanner extends Component {
                 this.setState({ 
                     refreshApi: { ...this.state.refreshApi, isExecuting: true }                   
                 }, () => {
-                    api.post('/v1/events', event)
+                    this.props.context.api.post('/v1/events', event)
                     .then(response => {
                         resolve(response.data);
                     })
@@ -294,36 +301,38 @@ class Scanner extends Component {
                                 <ScannerMenu 
                                     visible={scanner.event !== undefined}
                                     configured={scanner.event !== undefined && scanner.service !== undefined}
+                                    lastScan={scan}
+                                    clearLastScan={this.clearLastScan}
                                     resetScanner={this.resetScanner}
                                     viewHistory={() => this.setState({ historyDialog: { open: true }})}
                                 />
                             </div>
-                            {scanApi.isExecuting ? <CircularProgress thickness={7.2} size={72} color={'secondary'} className={classes.scanSpinner}/> :
-                                refreshApi.isExecuting ?
-                                    <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
-                                    <div>
-                                        {!eventSelected && 
-                                            <EventList
-                                                events={events}
-                                                icon={<Today/>}
-                                                onItemClick={this.handleEventItemClick}
-                                            />
-                                        }
-                                        {!serviceSelected && eventSelected && 
-                                            <ServiceList
-                                                services={services}
-                                                icon={<Shop/>}
-                                                onItemClick={this.handleServiceItemClick}
-                                            />
-                                        }
-                                        {serviceSelected && eventSelected &&
-                                            <div className={classes.displayBox}>
-                                                {!scan.status ? <Button disabled>Ready to Scan</Button> :
+                            {refreshApi.isExecuting ?
+                                <CircularProgress size={30} color={'secondary'} className={classes.refreshSpinner}/> :
+                                <div>
+                                    {!eventSelected && 
+                                        <EventList
+                                            events={events}
+                                            icon={<Today/>}
+                                            onItemClick={this.handleEventItemClick}
+                                        />
+                                    }
+                                    {!serviceSelected && eventSelected && 
+                                        <ServiceList
+                                            services={services}
+                                            icon={<Shop/>}
+                                            onItemClick={this.handleServiceItemClick}
+                                        />
+                                    }
+                                    {serviceSelected && eventSelected &&
+                                        <div className={classes.displayBox}>
+                                            {scanApi.isExecuting ? <CircularProgress thickness={5} size={60} color={'secondary'}/> :
+                                                !scan.status ? <Button disabled>Ready to Scan</Button> :
                                                     display
-                                                }
-                                            </div>
-                                        }
-                                    </div>
+                                            }
+                                        </div>
+                                    }
+                                </div>
                             }
                         </CardContent>
                     </Card>
@@ -354,4 +363,4 @@ Scanner.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Scanner); 
+export default withStyles(styles)(withContext(Scanner)); 

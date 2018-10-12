@@ -35,7 +35,7 @@ const ServiceList = (props) => {
 
 ServiceList.propTypes = {
     services: PropTypes.array.isRequired,
-    onItemClick: PropTypes.func.isRequired,
+    onItemClick: PropTypes.func,
     icon: PropTypes.object.isRequired,
 };
 
