@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         webview.addJavascriptInterface(this, "Android");
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
-        webview.loadUrl("http://qcvoc-dev.s3-website-us-east-1.amazonaws.com");
+        webview.loadUrl("http://qcvoc-prod.s3-website-us-east-1.amazonaws.com");
     }
 
     @JavascriptInterface
