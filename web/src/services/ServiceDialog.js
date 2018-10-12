@@ -40,7 +40,7 @@ const styles = {
 const initialState = {
     addApi: {
         isExecuting: false,
-        isErrored: false
+        isErrored: false,
     },
     deleteApi: {
         isExecuting: false,
@@ -61,7 +61,7 @@ const initialState = {
     confirmDialog: {
         open: false,
     },
-}
+};
 
 class ServiceDialog extends Component {
     state = initialState;
@@ -79,7 +79,7 @@ class ServiceDialog extends Component {
     }
 
     handleSaveClick = () => {
-        let service = { ...this.state.service }
+        let service = { ...this.state.service };
 
         this.validate().then(result => {
             if (result.isValid) {
@@ -88,7 +88,7 @@ class ServiceDialog extends Component {
                         () => this.props.context.api.post('/v1/services', service),
                         'addApi',
                         'Service \'' + service.name + '\' successfully created.'
-                    )
+                    );
                 }
                 else {
                     this.execute(
@@ -140,16 +140,16 @@ class ServiceDialog extends Component {
                 action()
                 .then(response => {
                     this.setState({
-                        [api]: { isExecuting: false, isErrored: false }
+                        [api]: { isExecuting: false, isErrored: false },
                     }, () => {
                         this.props.onClose(successMessage);
                         resolve(response);
-                    })
+                    });
                 }, error => {
                     this.setState({ [api]: { isExecuting: false, isErrored: true } }, () => reject(error));
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
     validate = () => {
@@ -164,7 +164,7 @@ class ServiceDialog extends Component {
                 result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });
-        })
+        });
     }
 
     render() {

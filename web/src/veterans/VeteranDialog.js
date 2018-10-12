@@ -77,7 +77,7 @@ const initialState = {
         verificationMethod: undefined,
     },
     confirmDialog: undefined,
-}
+};
 
 class VeteranDialog extends Component {
     state = initialState;
@@ -95,7 +95,7 @@ class VeteranDialog extends Component {
     }
 
     handleSaveClick = () => {
-        let veteran = { ...this.state.veteran }
+        let veteran = { ...this.state.veteran };
         let fullName = veteran.firstName + ' ' + veteran.lastName;
 
         if (veteran.email === '') delete veteran.email;
@@ -108,7 +108,7 @@ class VeteranDialog extends Component {
                         () => this.props.context.api.post('/v1/veterans', veteran),
                         'addApi', 
                         'Veteran \'' + fullName + '\' successfully enrolled.'
-                    )
+                    );
                 }
                 else {
                     if (this.props.veteran.cardNumber 
@@ -143,7 +143,7 @@ class VeteranDialog extends Component {
     }
 
     handleUpdateConfirmClick = () => {
-        let veteran = { ...this.state.veteran }
+        let veteran = { ...this.state.veteran };
         let fullName = veteran.firstName + ' ' + veteran.lastName;
 
         return this.execute(
@@ -176,18 +176,18 @@ class VeteranDialog extends Component {
                 action()
                 .then(response => {
                     this.setState({
-                        [api]: { isExecuting: false, isErrored: false }
+                        [api]: { isExecuting: false, isErrored: false },
                     }, () => {
                         this.props.onClose(successMessage);
                         resolve(response);
-                    })
+                    });
                 }, error => {
                     this.setState({ 
                         [api]: { isExecuting: false, isErrored: true },
                     }, () => reject(error));
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
     validate = () => {
@@ -216,7 +216,7 @@ class VeteranDialog extends Component {
                 result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });                
-        })
+        });
     }
 
     render() {
@@ -389,7 +389,7 @@ VeteranDialog.propTypes = {
     intent: PropTypes.oneOf([ 'add', 'update' ]).isRequired,
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    veteran: PropTypes.object
+    veteran: PropTypes.object,
 };
 
 export default withStyles(styles)(withContext(VeteranDialog)); 

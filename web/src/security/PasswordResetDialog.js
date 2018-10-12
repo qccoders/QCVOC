@@ -53,8 +53,8 @@ const initialState = {
     },
     prompt: {
         verb: undefined,
-    }
-}
+    },
+};
 
 class PasswordResetDialog extends Component {
     state = initialState;
@@ -133,18 +133,18 @@ class PasswordResetDialog extends Component {
                 this.props.context.api.patch('/v1/security/accounts/' + account.id, account)
                 .then(response => {
                     this.setState({
-                        updateApi: { isExecuting: false, isErrored: false }
+                        updateApi: { isExecuting: false, isErrored: false },
                     }, () => {
                         this.props.onClose('Password for \'' + name + '\' successfully updated.');
                         resolve(response);
-                    })
+                    });
                 }, error => {
                     this.setState({ 
                         updateApi: { isExecuting: false, isErrored: true },
                     }, () => reject(error));
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
     validate = () => {
@@ -168,7 +168,7 @@ class PasswordResetDialog extends Component {
                 result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });                
-        })
+        });
     }
 
     render() {

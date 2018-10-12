@@ -20,7 +20,7 @@ const styles = {
         float: 'right',
         marginTop: -8,
     },
-}
+};
 
 const initialState = {
     menu: {
@@ -68,7 +68,7 @@ class ScannerMenu extends Component {
     close = () => {
         return new Promise(resolve => {
             this.setState({ menu: { open: false }}, () => resolve());
-        })
+        });
     }
 
     render() {
@@ -140,11 +140,11 @@ ScannerMenu.propTypes = {
     lastScan: PropTypes.object,
     clearLastScan: PropTypes.func.isRequired,
     viewHistory: PropTypes.func.isRequired,
-}
+};
 
 ScannerMenu.defaultProps = {
     visible: true,
     configured: false,
-}
+};
 
 export default withStyles(styles)(ScannerMenu); 

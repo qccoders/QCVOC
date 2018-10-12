@@ -72,7 +72,7 @@ const initialState = {
     confirmDialog: {
         open: false,
     },
-}
+};
 
 class AccountDialog extends Component {
     state = initialState;
@@ -116,7 +116,7 @@ class AccountDialog extends Component {
                         () => this.props.context.api.post('/v1/security/accounts', account),
                         'addApi', 
                         'Account \'' + account.name + '\' successfully created.'
-                    )
+                    );
                 }
                 else {
                     this.execute(
@@ -153,18 +153,18 @@ class AccountDialog extends Component {
                 action(this.state.account)
                 .then(response => {
                     this.setState({
-                        [api]: { isExecuting: false, isErrored: false }
+                        [api]: { isExecuting: false, isErrored: false },
                     }, () => {
                         this.props.onClose(successMessage);
                         resolve(response);
-                    })
+                    });
                 }, error => {
                     this.setState({ 
-                        [api]: { isExecuting: false, isErrored: true }
+                        [api]: { isExecuting: false, isErrored: true },
                     }, () => reject(error));
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
     validate = () => {
@@ -198,7 +198,7 @@ class AccountDialog extends Component {
                 result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });                
-        })
+        });
     }
 
     render() {

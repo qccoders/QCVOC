@@ -13,15 +13,15 @@ export const getCredentials = () => {
     } else {
         return JSON.parse(localStorage.getItem(CREDENTIAL_KEY));
     }
-}
+};
 
 export const saveSessionCredentials = (credentials) => {
     sessionStorage.setItem(CREDENTIAL_KEY, JSON.stringify(credentials));
-}
+};
 
 export const saveLocalCredentials = (credentials) => {
     localStorage.setItem(CREDENTIAL_KEY, JSON.stringify(credentials));
-}
+};
 
 export const updateCredentials = (credentials) => {
     if (JSON.parse(sessionStorage.getItem(CREDENTIAL_KEY))) {
@@ -29,9 +29,9 @@ export const updateCredentials = (credentials) => {
     } else {
         localStorage.setItem(CREDENTIAL_KEY, JSON.stringify(credentials));
     }
-}
+};
 
 export const deleteCredentials = () => {
     sessionStorage.removeItem(CREDENTIAL_KEY);
     localStorage.removeItem(CREDENTIAL_KEY);
-}
+};

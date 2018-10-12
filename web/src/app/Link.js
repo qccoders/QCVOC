@@ -21,7 +21,7 @@ const Link = (props) => {
             <ListItemText primary={props.children}/>
         </ListItem>
     );
-}
+};
 
 Link.propTypes = {
   icon: PropTypes.object.isRequired,

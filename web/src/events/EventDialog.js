@@ -65,7 +65,7 @@ const initialState = {
     confirmDialog: {
         open: false,
     },
-}
+};
 
 class EventDialog extends Component {
     state = initialState;
@@ -87,7 +87,7 @@ class EventDialog extends Component {
             ...this.state.event,
             startDate: moment(this.state.event.startDate).format(),
             endDate: moment(this.state.event.endDate).format(),
-        }
+        };
 
         this.validate().then(result => {
             if (result.isValid) {
@@ -148,11 +148,11 @@ class EventDialog extends Component {
                 action()
                 .then(response => {
                     this.setState({
-                        [api]: { isExecuting: false, isErrored: false }
+                        [api]: { isExecuting: false, isErrored: false },
                     }, () => {
                         this.props.onClose(successMessage);
                         resolve(response);
-                    })
+                    });
                 }, error => {
                     var body = error && error.response && error.response.data ? error.response.data : error;
 
@@ -165,11 +165,11 @@ class EventDialog extends Component {
                     }
 
                     this.setState({ 
-                        [api]: { isExecuting: false, isErrored: true }
+                        [api]: { isExecuting: false, isErrored: true },
                     }, () => reject(error));
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
     validate = () => {

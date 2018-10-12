@@ -28,6 +28,6 @@ const DrawerToggleButton = (props) => {
             </IconButton>
         </div>
     );
-}
+};
 
 export default withStyles(styles)(DrawerToggleButton);

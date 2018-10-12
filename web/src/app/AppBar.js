@@ -12,9 +12,9 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = {
     appBar: {
-        marginBottom: 10
-    }
-}
+        marginBottom: 10,
+    },
+};
 
 const AppBar = (props) => {
     return (
@@ -32,7 +32,7 @@ const AppBar = (props) => {
             </Toolbar>
         </MaterialAppBar>
     );
-}
+};
 
 AppBar.propTypes = {
     title: PropTypes.string,

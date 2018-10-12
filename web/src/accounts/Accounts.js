@@ -19,7 +19,7 @@ import {
     CardContent,
     Button,
 } from '@material-ui/core';
-import { Add } from '@material-ui/icons'
+import { Add } from '@material-ui/icons';
 
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -31,7 +31,7 @@ const styles = {
         bottom: 20,
         left: 'auto',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
     },
     card: {
         minHeight: 212,
@@ -88,7 +88,7 @@ class Accounts extends Component {
                     [apiType]: { isExecuting: false, isErrored: true },
                 });
             });
-        })
+        });
     }
 
     handleAddClick = () => {
@@ -124,13 +124,13 @@ class Accounts extends Component {
             accountDialog: {
                 ...this.state.accountDialog,
                 open: false,
-            }
+            },
         }, () => {
             if (result) {
                 this.props.context.showMessage(result);
                 this.refresh('refreshApi');
             }
-        })
+        });
     }
 
     handlePasswordResetDialogClose = (result) => {
@@ -138,13 +138,13 @@ class Accounts extends Component {
             passwordResetDialog: {
                 ...this.state.passwordResetDialog,
                 open: false,
-            }
+            },
         }, () => {
             if (result) {
                 this.props.context.showMessage(result);
                 this.props.onPasswordReset();
             }
-        })
+        });
     }
 
     render() {

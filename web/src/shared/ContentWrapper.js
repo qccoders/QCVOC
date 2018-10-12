@@ -25,7 +25,7 @@ const styles = {
     container: {
         padding: 20,
     },
-}
+};
 
 const ContentWrapper = (props) => {
     let { isExecuting, isErrored } = props.api;
@@ -37,7 +37,7 @@ const ContentWrapper = (props) => {
             {!isErrored && !isExecuting && props.children}
         </div>
     );
-}
+};
 
 ContentWrapper.propTypes = {
     api: PropTypes.object.isRequired,

@@ -23,12 +23,12 @@ const styles = {
     },
     caption: {
         marginRight: 5,
-        display: 'inline'
+        display: 'inline',
     },
     icon: {
         fontSize: 29,
     },
-}
+};
 
 const initialState = {
     confirmDialog: {
@@ -59,7 +59,7 @@ class SecurityMenu extends Component {
     handleLogoutClick = () => {
         this.setState({ 
             menu: { open: false },
-            confirmDialog: { open: true }
+            confirmDialog: { open: true },
         });
     }
 
@@ -68,8 +68,8 @@ class SecurityMenu extends Component {
             menu: { open: false },
             passwordResetDialog: { 
                 open: true, 
-                account: { id: this.props.credentials.id, name: this.props.credentials.name }
-            }
+                account: { id: this.props.credentials.id, name: this.props.credentials.name },
+            },
         });
     }
 
@@ -162,6 +162,6 @@ SecurityMenu.propTypes = {
     credentials: PropTypes.object.isRequired,
     onLogout: PropTypes.func.isRequired,
     onPasswordReset: PropTypes.func.isRequired,
-}
+};
 
 export default withContext(SecurityMenu); 

@@ -13,4 +13,4 @@ export const getScanResult = (scan) => {
         default:
             return { message: 'Invalid Card', color: red['A700'], icon: <Clear/> };
     }
-}
+};
