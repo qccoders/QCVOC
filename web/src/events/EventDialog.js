@@ -214,6 +214,8 @@ class EventDialog extends Component {
         
         let executing = adding || updating || deleting;
         
+        let dim = executing ? { opacity: 0.5 } : undefined;
+
         return (
             <Dialog 
                 open={open}
@@ -221,7 +223,7 @@ class EventDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Create' : 'Update')} Event</DialogTitle>
+                <DialogTitle style={dim}>{(intent === 'add' ? 'Create' : 'Update')} Event</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
