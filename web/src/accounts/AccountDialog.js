@@ -211,6 +211,8 @@ class AccountDialog extends Component {
         let deleting = this.state.deleteApi.isExecuting;
         
         let executing = adding || updating || deleting;
+
+        let dim = executing ? { opacity: 0.5 } : undefined;
         
         return (
             <Dialog 
@@ -219,7 +221,7 @@ class AccountDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Add' : 'Update')} Account</DialogTitle>
+                <DialogTitle style={dim}>{(intent === 'add' ? 'Add' : 'Update')} Account</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus

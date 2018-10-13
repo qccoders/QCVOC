@@ -65,10 +65,13 @@ class ConfirmDialog extends Component {
 
     render() {
         let additionalProps = { ...this.props };
+        let { api } = this.state;
         
         delete additionalProps.classes;
         delete additionalProps.onConfirm;
         delete additionalProps.suppressCloseOnConfirm;
+
+        let dim = api.isExecuting ? { opacity: 0.5 } : undefined;
 
         return (
             <Dialog
@@ -76,8 +79,8 @@ class ConfirmDialog extends Component {
                 {...additionalProps}
                 scroll={'body'}
             >
-                <DialogTitle>{this.props.title}</DialogTitle>
-                <DialogContent>
+                <DialogTitle style={dim}>{this.props.title}</DialogTitle>
+                <DialogContent style={dim}>
                     {this.props.children}
                 </DialogContent>
                 <DialogActions>
