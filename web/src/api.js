@@ -29,23 +29,28 @@ api.interceptors.response.use(config => {
     let request = error.config;
     let creds = getCredentials();
 
-    if (error.response.status === 401 && creds && creds.refreshToken) {
-        let data = JSON.stringify(creds.refreshToken);
-        let headers = { headers: { 'Content-Type': 'application/json' }};
+    if (error.response.status === 401) {
+        if (creds && creds.refreshToken) {
+            let data = JSON.stringify(creds.refreshToken);
+            let headers = { headers: { 'Content-Type': 'application/json' }};
 
-        // use 'axios' here instead of the 'api' instance we created to bypass our interceptors
-        // and avoid an endless loop should this call result in a 401.
-        return axios.post('/v1/security/refresh', data, headers)
-            .then(response => {
-                updateCredentials(response.data);
-                request.headers.Authorization = response.data.tokenType + ' ' + response.data.accessToken;
-                return api(request);
-            }, error => {
-                deleteCredentials();
-                window.location.reload(true);
-                return Promise.reject(error);
-            }
-        );
+            // use 'axios' here instead of the 'api' instance we created to bypass our interceptors
+            // and avoid an endless loop should this call result in a 401.
+            return axios.post('/v1/security/refresh', data, headers)
+                .then(response => {
+                    updateCredentials(response.data);
+                    request.headers.Authorization = response.data.tokenType + ' ' + response.data.accessToken;
+                    return api(request);
+                }, error => {
+                    deleteCredentials();
+                    window.location.reload(true);
+                    return Promise.reject(error);
+                }
+            );
+        }
+
+        window.location.reload(true);
+        return Promise.reject(error);
     } 
     else {
         logError(error);
