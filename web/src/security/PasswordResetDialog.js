@@ -176,6 +176,8 @@ class PasswordResetDialog extends Component {
         let validation = this.state.validation;
         let executing = this.state.updateApi.isExecuting;
         let verb = this.state.prompt.verb;
+
+        let dim = executing ? { opacity: 0.5 } : undefined;
         
         return (
             <Dialog 
@@ -184,7 +186,7 @@ class PasswordResetDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{verb + ' Password'}</DialogTitle>
+                <DialogTitle style={dim}>{verb + ' Password'}</DialogTitle>
                 <DialogContent>
                     <TextField
                         style={{marginTop: 0}}
