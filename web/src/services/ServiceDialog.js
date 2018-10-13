@@ -177,6 +177,8 @@ class ServiceDialog extends Component {
         let deleting = this.state.deleteApi.isExecuting;
         
         let executing = adding || updating || deleting;
+
+        let dim = executing ? { opacity: 0.5 } : undefined;
         
         return (
             <Dialog 
@@ -185,7 +187,7 @@ class ServiceDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Create' : 'Update')} Service</DialogTitle>
+                <DialogTitle style={dim}>{(intent === 'add' ? 'Create' : 'Update')} Service</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
