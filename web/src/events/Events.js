@@ -5,15 +5,23 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
-import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress, ListSubheader, Button } from '@material-ui/core';
+import { 
+    Card, 
+    CardContent, 
+    Typography, 
+    CircularProgress, 
+    ListSubheader, 
+    Button,
+} from '@material-ui/core';
 import { Add, EventAvailable, Event, Today } from '@material-ui/icons';
+
+import { withContext } from '../shared/ContextProvider';
+import { userCanView } from '../util';
+import ContentWrapper from '../shared/ContentWrapper';
 import EventList from './EventList';
 import EventDialog from './EventDialog';
-import { userCanView } from '../util';
 
 const styles = {
     fab: {
