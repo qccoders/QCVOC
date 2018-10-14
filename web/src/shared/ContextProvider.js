@@ -4,7 +4,9 @@
 */
 
 import React, { Component } from 'react';
-import Snackbar from '@material-ui/core/Snackbar';
+
+import { Snackbar } from '@material-ui/core';
+
 import api from '../api';
 
 const Context = React.createContext();
