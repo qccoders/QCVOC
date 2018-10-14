@@ -3,10 +3,11 @@
     in the project root for full license information.
 */
 import React from 'react';
-import Error from './Error';
 
 import { Typography } from '@material-ui/core';
 import { Clear } from '@material-ui/icons';
+
+import Error from './Error';
 
 const NotFound = (props) => {
     return (
