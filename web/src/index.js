@@ -5,12 +5,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
+import './index.css';
+
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
 import MomentUtils from 'material-ui-pickers/utils/moment-utils';
-import ContextProvider from './shared/ContextProvider';
 
-import './index.css';
 import App from './app/App';
+import ContextProvider from './shared/ContextProvider';
 
 ReactDOM.render(
     <BrowserRouter>
