@@ -4,10 +4,11 @@
 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sortByProp } from '../util';
 
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import { Person } from '@material-ui/icons';
+
+import { sortByProp } from '../util';
 
 const VeteranList = (props) => {
     let { veterans, displayId, onItemClick } = props;
