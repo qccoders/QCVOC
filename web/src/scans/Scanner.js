@@ -5,20 +5,26 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 import moment from 'moment';
 
 import { withStyles } from '@material-ui/core/styles';
-import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
+import { 
+    Card, 
+    CardContent, 
+    Typography, 
+    CircularProgress, 
+    Button,
+} from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
+
 import { isMobileAttached, initiateMobileScan } from '../mobile';
-import EventList from '../events/EventList';
+import { withContext } from '../shared/ContextProvider';
+import { getScanResult } from './scannerUtil';
 import ServiceList from '../services/ServiceList';
 import ScannerMenu from './ScannerMenu';
-
+import EventList from '../events/EventList';
+import ContentWrapper from '../shared/ContentWrapper';
 import ScannerHistoryDialog from './ScannerHistoryDialog';
-import { getScanResult } from './scannerUtil';
 import ManualScanDialog from './ManualScanDialog';
 
 const historyLimit = 5;
