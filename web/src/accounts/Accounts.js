@@ -5,12 +5,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
-
-import AccountList from './AccountList';
-import ContentWrapper from '../shared/ContentWrapper';
-import AccountDialog from './AccountDialog';
-import PasswordResetDialog from '../security/PasswordResetDialog';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -18,10 +12,15 @@ import {
     Card, 
     CardContent,
     Button,
+    CircularProgress,
 } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
 
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { withContext } from '../shared/ContextProvider';
+import AccountList from './AccountList';
+import ContentWrapper from '../shared/ContentWrapper';
+import AccountDialog from './AccountDialog';
+import PasswordResetDialog from '../security/PasswordResetDialog';
 
 const styles = {
     fab: {

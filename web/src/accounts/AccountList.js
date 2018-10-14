@@ -5,9 +5,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sortByProp } from '../util';
 
 import { List, ListSubheader } from '@material-ui/core';
+
+import { sortByProp } from '../util';
 import AccountListItem from './AccountListItem';
 
 const AccountList = (props) => {
