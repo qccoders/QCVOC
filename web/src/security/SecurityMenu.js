@@ -5,15 +5,21 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'proptypes';
-import { withContext } from '../shared/ContextProvider';
-
 import './style.css';
 
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
+import { 
+    Badge, 
+    Menu, 
+    MenuItem, 
+    ListItemIcon, 
+    ListItemText,
+    IconButton,
+    Typography,
+} from '@material-ui/core';
 import { LockOpen, ExitToApp, AccountCircle }  from '@material-ui/icons';
+
+import { withContext } from '../shared/ContextProvider';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { Badge, Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import PasswordResetDialog from '../security/PasswordResetDialog';
 
 const styles = {

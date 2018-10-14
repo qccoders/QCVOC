@@ -4,16 +4,20 @@
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
+import { 
+    Card, 
+    CardContent, 
+    CardActions, 
+    CircularProgress,
+    TextField,
+    Button,
+    FormControlLabel,
+    Checkbox,
+} from '@material-ui/core';
 
-import { Card, CardContent, CardActions, CircularProgress } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-
+import { withContext } from '../shared/ContextProvider';
 import logo from '../assets/qcvo.png';
 
 const styles = {
