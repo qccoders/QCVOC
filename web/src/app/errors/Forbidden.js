@@ -3,13 +3,20 @@
     in the project root for full license information.
 */
 import React from 'react';
-import ContentWrapper from '../../shared/ContentWrapper';
+
+import Error from './Error';
+import { Typography } from '@material-ui/core';
 
 const Forbidden = (props) => {
     return (
-        <ContentWrapper api={{ isExecuting: false, isErrored: false }}>
-            <p>Forbidden</p>
-        </ContentWrapper>
+        <Error>
+            <Typography component="h2" variant="display1" gutterBottom>
+                Forbidden
+            </Typography>
+            <Typography component="h2" variant="subheading" gutterBottom>
+                You don't have permission to view the requested resource.
+            </Typography>
+        </Error>
     );
 };
 
