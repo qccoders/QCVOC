@@ -27,6 +27,7 @@ import LinkList from './LinkList';
 import Scanner from '../scans/Scanner';
 import { CircularProgress, ListSubheader } from '@material-ui/core';
 import { getEnvironment, userCanView } from '../util';
+import NotFound from './errors/NotFound';
 
 const styles = {
     root: {
@@ -174,6 +175,7 @@ class App extends Component {
                                         render={(props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>}
                                     />
                                 }
+                                <Route path='*' component={NotFound}/>
                             </Switch>
                         </div> :
                         <LoginForm onLogin={this.handleLogin}/>
