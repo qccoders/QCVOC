@@ -3,13 +3,22 @@
     in the project root for full license information.
 */
 import React from 'react';
-import ContentWrapper from '../../shared/ContentWrapper';
+import Error from './Error';
+
+import { Typography } from '@material-ui/core';
+import { Clear } from '@material-ui/icons';
 
 const NotFound = (props) => {
     return (
-        <ContentWrapper api={{ isExecuting: false, isErrored: false }}>
-            <p>Not Found</p>
-        </ContentWrapper>
+        <Error>
+            <Clear style={{ fontSize: 72 }}/>
+            <Typography component="h2" variant="display1" gutterBottom>
+                Not Found
+            </Typography>
+            <Typography component="h2" variant="subheading" gutterBottom>
+                The specified resource does not exist.
+            </Typography>
+        </Error>
     );
 };
 

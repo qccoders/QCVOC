@@ -6,10 +6,12 @@ import React from 'react';
 
 import Error from './Error';
 import { Typography } from '@material-ui/core';
+import { Block } from '@material-ui/icons';
 
 const Forbidden = (props) => {
     return (
         <Error>
+            <Block style={{ fontSize: 72 }}/>
             <Typography component="h2" variant="display1" gutterBottom>
                 Forbidden
             </Typography>
