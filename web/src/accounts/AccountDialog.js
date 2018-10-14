@@ -5,7 +5,6 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -19,11 +18,11 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    CircularProgress,
 } from '@material-ui/core';
 
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { withContext } from '../shared/ContextProvider';
 import ConfirmDialog from '../shared/ConfirmDialog';
-
 
 const styles = {
     dialog: {

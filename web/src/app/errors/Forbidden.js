@@ -4,9 +4,10 @@
 */
 import React from 'react';
 
-import Error from './Error';
 import { Typography } from '@material-ui/core';
 import { Block } from '@material-ui/icons';
+
+import Error from './Error';
 
 const Forbidden = (props) => {
     return (

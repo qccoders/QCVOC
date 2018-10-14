@@ -4,17 +4,24 @@
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
-
-import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress, Button, TextField, InputAdornment } from '@material-ui/core';
+import { 
+    Card, 
+    CardContent, 
+    Typography, 
+    CircularProgress, 
+    Button, 
+    TextField, 
+    InputAdornment,
+} from '@material-ui/core';
 import { Add, Search } from '@material-ui/icons';
+
+import { withContext } from '../shared/ContextProvider';
+import { sortByProp } from '../util';
+import ContentWrapper from '../shared/ContentWrapper';
 import VeteranList from './VeteranList';
 import VeteranDialog from './VeteranDialog';
-
-import { sortByProp } from '../util';
 
 const styles = {
     fab: {

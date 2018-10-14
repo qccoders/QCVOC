@@ -4,10 +4,9 @@
 */
 
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
 
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import { IconButton } from '@material-ui/core';
+import { Menu } from '@material-ui/icons';
 
 const styles = {
     menuButton: {
@@ -20,14 +19,14 @@ const DrawerToggleButton = (props) => {
     return (
         <div style={styles.container}>
             <IconButton 
-                className={props.classes.menuButton} 
+                style={styles.menuButton}
                 color="inherit" 
                 onClick={props.onToggleClick}
             >
-                <MenuIcon/>
+                <Menu/>
             </IconButton>
         </div>
     );
 };
 
-export default withStyles(styles)(DrawerToggleButton);
+export default DrawerToggleButton;

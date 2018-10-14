@@ -6,7 +6,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, IconButton } from '@material-ui/core';
+import { 
+    ListItem, 
+    ListItemIcon, 
+    ListItemText, 
+    ListItemSecondaryAction, 
+    IconButton,
+} from '@material-ui/core';
 import { Person, Star, SupervisorAccount, LockOpen } from '@material-ui/icons';
 
 const getUserIcon = (role) => {

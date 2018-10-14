@@ -4,16 +4,23 @@
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 
+import { 
+    Card, 
+    CardContent, 
+    Typography, 
+    CircularProgress, 
+    Button, 
+    ListSubheader,
+} from '@material-ui/core';
+import { Add, Shop, Work } from '@material-ui/icons';
+
+import { withContext } from '../shared/ContextProvider';
 import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress, Button, ListSubheader } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
 import ServiceList from './ServiceList';
 import ServiceDialog from './ServiceDialog';
-import { Shop, Work } from '@material-ui/icons';
 
 const styles = {
     fab: {

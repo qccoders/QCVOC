@@ -13,7 +13,7 @@ const LinkList = (props) => {
 };
 
 LinkList.propTypes = {
-  onLinkClick: PropTypes.func.isRequired,
+    onLinkClick: PropTypes.func.isRequired,
 };
 
 export default LinkList; 

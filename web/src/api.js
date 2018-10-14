@@ -4,6 +4,7 @@
 */
 
 import axios from 'axios';
+
 import { getCredentials, updateCredentials, deleteCredentials } from './credentialStore';
 import { getEnvironment } from './util';
 

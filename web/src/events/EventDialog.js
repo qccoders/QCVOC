@@ -15,13 +15,13 @@ import {
     Button,
     DialogContent,
     TextField,
+    CircularProgress,
 } from '@material-ui/core';
 
-import { withContext } from '../shared/ContextProvider';
-
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ConfirmDialog from '../shared/ConfirmDialog';
 import DateTimePicker from 'material-ui-pickers/DateTimePicker';
+
+import { withContext } from '../shared/ContextProvider';
+import ConfirmDialog from '../shared/ConfirmDialog';
 
 const styles = {
     dialog: {
