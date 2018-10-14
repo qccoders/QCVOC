@@ -6,29 +6,29 @@
 import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentialStore';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
+import { CircularProgress, ListSubheader, Drawer } from '@material-ui/core';
 import { People, VerifiedUser, Assignment, InsertInvitation, SpeakerPhone } from '@material-ui/icons';
-import Drawer from '@material-ui/core/Drawer';
+
+import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentialStore';
+import { getEnvironment, userCanView } from '../util';
+import { withContext } from '../shared/ContextProvider';
 
 import AppBar from './AppBar';
-import Link from './Link';
-import SecurityMenu from '../security/SecurityMenu';
 import DrawerToggleButton from './DrawerToggleButton';
+import Link from './Link';
+import LinkList from './LinkList';
+import LoginForm from '../security/LoginForm';
+import SecurityMenu from '../security/SecurityMenu';
+import NotFound from './errors/NotFound';
+import Forbidden from './errors/Forbidden';
 
 import Accounts from '../accounts/Accounts';
 import Veterans from '../veterans/Veterans';
 import Services from '../services/Services';
-import Events from '../events/Events';
-import LoginForm from '../security/LoginForm';
-import LinkList from './LinkList';
 import Scanner from '../scans/Scanner';
-import { CircularProgress, ListSubheader } from '@material-ui/core';
-import { getEnvironment, userCanView } from '../util';
-import NotFound from './errors/NotFound';
-import Forbidden from './errors/Forbidden';
+import Events from '../events/Events';
 
 const styles = {
     root: {
