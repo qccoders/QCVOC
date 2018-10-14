@@ -27,6 +27,8 @@ import LinkList from './LinkList';
 import Scanner from '../scans/Scanner';
 import { CircularProgress, ListSubheader } from '@material-ui/core';
 import { getEnvironment, userCanView } from '../util';
+import NotFound from './errors/NotFound';
+import Forbidden from './errors/Forbidden';
 
 const styles = {
     root: {
@@ -167,13 +169,13 @@ class App extends Component {
                                 <Route path='/veterans' component={Veterans}/>
                                 <Route path='/events' component={Events}/>
                                 <Route path='/scanner' component={Scanner}/>
-                                {userCanView() && <Route path='/services' component={Services}/>}
-                                {userCanView() && 
-                                    <Route 
-                                        path='/accounts' 
-                                        render={(props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>}
-                                    />
-                                }
+                                <Route path='/services' component={!userCanView() ? Forbidden : Services}/>
+                                <Route path='/accounts' 
+                                    render={!userCanView() ? Forbidden : 
+                                        (props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>
+                                    }
+                                />
+                                <Route path='*' component={NotFound}/>
                             </Switch>
                         </div> :
                         <LoginForm onLogin={this.handleLogin}/>
