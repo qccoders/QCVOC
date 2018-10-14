@@ -3,9 +3,10 @@
     in the project root for full license information.
 */
 import React from 'react';
-import ContentWrapper from '../../shared/ContentWrapper';
 
 import { Typography } from '@material-ui/core';
+
+import ContentWrapper from '../../shared/ContentWrapper';
 
 const Error = (props) => {
     return (
