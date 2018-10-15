@@ -11,7 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { CircularProgress, ListSubheader, Drawer } from '@material-ui/core';
 import { People, VerifiedUser, Assignment, InsertInvitation, SpeakerPhone } from '@material-ui/icons';
 
-import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentialStore';
+import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentials';
 import { getEnvironment, userCanView } from '../util';
 import { withContext } from '../shared/ContextProvider';
 
