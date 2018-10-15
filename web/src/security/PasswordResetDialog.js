@@ -16,7 +16,7 @@ import {
     CircularProgress,
 } from '@material-ui/core';
 
-import { getCredentials } from '../credentialStore';
+import { getCredentials } from '../credentials';
 import { withContext } from '../shared/ContextProvider';
 import ConfirmDialog from '../shared/ConfirmDialog';
 
