@@ -13,6 +13,9 @@ const styles = {
     appBar: {
         marginBottom: 10,
     },
+    title: {
+        marginLeft: -12,
+    },
 };
 
 const AppBar = (props) => {
@@ -24,7 +27,7 @@ const AppBar = (props) => {
         >
             <Toolbar>
                 {props.drawerToggleButton}
-                <Typography variant="title" color="inherit">
+                <Typography variant="title" color="inherit" style={styles.title}>
                     {props.title}
                 </Typography>
                 {props.children}
