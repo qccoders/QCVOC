@@ -4,7 +4,7 @@
 */
 
 import { PROD, DEV } from './environments';
-import { getCredentials } from './credentialStore';
+import { getCredentials } from './credentials';
 
 export const sortByProp = (prop, predicate = 'asc') => {
     return (a, b) => {
