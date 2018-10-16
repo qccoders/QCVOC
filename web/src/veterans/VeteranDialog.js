@@ -19,11 +19,15 @@ import {
     Select,
     MenuItem,
     CircularProgress,
+    Grid,
 } from '@material-ui/core';
+
+import { SpeakerPhone } from '@material-ui/icons';
 
 import { validateEmail, validatePhoneNumber, userCanView } from '../util';
 import { withContext } from '../shared/ContextProvider';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import { isMobileAttached, initiateMobileScan } from '../mobile';
 
 const styles = {
     dialog: {
@@ -41,6 +45,9 @@ const styles = {
     },
     spinner: {
         position: 'fixed',
+    },
+    fab: {
+        top: 25,
     },
 };
 
@@ -312,18 +319,31 @@ class VeteranDialog extends Component {
                         disabled={executing}
                         margin={'normal'}
                     />
-                    <TextField
-                        id="cardNumber"
-                        label="Card Number"
-                        value={cardNumber}
-                        type="text"
-                        fullWidth
-                        onChange={(event) => this.handleChange('cardNumber', event)}
-                        helperText={validation.cardNumber}
-                        error={validation.cardNumber !== undefined}
-                        disabled={executing}
-                        margin={'normal'}
-                    />
+                    <Grid container>
+                        <Grid item xs>
+                            <TextField
+                                id="cardNumber"
+                                label="Card Number"
+                                value={cardNumber}
+                                type="text"
+                                fullWidth
+                                onChange={(event) => this.handleChange('cardNumber', event)}
+                                helperText={validation.cardNumber}
+                                error={validation.cardNumber !== undefined}
+                                disabled={executing}
+                                margin={'normal'}
+                            />
+                        </Grid>
+                        <Grid item xs={2}>
+                            <Button 
+                            color="secondary"
+                            className={classes.fab}
+                            onClick={this.handleScanClick}
+                            >
+                                <SpeakerPhone/>
+                            </Button>
+                        </Grid>
+                    </Grid>
                     <FormControl 
                         className={classes.verificationSelect}
                         fullWidth
