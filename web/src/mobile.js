@@ -11,9 +11,9 @@ export const isAndroidAttached = () => {
     return window["Android"] !== undefined;
 };
 
-export const initiateMobileScan = () => {
+export const initiateMobileScan = (callback) => {
     if (isAndroidAttached()) {
-        initiateAndroidScan();
+        initiateAndroidScan(callback);
     }
 };
 
