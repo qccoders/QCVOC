@@ -22,6 +22,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 public class MainActivity extends AppCompatActivity {
     private WebView webview;
     private ProgressBar progressBar;
+    private String callback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @JavascriptInterface
-    public void scanBarcode() {
+    public void scanBarcode(String callback) {
+        this.callback = callback;
+
         Intent intent = new Intent(this, BarcodeCaptureActivity.class);
         intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
 
@@ -68,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MainActivity", barcode.displayValue);
 
             webview.evaluateJavascript(
-                    "window.barcodeScanned(" + barcode.displayValue + ");",
+                    "window." + callback + "(" + barcode.displayValue + ");",
                     null);
         }
     }
