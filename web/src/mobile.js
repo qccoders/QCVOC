@@ -17,6 +17,6 @@ export const initiateMobileScan = () => {
     }
 };
 
-export const initiateAndroidScan = () => {
-    window["Android"]["scanBarcode"]();
+export const initiateAndroidScan = (callback) => {
+    window["Android"]["scanBarcode"](callback);
 };
