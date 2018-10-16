@@ -81,6 +81,10 @@ const initialState = {
 class VeteranDialog extends Component {
     state = initialState;
 
+    componentDidMount = () => {
+        window.inputBarcodeVeteranDialog = this.handleBarcodeScanned;
+    }
+
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
