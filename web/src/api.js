@@ -1,11 +1,10 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
 import axios from 'axios';
-
-import { getCredentials, updateCredentials, deleteCredentials } from './credentialStore';
+import { getCredentials, updateCredentials, deleteCredentials } from './credentials';
 import { getEnvironment } from './util';
 
 axios.defaults.baseURL = getEnvironment().apiRoot;

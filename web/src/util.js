@@ -1,10 +1,10 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
 import { PROD, DEV } from './environments';
-import { getCredentials } from './credentialStore';
+import { getCredentials } from './credentials';
 
 export const sortByProp = (prop, predicate = 'asc') => {
     return (a, b) => {

@@ -1,5 +1,5 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
@@ -11,7 +11,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { CircularProgress, ListSubheader, Drawer } from '@material-ui/core';
 import { People, VerifiedUser, Assignment, InsertInvitation, SpeakerPhone } from '@material-ui/icons';
 
-import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentialStore';
+import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentials';
 import { getEnvironment, userCanView } from '../util';
 import { withContext } from '../shared/ContextProvider';
 
