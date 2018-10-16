@@ -85,6 +85,12 @@ class VeteranDialog extends Component {
         window.inputBarcodeVeteranDialog = this.handleBarcodeScanned;
     }
 
+    handleScanClick = () => {
+        if (isMobileAttached()) {
+            initiateMobileScan("inputBarcodeVeteranDialog");
+        }
+    }
+
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
