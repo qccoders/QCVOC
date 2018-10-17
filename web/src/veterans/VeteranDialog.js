@@ -358,7 +358,10 @@ class VeteranDialog extends Component {
                     {isMobileAttached() &&
                         <Grid item xs={2}>
                             <Avatar className = {classes.avatar}>
-                                <Button onClick={this.handleScanClick} className = {classes.scanButton}>
+                                <Button 
+                                    onClick={this.handleScanClick} 
+                                    className = {classes.scanButton}
+                                >
                                     <SpeakerPhone/>
                                 </Button>
                             </Avatar>
