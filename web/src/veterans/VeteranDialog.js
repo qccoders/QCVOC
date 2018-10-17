@@ -104,6 +104,21 @@ class VeteranDialog extends Component {
         }
     }
 
+    handleBarcodeScanned = (barcode) => {
+        if (barcode === undefined) return;
+
+        this.setState({ 
+            veteran: {
+                ...this.state.veteran,
+                cardNumber: barcode,
+            },
+            validation: {
+                ...this.state.validation,
+                cardNumber: undefined,
+            },
+        });
+    }
+
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
