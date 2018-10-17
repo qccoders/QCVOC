@@ -20,6 +20,7 @@ import {
     MenuItem,
     CircularProgress,
     Grid,
+    Avatar,
 } from '@material-ui/core';
 
 import { SpeakerPhone } from '@material-ui/icons';
@@ -30,6 +31,11 @@ import ConfirmDialog from '../shared/ConfirmDialog';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 
 const styles = {
+    avatar: {
+        backgroundColor:'#f50057',
+        top: 25,
+        left: 10,
+    },
     dialog: {
         width: 320,
         marginRight: 'auto',
@@ -46,8 +52,8 @@ const styles = {
     spinner: {
         position: 'fixed',
     },
-    fab: {
-        top: 25,
+    scanButton: {
+        color: '#fff',
     },
 };
 
@@ -335,13 +341,11 @@ class VeteranDialog extends Component {
                             />
                         </Grid>
                         <Grid item xs={2}>
-                            <Button 
-                            color="secondary"
-                            className={classes.fab}
-                            onClick={this.handleScanClick}
-                            >
-                                <SpeakerPhone/>
-                            </Button>
+                            <Avatar className = {classes.avatar}>
+                                <Button onClick={this.handleScanClick} className = {classes.scanButton}>
+                                    <SpeakerPhone/>
+                                </Button>
+                            </Avatar>
                         </Grid>
                     </Grid>
                     <FormControl 
