@@ -102,7 +102,7 @@ class Scanner extends Component {
     state = initialState;
 
     componentDidMount = () => {
-        window.barcodeScanned = this.handleBarcodeScanned;
+        window.inputBarcodeScanner = this.handleBarcodeScanned;
 
         this.fetchEvents('refreshApi');
     }
@@ -133,7 +133,7 @@ class Scanner extends Component {
 
     handleScanClick = () => {
         if (isMobileAttached()) {
-            initiateMobileScan();
+            initiateMobileScan("window.inputBarcodeScanner");
         }
         else {
             this.setState({ scanDialog: { open: true }});

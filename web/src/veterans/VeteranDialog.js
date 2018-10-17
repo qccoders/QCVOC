@@ -19,13 +19,23 @@ import {
     Select,
     MenuItem,
     CircularProgress,
+    Grid,
+    Avatar,
 } from '@material-ui/core';
+
+import { SpeakerPhone } from '@material-ui/icons';
 
 import { validateEmail, validatePhoneNumber, userCanView } from '../util';
 import { withContext } from '../shared/ContextProvider';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import { isMobileAttached, initiateMobileScan } from '../mobile';
 
 const styles = {
+    avatar: {
+        backgroundColor:'#f50057',
+        top: 25,
+        left: 10,
+    },
     dialog: {
         width: 320,
         marginRight: 'auto',
@@ -41,6 +51,9 @@ const styles = {
     },
     spinner: {
         position: 'fixed',
+    },
+    scanButton: {
+        color: '#fff',
     },
 };
 
@@ -80,6 +93,31 @@ const initialState = {
 
 class VeteranDialog extends Component {
     state = initialState;
+
+    componentDidMount = () => {
+        window.inputBarcodeVeteranDialog = this.handleBarcodeScanned;
+    }
+
+    handleScanClick = () => {
+        if (isMobileAttached()) {
+            initiateMobileScan("window.inputBarcodeVeteranDialog");
+        }
+    }
+
+    handleBarcodeScanned = (barcode) => {
+        if (barcode === undefined) return;
+
+        this.setState({ 
+            veteran: {
+                ...this.state.veteran,
+                cardNumber: barcode,
+            },
+            validation: {
+                ...this.state.validation,
+                cardNumber: undefined,
+            },
+        });
+    }
 
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
@@ -302,18 +340,34 @@ class VeteranDialog extends Component {
                         disabled={executing}
                         margin={'normal'}
                     />
-                    <TextField
-                        id="cardNumber"
-                        label="Card Number"
-                        value={cardNumber}
-                        type="text"
-                        fullWidth
-                        onChange={(event) => this.handleChange('cardNumber', event)}
-                        helperText={validation.cardNumber}
-                        error={validation.cardNumber !== undefined}
-                        disabled={executing}
-                        margin={'normal'}
-                    />
+                    <Grid container>
+                        <Grid item xs>
+                            <TextField
+                                id="cardNumber"
+                                label="Card Number"
+                                value={cardNumber}
+                                type="text"
+                                fullWidth
+                                onChange={(event) => this.handleChange('cardNumber', event)}
+                                helperText={validation.cardNumber}
+                                error={validation.cardNumber !== undefined}
+                                disabled={executing}
+                                margin={'normal'}
+                            />
+                        </Grid>
+                    {isMobileAttached() &&
+                        <Grid item xs={2}>
+                            <Avatar className = {classes.avatar}>
+                                <Button 
+                                    onClick={this.handleScanClick} 
+                                    className = {classes.scanButton}
+                                >
+                                    <SpeakerPhone/>
+                                </Button>
+                            </Avatar>
+                        </Grid>
+                    }
+                    </Grid>
                     <FormControl 
                         className={classes.verificationSelect}
                         fullWidth
