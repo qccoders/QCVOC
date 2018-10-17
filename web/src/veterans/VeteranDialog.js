@@ -340,6 +340,7 @@ class VeteranDialog extends Component {
                                 margin={'normal'}
                             />
                         </Grid>
+                    {isMobileAttached() &&
                         <Grid item xs={2}>
                             <Avatar className = {classes.avatar}>
                                 <Button onClick={this.handleScanClick} className = {classes.scanButton}>
@@ -347,6 +348,7 @@ class VeteranDialog extends Component {
                                 </Button>
                             </Avatar>
                         </Grid>
+                    }
                     </Grid>
                     <FormControl 
                         className={classes.verificationSelect}
