@@ -133,7 +133,7 @@ class Scanner extends Component {
 
     handleScanClick = () => {
         if (isMobileAttached()) {
-            initiateMobileScan("inputBarcodeScanner");
+            initiateMobileScan("window.inputBarcodeScanner");
         }
         else {
             this.setState({ scanDialog: { open: true }});

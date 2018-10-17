@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("MainActivity", barcode.displayValue);
 
             webview.evaluateJavascript(
-                    "window." + callback + "(" + barcode.displayValue + ");",
+                    callback + "(" + barcode.displayValue + ");",
                     null);
         }
     }

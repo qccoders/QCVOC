@@ -100,7 +100,7 @@ class VeteranDialog extends Component {
 
     handleScanClick = () => {
         if (isMobileAttached()) {
-            initiateMobileScan("inputBarcodeVeteranDialog");
+            initiateMobileScan("window.inputBarcodeVeteranDialog");
         }
     }
 
