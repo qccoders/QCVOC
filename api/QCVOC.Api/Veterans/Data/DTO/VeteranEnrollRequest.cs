@@ -42,7 +42,7 @@ namespace QCVOC.Api.Veterans.Data.DTO
         /// <summary>
         ///     Gets or sets the number of the card presently assigned to the Veteran.
         /// </summary>
-        [Range(minimum: 1000, maximum: 9999)]
+        [Range(minimum: 0, maximum: 9999)]
         public int? CardNumber { get; set; }
 
         /// <summary>
