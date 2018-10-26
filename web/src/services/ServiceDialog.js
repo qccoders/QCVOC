@@ -14,11 +14,10 @@ import {
     Button,
     DialogContent,
     TextField,
+    CircularProgress,
 } from '@material-ui/core';
 
 import { withContext } from '../shared/ContextProvider';
-
-import CircularProgress from '@material-ui/core/CircularProgress';
 import ConfirmDialog from '../shared/ConfirmDialog';
 
 const styles = {
@@ -40,7 +39,7 @@ const styles = {
 const initialState = {
     addApi: {
         isExecuting: false,
-        isErrored: false
+        isErrored: false,
     },
     deleteApi: {
         isExecuting: false,
@@ -61,7 +60,7 @@ const initialState = {
     confirmDialog: {
         open: false,
     },
-}
+};
 
 class ServiceDialog extends Component {
     state = initialState;
@@ -79,7 +78,7 @@ class ServiceDialog extends Component {
     }
 
     handleSaveClick = () => {
-        let service = { ...this.state.service }
+        let service = { ...this.state.service };
 
         this.validate().then(result => {
             if (result.isValid) {
@@ -88,7 +87,7 @@ class ServiceDialog extends Component {
                         () => this.props.context.api.post('/v1/services', service),
                         'addApi',
                         'Service \'' + service.name + '\' successfully created.'
-                    )
+                    );
                 }
                 else {
                     this.execute(
@@ -140,16 +139,16 @@ class ServiceDialog extends Component {
                 action()
                 .then(response => {
                     this.setState({
-                        [api]: { isExecuting: false, isErrored: false }
+                        [api]: { isExecuting: false, isErrored: false },
                     }, () => {
                         this.props.onClose(successMessage);
                         resolve(response);
-                    })
+                    });
                 }, error => {
                     this.setState({ [api]: { isExecuting: false, isErrored: true } }, () => reject(error));
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
     validate = () => {
@@ -164,7 +163,7 @@ class ServiceDialog extends Component {
                 result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });
-        })
+        });
     }
 
     render() {
@@ -177,6 +176,8 @@ class ServiceDialog extends Component {
         let deleting = this.state.deleteApi.isExecuting;
         
         let executing = adding || updating || deleting;
+
+        let dim = executing ? { opacity: 0.5 } : undefined;
         
         return (
             <Dialog 
@@ -185,7 +186,7 @@ class ServiceDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Create' : 'Update')} Service</DialogTitle>
+                <DialogTitle style={dim}>{(intent === 'add' ? 'Create' : 'Update')} Service</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus

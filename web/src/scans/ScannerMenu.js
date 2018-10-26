@@ -5,12 +5,19 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'proptypes';
-import { withStyles } from '@material-ui/core/styles';
 
-import IconButton from '@material-ui/core/IconButton';
+import { withStyles } from '@material-ui/core/styles';
+import { 
+    Menu, 
+    MenuItem, 
+    ListItemIcon, 
+    ListItemText, 
+    Divider, 
+    IconButton,
+} from '@material-ui/core';
 import { MoreVert, Replay, History, ArrowBack }  from '@material-ui/icons';
+
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { Menu, MenuItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core';
 
 const styles = {
     container: {
@@ -20,7 +27,7 @@ const styles = {
         float: 'right',
         marginTop: -8,
     },
-}
+};
 
 const initialState = {
     menu: {
@@ -68,7 +75,7 @@ class ScannerMenu extends Component {
     close = () => {
         return new Promise(resolve => {
             this.setState({ menu: { open: false }}, () => resolve());
-        })
+        });
     }
 
     render() {
@@ -140,11 +147,11 @@ ScannerMenu.propTypes = {
     lastScan: PropTypes.object,
     clearLastScan: PropTypes.func.isRequired,
     viewHistory: PropTypes.func.isRequired,
-}
+};
 
 ScannerMenu.defaultProps = {
     visible: true,
     configured: false,
-}
+};
 
 export default withStyles(styles)(ScannerMenu); 

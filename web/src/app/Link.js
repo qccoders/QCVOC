@@ -1,5 +1,5 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
@@ -21,12 +21,12 @@ const Link = (props) => {
             <ListItemText primary={props.children}/>
         </ListItem>
     );
-}
+};
 
 Link.propTypes = {
-  icon: PropTypes.object.isRequired,
-  children: PropTypes.string.isRequired,
-  to: PropTypes.string.isRequired,
+    icon: PropTypes.object.isRequired,
+    children: PropTypes.string.isRequired,
+    to: PropTypes.string.isRequired,
 };
 
 export default Link; 

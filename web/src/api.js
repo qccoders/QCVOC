@@ -1,10 +1,10 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
 import axios from 'axios';
-import { getCredentials, updateCredentials, deleteCredentials } from './credentialStore';
+import { getCredentials, updateCredentials, deleteCredentials } from './credentials';
 import { getEnvironment } from './util';
 
 axios.defaults.baseURL = getEnvironment().apiRoot;
@@ -29,29 +29,34 @@ api.interceptors.response.use(config => {
     let request = error.config;
     let creds = getCredentials();
 
-    if (error.response.status === 401 && creds && creds.refreshToken) {
-        let data = JSON.stringify(creds.refreshToken);
-        let headers = { headers: { 'Content-Type': 'application/json' }};
+    if (error.response.status === 401) {
+        if (creds && creds.refreshToken) {
+            let data = JSON.stringify(creds.refreshToken);
+            let headers = { headers: { 'Content-Type': 'application/json' }};
 
-        // use 'axios' here instead of the 'api' instance we created to bypass our interceptors
-        // and avoid an endless loop should this call result in a 401.
-        return axios.post('/v1/security/refresh', data, headers)
-            .then(response => {
-                updateCredentials(response.data);
-                request.headers.Authorization = response.data.tokenType + ' ' + response.data.accessToken;
-                return api(request);
-            }, error => {
-                deleteCredentials();
-                window.location.reload(true);
-                return Promise.reject(error);
-            }
-        );
+            // use 'axios' here instead of the 'api' instance we created to bypass our interceptors
+            // and avoid an endless loop should this call result in a 401.
+            return axios.post('/v1/security/refresh', data, headers)
+                .then(response => {
+                    updateCredentials(response.data);
+                    request.headers.Authorization = response.data.tokenType + ' ' + response.data.accessToken;
+                    return api(request);
+                }, error => {
+                    deleteCredentials();
+                    window.location.reload(true);
+                    return Promise.reject(error);
+                }
+            );
+        }
+
+        window.location.reload(true);
+        return Promise.reject(error);
     } 
     else {
         logError(error);
         return Promise.reject(error);
     }
-})
+});
 
 const logError = (error) => {
     if (error.response) {
@@ -64,6 +69,6 @@ const logError = (error) => {
         console.log('Error: ', error.message);
     }
     console.log(error.config);
-}
+};
 
 export default api;

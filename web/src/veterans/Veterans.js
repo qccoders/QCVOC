@@ -1,20 +1,27 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
-
-import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress, Button, TextField, InputAdornment } from '@material-ui/core';
+import { 
+    Card, 
+    CardContent, 
+    Typography, 
+    CircularProgress, 
+    Button, 
+    TextField, 
+    InputAdornment,
+} from '@material-ui/core';
 import { Add, Search } from '@material-ui/icons';
+
+import { withContext } from '../shared/ContextProvider';
+import { sortByProp } from '../util';
+import ContentWrapper from '../shared/ContentWrapper';
 import VeteranList from './VeteranList';
 import VeteranDialog from './VeteranDialog';
-
-import { sortByProp } from '../util';
 
 const styles = {
     fab: {
@@ -24,7 +31,7 @@ const styles = {
         bottom: 20,
         left: 'auto',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
     },
     card: {
         minHeight: 220,
@@ -45,7 +52,7 @@ const styles = {
     searchInput: {
         marginLeft: 25,
         marginRight: 25,
-    }
+    },
 };
 
 const showCount = 7;
@@ -80,8 +87,8 @@ class Veterans extends Component {
                 open: true,
                 intent: 'add',
                 veteran: undefined,
-            }
-        })
+            },
+        });
     }
     
     handleEditClick = (veteran) => {
@@ -90,8 +97,8 @@ class Veterans extends Component {
                 open: true,
                 intent: 'update',
                 veteran: veteran,
-            }
-        })
+            },
+        });
     }
 
     handleShowMoreClick = () => {
@@ -110,12 +117,12 @@ class Veterans extends Component {
             veteranDialog: {
                 ...this.state.veteranDialog,
                 open: false,
-            }
+            },
         }, () => {
             if (!result) return;
             this.props.context.showMessage(result);
             this.refresh('refreshApi');
-        })
+        });
     }
 
     refresh = (apiType) => {
@@ -131,7 +138,7 @@ class Veterans extends Component {
                     [apiType]: { isExecuting: false, isErrored: true },
                 });
             });
-        })
+        });
     }
 
     render() {

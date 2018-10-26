@@ -1,19 +1,26 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 
+import { 
+    Card, 
+    CardContent, 
+    Typography, 
+    CircularProgress, 
+    Button, 
+    ListSubheader,
+} from '@material-ui/core';
+import { Add, Shop, Work } from '@material-ui/icons';
+
+import { withContext } from '../shared/ContextProvider';
 import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress, Button, ListSubheader } from '@material-ui/core';
-import { Add } from '@material-ui/icons';
 import ServiceList from './ServiceList';
 import ServiceDialog from './ServiceDialog';
-import { Shop, Work } from '@material-ui/icons'
 
 const styles = {
     fab: {
@@ -23,7 +30,7 @@ const styles = {
         bottom: 20,
         left: 'auto',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
     },
     card: {
         minHeight: 230,
@@ -68,8 +75,8 @@ class Services extends Component {
                 open: true,
                 intent: 'add',
                 service: undefined,
-            }
-        })
+            },
+        });
     }
 
     handleEditClick = (service) => {
@@ -78,8 +85,8 @@ class Services extends Component {
                 open: true,
                 intent: 'update',
                 service: service,
-            }
-        })
+            },
+        });
     }
 
     handleServiceDialogClose = (result) => {
@@ -87,12 +94,12 @@ class Services extends Component {
             serviceDialog: {
                 ...this.state.serviceDialog,
                 open: false,
-            }
+            },
         }, () => {
             if (!result) return;
             this.props.context.showMessage(result);
             this.refresh('refreshApi');
-        })
+        });
     }
 
     refresh = (apiType) => {
@@ -105,10 +112,10 @@ class Services extends Component {
                 });
             }, error => {
                 this.setState({
-                    [apiType]: { isExecuting: false, isErrored: true }
+                    [apiType]: { isExecuting: false, isErrored: true },
                 });
             });
-        })
+        });
     }
 
     render() {

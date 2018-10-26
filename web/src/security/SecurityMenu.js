@@ -1,19 +1,25 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
 import React, { Component } from 'react';
 import PropTypes from 'proptypes';
-import { withContext } from '../shared/ContextProvider';
-
 import './style.css';
 
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
+import { 
+    Badge, 
+    Menu, 
+    MenuItem, 
+    ListItemIcon, 
+    ListItemText,
+    IconButton,
+    Typography,
+} from '@material-ui/core';
 import { LockOpen, ExitToApp, AccountCircle }  from '@material-ui/icons';
+
+import { withContext } from '../shared/ContextProvider';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { Badge, Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import PasswordResetDialog from '../security/PasswordResetDialog';
 
 const styles = {
@@ -23,12 +29,12 @@ const styles = {
     },
     caption: {
         marginRight: 5,
-        display: 'inline'
+        display: 'inline',
     },
     icon: {
         fontSize: 29,
     },
-}
+};
 
 const initialState = {
     confirmDialog: {
@@ -59,7 +65,7 @@ class SecurityMenu extends Component {
     handleLogoutClick = () => {
         this.setState({ 
             menu: { open: false },
-            confirmDialog: { open: true }
+            confirmDialog: { open: true },
         });
     }
 
@@ -68,8 +74,8 @@ class SecurityMenu extends Component {
             menu: { open: false },
             passwordResetDialog: { 
                 open: true, 
-                account: { id: this.props.credentials.id, name: this.props.credentials.name }
-            }
+                account: { id: this.props.credentials.id, name: this.props.credentials.name },
+            },
         });
     }
 
@@ -162,6 +168,6 @@ SecurityMenu.propTypes = {
     credentials: PropTypes.object.isRequired,
     onLogout: PropTypes.func.isRequired,
     onPasswordReset: PropTypes.func.isRequired,
-}
+};
 
 export default withContext(SecurityMenu); 

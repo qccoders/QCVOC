@@ -5,6 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
 import { withStyles } from '@material-ui/core/styles';
 import { 
     Dialog,
@@ -38,7 +39,7 @@ class ManualScanDialog extends Component {
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
-                ...initialState
+                ...initialState,
             });
         }
     }
@@ -78,7 +79,7 @@ class ManualScanDialog extends Component {
                 result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });                
-        })
+        });
     }
     
     render() {

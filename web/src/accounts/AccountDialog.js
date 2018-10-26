@@ -1,11 +1,10 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -19,11 +18,11 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    CircularProgress,
 } from '@material-ui/core';
 
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { withContext } from '../shared/ContextProvider';
 import ConfirmDialog from '../shared/ConfirmDialog';
-
 
 const styles = {
     dialog: {
@@ -72,7 +71,7 @@ const initialState = {
     confirmDialog: {
         open: false,
     },
-}
+};
 
 class AccountDialog extends Component {
     state = initialState;
@@ -116,7 +115,7 @@ class AccountDialog extends Component {
                         () => this.props.context.api.post('/v1/security/accounts', account),
                         'addApi', 
                         'Account \'' + account.name + '\' successfully created.'
-                    )
+                    );
                 }
                 else {
                     this.execute(
@@ -153,18 +152,18 @@ class AccountDialog extends Component {
                 action(this.state.account)
                 .then(response => {
                     this.setState({
-                        [api]: { isExecuting: false, isErrored: false }
+                        [api]: { isExecuting: false, isErrored: false },
                     }, () => {
                         this.props.onClose(successMessage);
                         resolve(response);
-                    })
+                    });
                 }, error => {
                     this.setState({ 
-                        [api]: { isExecuting: false, isErrored: true }
+                        [api]: { isExecuting: false, isErrored: true },
                     }, () => reject(error));
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
     validate = () => {
@@ -198,7 +197,7 @@ class AccountDialog extends Component {
                 result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });                
-        })
+        });
     }
 
     render() {
@@ -211,6 +210,8 @@ class AccountDialog extends Component {
         let deleting = this.state.deleteApi.isExecuting;
         
         let executing = adding || updating || deleting;
+
+        let dim = executing ? { opacity: 0.5 } : undefined;
         
         return (
             <Dialog 
@@ -219,7 +220,7 @@ class AccountDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Add' : 'Update')} Account</DialogTitle>
+                <DialogTitle style={dim}>{(intent === 'add' ? 'Add' : 'Update')} Account</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus

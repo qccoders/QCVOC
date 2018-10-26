@@ -1,13 +1,14 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sortByProp } from '../util';
 
 import { List, ListSubheader } from '@material-ui/core';
+
+import { sortByProp } from '../util';
 import AccountListItem from './AccountListItem';
 
 const AccountList = (props) => {
@@ -50,7 +51,7 @@ const AccountList = (props) => {
             }
         </List>
     );
-}
+};
 
 AccountList.propTypes = {
     accounts: PropTypes.array.isRequired,

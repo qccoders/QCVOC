@@ -5,20 +5,26 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 import moment from 'moment';
 
 import { withStyles } from '@material-ui/core/styles';
-import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress, Button } from '@material-ui/core';
+import { 
+    Card, 
+    CardContent, 
+    Typography, 
+    CircularProgress, 
+    Button,
+} from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
+
 import { isMobileAttached, initiateMobileScan } from '../mobile';
-import EventList from '../events/EventList';
+import { withContext } from '../shared/ContextProvider';
+import { getScanResult } from './scannerUtil';
 import ServiceList from '../services/ServiceList';
 import ScannerMenu from './ScannerMenu';
-
+import EventList from '../events/EventList';
+import ContentWrapper from '../shared/ContentWrapper';
 import ScannerHistoryDialog from './ScannerHistoryDialog';
-import { getScanResult } from './scannerUtil';
 import ManualScanDialog from './ManualScanDialog';
 
 const historyLimit = 5;
@@ -31,7 +37,7 @@ const styles = {
         bottom: 20,
         left: 'auto',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
     },
     card: {
         height: 'calc(100vh - 115px)',
@@ -56,7 +62,7 @@ const styles = {
     },
     title: {
         display: 'inline',
-    }
+    },
 };
 
 const initialState = {
@@ -90,13 +96,13 @@ const initialState = {
     scanDialog: {
         open: false,
     },
-}
+};
 
 class Scanner extends Component {
     state = initialState;
 
     componentDidMount = () => {
-        window.barcodeScanned = this.handleBarcodeScanned;
+        window.inputBarcodeScanner = this.handleBarcodeScanned;
 
         this.fetchEvents('refreshApi');
     }
@@ -110,7 +116,7 @@ class Scanner extends Component {
         this.setState({ 
             scan: initialState.scan,
             scanDialog: { open: false },
-            scanApi: { ...this.state.scanApi, isExecuting: true }
+            scanApi: { ...this.state.scanApi, isExecuting: true },
         }, () => {
             this.props.context.api.put('/v1/scans', scan)
             .then(response => {
@@ -127,7 +133,7 @@ class Scanner extends Component {
 
     handleScanClick = () => {
         if (isMobileAttached()) {
-            initiateMobileScan();
+            initiateMobileScan("window.inputBarcodeScanner");
         }
         else {
             this.setState({ scanDialog: { open: true }});
@@ -244,7 +250,7 @@ class Scanner extends Component {
         new Promise((resolve, reject) => {
             if (event.id === undefined) {
                 this.setState({ 
-                    refreshApi: { ...this.state.refreshApi, isExecuting: true }                   
+                    refreshApi: { ...this.state.refreshApi, isExecuting: true },                   
                 }, () => {
                     this.props.context.api.post('/v1/events', event)
                     .then(response => {

@@ -1,16 +1,10 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
-
-import AccountList from './AccountList';
-import ContentWrapper from '../shared/ContentWrapper';
-import AccountDialog from './AccountDialog';
-import PasswordResetDialog from '../security/PasswordResetDialog';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -18,10 +12,15 @@ import {
     Card, 
     CardContent,
     Button,
+    CircularProgress,
 } from '@material-ui/core';
-import { Add } from '@material-ui/icons'
+import { Add } from '@material-ui/icons';
 
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { withContext } from '../shared/ContextProvider';
+import AccountList from './AccountList';
+import ContentWrapper from '../shared/ContentWrapper';
+import AccountDialog from './AccountDialog';
+import PasswordResetDialog from '../security/PasswordResetDialog';
 
 const styles = {
     fab: {
@@ -31,7 +30,7 @@ const styles = {
         bottom: 20,
         left: 'auto',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
     },
     card: {
         minHeight: 212,
@@ -88,7 +87,7 @@ class Accounts extends Component {
                     [apiType]: { isExecuting: false, isErrored: true },
                 });
             });
-        })
+        });
     }
 
     handleAddClick = () => {
@@ -124,13 +123,13 @@ class Accounts extends Component {
             accountDialog: {
                 ...this.state.accountDialog,
                 open: false,
-            }
+            },
         }, () => {
             if (result) {
                 this.props.context.showMessage(result);
                 this.refresh('refreshApi');
             }
-        })
+        });
     }
 
     handlePasswordResetDialogClose = (result) => {
@@ -138,13 +137,13 @@ class Accounts extends Component {
             passwordResetDialog: {
                 ...this.state.passwordResetDialog,
                 open: false,
-            }
+            },
         }, () => {
             if (result) {
                 this.props.context.showMessage(result);
                 this.props.onPasswordReset();
             }
-        })
+        });
     }
 
     render() {

@@ -7,9 +7,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 
-import { sortByProp } from '../util';
-
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+
+import { sortByProp } from '../util';
 
 const EventList = (props) => {
     const { events, icon, onItemClick } = props;
@@ -29,7 +29,7 @@ const EventList = (props) => {
         }
 
         return start.local().format(startFmt) + ' to ' + end.local().format(endFmt);
-    }
+    };
 
     return (
         <List>
@@ -50,7 +50,7 @@ const EventList = (props) => {
             )}
         </List>
     );
-}
+};
 
 EventList.propTypes = {
     events: PropTypes.array.isRequired,

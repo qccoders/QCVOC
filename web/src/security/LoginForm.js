@@ -1,19 +1,23 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
+import { 
+    Card, 
+    CardContent, 
+    CardActions, 
+    CircularProgress,
+    TextField,
+    Button,
+    FormControlLabel,
+    Checkbox,
+} from '@material-ui/core';
 
-import { Card, CardContent, CardActions, CircularProgress } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-
+import { withContext } from '../shared/ContextProvider';
 import logo from '../assets/qcvo.png';
 
 const styles = {
@@ -28,7 +32,7 @@ const styles = {
         display: 'grid',
         textAlign: 'center',
         padding: 20,
-        minHeight: 470
+        minHeight: 470,
     },
     card: {
         minWidth: 180,
@@ -64,7 +68,7 @@ const initialState = {
         isExecuting: false,
         isErrored: false,
     },
-}
+};
 
 class LoginForm extends Component {
     state = initialState;
@@ -98,14 +102,14 @@ class LoginForm extends Component {
                     this.setState({ api: { isExecuting: false, isErrored: true }}, () => {
                         if (error.response
                             && (error.response.status === 400 || error.response.status === 401)) {
-                            this.setState({ password: '', }, () => {
+                            this.setState({ password: '' }, () => {
                                 this.passwordInput.focus();
                             });
                         }
                     });
                 }
             );
-        })
+        });
     }
 
     handleKeyPress = (event) => {

@@ -1,10 +1,9 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
@@ -14,11 +13,12 @@ import {
     Button,
     DialogContent,
     TextField,
+    CircularProgress,
 } from '@material-ui/core';
 
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { getCredentials } from '../credentials';
+import { withContext } from '../shared/ContextProvider';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { getCredentials } from '../credentialStore';
 
 const styles = {
     dialog: {
@@ -53,8 +53,8 @@ const initialState = {
     },
     prompt: {
         verb: undefined,
-    }
-}
+    },
+};
 
 class PasswordResetDialog extends Component {
     state = initialState;
@@ -133,18 +133,18 @@ class PasswordResetDialog extends Component {
                 this.props.context.api.patch('/v1/security/accounts/' + account.id, account)
                 .then(response => {
                     this.setState({
-                        updateApi: { isExecuting: false, isErrored: false }
+                        updateApi: { isExecuting: false, isErrored: false },
                     }, () => {
                         this.props.onClose('Password for \'' + name + '\' successfully updated.');
                         resolve(response);
-                    })
+                    });
                 }, error => {
                     this.setState({ 
                         updateApi: { isExecuting: false, isErrored: true },
                     }, () => reject(error));
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
     validate = () => {
@@ -168,7 +168,7 @@ class PasswordResetDialog extends Component {
                 result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });                
-        })
+        });
     }
 
     render() {
@@ -176,6 +176,8 @@ class PasswordResetDialog extends Component {
         let validation = this.state.validation;
         let executing = this.state.updateApi.isExecuting;
         let verb = this.state.prompt.verb;
+
+        let dim = executing ? { opacity: 0.5 } : undefined;
         
         return (
             <Dialog 
@@ -184,7 +186,7 @@ class PasswordResetDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{verb + ' Password'}</DialogTitle>
+                <DialogTitle style={dim}>{verb + ' Password'}</DialogTitle>
                 <DialogContent>
                     <TextField
                         style={{marginTop: 0}}

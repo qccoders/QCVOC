@@ -6,6 +6,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
+
 import { sortByProp } from '../util';
 
 const ServiceList = (props) => {
@@ -31,7 +32,7 @@ const ServiceList = (props) => {
             )}
         </List>
     );
-}
+};
 
 ServiceList.propTypes = {
     services: PropTypes.array.isRequired,
