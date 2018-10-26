@@ -3,6 +3,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>QCVOC.Api</RootNamespace>
     <AssemblyName>QCVOC.Api</AssemblyName>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>bin\Debug\netcoreapp2.1\QCVOC.Api.xml</DocumentationFile>

@@ -1,25 +1,26 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import Button from '@material-ui/core/Button';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
-import Dialog from '@material-ui/core/Dialog';
-import CircularProgress from '@material-ui/core/CircularProgress';
-
 import { withStyles } from '@material-ui/core/styles';
+import {
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    CircularProgress,
+} from '@material-ui/core';
 
 const initialState = {
     api: {
         isExecuting: false,
         isErrored: false,
-    }
-}
+    },
+};
 
 const styles = {
     spinner: {
@@ -32,7 +33,7 @@ const styles = {
         marginTop: 50,
         height: 'fit-content',
     },
-}
+};
 
 class ConfirmDialog extends Component {
     state = initialState;
@@ -49,26 +50,29 @@ class ConfirmDialog extends Component {
             .then(response => {
                 this.setState({ api: { isExecuting: false, isErrored: false }}, () => {
                     if (!this.props.suppressCloseOnConfirm) {
-                        this.props.onClose({ cancelled: false }) 
+                        this.props.onClose({ cancelled: false }); 
                     }
                 });
             }, error => {
                 this.setState({ api: { isExecuting: false, isErrored: true }});
-                this.props.onClose({ cancelled: false }) 
-            })
-        })
+                this.props.onClose({ cancelled: false }); 
+            });
+        });
     }
 
     handleCancelClick = () => {
-        this.setState(initialState, () => this.props.onClose({ cancelled: true }))
+        this.setState(initialState, () => this.props.onClose({ cancelled: true }));
     }
 
     render() {
         let additionalProps = { ...this.props };
+        let { api } = this.state;
         
         delete additionalProps.classes;
         delete additionalProps.onConfirm;
         delete additionalProps.suppressCloseOnConfirm;
+
+        let dim = api.isExecuting ? { opacity: 0.5 } : undefined;
 
         return (
             <Dialog
@@ -76,8 +80,8 @@ class ConfirmDialog extends Component {
                 {...additionalProps}
                 scroll={'body'}
             >
-                <DialogTitle>{this.props.title}</DialogTitle>
-                <DialogContent>
+                <DialogTitle style={dim}>{this.props.title}</DialogTitle>
+                <DialogContent style={dim}>
                     {this.props.children}
                 </DialogContent>
                 <DialogActions>

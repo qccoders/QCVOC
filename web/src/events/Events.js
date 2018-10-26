@@ -1,19 +1,27 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
-import ContentWrapper from '../shared/ContentWrapper';
-import { Card, CardContent, Typography, CircularProgress, ListSubheader, Button } from '@material-ui/core';
+import { 
+    Card, 
+    CardContent, 
+    Typography, 
+    CircularProgress, 
+    ListSubheader, 
+    Button,
+} from '@material-ui/core';
 import { Add, EventAvailable, Event, Today } from '@material-ui/icons';
+
+import { withContext } from '../shared/ContextProvider';
+import { userCanView } from '../util';
+import ContentWrapper from '../shared/ContentWrapper';
 import EventList from './EventList';
 import EventDialog from './EventDialog';
-import { userCanView } from '../util';
 
 const styles = {
     fab: {
@@ -23,7 +31,7 @@ const styles = {
         bottom: 20,
         left: 'auto',
         position: 'fixed',
-        zIndex: 1000
+        zIndex: 1000,
     },
     card: {
         minHeight: 273,
@@ -58,7 +66,7 @@ class Events extends Component {
             intent: 'add',
             event: undefined,
         },
-        show: showCount
+        show: showCount,
     }
 
     componentWillMount = () => {
@@ -71,7 +79,7 @@ class Events extends Component {
                 open: true,
                 intent: 'update',
                 event: event,
-            }
+            },
         });
     }
 
@@ -81,7 +89,7 @@ class Events extends Component {
                 open: true,
                 intent: 'add',
                 event: undefined,
-            }
+            },
         });
     }
 
@@ -94,12 +102,12 @@ class Events extends Component {
             eventDialog: {
                 ...this.state.eventDialog,
                 open: false,
-            }
+            },
         }, () => {
             if (!result) return;
             this.props.context.showMessage(result);
             this.refresh('refreshApi');
-        })
+        });
     }
 
     refresh = (apiType) => {
@@ -113,21 +121,21 @@ class Events extends Component {
             }, error => {
                 this.setState({ [apiType]: { isExecuting: false, isErrored: true } });
             });
-        })
+        });
     }
 
     render() {
         let classes = this.props.classes;
         let { events, loadApi, refreshApi, show, eventDialog } = this.state;
 
-        events = events.map(e => ({ ...e, startDate: new Date(e.startDate).getTime(), endDate: new Date(e.endDate).getTime() }))
+        events = events.map(e => ({ ...e, startDate: new Date(e.startDate).getTime(), endDate: new Date(e.endDate).getTime() }));
 
         let now = new Date().getTime();
 
         let current = events.filter(e => e.startDate <= now && e.endDate >= now);
         let upcoming = events.filter(e => e.startDate > now);
         
-        let past = events.filter(e => e.endDate < now)
+        let past = events.filter(e => e.endDate < now);
         let shownPastList = past.slice(0, show);
 
         return (

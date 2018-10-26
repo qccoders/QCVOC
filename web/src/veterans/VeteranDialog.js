@@ -1,5 +1,5 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
@@ -18,15 +18,24 @@ import {
     InputLabel,
     Select,
     MenuItem,
+    CircularProgress,
+    Grid,
+    Avatar,
 } from '@material-ui/core';
+
+import { SpeakerPhone } from '@material-ui/icons';
 
 import { validateEmail, validatePhoneNumber, userCanView } from '../util';
 import { withContext } from '../shared/ContextProvider';
-
-import CircularProgress from '@material-ui/core/CircularProgress';
 import ConfirmDialog from '../shared/ConfirmDialog';
+import { isMobileAttached, initiateMobileScan } from '../mobile';
 
 const styles = {
+    avatar: {
+        backgroundColor:'#f50057',
+        top: 25,
+        left: 10,
+    },
     dialog: {
         width: 320,
         marginRight: 'auto',
@@ -42,6 +51,9 @@ const styles = {
     },
     spinner: {
         position: 'fixed',
+    },
+    scanButton: {
+        color: '#fff',
     },
 };
 
@@ -77,10 +89,35 @@ const initialState = {
         verificationMethod: undefined,
     },
     confirmDialog: undefined,
-}
+};
 
 class VeteranDialog extends Component {
     state = initialState;
+
+    componentDidMount = () => {
+        window.inputBarcodeVeteranDialog = this.handleBarcodeScanned;
+    }
+
+    handleScanClick = () => {
+        if (isMobileAttached()) {
+            initiateMobileScan("window.inputBarcodeVeteranDialog");
+        }
+    }
+
+    handleBarcodeScanned = (barcode) => {
+        if (barcode === undefined) return;
+
+        this.setState({ 
+            veteran: {
+                ...this.state.veteran,
+                cardNumber: barcode,
+            },
+            validation: {
+                ...this.state.validation,
+                cardNumber: undefined,
+            },
+        });
+    }
 
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
@@ -95,7 +132,7 @@ class VeteranDialog extends Component {
     }
 
     handleSaveClick = () => {
-        let veteran = { ...this.state.veteran }
+        let veteran = { ...this.state.veteran };
         let fullName = veteran.firstName + ' ' + veteran.lastName;
 
         if (veteran.email === '') delete veteran.email;
@@ -108,7 +145,7 @@ class VeteranDialog extends Component {
                         () => this.props.context.api.post('/v1/veterans', veteran),
                         'addApi', 
                         'Veteran \'' + fullName + '\' successfully enrolled.'
-                    )
+                    );
                 }
                 else {
                     if (this.props.veteran.cardNumber 
@@ -143,7 +180,7 @@ class VeteranDialog extends Component {
     }
 
     handleUpdateConfirmClick = () => {
-        let veteran = { ...this.state.veteran }
+        let veteran = { ...this.state.veteran };
         let fullName = veteran.firstName + ' ' + veteran.lastName;
 
         return this.execute(
@@ -176,25 +213,25 @@ class VeteranDialog extends Component {
                 action()
                 .then(response => {
                     this.setState({
-                        [api]: { isExecuting: false, isErrored: false }
+                        [api]: { isExecuting: false, isErrored: false },
                     }, () => {
                         this.props.onClose(successMessage);
                         resolve(response);
-                    })
+                    });
                 }, error => {
                     this.setState({ 
                         [api]: { isExecuting: false, isErrored: true },
                     }, () => reject(error));
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
     validate = () => {
         let { cardNumber, firstName, lastName, address, primaryPhone, email } = this.state.veteran;
         let result = { ...initialState.validation };
 
-        if (cardNumber !== '' && (isNaN(cardNumber) || cardNumber < 1000 || cardNumber > 9999)) result.cardNumber = 'The Card Number field must be a number between 1000 and 9999.';
+        if (cardNumber !== '' && (isNaN(cardNumber) || cardNumber < 0 || cardNumber > 9999)) result.cardNumber = 'The Card Number field must be a number between 0 and 9999.';
         if (firstName === '') result.firstName = 'The First Name field is required.';
         if (lastName === '') result.lastName = 'The Last Name field is required.';
         if (address === '') result.address = 'The Address field is required.';
@@ -216,7 +253,7 @@ class VeteranDialog extends Component {
                 result.isValid = JSON.stringify(result) === JSON.stringify(initialState.validation);
                 resolve(result);
             });                
-        })
+        });
     }
 
     render() {
@@ -230,6 +267,8 @@ class VeteranDialog extends Component {
         let deleting = this.state.deleteApi.isExecuting;
         
         let executing = adding || updating || deleting;
+
+        let dim = executing ? { opacity: 0.5 } : undefined;
         
         return (
             <Dialog 
@@ -238,7 +277,7 @@ class VeteranDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
+                <DialogTitle style={dim}>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus
@@ -301,18 +340,34 @@ class VeteranDialog extends Component {
                         disabled={executing}
                         margin={'normal'}
                     />
-                    <TextField
-                        id="cardNumber"
-                        label="Card Number"
-                        value={cardNumber}
-                        type="text"
-                        fullWidth
-                        onChange={(event) => this.handleChange('cardNumber', event)}
-                        helperText={validation.cardNumber}
-                        error={validation.cardNumber !== undefined}
-                        disabled={executing}
-                        margin={'normal'}
-                    />
+                    <Grid container>
+                        <Grid item xs>
+                            <TextField
+                                id="cardNumber"
+                                label="Card Number"
+                                value={cardNumber}
+                                type="text"
+                                fullWidth
+                                onChange={(event) => this.handleChange('cardNumber', event)}
+                                helperText={validation.cardNumber}
+                                error={validation.cardNumber !== undefined}
+                                disabled={executing}
+                                margin={'normal'}
+                            />
+                        </Grid>
+                    {isMobileAttached() &&
+                        <Grid item xs={2}>
+                            <Avatar className = {classes.avatar}>
+                                <Button 
+                                    onClick={this.handleScanClick} 
+                                    className = {classes.scanButton}
+                                >
+                                    <SpeakerPhone/>
+                                </Button>
+                            </Avatar>
+                        </Grid>
+                    }
+                    </Grid>
                     <FormControl 
                         className={classes.verificationSelect}
                         fullWidth
@@ -389,7 +444,7 @@ VeteranDialog.propTypes = {
     intent: PropTypes.oneOf([ 'add', 'update' ]).isRequired,
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    veteran: PropTypes.object
+    veteran: PropTypes.object,
 };
 
 export default withStyles(styles)(withContext(VeteranDialog)); 

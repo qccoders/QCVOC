@@ -15,13 +15,13 @@ import {
     Button,
     DialogContent,
     TextField,
+    CircularProgress,
 } from '@material-ui/core';
 
-import { withContext } from '../shared/ContextProvider';
-
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ConfirmDialog from '../shared/ConfirmDialog';
 import DateTimePicker from 'material-ui-pickers/DateTimePicker';
+
+import { withContext } from '../shared/ContextProvider';
+import ConfirmDialog from '../shared/ConfirmDialog';
 
 const styles = {
     dialog: {
@@ -65,7 +65,7 @@ const initialState = {
     confirmDialog: {
         open: false,
     },
-}
+};
 
 class EventDialog extends Component {
     state = initialState;
@@ -87,7 +87,7 @@ class EventDialog extends Component {
             ...this.state.event,
             startDate: moment(this.state.event.startDate).format(),
             endDate: moment(this.state.event.endDate).format(),
-        }
+        };
 
         this.validate().then(result => {
             if (result.isValid) {
@@ -148,11 +148,11 @@ class EventDialog extends Component {
                 action()
                 .then(response => {
                     this.setState({
-                        [api]: { isExecuting: false, isErrored: false }
+                        [api]: { isExecuting: false, isErrored: false },
                     }, () => {
                         this.props.onClose(successMessage);
                         resolve(response);
-                    })
+                    });
                 }, error => {
                     var body = error && error.response && error.response.data ? error.response.data : error;
 
@@ -165,11 +165,11 @@ class EventDialog extends Component {
                     }
 
                     this.setState({ 
-                        [api]: { isExecuting: false, isErrored: true }
+                        [api]: { isExecuting: false, isErrored: true },
                     }, () => reject(error));
-                })
-            })
-        })
+                });
+            });
+        });
     }
 
     validate = () => {
@@ -214,6 +214,8 @@ class EventDialog extends Component {
         
         let executing = adding || updating || deleting;
         
+        let dim = executing ? { opacity: 0.5 } : undefined;
+
         return (
             <Dialog 
                 open={open}
@@ -221,7 +223,7 @@ class EventDialog extends Component {
                 PaperProps={{ className: classes.dialog }}
                 scroll={'body'}
             >
-                <DialogTitle>{(intent === 'add' ? 'Create' : 'Update')} Event</DialogTitle>
+                <DialogTitle style={dim}>{(intent === 'add' ? 'Create' : 'Update')} Event</DialogTitle>
                 <DialogContent>
                     <TextField
                         autoFocus

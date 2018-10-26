@@ -1,5 +1,5 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
@@ -7,14 +7,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { AppBar as MaterialAppBar } from '@material-ui/core';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
+import { Toolbar, Typography } from '@material-ui/core';
 
 const styles = {
     appBar: {
-        marginBottom: 10
-    }
-}
+        marginBottom: 10,
+    },
+    title: {
+        marginLeft: -12,
+    },
+};
 
 const AppBar = (props) => {
     return (
@@ -25,14 +27,14 @@ const AppBar = (props) => {
         >
             <Toolbar>
                 {props.drawerToggleButton}
-                <Typography variant="title" color="inherit">
+                <Typography variant="title" color="inherit" style={styles.title}>
                     {props.title}
                 </Typography>
                 {props.children}
             </Toolbar>
         </MaterialAppBar>
     );
-}
+};
 
 AppBar.propTypes = {
     title: PropTypes.string,

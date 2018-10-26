@@ -1,13 +1,14 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { sortByProp } from '../util';
 
 import { List, ListItem, ListItemIcon, ListItemText } from '@material-ui/core';
-import { Person } from '@material-ui/icons'
+import { Person } from '@material-ui/icons';
+
+import { sortByProp } from '../util';
 
 const VeteranList = (props) => {
     let { veterans, displayId, onItemClick } = props;
@@ -31,7 +32,7 @@ const VeteranList = (props) => {
             )}
         </List>
     );
-}
+};
 
 VeteranList.propTypes = {
     veterans: PropTypes.array.isRequired,

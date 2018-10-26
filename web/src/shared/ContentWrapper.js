@@ -1,12 +1,12 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Error from '@material-ui/icons/Error';
+import { CircularProgress } from '@material-ui/core';
+import { Error } from '@material-ui/icons';
 
 const styles = {
     icon: {
@@ -25,7 +25,7 @@ const styles = {
     container: {
         padding: 20,
     },
-}
+};
 
 const ContentWrapper = (props) => {
     let { isExecuting, isErrored } = props.api;
@@ -37,7 +37,7 @@ const ContentWrapper = (props) => {
             {!isErrored && !isExecuting && props.children}
         </div>
     );
-}
+};
 
 ContentWrapper.propTypes = {
     api: PropTypes.object.isRequired,

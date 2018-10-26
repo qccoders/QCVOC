@@ -5,7 +5,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { getScanResult } from './scannerUtil';
+
 import { withStyles } from '@material-ui/core/styles';
 import { 
     Dialog,
@@ -18,6 +18,8 @@ import {
     ListItemText,
     Avatar,
 } from '@material-ui/core';
+
+import { getScanResult } from './scannerUtil';
 
 const styles = {
     dialog: {

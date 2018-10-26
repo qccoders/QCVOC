@@ -1,32 +1,34 @@
 /*
-    Copyright (c) QC Coders (JP Dillingham, Nick Acosta, Will Burklund, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+    Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
     in the project root for full license information.
 */
 
 import React, { Component } from 'react';
 import { Route, Switch, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentialStore';
-import { withContext } from '../shared/ContextProvider';
 
 import { withStyles } from '@material-ui/core/styles';
+import { CircularProgress, ListSubheader, Drawer } from '@material-ui/core';
 import { People, VerifiedUser, Assignment, InsertInvitation, SpeakerPhone } from '@material-ui/icons';
-import Drawer from '@material-ui/core/Drawer';
+
+import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentials';
+import { getEnvironment, userCanView } from '../util';
+import { withContext } from '../shared/ContextProvider';
 
 import AppBar from './AppBar';
-import Link from './Link';
-import SecurityMenu from '../security/SecurityMenu';
 import DrawerToggleButton from './DrawerToggleButton';
+import Link from './Link';
+import LinkList from './LinkList';
+import LoginForm from '../security/LoginForm';
+import SecurityMenu from '../security/SecurityMenu';
+import NotFound from './errors/NotFound';
+import Forbidden from './errors/Forbidden';
 
 import Accounts from '../accounts/Accounts';
 import Veterans from '../veterans/Veterans';
 import Services from '../services/Services';
-import Events from '../events/Events';
-import LoginForm from '../security/LoginForm';
-import LinkList from './LinkList';
 import Scanner from '../scans/Scanner';
-import { CircularProgress, ListSubheader } from '@material-ui/core';
-import { getEnvironment, userCanView } from '../util';
+import Events from '../events/Events';
 
 const styles = {
     root: {
@@ -65,7 +67,7 @@ const initialState = {
     drawer: {
         open: false,
     },
-}
+};
 
 class App extends Component {
     state = initialState;
@@ -76,16 +78,16 @@ class App extends Component {
                 this.props.context.api.get('/v1/security').then(() => {
                     this.setState({ 
                         api: { isExecuting: false, isErrored: false },
-                        credentials: getCredentials() 
+                        credentials: getCredentials(), 
                     });
                 })
                 .catch(error => {
                     this.setState({ 
                         credentials: initialState.credentials,
-                        api: { isExecuting: false, isErrored: true }
+                        api: { isExecuting: false, isErrored: true },
                     });
                 });
-            })
+            });
         }
     }
 
@@ -116,7 +118,7 @@ class App extends Component {
 
     handlePasswordReset = () => {
         this.setState({ 
-            credentials: { ...this.state.credentials, passwordResetRequired: false }
+            credentials: { ...this.state.credentials, passwordResetRequired: false },
         }, () => updateCredentials(this.state.credentials));
     }
 
@@ -167,12 +169,13 @@ class App extends Component {
                                 <Route path='/veterans' component={Veterans}/>
                                 <Route path='/events' component={Events}/>
                                 <Route path='/scanner' component={Scanner}/>
-                                {userCanView() &&
-                                    <div>
-                                        <Route path='/services' component={Services}/>
-                                        <Route path='/accounts' render={(props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>}/>
-                                    </div>
-                                }
+                                <Route path='/services' component={!userCanView() ? Forbidden : Services}/>
+                                <Route path='/accounts' 
+                                    render={!userCanView() ? Forbidden : 
+                                        (props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>
+                                    }
+                                />
+                                <Route path='*' component={NotFound}/>
                             </Switch>
                         </div> :
                         <LoginForm onLogin={this.handleLogin}/>
