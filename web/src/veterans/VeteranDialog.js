@@ -231,7 +231,7 @@ class VeteranDialog extends Component {
         let { cardNumber, firstName, lastName, address, primaryPhone, email } = this.state.veteran;
         let result = { ...initialState.validation };
 
-        if (cardNumber !== '' && (isNaN(cardNumber) || cardNumber < 1000 || cardNumber > 9999)) result.cardNumber = 'The Card Number field must be a number between 1000 and 9999.';
+        if (cardNumber !== '' && (isNaN(cardNumber) || cardNumber < 0 || cardNumber > 9999)) result.cardNumber = 'The Card Number field must be a number between 0 and 9999.';
         if (firstName === '') result.firstName = 'The First Name field is required.';
         if (lastName === '') result.lastName = 'The Last Name field is required.';
         if (address === '') result.address = 'The Address field is required.';
