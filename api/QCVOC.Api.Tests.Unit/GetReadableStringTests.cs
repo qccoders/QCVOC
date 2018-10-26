@@ -1,4 +1,9 @@
-﻿namespace Server.Tests
+﻿// <copyright file="GetReadableStringTests.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
+//     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+//     in the project root for full license information.
+// </copyright>
+
+namespace Server.Tests
 {
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;

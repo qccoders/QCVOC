@@ -1,11 +1,12 @@
-﻿// <copyright file="Utility.cs" company="QC Coders (JP Dillingham, Nick Acosta, et. al.)">
-//     Copyright (c) QC Coders (JP Dillingham, Nick Acosta, et. al.). All rights reserved. Licensed under the GPLv3 license. See LICENSE file
+﻿// <copyright file="Utility.cs" company="QC Coders">
+//     Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
 namespace QCVOC.Api.Common
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Linq;
     using System.Security.Cryptography;
@@ -177,6 +178,7 @@ namespace QCVOC.Api.Common
         /// </summary>
         /// <param name="dictionary">The ModelStateDictionary to format.</param>
         /// <returns>The formatted error string.</returns>
+        [SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1008:OpeningParenthesisMustBeSpacedCorrectly", Justification = "Reviewed.")]
         public static string GetReadableString(this ModelStateDictionary dictionary)
         {
             if (dictionary == null || dictionary.IsValid)
@@ -186,7 +188,7 @@ namespace QCVOC.Api.Common
 
             var fields = dictionary.Keys
                 .Select(key => (key, dictionary.Root.GetModelStateForProperty(key)))
-                .Select(field => field.Item1 + ": " +
+                .Select(field => field.key + ": " +
                     field.Item2.Errors
                         .Select(error => error.ErrorMessage)
                         .Select(error => error.TrimEnd('.'))
