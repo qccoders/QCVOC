@@ -92,4 +92,4 @@ matrix:
     before_script:
     - cd mobile
     script:
-    - ./gradlew build
+    - ./gradlew --quiet build
