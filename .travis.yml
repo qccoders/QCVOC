@@ -93,5 +93,4 @@ matrix:
     - cd mobile
     script:
     - "./gradlew --quiet build"
-    - openssl aes-256-cbc -K $encrypted_ec9078fc30f0_key -iv $encrypted_ec9078fc30f0_iv -in qcvoc-key.jks.enc -out qcvoc-key.jks -d
-
+    - openssl aes-256-cbc -K $encrypted_1d09d3d42bcc_key -iv $encrypted_1d09d3d42bcc_iv -in qcvoc-key.jks.enc -out qcvoc-key.jks -d
