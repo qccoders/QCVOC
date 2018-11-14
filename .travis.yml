@@ -93,4 +93,9 @@ matrix:
     - cd mobile
     script:
     - "./gradlew --quiet build"
-    - openssl aes-256-cbc -K $encrypted_1d09d3d42bcc_key -iv $encrypted_1d09d3d42bcc_iv -in qcvoc-key.jks.enc -out qcvoc-key.jks -d
+    - openssl aes-256-cbc -K $encrypted_1d09d3d42bcc_key -iv $encrypted_1d09d3d42bcc_iv
+      -in qcvoc-key.jks.enc -out qcvoc-key.jks -d
+env:
+  global:
+  - secure: s/AUVVBdqUi+tgLJY3ljbjfYGZEjYjDDIRAR3N5tH3drR3cS542I4XtAnNtWGuhwmtCDusci/Tg4P9+UDBEjIY/MXWD+Kab3OkAhAEe8OpQwQ0t7p81S4KLlxrdnxmmoQawULBVpcXeyo8F8CD5g6XPO/nesPwC1SHrhWanxDEvAZwshIML5PcoTVrwMTHzvEjj9+ZMs+p1x2dFjFDOdJqd65Qip9ujiH9rtUVdFGb3nXgZasprTir6PQoFtIMNL0ZkMIC/uspDDUObPDpf0hiK9BK2Cv31rfhbCfdehZjWhba+foiSsU/Gwcl/M/ay4xAFncBxC9BqluW2BcKv1gakE4oYQl7sF//2DJrunHelxw0JsMxspHaw7ABrLi9LhpBIgNGiIL7ljl2ZJkKH18v6g6R9G0Xk4Rjyqa9X4Drms/lQDMvI2+Xp0WUvSV15Iy765OaWkDdsOY0+j//0JD2te2LH3NmcSOPlkWjvMO7TLWjzj0Q+JfxVUiVSsMVVO78YK431zh1Vf03TCZ/LmzXfCxyRsoFE8uxJpxrFwHir/q9fjHKsJdNQVN+dD/4jpK/oqY399EwYSLbtye4NcbdDAqZfXcY5bNTqvy3JESipR4xmp1DGcUlVh5FX7mmlEx8eT2Z2i9L09tGter9mZHn1A/9UNvycxAudY4oWPHn4=
+  - secure: Lz0KdHOttf/tOlkLILVJOxtzGAQUgXWJKyULbxwy8b3/qZMLDDIcgRQESzQTfJfozRuoqqwuswataCELdQ83PwpvFdfzDA9kRd5fpF+UCZCbkFyu/SoocWJrwrXpBHEwoeg3Jw0xIqulg4TYgiJ+2E7JvR4Nc0d/IF/f3Ejk+ymkTIi4dJy9dPkZzoox96SJZJQlG0jgHxZHId9SMuyOBtzJvbt0VCl/oJu8K84x/g5oxN1K0UpNQcmSKTl4+GR/SwiD68nOMCs8Lir5aP+hS0g5mZguVfRO9l25SE7BCl6vY/Ev2TKDo+w3v2YAE8Z1+g7KGWLN8Oq9VVrx/gM6NOPDfS++GqbZpkEEUpTCGF80aPTwhc5cYlgBKj4NjcG02WNGneQENBNwbY6e/pPD+cov0FZgqn3BCBtFf5kPsCfaOS4QrxKeUaiJzlfaeWHR51AaMnObxMuQHXS48aZmunswI0RF4/G6e4FtxP59JG+6JnbT/HRK1DPdfLmoyoh2gn9PntrLUzmH3H+EvpSd9jp48uae3oE5XTslLoKIYMoTH9Kdip2IMXR52Sz89obVfJ/Op5mSIeGMhcGp1MZnZrPltvcbcryAz+lj4kGW+w8/VqE41Foxa5i0LDbmvfnbgdAwDoKH3BYwZjWwzsFy2dvAabJATrwBfqUkMQj042g=
