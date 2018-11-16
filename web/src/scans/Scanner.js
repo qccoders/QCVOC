@@ -17,6 +17,7 @@ import {
 } from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
 
+import { CHECKIN_SERVICE_ID } from '../constants';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import { withContext } from '../shared/ContextProvider';
 import { getScanResult } from './scannerUtil';
@@ -26,6 +27,7 @@ import EventList from '../events/EventList';
 import ContentWrapper from '../shared/ContentWrapper';
 import ScannerHistoryDialog from './ScannerHistoryDialog';
 import ManualScanDialog from './ManualScanDialog';
+import PlusOneDialog from './PlusOneDialog';
 
 const historyLimit = 5;
 
@@ -86,14 +88,19 @@ const initialState = {
         cardNumber: undefined,
         status: undefined,
         response: undefined,
+        plusOne: undefined,
     },
     events: [],
     services: [],
     history: [],
+    plusOne: undefined,
     historyDialog: {
         open: false,
     },
     scanDialog: {
+        open: false,
+    },
+    plusOneDialog: {
         open: false,
     },
 };
@@ -111,7 +118,7 @@ class Scanner extends Component {
         if (barcode === undefined) return;
 
         let { event, service } = this.state.scanner;
-        let scan = { eventId: event && event.id, serviceId: service && service.id, cardNumber: barcode };
+        let scan = { eventId: event && event.id, serviceId: service && service.id, cardNumber: barcode, plusOne: this.state.plusOne === undefined ? false : this.state.plusOne };
 
         this.setState({ 
             scan: initialState.scan,
@@ -132,6 +139,15 @@ class Scanner extends Component {
     }
 
     handleScanClick = () => {
+        if (this.state.scanner.service && this.state.scanner.service.id === CHECKIN_SERVICE_ID) { 
+            this.setState({ plusOneDialog: { open: true }});
+        }
+        else {
+            this.scan();
+        }
+    }
+
+    scan = () => {
         if (isMobileAttached()) {
             initiateMobileScan("window.inputBarcodeScanner");
         }
@@ -144,6 +160,14 @@ class Scanner extends Component {
         this.setState({ scanDialog: { open: false }}, () => {
             if (result !== undefined) {
                 this.handleBarcodeScanned(result);
+            }
+        });
+    }
+
+    handlePlusOneDialogClose = (result) => {
+        this.setState({ plusOneDialog: { open: false }, plusOne: result === undefined ? false : result }, () => {
+            if (result !== undefined) {
+                this.scan();
             }
         });
     }
@@ -277,7 +301,7 @@ class Scanner extends Component {
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, history, historyDialog, scanDialog } = this.state;
+        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, history, historyDialog, scanDialog, plusOneDialog } = this.state;
 
         let title = this.getTitle(scanner);
         let display = this.getScanDisplay(scan);
@@ -353,6 +377,10 @@ class Scanner extends Component {
                     <ManualScanDialog
                         open={scanDialog.open}
                         onClose={this.handleScanDialogClose}
+                    />
+                    <PlusOneDialog
+                        open={plusOneDialog.open}
+                        onClose={this.handlePlusOneDialogClose}
                     />
                     <ScannerHistoryDialog
                         open={historyDialog.open}
