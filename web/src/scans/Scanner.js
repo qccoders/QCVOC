@@ -17,6 +17,7 @@ import {
 } from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
 
+import { CHECKIN_SERVICE_ID } from '../constants';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import { withContext } from '../shared/ContextProvider';
 import { getScanResult } from './scannerUtil';
@@ -138,7 +139,7 @@ class Scanner extends Component {
     }
 
     handleScanClick = () => {
-        if (this.state.scanner.service && this.state.scanner.service.id === '00000000-0000-0000-0000-000000000000') { 
+        if (this.state.scanner.service && this.state.scanner.service.id === CHECKIN_SERVICE_ID) { 
             this.setState({ plusOneDialog: { open: true }});
         }
         else {
