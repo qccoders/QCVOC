@@ -17,6 +17,7 @@ import {
 } from '@material-ui/core';
 import { Add, Shop, Work } from '@material-ui/icons';
 
+import { CHECKIN_SERVICE_ID } from '../constants';
 import { withContext } from '../shared/ContextProvider';
 import ContentWrapper from '../shared/ContentWrapper';
 import ServiceList from './ServiceList';
@@ -122,8 +123,8 @@ class Services extends Component {
         let { classes } = this.props;
         let { services, loadApi, refreshApi, serviceDialog } = this.state;
 
-        let userDefined = services.filter(s => s.id !== '00000000-0000-0000-0000-000000000000');
-        let systemDefined = services.filter(s => s.id === '00000000-0000-0000-0000-000000000000');
+        let userDefined = services.filter(s => s.id !== CHECKIN_SERVICE_ID);
+        let systemDefined = services.filter(s => s.id === CHECKIN_SERVICE_ID);
 
         return (
             <div>
