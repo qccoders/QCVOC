@@ -47,13 +47,6 @@ class PlusOneDialog extends Component {
     handleSelectClick = (plusOne) => {
         this.props.onClose(plusOne);
     }
-
-    handleChange = (event) => {
-        this.setState({ 
-            cardNumber: event.target.value,
-            validation: { cardNumber: undefined },
-        });
-    }
     
     render() {
         let { classes, open } = this.props;
