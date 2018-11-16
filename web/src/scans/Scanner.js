@@ -138,7 +138,7 @@ class Scanner extends Component {
     }
 
     handleScanClick = () => {
-        if (1 === 1) { // replace this with logic to detect check in service
+        if (this.state.scanner.service && this.state.scanner.service.id === '00000000-0000-0000-0000-000000000000') { 
             this.setState({ plusOneDialog: { open: true }});
         }
         else {
