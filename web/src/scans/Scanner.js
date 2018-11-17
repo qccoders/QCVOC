@@ -186,9 +186,9 @@ class Scanner extends Component {
     }
 
     resetScanner = (resolve) => { 
-        this.fetchEvents('refreshApi')
-        .then(() => {
-            this.setState({ scanner: initialState.scanner }, () => resolve());
+        this.setState({ ...initialState }, () => {
+            this.fetchEvents('refreshApi')
+            .then(() => resolve());
         });
     }
 
