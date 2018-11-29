@@ -57,5 +57,10 @@ namespace QCVOC.Api.Veterans.Data.DTO
         /// </summary>
         [Required]
         public VerificationMethod VerificationMethod { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the photo of the veteran.
+        /// </summary>
+        public string PhotoBase64 { get; set; }
     }
 }
