@@ -11,13 +11,12 @@ namespace QCVOC.Api.Veterans.Data.Repository
     using Dapper;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
-    using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Veterans.Data.Model;
 
     /// <summary>
     ///     Provides data access for <see cref="Veteran"/>.
     /// </summary>
-    public class VeteranRepository : ISingleKeyRepository<Veteran>
+    public class VeteranRepository : IVeteranRepository
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="VeteranRepository"/> class.
@@ -48,6 +47,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     lastupdatedate,
                     lastupdatebyid,
                     address,
+                    photobase64,
                     primaryphone,
                     email,
                     enrollmentdate,
@@ -63,6 +63,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     @lastupdatedate,
                     @lastupdatebyid,
                     @address,
+                    @photobase64,
                     @primaryphone,
                     @email,
                     @enrollmentdate,
@@ -81,6 +82,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 lastupdatedate = veteran.LastUpdateDate,
                 lastupdatebyid = veteran.LastUpdateById,
                 address = veteran.Address,
+                photobase64 = veteran.PhotoBase64,
                 primaryphone = veteran.PrimaryPhone,
                 email = veteran.Email,
                 enrollmentdate = veteran.EnrollmentDate,
@@ -107,7 +109,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
 
             var query = builder.AddTemplate(@"
                 UPDATE veterans
-                SET 
+                SET
                     deleted = true,
                     cardnumber = NULL
                 WHERE id = @id
@@ -137,7 +139,10 @@ namespace QCVOC.Api.Veterans.Data.Repository
         /// <returns>The Veteran matching the specified id.</returns>
         public Veteran Get(Guid id)
         {
-            return GetAll(new VeteranFilters() { Id = id }).SingleOrDefault();
+            var veteran = GetAll(new VeteranFilters() { Id = id }).SingleOrDefault();
+            veteran.PhotoBase64 = GetPhotoBase64(veteran.Id);
+
+            return veteran;
         }
 
         /// <summary>
@@ -167,7 +172,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     b.name AS enrollmentby,
                     v.verificationmethod
                 FROM veterans v
-                LEFT JOIN accounts a ON v.lastupdatebyid = a.id 
+                LEFT JOIN accounts a ON v.lastupdatebyid = a.id
                 LEFT JOIN accounts b ON v.enrollmentbyid = b.id
                 /**where**/
                 ORDER BY (firstname || lastname) {filters.OrderBy.ToString()}
@@ -203,6 +208,30 @@ namespace QCVOC.Api.Veterans.Data.Repository
         }
 
         /// <summary>
+        ///     Retrieves the base 64 encoded photo for the Veteran matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Veteran"/> to retrieve.</param>
+        /// <returns>The base 64 encoded photo for the Veteran matching the specified id.</returns>
+        public string GetPhotoBase64(Guid id)
+        {
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
+                SELECT
+                    photobase64
+                FROM veterans
+                WHERE id = @id
+            ");
+
+            builder.AddParameters(new { id });
+
+            using (var db = ConnectionFactory.CreateConnection())
+            {
+                return db.Query<string>(query.RawSql, query.Parameters).FirstOrDefault();
+            }
+        }
+
+        /// <summary>
         ///     Updates the specified <paramref name="veteran"/>.
         /// </summary>
         /// <param name="veteran">The Veteran to update.</param>
@@ -220,6 +249,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     lastupdatedate = @lastupdatedate,
                     lastupdatebyid = @lastupdatebyid,
                     address = @address,
+                    photobase64 = @photobase64,
                     primaryphone = @primaryphone,
                     email = @email,
                     verificationmethod = @verificationmethod
@@ -234,6 +264,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 lastupdatedate = veteran.LastUpdateDate,
                 lastupdatebyid = veteran.LastUpdateById,
                 address = veteran.Address,
+                photobase64 = veteran.PhotoBase64,
                 primaryPhone = veteran.PrimaryPhone,
                 email = veteran.Email,
                 id = veteran.Id,
@@ -246,6 +277,37 @@ namespace QCVOC.Api.Veterans.Data.Repository
             }
 
             return Get(veteran.Id);
+        }
+
+        /// <summary>
+        ///     Updates the base 64 encoded photo for the Veteran matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Veteran"/> to update.</param>
+        /// <param name="photoBase64">The base 64 encoded photo with which to update the Veteran.</param>
+        /// <returns>The base 64 encoded photo for the Veteran matching the specified id.</returns>
+        public string UpdatePhotoBase64(Guid id, string photoBase64)
+        {
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
+                UPDATE veterans
+                SET
+                    photobase64 = @photobase64
+                WHERE id = @id
+            ");
+
+            builder.AddParameters(new
+            {
+                id,
+                photobase64 = photoBase64,
+            });
+
+            using (var db = ConnectionFactory.CreateConnection())
+            {
+                db.Execute(query.RawSql, query.Parameters);
+            }
+
+            return GetPhotoBase64(id);
         }
     }
 }

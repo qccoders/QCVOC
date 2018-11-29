@@ -38,6 +38,11 @@ namespace QCVOC.Api.Veterans.Data.Model
         public DateTime EnrollmentDate { get; set; }
 
         /// <summary>
+        ///     Gets or sets the photo of the veteran.
+        /// </summary>
+        public string PhotoBase64 { get; set; }
+
+        /// <summary>
         ///     Gets or sets the first name of the Veteran.
         /// </summary>
         public string FirstName { get; set; }
@@ -107,6 +112,7 @@ namespace QCVOC.Api.Veterans.Data.Model
             && this.LastUpdateById == veteran.LastUpdateById
             && this.LastUpdateBy == veteran.LastUpdateBy
             && this.Address == veteran.Address
+            && this.PhotoBase64 == veteran.PhotoBase64
             && this.PrimaryPhone == veteran.PrimaryPhone
             && this.Email == veteran.Email
             && this.EnrollmentById == veteran.EnrollmentById
