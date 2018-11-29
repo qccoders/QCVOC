@@ -30,3 +30,4 @@ namespace QCVOC.Api.Veterans.Data.Repository
         string UpdatePhotoBase64(Guid id, string photoBase64);
     }
 }
+
