@@ -11,13 +11,12 @@ namespace QCVOC.Api.Veterans.Data.Repository
     using Dapper;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
-    using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Veterans.Data.Model;
 
     /// <summary>
     ///     Provides data access for <see cref="Veteran"/>.
     /// </summary>
-    public class VeteranRepository : ISingleKeyRepository<Veteran>
+    public class VeteranRepository : IVeteranRepository
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="VeteranRepository"/> class.
@@ -110,7 +109,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
 
             var query = builder.AddTemplate(@"
                 UPDATE veterans
-                SET 
+                SET
                     deleted = true,
                     cardnumber = NULL
                 WHERE id = @id
@@ -163,7 +162,6 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     a.name AS lastupdateby,
                     v.lastupdatebyid,
                     v.address,
-                    v.photobase64,
                     v.primaryphone,
                     v.email,
                     v.enrollmentdate,
@@ -171,7 +169,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     b.name AS enrollmentby,
                     v.verificationmethod
                 FROM veterans v
-                LEFT JOIN accounts a ON v.lastupdatebyid = a.id 
+                LEFT JOIN accounts a ON v.lastupdatebyid = a.id
                 LEFT JOIN accounts b ON v.enrollmentbyid = b.id
                 /**where**/
                 ORDER BY (firstname || lastname) {filters.OrderBy.ToString()}
@@ -203,6 +201,30 @@ namespace QCVOC.Api.Veterans.Data.Repository
             using (var db = ConnectionFactory.CreateConnection())
             {
                 return db.Query<Veteran>(query.RawSql, query.Parameters);
+            }
+        }
+
+        /// <summary>
+        ///     Retrieves the base 64 encoded photo for the Veteran matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Veteran"/> to retrieve.</param>
+        /// <returns>The base 64 encoded photo for the Veteran matching the specified id.</returns>
+        public string GetPhotoBase64(Guid id)
+        {
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
+                SELECT
+                    photobase64
+                FROM veterans
+                WHERE id = @id
+            ");
+
+            builder.AddParameters(new { id });
+
+            using (var db = ConnectionFactory.CreateConnection())
+            {
+                return db.Query<string>(query.RawSql, query.Parameters).FirstOrDefault();
             }
         }
 
