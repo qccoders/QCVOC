@@ -20,5 +20,13 @@ namespace QCVOC.Api.Veterans.Data.Repository
         /// <param name="id">The id of the <see cref="Veteran"/> to retrieve.</param>
         /// <returns>The base 64 encoded photo for the Veteran matching the specified id.</returns>
         string GetPhotoBase64(Guid id);
+
+        /// <summary>
+        ///     Updates the base 64 encoded photo for the Veteran matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Veteran"/> to update.</param>
+        /// <param name="photoBase64">The base 64 encoded photo with which to update the Veteran.</param>
+        /// <returns>The base 64 encoded photo for the Veteran matching the specified id.</returns>
+        string UpdatePhotoBase64(Guid id, string photoBase64);
     }
 }

@@ -275,5 +275,35 @@ namespace QCVOC.Api.Veterans.Data.Repository
 
             return Get(veteran.Id);
         }
+
+        /// <summary>
+        ///     Updates the base 64 encoded photo for the Veteran matching the specified <paramref name="id"/>.
+        /// </summary>
+        /// <param name="id">The id of the <see cref="Veteran"/> to update.</param>
+        /// <param name="photoBase64">The base 64 encoded photo with which to update the Veteran.</param>
+        /// <returns>The base 64 encoded photo for the Veteran matching the specified id.</returns>
+        public string UpdatePhotoBase64(Guid id, string photoBase64)
+        {
+            var builder = new SqlBuilder();
+
+            var query = builder.AddTemplate(@"
+                UPDATE veterans
+                SET
+                    photobase64 = @photobase64,
+                WHERE id = @id
+            ");
+
+            builder.AddParameters(new
+            {
+                photobase64 = photoBase64,
+            });
+
+            using (var db = ConnectionFactory.CreateConnection())
+            {
+                db.Execute(query.RawSql, query.Parameters);
+            }
+
+            return GetPhotoBase64(id);
+        }
     }
 }
