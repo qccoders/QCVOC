@@ -144,7 +144,7 @@ class VeteranDialog extends Component {
                         .then(response => this.setState({ 
                             veteran: response.data,
                             getApi: { isExecuting: false, isErrored: false }, 
-                        }, () => console.log(this.state)), error => this.setState({ getApi: { isExecuting: false, isErrored: true }}));
+                        }), error => this.setState({ getApi: { isExecuting: false, isErrored: true }}));
                     });
                 }
             });
