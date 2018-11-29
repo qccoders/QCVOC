@@ -23,7 +23,7 @@ import {
     Avatar,
 } from '@material-ui/core';
 
-import { SpeakerPhone } from '@material-ui/icons';
+import { SpeakerPhone, PhotoCamera } from '@material-ui/icons';
 
 import { validateEmail, validatePhoneNumber, userCanView } from '../util';
 import { withContext } from '../shared/ContextProvider';
@@ -55,9 +55,19 @@ const styles = {
     scanButton: {
         color: '#fff',
     },
+    photo: {
+        width: 240,
+        height: 240,
+        margin: 'auto',
+        backgroundColor: '#E0E0E0',
+    },
 };
 
 const initialState = {
+    getApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
     addApi: {
         isExecuting: false,
         isErrored: false,
@@ -124,9 +134,19 @@ class VeteranDialog extends Component {
             this.setState({ 
                 ...initialState, 
                 veteran: nextProps.veteran ? nextProps.veteran : { 
-                    ...initialState.veteran, 
+                    ...initialState.veteran,
                 },
                 validation: initialState.validation,
+            }, () => {
+                if (this.state.veteran.id !== initialState.veteran.id) {
+                    this.setState({ getApi: { isExecuting: true, isErrored: false }}, () => {
+                        this.props.context.api.get('/v1/veterans/' + nextProps.veteran.id)
+                        .then(response => this.setState({ 
+                            veteran: response.data,
+                            getApi: { isExecuting: false, isErrored: false }, 
+                        }), error => this.setState({ getApi: { isExecuting: false, isErrored: true }}));
+                    });
+                }
             });
         }
     }
@@ -258,8 +278,9 @@ class VeteranDialog extends Component {
 
     render() {
         let { classes, intent, open } = this.props;
-        let { cardNumber, firstName, lastName, address, primaryPhone, email, verificationMethod } = this.state.veteran;
+        let { cardNumber, firstName, lastName, address, primaryPhone, email, verificationMethod, photoBase64 } = this.state.veteran;
         let validation = this.state.validation;
+        let fullName = firstName + ' ' + lastName;
         let oldCardNumber = this.props.veteran ? this.props.veteran.cardNumber : '';
 
         let adding = this.state.addApi.isExecuting;
@@ -279,6 +300,13 @@ class VeteranDialog extends Component {
             >
                 <DialogTitle style={dim}>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
+                    {!this.state.getApi.isExecuting ? 
+                        photoBase64 ? <Avatar 
+                            alt={fullName}
+                            className={classes.photo}
+                            src={photoBase64}
+                        /> : <Avatar className={classes.photo}><PhotoCamera/></Avatar>
+                    : <Avatar className={classes.photo}><CircularProgress size={30} color={'secondary'}/></Avatar>}
                     <TextField
                         autoFocus
                         id="firstName"
