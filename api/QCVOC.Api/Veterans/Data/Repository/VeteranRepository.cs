@@ -139,7 +139,10 @@ namespace QCVOC.Api.Veterans.Data.Repository
         /// <returns>The Veteran matching the specified id.</returns>
         public Veteran Get(Guid id)
         {
-            return GetAll(new VeteranFilters() { Id = id }).SingleOrDefault();
+            var veteran = GetAll(new VeteranFilters() { Id = id }).SingleOrDefault();
+            veteran.PhotoBase64 = GetPhotoBase64(veteran.Id);
+
+            return veteran;
         }
 
         /// <summary>
