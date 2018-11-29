@@ -289,12 +289,13 @@ namespace QCVOC.Api.Veterans.Data.Repository
             var query = builder.AddTemplate(@"
                 UPDATE veterans
                 SET
-                    photobase64 = @photobase64,
+                    photobase64 = @photobase64
                 WHERE id = @id
             ");
 
             builder.AddParameters(new
             {
+                id,
                 photobase64 = photoBase64,
             });
 
