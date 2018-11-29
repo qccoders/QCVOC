@@ -127,6 +127,11 @@ class VeteranDialog extends Component {
                     ...initialState.veteran, 
                 },
                 validation: initialState.validation,
+            }, () => {
+                if (this.state.veteran.id !== initialState.veteran.id) {
+                    this.props.context.api.get('/v1/veterans/' + nextProps.veteran.id)
+                    .then(response => this.setState({ veteran: response.data }));
+                }
             });
         }
     }
