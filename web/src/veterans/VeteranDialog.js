@@ -23,7 +23,7 @@ import {
     Avatar,
 } from '@material-ui/core';
 
-import { SpeakerPhone } from '@material-ui/icons';
+import { SpeakerPhone, PhotoCamera } from '@material-ui/icons';
 
 import { validateEmail, validatePhoneNumber, userCanView } from '../util';
 import { withContext } from '../shared/ContextProvider';
@@ -59,6 +59,7 @@ const styles = {
         width: 240,
         height: 240,
         margin: 'auto',
+        backgroundColor: '#E0E0E0',
     },
 };
 
@@ -138,8 +139,13 @@ class VeteranDialog extends Component {
                 validation: initialState.validation,
             }, () => {
                 if (this.state.veteran.id !== initialState.veteran.id) {
-                    this.props.context.api.get('/v1/veterans/' + nextProps.veteran.id)
-                    .then(response => this.setState({ veteran: response.data }));
+                    this.setState({ getApi: { isExecuting: true, isErrored: false }}, () => {
+                        this.props.context.api.get('/v1/veterans/' + nextProps.veteran.id)
+                        .then(response => this.setState({ 
+                            veteran: response.data,
+                            getApi: { isExecuting: false, isErrored: false }, 
+                        }, () => console.log(this.state)), error => this.setState({ getApi: { isExecuting: false, isErrored: true }}));
+                    });
                 }
             });
         }
@@ -294,11 +300,13 @@ class VeteranDialog extends Component {
             >
                 <DialogTitle style={dim}>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
-                    <Avatar 
-                        alt={fullName}
-                        className={classes.photo}
-                        src={photoBase64}
-                    />
+                    {!this.state.getApi.isExecuting ? 
+                        photoBase64 ? <Avatar 
+                            alt={fullName}
+                            className={classes.photo}
+                            src={photoBase64}
+                        /> : <Avatar className={classes.photo}><PhotoCamera/></Avatar>
+                    : <Avatar className={classes.photo}><CircularProgress size={30} color={'secondary'}/></Avatar>}
                     <TextField
                         autoFocus
                         id="firstName"
