@@ -36,6 +36,11 @@ namespace QCVOC.Api.Veterans
         public Guid? Id { get; set; }
 
         /// <summary>
+        ///     A value indicating whether the PhotoBase64 data should be included in the results.
+        /// </summary>
+        public bool IncludePhotoBase64 { get; set; }
+
+        /// <summary>
         ///     The last name of the Veteran.
         /// </summary>
         public string LastName { get; set; }
@@ -54,10 +59,5 @@ namespace QCVOC.Api.Veterans
         ///     The primary phone number of the Veteran.
         /// </summary>
         public string PrimaryPhone { get; set; }
-
-        /// <summary>
-        ///     A value indicating whether the PhotoBase64 data should be included in the results.
-        /// </summary>
-        public bool WithPhotoBase64 { get; set; }
     }
 }

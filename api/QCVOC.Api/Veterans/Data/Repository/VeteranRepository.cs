@@ -140,7 +140,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
         /// <returns>The Veteran matching the specified id.</returns>
         public Veteran Get(Guid id)
         {
-            return GetAll(new VeteranFilters() { Id = id, WithPhotoBase64 = true }).SingleOrDefault();
+            return GetAll(new VeteranFilters() { Id = id, IncludePhotoBase64 = true }).SingleOrDefault();
         }
 
         /// <summary>
@@ -163,7 +163,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     a.name AS lastupdateby,
                     v.lastupdatebyid,
                     v.address,
-                    {(((VeteranFilters)filters).WithPhotoBase64 ? "v.photobase64" : string.Empty)}
+                    {(((VeteranFilters)filters).IncludePhotoBase64 ? "v.photobase64" : string.Empty)}
                     v.primaryphone,
                     v.email,
                     v.enrollmentdate,
