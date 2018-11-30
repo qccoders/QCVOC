@@ -11,12 +11,13 @@ namespace QCVOC.Api.Veterans.Data.Repository
     using Dapper;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
+    using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Veterans.Data.Model;
 
     /// <summary>
     ///     Provides data access for <see cref="Veteran"/>.
     /// </summary>
-    public class VeteranRepository : IVeteranRepository
+    public class VeteranRepository : ISingleKeyRepository<Veteran>
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="VeteranRepository"/> class.
@@ -139,16 +140,15 @@ namespace QCVOC.Api.Veterans.Data.Repository
         /// <returns>The Veteran matching the specified id.</returns>
         public Veteran Get(Guid id)
         {
-            return GetAll(new VeteranFilters() { Id = id }, includePhotoBase64: true).SingleOrDefault();
+            return GetAll(new VeteranFilters() { Id = id, WithPhotoBase64 = true }).SingleOrDefault();
         }
 
         /// <summary>
         ///     Retrieves all Veterans after applying optional <paramref name="filters"/>.
         /// </summary>
         /// <param name="filters">Optional query filters.</param>
-        /// <param name="includePhotoBase64">A value indicating whether the photobase64 column should be included in the results.</param>
         /// <returns>A list of Veterans</returns>
-        public IEnumerable<Veteran> GetAll(Filters filters = null, bool includePhotoBase64 = false)
+        public IEnumerable<Veteran> GetAll(Filters filters = null)
         {
             filters = filters ?? new Filters();
             var builder = new SqlBuilder();
@@ -163,7 +163,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     a.name AS lastupdateby,
                     v.lastupdatebyid,
                     v.address,
-                    {(includePhotoBase64 ? "v.photobase64" : string.Empty)}
+                    {(((VeteranFilters)filters).WithPhotoBase64 ? "v.photobase64" : string.Empty)}
                     v.primaryphone,
                     v.email,
                     v.enrollmentdate,
