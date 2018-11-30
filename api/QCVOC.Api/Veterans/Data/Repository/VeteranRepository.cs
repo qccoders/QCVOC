@@ -139,18 +139,16 @@ namespace QCVOC.Api.Veterans.Data.Repository
         /// <returns>The Veteran matching the specified id.</returns>
         public Veteran Get(Guid id)
         {
-            var veteran = GetAll(new VeteranFilters() { Id = id }).SingleOrDefault();
-            veteran.PhotoBase64 = GetPhotoBase64(veteran.Id);
-
-            return veteran;
+            return GetAll(new VeteranFilters() { Id = id }, includePhotoBase64: true).SingleOrDefault();
         }
 
         /// <summary>
         ///     Retrieves all Veterans after applying optional <paramref name="filters"/>.
         /// </summary>
         /// <param name="filters">Optional query filters.</param>
+        /// <param name="includePhotoBase64">A value indicating whether the photobase64 column should be included in the results.</param>
         /// <returns>A list of Veterans</returns>
-        public IEnumerable<Veteran> GetAll(Filters filters = null)
+        public IEnumerable<Veteran> GetAll(Filters filters = null, bool includePhotoBase64 = false)
         {
             filters = filters ?? new Filters();
             var builder = new SqlBuilder();
@@ -165,6 +163,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     a.name AS lastupdateby,
                     v.lastupdatebyid,
                     v.address,
+                    {(includePhotoBase64 ? "v.photobase64" : string.Empty)}
                     v.primaryphone,
                     v.email,
                     v.enrollmentdate,
@@ -204,30 +203,6 @@ namespace QCVOC.Api.Veterans.Data.Repository
             using (var db = ConnectionFactory.CreateConnection())
             {
                 return db.Query<Veteran>(query.RawSql, query.Parameters);
-            }
-        }
-
-        /// <summary>
-        ///     Retrieves the base 64 encoded photo for the Veteran matching the specified <paramref name="id"/>.
-        /// </summary>
-        /// <param name="id">The id of the <see cref="Veteran"/> to retrieve.</param>
-        /// <returns>The base 64 encoded photo for the Veteran matching the specified id.</returns>
-        public string GetPhotoBase64(Guid id)
-        {
-            var builder = new SqlBuilder();
-
-            var query = builder.AddTemplate(@"
-                SELECT
-                    photobase64
-                FROM veterans
-                WHERE id = @id
-            ");
-
-            builder.AddParameters(new { id });
-
-            using (var db = ConnectionFactory.CreateConnection())
-            {
-                return db.Query<string>(query.RawSql, query.Parameters).FirstOrDefault();
             }
         }
 
@@ -277,37 +252,6 @@ namespace QCVOC.Api.Veterans.Data.Repository
             }
 
             return Get(veteran.Id);
-        }
-
-        /// <summary>
-        ///     Updates the base 64 encoded photo for the Veteran matching the specified <paramref name="id"/>.
-        /// </summary>
-        /// <param name="id">The id of the <see cref="Veteran"/> to update.</param>
-        /// <param name="photoBase64">The base 64 encoded photo with which to update the Veteran.</param>
-        /// <returns>The base 64 encoded photo for the Veteran matching the specified id.</returns>
-        public string UpdatePhotoBase64(Guid id, string photoBase64)
-        {
-            var builder = new SqlBuilder();
-
-            var query = builder.AddTemplate(@"
-                UPDATE veterans
-                SET
-                    photobase64 = @photobase64
-                WHERE id = @id
-            ");
-
-            builder.AddParameters(new
-            {
-                id,
-                photobase64 = photoBase64,
-            });
-
-            using (var db = ConnectionFactory.CreateConnection())
-            {
-                db.Execute(query.RawSql, query.Parameters);
-            }
-
-            return GetPhotoBase64(id);
         }
     }
 }
