@@ -103,9 +103,11 @@ const initialState = {
 
 class VeteranDialog extends Component {
     state = initialState;
+    fileUploadInput = React.createRef();
 
     componentDidMount = () => {
         window.inputBarcodeVeteranDialog = this.handleBarcodeScanned;
+        // window.??? = this.handlePhotoUploaded;
     }
 
     handleScanClick = () => {
@@ -128,6 +130,33 @@ class VeteranDialog extends Component {
             },
         });
     }
+    
+    handleUploadPhotoClick = () => {
+        if (isMobileAttached()) {
+            // we're all counting on you Will
+        }
+        else {
+            this.fileUploadInput.current.click();
+        }
+    }
+
+    handlePhotoUploaded = (base64) => {
+        this.setState({ veteran: { ...this.state.veteran, photoBase64: base64 }});
+    }
+
+    uploadPhotoFile = (file) => {
+        if (file) {
+            let self = this;
+
+            let fileReader = new FileReader();
+
+            fileReader.addEventListener("load", function(e) {
+                self.handlePhotoUploaded(e.target.result);
+            }); 
+    
+            fileReader.readAsDataURL(file); 
+        }       
+    }
 
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
@@ -142,7 +171,7 @@ class VeteranDialog extends Component {
                     this.setState({ getApi: { isExecuting: true, isErrored: false }}, () => {
                         this.props.context.api.get('/v1/veterans/' + nextProps.veteran.id)
                         .then(response => this.setState({ 
-                            veteran: response.data,
+                            veteran: { ...response.data, cardNumber: response.data.cardNumber || '' },
                             getApi: { isExecuting: false, isErrored: false }, 
                         }), error => this.setState({ getApi: { isExecuting: false, isErrored: true }}));
                     });
@@ -300,13 +329,21 @@ class VeteranDialog extends Component {
             >
                 <DialogTitle style={dim}>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
-                    {!this.state.getApi.isExecuting ? 
-                        photoBase64 ? <Avatar 
-                            alt={fullName}
-                            className={classes.photo}
-                            src={photoBase64}
-                        /> : <Avatar className={classes.photo}><PhotoCamera/></Avatar>
-                    : <Avatar className={classes.photo}><CircularProgress size={30} color={'secondary'}/></Avatar>}
+                    <div onClick={this.handleUploadPhotoClick}>
+                        <input 
+                            ref={this.fileUploadInput} 
+                            style={{display: 'none'}} 
+                            type="file" 
+                            onChange={(e) => this.uploadPhotoFile(e.target.files[0])}
+                        />
+                        {!this.state.getApi.isExecuting ? 
+                            photoBase64 ? <Avatar 
+                                alt={fullName}
+                                className={classes.photo}
+                                src={photoBase64}
+                            /> : <Avatar className={classes.photo}><PhotoCamera/></Avatar>
+                        : <Avatar className={classes.photo}><CircularProgress size={30} color={'secondary'}/></Avatar>}
+                    </div>
                     <TextField
                         autoFocus
                         id="firstName"
