@@ -136,7 +136,7 @@ namespace QCVOC.Api.Scans.Controller
                 }
                 else
                 {
-                    return StatusCode(200, existingCheckIn);
+                    return StatusCode(200, new ScanResponse(existingCheckIn, veteran));
                 }
             }
 
