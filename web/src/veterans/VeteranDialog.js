@@ -103,6 +103,7 @@ const initialState = {
 
 class VeteranDialog extends Component {
     state = initialState;
+    fileUploadInput = React.createRef();
 
     componentDidMount = () => {
         window.inputBarcodeVeteranDialog = this.handleBarcodeScanned;
@@ -142,7 +143,7 @@ class VeteranDialog extends Component {
                     this.setState({ getApi: { isExecuting: true, isErrored: false }}, () => {
                         this.props.context.api.get('/v1/veterans/' + nextProps.veteran.id)
                         .then(response => this.setState({ 
-                            veteran: response.data,
+                            veteran: { ...response.data, cardNumber: response.data.cardNumber || '' },
                             getApi: { isExecuting: false, isErrored: false }, 
                         }), error => this.setState({ getApi: { isExecuting: false, isErrored: true }}));
                     });
@@ -318,14 +319,16 @@ class VeteranDialog extends Component {
             >
                 <DialogTitle style={dim}>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
-                    <input type="file" onChange={(e) => this.uploadFile(e.target.files[0])}/>
-                    {!this.state.getApi.isExecuting ? 
-                        photoBase64 ? <Avatar 
-                            alt={fullName}
-                            className={classes.photo}
-                            src={photoBase64}
-                        /> : <Avatar className={classes.photo}><PhotoCamera/></Avatar>
-                    : <Avatar className={classes.photo}><CircularProgress size={30} color={'secondary'}/></Avatar>}
+                    <div onClick={() => this.fileUploadInput.current.click()}>
+                        <input ref={this.fileUploadInput} style={{display: 'none'}} type="file" onChange={(e) => this.uploadFile(e.target.files[0])}/>
+                        {!this.state.getApi.isExecuting ? 
+                            photoBase64 ? <Avatar 
+                                alt={fullName}
+                                className={classes.photo}
+                                src={photoBase64}
+                            /> : <Avatar className={classes.photo}><PhotoCamera/></Avatar>
+                        : <Avatar className={classes.photo}><CircularProgress size={30} color={'secondary'}/></Avatar>}
+                    </div>
                     <TextField
                         autoFocus
                         id="firstName"
