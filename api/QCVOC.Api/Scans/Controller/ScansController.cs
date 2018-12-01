@@ -102,7 +102,7 @@ namespace QCVOC.Api.Scans.Controller
             }
 
             var veteran = VeteranRepository
-                .GetAll(new VeteranFilters() { CardNumber = scan.CardNumber })
+                .GetAll(new VeteranFilters() { CardNumber = scan.CardNumber, IncludePhotoBase64 = true })
                 .SingleOrDefault();
 
             if (veteran == default(Veteran))
@@ -128,11 +128,11 @@ namespace QCVOC.Api.Scans.Controller
 
                 if (existingCheckIn == default(Scan))
                 {
-                    return CreateScan(scanRecord);
+                    return CreateScan(scanRecord, veteran);
                 }
                 else if (existingCheckIn.PlusOne != scan.PlusOne)
                 {
-                    return UpdateScan(scanRecord);
+                    return UpdateScan(scanRecord, veteran);
                 }
                 else
                 {
@@ -157,15 +157,15 @@ namespace QCVOC.Api.Scans.Controller
                 return StatusCode(200, previousScans.Where(s => s.ServiceId == scan.ServiceId).SingleOrDefault());
             }
 
-            return CreateScan(scanRecord);
+            return CreateScan(scanRecord, veteran);
         }
 
-        private IActionResult CreateScan(Scan scan)
+        private IActionResult CreateScan(Scan scan, Veteran veteran)
         {
             try
             {
                 var createdScan = ScanRepository.Create(scan);
-                return StatusCode(201, createdScan);
+                return StatusCode(201, new ScanResponse(createdScan, veteran));
             }
             catch (Exception ex)
             {
@@ -173,12 +173,12 @@ namespace QCVOC.Api.Scans.Controller
             }
         }
 
-        private IActionResult UpdateScan(Scan scan)
+        private IActionResult UpdateScan(Scan scan, Veteran veteran)
         {
             try
             {
                 var updatedScan = ScanRepository.Update(scan);
-                return StatusCode(201, updatedScan);
+                return StatusCode(201, new ScanResponse(updatedScan, veteran));
             }
             catch (Exception ex)
             {

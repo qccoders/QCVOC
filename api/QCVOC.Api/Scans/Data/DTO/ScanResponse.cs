@@ -19,7 +19,7 @@ namespace QCVOC.Api.Scans.Data.DTO
         /// </summary>
         /// <param name="scan">The Scan to include in the response.</param>
         /// <param name="veteran">The Veteran associated with the scan, if applicable.</param>
-        public ScanResponse(Scan scan, Veteran veteran = null)
+        public ScanResponse(Scan scan, Veteran veteran)
         {
             EventId = scan.EventId;
             VeteranId = scan.VeteranId;
