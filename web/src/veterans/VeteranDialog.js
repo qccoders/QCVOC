@@ -144,7 +144,7 @@ class VeteranDialog extends Component {
         this.setState({ veteran: { ...this.state.veteran, photoBase64: base64 }});
     }
 
-    uploadPhoto = (file) => {
+    uploadPhotoFile = (file) => {
         if (file) {
             let self = this;
 
@@ -334,7 +334,7 @@ class VeteranDialog extends Component {
                             ref={this.fileUploadInput} 
                             style={{display: 'none'}} 
                             type="file" 
-                            onChange={(e) => this.uploadPhoto(e.target.files[0])}
+                            onChange={(e) => this.uploadPhotoFile(e.target.files[0])}
                         />
                         {!this.state.getApi.isExecuting ? 
                             photoBase64 ? <Avatar 
