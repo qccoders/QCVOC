@@ -163,7 +163,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     a.name AS lastupdateby,
                     v.lastupdatebyid,
                     v.address,
-                    {(((VeteranFilters)filters).IncludePhotoBase64 ? "v.photobase64" : string.Empty)}
+                    {(((VeteranFilters)filters).IncludePhotoBase64 ? "v.photobase64," : string.Empty)}
                     v.primaryphone,
                     v.email,
                     v.enrollmentdate,
