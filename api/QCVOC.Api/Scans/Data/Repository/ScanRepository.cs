@@ -137,8 +137,7 @@ namespace QCVOC.Api.Scans.Data.Repository
                     s.plusone, 
                     s.scandate, 
                     s.scanbyid,
-                    a.name AS scanby,
-                    v.firstname || ' ' || v.lastname AS veteran
+                    a.name AS scanby
                 FROM scans s
                 LEFT JOIN accounts a ON s.scanbyid = a.id
                 INNER JOIN veterans v ON s.veteranid = v.id
@@ -162,8 +161,7 @@ namespace QCVOC.Api.Scans.Data.Repository
                     .ApplyFilter(FilterType.Equals, "s.eventid", scanFilters.EventId)
                     .ApplyFilter(FilterType.Equals, "s.veteranid", scanFilters.VeteranId)
                     .ApplyFilter(FilterType.Equals, "s.serviceid", scanFilters.ServiceId)
-                    .ApplyFilter(FilterType.Equals, "s.plusone", scanFilters.PlusOne)
-                    .ApplyFilter(FilterType.Equals, "v.firstname || ' ' || v.lastname", scanFilters.Veteran);
+                    .ApplyFilter(FilterType.Equals, "s.plusone", scanFilters.PlusOne);
             }
 
             using (var db = ConnectionFactory.CreateConnection())
