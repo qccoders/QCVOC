@@ -107,6 +107,7 @@ class VeteranDialog extends Component {
 
     componentDidMount = () => {
         window.inputBarcodeVeteranDialog = this.handleBarcodeScanned;
+        // window.??? = this.handlePhotoUploaded;
     }
 
     handleScanClick = () => {
@@ -128,6 +129,33 @@ class VeteranDialog extends Component {
                 cardNumber: undefined,
             },
         });
+    }
+    
+    handleUploadPhotoClick = () => {
+        if (isMobileAttached()) {
+            // we're all counting on you Will
+        }
+        else {
+            this.fileUploadInput.current.click();
+        }
+    }
+
+    handlePhotoUploaded = (base64) => {
+        this.setState({ veteran: { ...this.state.veteran, photoBase64: base64 }});
+    }
+
+    uploadPhoto = (file) => {
+        if (file) {
+            let self = this;
+
+            let fileReader = new FileReader();
+
+            fileReader.addEventListener("load", function(e) {
+                self.handlePhotoUploaded(e.target.result);
+            }); 
+    
+            fileReader.readAsDataURL(file); 
+        }       
     }
 
     componentWillReceiveProps = (nextProps) => {
@@ -277,24 +305,6 @@ class VeteranDialog extends Component {
         });
     }
 
-    updatePhotoBase64 = (base64) => {
-        this.setState({ veteran: { ...this.state.veteran, photoBase64: base64 }});
-    }
-
-    uploadFile = (file) => {
-        if (file) {
-            let self = this;
-
-            let fileReader = new FileReader();
-
-            fileReader.addEventListener("load", function(e) {
-                self.updatePhotoBase64(e.target.result);
-            }); 
-    
-            fileReader.readAsDataURL(file); 
-        }       
-    }
-
     render() {
         let { classes, intent, open } = this.props;
         let { cardNumber, firstName, lastName, address, primaryPhone, email, verificationMethod, photoBase64 } = this.state.veteran;
@@ -319,8 +329,13 @@ class VeteranDialog extends Component {
             >
                 <DialogTitle style={dim}>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
-                    <div onClick={() => this.fileUploadInput.current.click()}>
-                        <input ref={this.fileUploadInput} style={{display: 'none'}} type="file" onChange={(e) => this.uploadFile(e.target.files[0])}/>
+                    <div onClick={this.handleUploadPhotoClick}>
+                        <input 
+                            ref={this.fileUploadInput} 
+                            style={{display: 'none'}} 
+                            type="file" 
+                            onChange={(e) => this.uploadPhoto(e.target.files[0])}
+                        />
                         {!this.state.getApi.isExecuting ? 
                             photoBase64 ? <Avatar 
                                 alt={fullName}
