@@ -14,6 +14,7 @@ import {
     Typography, 
     CircularProgress, 
     Button,
+    Fab,
 } from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
 
@@ -347,14 +348,13 @@ class Scanner extends Component {
                             }
                         </CardContent>
                     </Card>
-                    {serviceSelected && <Button 
-                        variant="fab" 
+                    {serviceSelected && <Fab
                         color="secondary" 
                         className={classes.fab}
                         onClick={this.handleScanClick}
                     >
                         <SpeakerPhone/>
-                    </Button>}
+                    </Fab>}
                     <ManualScanDialog
                         open={scanDialog.open}
                         onClose={this.handleScanDialogClose}
