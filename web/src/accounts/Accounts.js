@@ -11,7 +11,7 @@ import {
     Typography, 
     Card, 
     CardContent,
-    Button,
+    Fab,
     CircularProgress,
 } from '@material-ui/core';
 import { Add } from '@material-ui/icons';
@@ -168,14 +168,13 @@ class Accounts extends Component {
                             }
                         </CardContent>
                     </Card>
-                    <Button 
-                        variant="fab" 
+                    <Fab
                         color="secondary" 
                         className={classes.fab}
                         onClick={this.handleAddClick}
                     >
                         <Add/>
-                    </Button>
+                    </Fab>
                     <AccountDialog
                         open={accountDialog.open}
                         intent={accountDialog.intent} 
