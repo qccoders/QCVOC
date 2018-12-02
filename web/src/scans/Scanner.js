@@ -307,7 +307,7 @@ class Scanner extends Component {
                         <CardContent>
                             <div>
                                 {/* todo: move this to a component */}
-                                <Typography gutterBottom variant="headline" component="h2" className={classes.title}>
+                                <Typography gutterBottom variant="h5" className={classes.title}>
                                     {title}
                                 </Typography>
                                 <ScannerMenu 

@@ -131,7 +131,7 @@ class Services extends Component {
                 <ContentWrapper api={loadApi}>
                     <Card className={classes.card}>
                         <CardContent>
-                            <Typography gutterBottom variant="headline" component="h2">
+                            <Typography gutterBottom variant="h5">
                                 Services
                             </Typography>
                             {refreshApi.isExecuting ?
