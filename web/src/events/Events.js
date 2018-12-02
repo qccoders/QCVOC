@@ -14,6 +14,7 @@ import {
     CircularProgress, 
     ListSubheader, 
     Button,
+    Fab,
 } from '@material-ui/core';
 import { Add, EventAvailable, Event, Today } from '@material-ui/icons';
 
@@ -143,7 +144,7 @@ class Events extends Component {
                 <ContentWrapper api={loadApi}>
                     <Card className={classes.card}>
                         <CardContent>
-                            <Typography gutterBottom variant="headline" component="h2">
+                            <Typography gutterBottom variant="h5">
                                 Events
                             </Typography>
                             {refreshApi.isExecuting ?
@@ -173,14 +174,13 @@ class Events extends Component {
                         </CardContent>
                     </Card>
                     { userCanView() &&
-                    <Button 
-                        variant="fab" 
-                        color="secondary" 
-                        className={classes.fab}
-                        onClick={this.handleAddClick}
-                    >
-                        <Add/>
-                    </Button>
+                        <Fab
+                            color="secondary" 
+                            className={classes.fab}
+                            onClick={this.handleAddClick}
+                        >
+                            <Add/>
+                        </Fab>
                     }
                     <EventDialog
                         open={eventDialog.open}

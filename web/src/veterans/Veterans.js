@@ -14,6 +14,7 @@ import {
     Button, 
     TextField, 
     InputAdornment,
+    Fab,
 } from '@material-ui/core';
 import { Add, Search } from '@material-ui/icons';
 
@@ -158,7 +159,7 @@ class Veterans extends Component {
                 <ContentWrapper api={loadApi}>
                     <Card className={classes.card}>
                         <CardContent>
-                            <Typography gutterBottom variant="headline" component="h2">
+                            <Typography gutterBottom variant="h5">
                                 Veterans
                             </Typography>
                             <TextField
@@ -188,14 +189,13 @@ class Veterans extends Component {
                             }
                         </CardContent>
                     </Card>
-                    <Button 
-                        variant="fab" 
+                    <Fab
                         color="secondary" 
                         className={classes.fab}
                         onClick={this.handleAddClick}
                     >
                         <Add/>
-                    </Button>
+                    </Fab>
                     <VeteranDialog
                         open={veteranDialog.open}
                         intent={veteranDialog.intent} 

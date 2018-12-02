@@ -27,7 +27,7 @@ const AppBar = (props) => {
         >
             <Toolbar>
                 {props.drawerToggleButton}
-                <Typography variant="title" color="inherit" style={styles.title}>
+                <Typography variant="h6" color="inherit" style={styles.title}>
                     {props.title}
                 </Typography>
                 {props.children}

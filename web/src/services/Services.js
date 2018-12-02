@@ -12,7 +12,7 @@ import {
     CardContent, 
     Typography, 
     CircularProgress, 
-    Button, 
+    Fab,
     ListSubheader,
 } from '@material-ui/core';
 import { Add, Shop, Work } from '@material-ui/icons';
@@ -131,7 +131,7 @@ class Services extends Component {
                 <ContentWrapper api={loadApi}>
                     <Card className={classes.card}>
                         <CardContent>
-                            <Typography gutterBottom variant="headline" component="h2">
+                            <Typography gutterBottom variant="h5">
                                 Services
                             </Typography>
                             {refreshApi.isExecuting ?
@@ -152,14 +152,13 @@ class Services extends Component {
                             }
                         </CardContent>
                     </Card>
-                    <Button 
-                        variant="fab" 
+                    <Fab
                         color="secondary" 
                         className={classes.fab}
                         onClick={this.handleAddClick}
                     >
                         <Add/>
-                    </Button>
+                    </Fab>
                     <ServiceDialog
                         open={serviceDialog.open}
                         intent={serviceDialog.intent}
