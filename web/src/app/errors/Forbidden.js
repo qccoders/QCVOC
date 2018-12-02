@@ -13,10 +13,10 @@ const Forbidden = (props) => {
     return (
         <Error>
             <Block style={{ fontSize: 72 }}/>
-            <Typography component="h2" variant="h4" gutterBottom>
+            <Typography variant="h4" gutterBottom>
                 Forbidden
             </Typography>
-            <Typography component="h2" variant="subtitle1" gutterBottom>
+            <Typography variant="subtitle1" gutterBottom>
                 You don't have permission to view the requested resource.
             </Typography>
         </Error>

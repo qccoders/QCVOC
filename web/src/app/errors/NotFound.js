@@ -13,10 +13,10 @@ const NotFound = (props) => {
     return (
         <Error>
             <Clear style={{ fontSize: 72 }}/>
-            <Typography component="h2" variant="h4" gutterBottom>
+            <Typography variant="h4" gutterBottom>
                 Not Found
             </Typography>
-            <Typography component="h2" variant="subtitle1" gutterBottom>
+            <Typography variant="subtitle1" gutterBottom>
                 The specified resource does not exist.
             </Typography>
         </Error>
