@@ -5,11 +5,22 @@
 
 package org.qccoders.qcvoc;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
+import android.os.StrictMode;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -17,9 +28,13 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity;
 import com.google.android.gms.vision.barcode.Barcode;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import static android.view.KeyEvent.KEYCODE_VOLUME_DOWN;
 import static android.view.KeyEvent.KEYCODE_VOLUME_UP;
@@ -29,12 +44,18 @@ public class MainActivity extends AppCompatActivity {
     private boolean developmentEnvironment = false;
     private ProgressBar progressBar;
     private String callback;
+    private Uri mImageUri;
 
-    private final int[] environmentCode = {KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP,
+
+    private static final int[] environmentCode = {KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP,
             KEYCODE_VOLUME_DOWN, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_DOWN,
             KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP,
             KEYCODE_VOLUME_DOWN};
     private int codeIndex = 0;
+
+    private static final int BARCODE_REQUEST = 42;
+    private static final int PHOTO_REQUEST = 1888;
+    private static final int PHOTO_PERMISSION_CODE = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,19 +93,128 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, BarcodeCaptureActivity.class);
         intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
 
-        startActivityForResult(intent, 42);
+        startActivityForResult(intent, BARCODE_REQUEST);
+    }
+
+    @JavascriptInterface
+    public void takePhoto() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA,
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    PHOTO_PERMISSION_CODE);
+        } else {
+            captureImage();
+        }
+    }
+
+    private void captureImage() {
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        File photo;
+        try
+        {
+            // place where to store camera taken picture
+            photo = File.createTempFile("photo", ".jpg", Environment.getExternalStorageDirectory());
+            photo.delete();
+        }
+        catch(Exception e)
+        {
+            Log.v("MainActivity", "Error creating temporary file to store photo", e);
+            Toast.makeText(this, "Error creating temporary file to store photo", Toast.LENGTH_LONG).show();
+            return;
+        }
+        mImageUri = Uri.fromFile(photo);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
+
+        startActivityForResult(cameraIntent, PHOTO_REQUEST);
+    }
+
+    public Bitmap retrievePhoto()
+    {
+        ContentResolver cr = this.getContentResolver();
+        Bitmap bitmap;
+        try
+        {
+            bitmap = android.provider.MediaStore.Images.Media.getBitmap(cr, mImageUri);
+            return transformPhoto(bitmap);
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(this, "Error retrieving photo", Toast.LENGTH_LONG).show();
+            Log.d("MainActivity", "Error retrieving photo", e);
+            return Bitmap.createBitmap(300, 300, Bitmap.Config.ARGB_8888);
+        }
+    }
+
+    private Bitmap transformPhoto(Bitmap bitmap) {
+        // Crop to square
+        if (bitmap.getWidth() >= bitmap.getHeight()){
+            bitmap = Bitmap.createBitmap(
+                    bitmap,
+                    bitmap.getWidth()/2 - bitmap.getHeight()/2,
+                    0,
+                    bitmap.getHeight(),
+                    bitmap.getHeight()
+            );
+        } else {
+            bitmap= Bitmap.createBitmap(
+                    bitmap,
+                    0,
+                    bitmap.getHeight()/2 - bitmap.getWidth()/2,
+                    bitmap.getWidth(),
+                    bitmap.getWidth()
+            );
+        }
+        // Scale down
+        return Bitmap.createScaledBitmap(bitmap, 300, 300, false);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PHOTO_PERMISSION_CODE) {
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Required permissions were not granted for photo taking", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+            captureImage();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (data != null) {
-            Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+        if (requestCode == BARCODE_REQUEST) {
+            if (data != null) {
+                Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
 
-            Log.d("MainActivity", barcode.displayValue);
+                Log.d("MainActivity", barcode.displayValue);
+
+                webview.evaluateJavascript(
+                        callback + "(" + barcode.displayValue + ");",
+                        null);
+            }
+        }
+        if (requestCode == PHOTO_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap bitmap = retrievePhoto();
+
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+            byte[] byteArray = stream.toByteArray();
+            String photo = "data:image/jpeg;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP);
+
+            Log.d("MainActivity", "Photo of size " + photo.length() + " bytes taken");
 
             webview.evaluateJavascript(
-                    callback + "(" + barcode.displayValue + ");",
-                    null);
+                    "window.inputPhoto(" + photo + ");",
+                    null
+            );
         }
     }
 
