@@ -13,6 +13,8 @@ import MomentUtils from '@date-io/moment';
 import App from './app/App';
 import ContextProvider from './shared/ContextProvider';
 
+window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
+
 ReactDOM.render(
     <BrowserRouter>
         <MuiPickersUtilsProvider utils={MomentUtils}>
