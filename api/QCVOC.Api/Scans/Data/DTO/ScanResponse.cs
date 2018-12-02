@@ -1,17 +1,36 @@
-﻿// <copyright file="Scan.cs" company="QC Coders">
+﻿// <copyright file="ScanResponse.cs" company="QC Coders">
 //     Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
 
-namespace QCVOC.Api.Scans.Data.Model
+namespace QCVOC.Api.Scans.Data.DTO
 {
     using System;
+    using QCVOC.Api.Scans.Data.Model;
+    using QCVOC.Api.Veterans.Data.Model;
 
     /// <summary>
-    ///     A record of the Scan of a Veteran's membership card.
+    ///     DTO containing the result of a Scan.
     /// </summary>
-    public class Scan : IEquatable<Scan>
+    public class ScanResponse
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="ScanResponse"/> class with the specified <paramref name="scan"/> and <paramref name="veteran"/>.
+        /// </summary>
+        /// <param name="scan">The Scan to include in the response.</param>
+        /// <param name="veteran">The Veteran associated with the scan, if applicable.</param>
+        public ScanResponse(Scan scan, Veteran veteran)
+        {
+            EventId = scan.EventId;
+            VeteranId = scan.VeteranId;
+            Veteran = veteran;
+            ServiceId = scan.ServiceId;
+            PlusOne = scan.PlusOne;
+            ScanBy = scan.ScanBy;
+            ScanById = scan.ScanById;
+            ScanDate = scan.ScanDate;
+        }
+
         /// <summary>
         ///     Gets or sets the id of the Event.
         /// </summary>
@@ -21,6 +40,11 @@ namespace QCVOC.Api.Scans.Data.Model
         ///     Gets or sets the id of the Veteran.
         /// </summary>
         public Guid VeteranId { get; set; }
+
+        /// <summary>
+        ///     Gets or sets the Veteran associated with the Scan.
+        /// </summary>
+        public Veteran Veteran { get; set; }
 
         /// <summary>
         ///     Gets or sets the id of the Service.
@@ -49,26 +73,5 @@ namespace QCVOC.Api.Scans.Data.Model
         ///     Gets or sets the date on which the Scan was performed.
         /// </summary>
         public DateTime ScanDate { get; set; }
-
-        /// <summary>
-        ///     Compares two Scan instances.
-        /// </summary>
-        /// <param name="scan">The Scan to which to compare.</param>
-        /// <returns>A value indicating whether the compared instances are equa.</returns>
-        public bool Equals(Scan scan)
-        {
-            if (scan == null)
-            {
-                return this == null;
-            }
-
-            return this.EventId == scan.EventId
-                && this.VeteranId == scan.VeteranId
-                && this.ServiceId == scan.ServiceId
-                && this.PlusOne == scan.PlusOne
-                && this.ScanBy == scan.ScanBy
-                && this.ScanById == scan.ScanById
-                && this.ScanDate - scan.ScanDate <= TimeSpan.FromSeconds(1);
-        }
     }
 }
