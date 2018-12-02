@@ -8,18 +8,28 @@ import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
-    Card, 
-    CardContent, 
     Typography, 
-    CircularProgress, 
-    Button,
+    Avatar,
 } from '@material-ui/core';
-import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
 
 import { getScanResult } from './scannerUtil';
 
+const styles = {
+    photo: {
+        width: 240,
+        height: 240,
+        margin: 'auto',
+    },
+    title: {
+        marginTop: 10,
+    },
+    message: {
+        marginTop: 10,
+    },
+};
+
 const ScanResult = (props) => {
-    let { scan } = props;
+    let { classes, scan } = props;
 
     if (scan === undefined || scan.status === undefined) return;
 
@@ -27,18 +37,18 @@ const ScanResult = (props) => {
     let { message, icon } = getScanResult(scan);
 
     icon = React.cloneElement(icon, { style: { fontSize: 72 }});
-    let title = veteran ? veteran : scan.cardNumber;
+    let title = veteran ? veteran.firstName + ' ' + veteran.lastName : scan.cardNumber;
 
-    console.log(veteran);
+    let photoPresent = veteran !== undefined && veteran.photoBase64 !== undefined && veteran.photoBase64 !== '';
     
     return (
         <div>
-            <Typography component="h2" variant="display2" gutterBottom>{title}</Typography>
-            {plusOne && <Typography component="h2" variant="display1" gutterBottom>+1</Typography>}
-            {icon}
-            <Typography style={{ marginTop: 20 }} variant="title" gutterBottom>{message}</Typography>
+            {photoPresent ? <Avatar className={classes.photo} src={veteran.photoBase64}/> : icon}
+            <Typography className={classes.title} variant="h5" gutterBottom>{title}</Typography>
+            {plusOne && <Typography variant="h4" gutterBottom>+1</Typography>}
+            <Typography className={classes.message} variant="h6" gutterBottom>{message}</Typography>
         </div>
     );
-}
+};
 
-export default ScanResult; 
+export default withStyles(styles)(ScanResult); 
