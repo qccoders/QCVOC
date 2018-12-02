@@ -51,4 +51,9 @@ const ScanResult = (props) => {
     );
 };
 
+ScanResult.propTypes = {
+    scan: PropTypes.object,
+    classes: PropTypes.object.isRequired,
+};
+
 export default withStyles(styles)(ScanResult); 
