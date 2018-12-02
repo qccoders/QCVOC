@@ -13,6 +13,10 @@ import MomentUtils from '@date-io/moment';
 import App from './app/App';
 import ContextProvider from './shared/ContextProvider';
 
+// this suppresses warnings for deprecated typography variants, 
+// which are apparently still used under the hood by 3.xx components 
+// because all of the usage in this code has been updated and we're still
+// being warned.  remove this if/when MUI is upgraded to 4.xx+
 window.__MUI_USE_NEXT_TYPOGRAPHY_VARIANTS__ = true;
 
 ReactDOM.render(
