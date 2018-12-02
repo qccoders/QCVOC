@@ -12,6 +12,6 @@ export const getScanResult = (scan) => {
         case 200:
             return { message: 'Duplicate Scan', color: yellow['A700'], icon: <Pause/> };
         default:
-            return { message: 'Invalid Card', color: red['A700'], icon: <Clear/> };
+            return { message: scan.response, color: red['A700'], icon: <Clear/> };
     }
 };

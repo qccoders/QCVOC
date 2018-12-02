@@ -14,6 +14,7 @@ import {
     Typography, 
     CircularProgress, 
     Button,
+    Fab,
 } from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
 
@@ -23,6 +24,7 @@ import { withContext } from '../shared/ContextProvider';
 import { getScanResult } from './scannerUtil';
 import ServiceList from '../services/ServiceList';
 import ScannerMenu from './ScannerMenu';
+import ScanDisplay from './ScanDisplay';
 import EventList from '../events/EventList';
 import ContentWrapper from '../shared/ContentWrapper';
 import ScannerHistoryDialog from './ScannerHistoryDialog';
@@ -239,25 +241,6 @@ class Scanner extends Component {
         return (scanner.service ? scanner.service.name + ' ' : '') + 'Scanner';
     }
 
-    getScanDisplay = (scan) => {
-        if (scan === undefined || scan.status === undefined) return;
-
-        let { veteran, plusOne } = scan.response;
-        let { message, icon } = getScanResult(scan);
-
-        icon = React.cloneElement(icon, { style: { fontSize: 72 }});
-        let title = veteran ? veteran : scan.cardNumber;
-
-        return (
-            <div>
-                <Typography component="h2" variant="display2" gutterBottom>{title}</Typography>
-                {plusOne && <Typography component="h2" variant="display1" gutterBottom>+1</Typography>}
-                {icon}
-                <Typography style={{ marginTop: 20 }} variant="title" gutterBottom>{message}</Typography>
-            </div>
-        );
-    }
-
     getDailyEvent = () => {
         let start = moment().startOf('day').add(8, 'hours');
         let end = moment().startOf('day').add(8, 'hours').add(7, 'hours');
@@ -304,7 +287,6 @@ class Scanner extends Component {
         let { loadApi, refreshApi, scanApi, scanner, scan, events, services, history, historyDialog, scanDialog, plusOneDialog } = this.state;
 
         let title = this.getTitle(scanner);
-        let display = this.getScanDisplay(scan);
 
         let eventSelected = scanner.event !== undefined;
         let serviceSelected = scanner.service !== undefined;
@@ -358,7 +340,7 @@ class Scanner extends Component {
                                         <div className={classes.displayBox}>
                                             {scanApi.isExecuting ? <CircularProgress thickness={5} size={60} color={'secondary'}/> :
                                                 !scan.status ? <Button disabled>Ready to Scan</Button> :
-                                                    display
+                                                    <ScanDisplay scan={scan}/>
                                             }
                                         </div>
                                     }
@@ -366,14 +348,13 @@ class Scanner extends Component {
                             }
                         </CardContent>
                     </Card>
-                    {serviceSelected && <Button 
-                        variant="fab" 
+                    {serviceSelected && <Fab
                         color="secondary" 
                         className={classes.fab}
                         onClick={this.handleScanClick}
                     >
                         <SpeakerPhone/>
-                    </Button>}
+                    </Fab>}
                     <ManualScanDialog
                         open={scanDialog.open}
                         onClose={this.handleScanDialogClose}
