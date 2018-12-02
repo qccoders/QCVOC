@@ -15,7 +15,7 @@ const Error = (props) => {
                 {props.children}
                 <Typography 
                     component="h2" 
-                    variant="subheading" 
+                    variant="subtitle1" 
                     gutterBottom
                     style={{ marginTop: 50 }}
                 >
