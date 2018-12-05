@@ -28,7 +28,7 @@ import { SpeakerPhone, PhotoCamera } from '@material-ui/icons';
 import { validateEmail, validatePhoneNumber, userCanView } from '../util';
 import { withContext } from '../shared/ContextProvider';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { isMobileAttached, initiateMobileScan } from '../mobile';
+import { isMobileAttached, initiateMobileScan, initiateMobilePhotoAcquisition } from '../mobile';
 
 const styles = {
     avatar: {
@@ -107,7 +107,7 @@ class VeteranDialog extends Component {
 
     componentDidMount = () => {
         window.inputBarcodeVeteranDialog = this.handleBarcodeScanned;
-        // window.??? = this.handlePhotoUploaded;
+        window.inputPhotoVeteranDialog = this.handlePhotoUploaded;
     }
 
     handleScanClick = () => {
@@ -133,7 +133,7 @@ class VeteranDialog extends Component {
     
     handleUploadPhotoClick = () => {
         if (isMobileAttached()) {
-            // we're all counting on you Will
+            initiateMobilePhotoAcquisition('window.inputPhotoVeteranDialog');
         }
         else {
             this.fileUploadInput.current.click();
