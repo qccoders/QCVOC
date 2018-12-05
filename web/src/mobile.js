@@ -8,7 +8,7 @@ export const isMobileAttached = () => {
 };
 
 export const isAndroidAttached = () => {
-    return window["Android"] !== undefined;
+    return navigator.userAgent.includes('Android');
 };
 
 export const initiateMobileScan = (callback) => {
@@ -17,6 +17,21 @@ export const initiateMobileScan = (callback) => {
     }
 };
 
+export const initiateMobilePhotoAcquisition = (callback) => {
+    if (isAndroidAttached()) {
+        initiateAndroidPhotoAcquisition(callback);
+    }
+};
+
 export const initiateAndroidScan = (callback) => {
-    window["Android"]["scanBarcode"](callback);
+    redirectToQuery('?scan&callback=' + callback);
+};
+
+export const initiateAndroidPhotoAcquisition = (callback) => {
+    redirectToQuery('?acquirePhoto&callback=' + callback);
+};
+
+const redirectToQuery = (query) => {
+    let arr = window.location.toString().split('?');
+    window.location.assign(arr[0] + query);
 };
