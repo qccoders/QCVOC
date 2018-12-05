@@ -24,7 +24,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private String callback;
     private Uri mImageUri;
 
+    private static final String prodUrl = "http://qcvoc-prod.s3-website-us-east-1.amazonaws.com";
+    private static final String devUrl = "http://qcvoc-dev.s3-website-us-east-1.amazonaws.com";
 
     private static final int[] environmentCode = {KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP,
             KEYCODE_VOLUME_DOWN, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_DOWN,
@@ -78,33 +80,52 @@ public class MainActivity extends AppCompatActivity {
                 super.onPageFinished(view, url);
                 progressBar.setVisibility(View.GONE);
             }
+
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String currentHost = "http://" + Uri.parse(view.getUrl()).getHost();
+                if (!currentHost.equals(prodUrl) && !currentHost.equals(devUrl)) {
+                    return true;
+                }
+
+                String query = request.getUrl().getQuery();
+
+                if (query != null) {
+                    String queryCommand = query.substring(0, query.indexOf('&'));
+                    callback = query.substring(query.indexOf('&') + 1);
+
+                    if (queryCommand.equals("scan")) {
+                        scanBarcode();
+                        return true;
+                    } else if (queryCommand.equals("acquirePhoto")) {
+                        takePhoto();
+                        return true;
+                    }
+                }
+
+                String requestHost = "http://" + request.getUrl().getHost();
+                return !requestHost.equals(prodUrl) && !requestHost.equals(devUrl);
+            }
         });
 
-        webview.addJavascriptInterface(this, "Android");
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
-        webview.loadUrl("http://qcvoc-prod.s3-website-us-east-1.amazonaws.com");
+        webview.loadUrl(prodUrl);
     }
 
-    @JavascriptInterface
-    public void scanBarcode(String callback) {
-        this.callback = callback;
-
+    public void scanBarcode() {
         Intent intent = new Intent(this, BarcodeCaptureActivity.class);
         intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
 
         startActivityForResult(intent, BARCODE_REQUEST);
     }
 
-    @JavascriptInterface
     public void takePhoto() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA,
-                            Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PHOTO_PERMISSION_CODE);
+                            PHOTO_PERMISSION_CODE);
         } else {
             captureImage();
         }
@@ -134,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(cameraIntent, PHOTO_REQUEST);
     }
 
-    public Bitmap retrievePhoto()
+    private Bitmap retrievePhoto()
     {
         ContentResolver cr = this.getContentResolver();
         Bitmap bitmap;
@@ -210,9 +231,8 @@ public class MainActivity extends AppCompatActivity {
             String photo = "data:image/jpeg;base64," + Base64.encodeToString(byteArray, Base64.NO_WRAP);
 
             Log.d("MainActivity", "Photo of size " + photo.length() + " bytes taken");
-
             webview.evaluateJavascript(
-                    "window.inputPhoto(" + photo + ");",
+                    callback + "(" + photo + ")",
                     null
             );
         }
@@ -242,9 +262,7 @@ public class MainActivity extends AppCompatActivity {
                     Snackbar.LENGTH_SHORT)
                     .show();
 
-            String newUrl = developmentEnvironment
-                    ? "http://qcvoc-dev.s3-website-us-east-1.amazonaws.com"
-                    : "http://qcvoc-prod.s3-website-us-east-1.amazonaws.com";
+            String newUrl = developmentEnvironment ? devUrl : prodUrl;
 
             webview.loadUrl(newUrl);
         }

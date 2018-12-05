@@ -8,9 +8,9 @@
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
--keepclassmembers class org.qccoders.qcvoc.MainActivity {
-   public *;
-}
+#-keepclassmembers class org.qccoders.qcvoc.MainActivity {
+#   public *;
+#}
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
