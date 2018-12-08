@@ -11,13 +11,14 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (query != null) {
                     String queryCommand = query.substring(0, query.indexOf('&'));
-                    callback = query.substring(query.indexOf('&') + 1);
+                    callback = query.substring(query.indexOf('=') + 1);
 
                     if (queryCommand.equals("scan")) {
                         scanBarcode();
@@ -132,15 +133,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void captureImage() {
-        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
-        StrictMode.setVmPolicy(builder.build());
-
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         File photo;
         try
         {
             // place where to store camera taken picture
-            photo = File.createTempFile("photo", ".jpg", Environment.getExternalStorageDirectory());
+            File photoDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            photo = File.createTempFile("photo", ".jpg", photoDir);
             photo.delete();
         }
         catch(Exception e)
@@ -149,7 +148,10 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Error creating temporary file to store photo", Toast.LENGTH_LONG).show();
             return;
         }
-        mImageUri = Uri.fromFile(photo);
+
+        mImageUri = FileProvider.getUriForFile(this,
+                "org.qccoders.qcvoc.fileprovider",
+                photo);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageUri);
 
         startActivityForResult(cameraIntent, PHOTO_REQUEST);
@@ -192,7 +194,12 @@ public class MainActivity extends AppCompatActivity {
             );
         }
         // Scale down
-        return Bitmap.createScaledBitmap(bitmap, 300, 300, false);
+        bitmap = Bitmap.createScaledBitmap(bitmap, 300, 300, false);
+        // Rotate
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
     }
 
     @Override
@@ -232,7 +239,7 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d("MainActivity", "Photo of size " + photo.length() + " bytes taken");
             webview.evaluateJavascript(
-                    callback + "(" + photo + ")",
+                    callback + "('" + photo + "')",
                     null
             );
         }
