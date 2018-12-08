@@ -11,6 +11,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -92,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (query != null) {
                     String queryCommand = query.substring(0, query.indexOf('&'));
-                    callback = query.substring(query.indexOf('&') + 1);
+                    callback = query.substring(query.indexOf('=') + 1);
 
                     if (queryCommand.equals("scan")) {
                         scanBarcode();
@@ -192,7 +193,12 @@ public class MainActivity extends AppCompatActivity {
             );
         }
         // Scale down
-        return Bitmap.createScaledBitmap(bitmap, 300, 300, false);
+        bitmap = Bitmap.createScaledBitmap(bitmap, 300, 300, false);
+        // Rotate
+        Matrix matrix = new Matrix();
+        matrix.postRotate(90);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+
     }
 
     @Override
@@ -232,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
 
             Log.d("MainActivity", "Photo of size " + photo.length() + " bytes taken");
             webview.evaluateJavascript(
-                    callback + "(" + photo + ")",
+                    callback + "('" + photo + "')",
                     null
             );
         }
