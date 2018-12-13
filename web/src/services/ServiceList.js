@@ -30,6 +30,7 @@ const ServiceList = (props) => {
                     />
                 </ListItem>
             )}
+            {services.length === 0 && <ListItem><ListItemText primary='No Services have been added.'/></ListItem>}
         </List>
     );
 };
