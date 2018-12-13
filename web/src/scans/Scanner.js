@@ -14,18 +14,23 @@ import {
     Typography, 
     CircularProgress, 
     Button,
+    Fab,
 } from '@material-ui/core';
 import { SpeakerPhone, Today, Shop } from '@material-ui/icons';
 
+import { CHECKIN_SERVICE_ID } from '../constants';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import { withContext } from '../shared/ContextProvider';
 import { getScanResult } from './scannerUtil';
+import { userCanView } from '../util';
 import ServiceList from '../services/ServiceList';
 import ScannerMenu from './ScannerMenu';
+import ScanDisplay from './ScanDisplay';
 import EventList from '../events/EventList';
 import ContentWrapper from '../shared/ContentWrapper';
 import ScannerHistoryDialog from './ScannerHistoryDialog';
 import ManualScanDialog from './ManualScanDialog';
+import PlusOneDialog from './PlusOneDialog';
 
 const historyLimit = 5;
 
@@ -86,14 +91,19 @@ const initialState = {
         cardNumber: undefined,
         status: undefined,
         response: undefined,
+        plusOne: undefined,
     },
     events: [],
     services: [],
     history: [],
+    plusOne: undefined,
     historyDialog: {
         open: false,
     },
     scanDialog: {
+        open: false,
+    },
+    plusOneDialog: {
         open: false,
     },
 };
@@ -111,7 +121,7 @@ class Scanner extends Component {
         if (barcode === undefined) return;
 
         let { event, service } = this.state.scanner;
-        let scan = { eventId: event && event.id, serviceId: service && service.id, cardNumber: barcode };
+        let scan = { eventId: event && event.id, serviceId: service && service.id, cardNumber: barcode, plusOne: this.state.plusOne === undefined ? false : this.state.plusOne };
 
         this.setState({ 
             scan: initialState.scan,
@@ -132,6 +142,15 @@ class Scanner extends Component {
     }
 
     handleScanClick = () => {
+        if (this.state.scanner.service && this.state.scanner.service.id === CHECKIN_SERVICE_ID) { 
+            this.setState({ plusOneDialog: { open: true }});
+        }
+        else {
+            this.scan();
+        }
+    }
+
+    scan = () => {
         if (isMobileAttached()) {
             initiateMobileScan("window.inputBarcodeScanner");
         }
@@ -144,6 +163,14 @@ class Scanner extends Component {
         this.setState({ scanDialog: { open: false }}, () => {
             if (result !== undefined) {
                 this.handleBarcodeScanned(result);
+            }
+        });
+    }
+
+    handlePlusOneDialogClose = (result) => {
+        this.setState({ plusOneDialog: { open: false }, plusOne: result === undefined ? false : result }, () => {
+            if (result !== undefined) {
+                this.scan();
             }
         });
     }
@@ -162,9 +189,9 @@ class Scanner extends Component {
     }
 
     resetScanner = (resolve) => { 
-        this.fetchEvents('refreshApi')
-        .then(() => {
-            this.setState({ scanner: initialState.scanner }, () => resolve());
+        this.setState({ ...initialState }, () => {
+            this.fetchEvents('refreshApi')
+            .then(() => resolve());
         });
     }
 
@@ -215,25 +242,6 @@ class Scanner extends Component {
         return (scanner.service ? scanner.service.name + ' ' : '') + 'Scanner';
     }
 
-    getScanDisplay = (scan) => {
-        if (scan === undefined || scan.status === undefined) return;
-
-        let { veteran, plusOne } = scan.response;
-        let { message, icon } = getScanResult(scan);
-
-        icon = React.cloneElement(icon, { style: { fontSize: 72 }});
-        let title = veteran ? veteran : scan.cardNumber;
-
-        return (
-            <div>
-                <Typography component="h2" variant="display2" gutterBottom>{title}</Typography>
-                {plusOne && <Typography component="h2" variant="display1" gutterBottom>+1</Typography>}
-                {icon}
-                <Typography style={{ marginTop: 20 }} variant="title" gutterBottom>{message}</Typography>
-            </div>
-        );
-    }
-
     getDailyEvent = () => {
         let start = moment().startOf('day').add(8, 'hours');
         let end = moment().startOf('day').add(8, 'hours').add(7, 'hours');
@@ -277,10 +285,9 @@ class Scanner extends Component {
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, history, historyDialog, scanDialog } = this.state;
+        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, history, historyDialog, scanDialog, plusOneDialog } = this.state;
 
         let title = this.getTitle(scanner);
-        let display = this.getScanDisplay(scan);
 
         let eventSelected = scanner.event !== undefined;
         let serviceSelected = scanner.service !== undefined;
@@ -288,7 +295,7 @@ class Scanner extends Component {
         let dailyEvent = this.getDailyEvent();
         let dailyEventExists = events.find(e => e.name === dailyEvent.name);
 
-        if (dailyEventExists === undefined) {
+        if (dailyEventExists === undefined && userCanView()) {
             events = events.concat(dailyEvent);
         }
 
@@ -301,7 +308,7 @@ class Scanner extends Component {
                         <CardContent>
                             <div>
                                 {/* todo: move this to a component */}
-                                <Typography gutterBottom variant="headline" component="h2" className={classes.title}>
+                                <Typography gutterBottom variant="h5" className={classes.title}>
                                     {title}
                                 </Typography>
                                 <ScannerMenu 
@@ -334,7 +341,7 @@ class Scanner extends Component {
                                         <div className={classes.displayBox}>
                                             {scanApi.isExecuting ? <CircularProgress thickness={5} size={60} color={'secondary'}/> :
                                                 !scan.status ? <Button disabled>Ready to Scan</Button> :
-                                                    display
+                                                    <ScanDisplay scan={scan}/>
                                             }
                                         </div>
                                     }
@@ -342,17 +349,20 @@ class Scanner extends Component {
                             }
                         </CardContent>
                     </Card>
-                    {serviceSelected && <Button 
-                        variant="fab" 
+                    {serviceSelected && <Fab
                         color="secondary" 
                         className={classes.fab}
                         onClick={this.handleScanClick}
                     >
                         <SpeakerPhone/>
-                    </Button>}
+                    </Fab>}
                     <ManualScanDialog
                         open={scanDialog.open}
                         onClose={this.handleScanDialogClose}
+                    />
+                    <PlusOneDialog
+                        open={plusOneDialog.open}
+                        onClose={this.handlePlusOneDialogClose}
                     />
                     <ScannerHistoryDialog
                         open={historyDialog.open}

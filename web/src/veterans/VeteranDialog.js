@@ -23,12 +23,12 @@ import {
     Avatar,
 } from '@material-ui/core';
 
-import { SpeakerPhone } from '@material-ui/icons';
+import { SpeakerPhone, PhotoCamera } from '@material-ui/icons';
 
 import { validateEmail, validatePhoneNumber, userCanView } from '../util';
 import { withContext } from '../shared/ContextProvider';
 import ConfirmDialog from '../shared/ConfirmDialog';
-import { isMobileAttached, initiateMobileScan } from '../mobile';
+import { isMobileAttached, initiateMobileScan, initiateMobilePhotoAcquisition } from '../mobile';
 
 const styles = {
     avatar: {
@@ -55,9 +55,19 @@ const styles = {
     scanButton: {
         color: '#fff',
     },
+    photo: {
+        width: 240,
+        height: 240,
+        margin: 'auto',
+        backgroundColor: '#E0E0E0',
+    },
 };
 
 const initialState = {
+    getApi: {
+        isExecuting: false,
+        isErrored: false,
+    },
     addApi: {
         isExecuting: false,
         isErrored: false,
@@ -93,9 +103,11 @@ const initialState = {
 
 class VeteranDialog extends Component {
     state = initialState;
+    fileUploadInput = React.createRef();
 
     componentDidMount = () => {
         window.inputBarcodeVeteranDialog = this.handleBarcodeScanned;
+        window.inputPhotoVeteranDialog = this.handlePhotoUploaded;
     }
 
     handleScanClick = () => {
@@ -118,15 +130,52 @@ class VeteranDialog extends Component {
             },
         });
     }
+    
+    handleUploadPhotoClick = () => {
+        if (isMobileAttached()) {
+            initiateMobilePhotoAcquisition('window.inputPhotoVeteranDialog');
+        }
+        else {
+            this.fileUploadInput.current.click();
+        }
+    }
+
+    handlePhotoUploaded = (base64) => {
+        this.setState({ veteran: { ...this.state.veteran, photoBase64: base64 }});
+    }
+
+    uploadPhotoFile = (file) => {
+        if (file) {
+            let self = this;
+
+            let fileReader = new FileReader();
+
+            fileReader.addEventListener("load", function(e) {
+                self.handlePhotoUploaded(e.target.result);
+            }); 
+    
+            fileReader.readAsDataURL(file); 
+        }       
+    }
 
     componentWillReceiveProps = (nextProps) => {
         if (nextProps.open && !this.props.open) {
             this.setState({ 
                 ...initialState, 
                 veteran: nextProps.veteran ? nextProps.veteran : { 
-                    ...initialState.veteran, 
+                    ...initialState.veteran,
                 },
                 validation: initialState.validation,
+            }, () => {
+                if (this.state.veteran.id !== initialState.veteran.id) {
+                    this.setState({ getApi: { isExecuting: true, isErrored: false }}, () => {
+                        this.props.context.api.get('/v1/veterans/' + nextProps.veteran.id)
+                        .then(response => this.setState({ 
+                            veteran: { ...response.data, cardNumber: response.data.cardNumber || '' },
+                            getApi: { isExecuting: false, isErrored: false }, 
+                        }), error => this.setState({ getApi: { isExecuting: false, isErrored: true }}));
+                    });
+                }
             });
         }
     }
@@ -258,8 +307,9 @@ class VeteranDialog extends Component {
 
     render() {
         let { classes, intent, open } = this.props;
-        let { cardNumber, firstName, lastName, address, primaryPhone, email, verificationMethod } = this.state.veteran;
+        let { cardNumber, firstName, lastName, address, primaryPhone, email, verificationMethod, photoBase64 } = this.state.veteran;
         let validation = this.state.validation;
+        let fullName = firstName + ' ' + lastName;
         let oldCardNumber = this.props.veteran ? this.props.veteran.cardNumber : '';
 
         let adding = this.state.addApi.isExecuting;
@@ -279,6 +329,21 @@ class VeteranDialog extends Component {
             >
                 <DialogTitle style={dim}>{(intent === 'add' ? 'Enroll' : 'Update')} Veteran</DialogTitle>
                 <DialogContent>
+                    <div onClick={this.handleUploadPhotoClick}>
+                        <input 
+                            ref={this.fileUploadInput} 
+                            style={{display: 'none'}} 
+                            type="file" 
+                            onChange={(e) => this.uploadPhotoFile(e.target.files[0])}
+                        />
+                        {!this.state.getApi.isExecuting ? 
+                            photoBase64 ? <Avatar 
+                                alt={fullName}
+                                className={classes.photo}
+                                src={photoBase64}
+                            /> : <Avatar className={classes.photo}><PhotoCamera/></Avatar>
+                        : <Avatar className={classes.photo}><CircularProgress size={30} color={'secondary'}/></Avatar>}
+                    </div>
                     <TextField
                         autoFocus
                         id="firstName"

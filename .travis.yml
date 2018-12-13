@@ -82,3 +82,14 @@ matrix:
         on:
           repo: qccoders/QCVOC
           branch: master
+  - language: android
+    stage: Android
+    android:
+      components:
+        - build-tools-28.0.2
+        - android-26
+        - extra-google-google_play_services
+    before_script:
+    - cd mobile
+    script:
+    - ./gradlew --quiet build

@@ -26,11 +26,6 @@ namespace QCVOC.Api.Scans
         public Guid? VeteranId { get; set; }
 
         /// <summary>
-        ///     The full name of the Veteran.
-        /// </summary>
-        public string Veteran { get; set; }
-
-        /// <summary>
         ///     The id of the Service.
         /// </summary>
         public Guid? ServiceId { get; set; }

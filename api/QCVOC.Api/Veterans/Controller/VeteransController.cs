@@ -10,7 +10,6 @@ namespace QCVOC.Api.Veterans.Controller
     using System.Linq;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.ModelBinding;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.Repository;
     using QCVOC.Api.Security;
@@ -144,6 +143,7 @@ namespace QCVOC.Api.Veterans.Controller
                 LastUpdateDate = DateTime.UtcNow,
                 LastUpdateById = User.GetId(),
                 CardNumber = veteran.CardNumber,
+                PhotoBase64 = veteran.PhotoBase64,
                 PrimaryPhone = veteran.PrimaryPhone,
                 VerificationMethod = veteran.VerificationMethod,
             };
@@ -228,6 +228,7 @@ namespace QCVOC.Api.Veterans.Controller
                 LastUpdateDate = DateTime.UtcNow,
                 LastUpdateById = User.GetId(),
                 CardNumber = veteran.CardNumber,
+                PhotoBase64 = veteran.PhotoBase64,
                 PrimaryPhone = veteran.PrimaryPhone,
                 VerificationMethod = veteran.VerificationMethod,
             };

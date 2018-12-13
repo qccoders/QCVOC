@@ -48,6 +48,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     lastupdatedate,
                     lastupdatebyid,
                     address,
+                    photobase64,
                     primaryphone,
                     email,
                     enrollmentdate,
@@ -63,6 +64,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     @lastupdatedate,
                     @lastupdatebyid,
                     @address,
+                    @photobase64,
                     @primaryphone,
                     @email,
                     @enrollmentdate,
@@ -81,6 +83,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 lastupdatedate = veteran.LastUpdateDate,
                 lastupdatebyid = veteran.LastUpdateById,
                 address = veteran.Address,
+                photobase64 = veteran.PhotoBase64,
                 primaryphone = veteran.PrimaryPhone,
                 email = veteran.Email,
                 enrollmentdate = veteran.EnrollmentDate,
@@ -107,7 +110,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
 
             var query = builder.AddTemplate(@"
                 UPDATE veterans
-                SET 
+                SET
                     deleted = true,
                     cardnumber = NULL
                 WHERE id = @id
@@ -137,7 +140,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
         /// <returns>The Veteran matching the specified id.</returns>
         public Veteran Get(Guid id)
         {
-            return GetAll(new VeteranFilters() { Id = id }).SingleOrDefault();
+            return GetAll(new VeteranFilters() { Id = id, IncludePhotoBase64 = true }).SingleOrDefault();
         }
 
         /// <summary>
@@ -160,6 +163,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     a.name AS lastupdateby,
                     v.lastupdatebyid,
                     v.address,
+                    {(((VeteranFilters)filters).IncludePhotoBase64 ? "v.photobase64," : string.Empty)}
                     v.primaryphone,
                     v.email,
                     v.enrollmentdate,
@@ -167,7 +171,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     b.name AS enrollmentby,
                     v.verificationmethod
                 FROM veterans v
-                LEFT JOIN accounts a ON v.lastupdatebyid = a.id 
+                LEFT JOIN accounts a ON v.lastupdatebyid = a.id
                 LEFT JOIN accounts b ON v.enrollmentbyid = b.id
                 /**where**/
                 ORDER BY (firstname || lastname) {filters.OrderBy.ToString()}
@@ -220,6 +224,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                     lastupdatedate = @lastupdatedate,
                     lastupdatebyid = @lastupdatebyid,
                     address = @address,
+                    photobase64 = @photobase64,
                     primaryphone = @primaryphone,
                     email = @email,
                     verificationmethod = @verificationmethod
@@ -234,6 +239,7 @@ namespace QCVOC.Api.Veterans.Data.Repository
                 lastupdatedate = veteran.LastUpdateDate,
                 lastupdatebyid = veteran.LastUpdateById,
                 address = veteran.Address,
+                photobase64 = veteran.PhotoBase64,
                 primaryPhone = veteran.PrimaryPhone,
                 email = veteran.Email,
                 id = veteran.Id,

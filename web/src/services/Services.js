@@ -12,11 +12,12 @@ import {
     CardContent, 
     Typography, 
     CircularProgress, 
-    Button, 
+    Fab,
     ListSubheader,
 } from '@material-ui/core';
 import { Add, Shop, Work } from '@material-ui/icons';
 
+import { CHECKIN_SERVICE_ID } from '../constants';
 import { withContext } from '../shared/ContextProvider';
 import ContentWrapper from '../shared/ContentWrapper';
 import ServiceList from './ServiceList';
@@ -104,7 +105,7 @@ class Services extends Component {
 
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true}}, () => {
-            this.props.context.api.get('/v1/services?offset=0&limit=5000&orderBy=ASC')
+            this.props.context.api.get('/v1/services?offset=0&limit=100&orderBy=ASC')
             .then(response => {
                 this.setState({
                     services: response.data,
@@ -122,15 +123,15 @@ class Services extends Component {
         let { classes } = this.props;
         let { services, loadApi, refreshApi, serviceDialog } = this.state;
 
-        let userDefined = services.filter(s => s.id !== '00000000-0000-0000-0000-000000000000');
-        let systemDefined = services.filter(s => s.id === '00000000-0000-0000-0000-000000000000');
+        let userDefined = services.filter(s => s.id !== CHECKIN_SERVICE_ID);
+        let systemDefined = services.filter(s => s.id === CHECKIN_SERVICE_ID);
 
         return (
             <div>
                 <ContentWrapper api={loadApi}>
                     <Card className={classes.card}>
                         <CardContent>
-                            <Typography gutterBottom variant="headline" component="h2">
+                            <Typography gutterBottom variant="h5">
                                 Services
                             </Typography>
                             {refreshApi.isExecuting ?
@@ -151,14 +152,13 @@ class Services extends Component {
                             }
                         </CardContent>
                     </Card>
-                    <Button 
-                        variant="fab" 
+                    <Fab
                         color="secondary" 
                         className={classes.fab}
                         onClick={this.handleAddClick}
                     >
                         <Add/>
-                    </Button>
+                    </Fab>
                     <ServiceDialog
                         open={serviceDialog.open}
                         intent={serviceDialog.intent}

@@ -33,7 +33,7 @@ const EventList = (props) => {
 
     return (
         <List>
-            {events.sort(sortByProp('startDate')).map((e, index) => 
+            {events.sort(sortByProp('startDate', 'desc')).map((e, index) => 
                 <ListItem 
                     key={index}
                     button={onItemClick !== undefined}
@@ -48,6 +48,7 @@ const EventList = (props) => {
                     />
                 </ListItem>
             )}
+            {events.length === 0 && <ListItem><ListItemText primary='No Events have been scheduled.'/></ListItem>}
         </List>
     );
 };
