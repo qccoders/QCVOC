@@ -22,6 +22,7 @@ import { CHECKIN_SERVICE_ID } from '../constants';
 import { isMobileAttached, initiateMobileScan } from '../mobile';
 import { withContext } from '../shared/ContextProvider';
 import { getScanResult } from './scannerUtil';
+import { userCanView } from '../util';
 import ServiceList from '../services/ServiceList';
 import ScannerMenu from './ScannerMenu';
 import ScanDisplay from './ScanDisplay';
@@ -294,7 +295,7 @@ class Scanner extends Component {
         let dailyEvent = this.getDailyEvent();
         let dailyEventExists = events.find(e => e.name === dailyEvent.name);
 
-        if (dailyEventExists === undefined) {
+        if (dailyEventExists === undefined && userCanView()) {
             events = events.concat(dailyEvent);
         }
 
