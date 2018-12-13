@@ -105,7 +105,7 @@ class Services extends Component {
 
     refresh = (apiType) => {
         this.setState({ [apiType]: { ...this.state[apiType], isExecuting: true}}, () => {
-            this.props.context.api.get('/v1/services?offset=0&limit=5000&orderBy=ASC')
+            this.props.context.api.get('/v1/services?offset=0&limit=100&orderBy=ASC')
             .then(response => {
                 this.setState({
                     services: response.data,

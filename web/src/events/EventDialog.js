@@ -31,7 +31,7 @@ const styles = {
         marginTop: 50,
         height: 'fit-content',
     },
-    deleteButton: {
+    leftButton: {
         marginRight: 'auto',
     },
     spinner: {
@@ -115,6 +115,20 @@ class EventDialog extends Component {
 
     handleDeleteClick = () => {
         this.setState({ confirmDialog: { open: true }});
+    }
+
+    handleDailyEventClick = () => {
+        let start = moment().startOf('day').add(8, 'hours');
+        let end = moment().startOf('day').add(8, 'hours').add(7, 'hours');
+
+        this.setState({ 
+            event: {
+                name: 'Daily Event for ' + start.format('M/DD/YY'),
+                startDate: start.format(),
+                endDate: end.format(),
+            },
+            validation: { ...initialState.validation },
+        });
     }
 
     handleDeleteConfirmClick = () => {
@@ -264,11 +278,21 @@ class EventDialog extends Component {
                         <Button 
                             onClick={this.handleDeleteClick} 
                             color="primary" 
-                            className={classes.deleteButton}
+                            className={classes.leftButton}
                             disabled={executing}
                         >
                             {deleting && <CircularProgress size={20} style={styles.spinner}/>}
                             Delete
+                        </Button>
+                    }
+                    {intent === 'add' && 
+                        <Button 
+                            onClick={this.handleDailyEventClick} 
+                            color="primary" 
+                            className={classes.leftButton}
+                            disabled={executing}
+                        >
+                            Daily Event
                         </Button>
                     }
                     <Button 
