@@ -48,6 +48,7 @@ const EventList = (props) => {
                     />
                 </ListItem>
             )}
+            {events.length === 0 && <ListItem><ListItemText primary='No Events have been scheduled.'/></ListItem>}
         </List>
     );
 };
