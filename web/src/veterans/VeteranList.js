@@ -30,6 +30,7 @@ const VeteranList = (props) => {
                     />
                 </ListItem>
             )}
+            {veterans.length === 0 && <ListItem><ListItemText primary='No Veterans have been added.'/></ListItem>}
         </List>
     );
 };
