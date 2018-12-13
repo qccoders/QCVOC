@@ -224,9 +224,22 @@ public class MainActivity extends AppCompatActivity {
 
                 Log.d("MainActivity", barcode.displayValue);
 
-                webview.evaluateJavascript(
-                        callback + "(" + barcode.displayValue + ");",
-                        null);
+                try {
+                    // Javascript interprets numbers with leading zeroes as octal, so remove them by parsing
+                    int barcodeNumber = Integer.parseInt(barcode.displayValue);
+
+                    webview.evaluateJavascript(
+                            callback + "('" + barcodeNumber + "');",
+                            null);
+                }
+                catch (NumberFormatException e) {
+                    Snackbar.make(
+                            findViewById(R.id.mainLayout),
+                            "Invalid barcode",
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                }
+
             }
         }
         if (requestCode == PHOTO_REQUEST && resultCode == Activity.RESULT_OK) {
