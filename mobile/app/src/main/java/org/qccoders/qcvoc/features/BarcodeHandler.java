@@ -1,15 +1,16 @@
-package org.qccoders.qcvoc;
+package org.qccoders.qcvoc.features;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity;
 import com.google.android.gms.vision.barcode.Barcode;
 
-import static org.qccoders.qcvoc.Constants.BARCODE_REQUEST;
+import static org.qccoders.qcvoc.shared.Constants.BARCODE_REQUEST;
 
-class BarcodeHandler {
+public class BarcodeHandler {
     private Context mContext;
     private String callback;
 
@@ -28,6 +29,7 @@ class BarcodeHandler {
 
     public String returnBarcode(Intent data) {
         Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+        Log.d("BarcodeHandler", barcode.displayValue);
         return callback + "('" + barcode.displayValue + "')";
     }
 }

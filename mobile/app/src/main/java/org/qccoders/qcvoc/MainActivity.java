@@ -24,10 +24,15 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import static org.qccoders.qcvoc.Constants.BARCODE_REQUEST;
-import static org.qccoders.qcvoc.Constants.PHOTO_PERMISSION_CODE;
-import static org.qccoders.qcvoc.Constants.PHOTO_REQUEST;
-import static org.qccoders.qcvoc.Constants.prodUrl;
+import org.qccoders.qcvoc.features.BarcodeHandler;
+import org.qccoders.qcvoc.features.CodeHandler;
+import org.qccoders.qcvoc.features.PhotoHandler;
+import org.qccoders.qcvoc.shared.Utilities;
+
+import static org.qccoders.qcvoc.shared.Constants.BARCODE_REQUEST;
+import static org.qccoders.qcvoc.shared.Constants.PHOTO_PERMISSION_CODE;
+import static org.qccoders.qcvoc.shared.Constants.PHOTO_REQUEST;
+import static org.qccoders.qcvoc.shared.Constants.prodUrl;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webview;

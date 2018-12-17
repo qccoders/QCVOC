@@ -1,4 +1,4 @@
-package org.qccoders.qcvoc;
+package org.qccoders.qcvoc.features;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -17,9 +17,9 @@ import android.widget.Toast;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import static org.qccoders.qcvoc.Constants.PHOTO_REQUEST;
+import static org.qccoders.qcvoc.shared.Constants.PHOTO_REQUEST;
 
-class PhotoHandler {
+public class PhotoHandler {
     private Context mContext;
     private Uri mPhotoUri;
     private String callback;

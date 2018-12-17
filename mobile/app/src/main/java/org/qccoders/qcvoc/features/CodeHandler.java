@@ -1,11 +1,11 @@
-package org.qccoders.qcvoc;
+package org.qccoders.qcvoc.features;
 
 import static android.view.KeyEvent.KEYCODE_VOLUME_DOWN;
 import static android.view.KeyEvent.KEYCODE_VOLUME_UP;
-import static org.qccoders.qcvoc.Constants.devUrl;
-import static org.qccoders.qcvoc.Constants.prodUrl;
+import static org.qccoders.qcvoc.shared.Constants.devUrl;
+import static org.qccoders.qcvoc.shared.Constants.prodUrl;
 
-class CodeHandler {
+public class CodeHandler {
     private static boolean developmentEnvironment = false;
 
     private static final int[] environmentCode = {KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP,
