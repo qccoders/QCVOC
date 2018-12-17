@@ -37,24 +37,13 @@ import com.google.android.gms.vision.barcode.Barcode;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import static android.view.KeyEvent.KEYCODE_VOLUME_DOWN;
-import static android.view.KeyEvent.KEYCODE_VOLUME_UP;
+import static org.qccoders.qcvoc.Constants.prodUrl;
 
 public class MainActivity extends AppCompatActivity {
     private WebView webview;
-    private boolean developmentEnvironment = false;
     private ProgressBar progressBar;
     private String callback;
     private Uri mImageUri;
-
-    private static final String prodUrl = "http://qcvoc-prod.s3-website-us-east-1.amazonaws.com";
-    private static final String devUrl = "http://qcvoc-dev.s3-website-us-east-1.amazonaws.com";
-
-    private static final int[] environmentCode = {KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP,
-            KEYCODE_VOLUME_DOWN, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_DOWN,
-            KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP, KEYCODE_VOLUME_UP,
-            KEYCODE_VOLUME_DOWN};
-    private int codeIndex = 0;
 
     private static final int BARCODE_REQUEST = 42;
     private static final int PHOTO_REQUEST = 1888;
@@ -84,8 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                String currentHost = "http://" + Uri.parse(view.getUrl()).getHost();
-                if (!currentHost.equals(prodUrl) && !currentHost.equals(devUrl)) {
+                if (!Utilities.urlIsTrusted(view.getUrl())) {
                     return true;
                 }
 
@@ -104,8 +92,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                String requestHost = "http://" + request.getUrl().getHost();
-                return !requestHost.equals(prodUrl) && !requestHost.equals(devUrl);
+                return !Utilities.urlIsTrusted(request.getUrl().toString());
             }
         });
 
@@ -260,29 +247,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onKeyUp(int keycode, KeyEvent event) {
+        String newUrl = CodeHandler.inputKey(keycode);
 
-        if (event.getKeyCode() == environmentCode[codeIndex]) {
-            codeIndex += 1;
-        } else {
-            codeIndex = 0;
-        }
-
-        if (codeIndex == environmentCode.length) {
-            codeIndex = 0;
-            developmentEnvironment = !developmentEnvironment;
-
-            String message = "Environment switched to " +
-                    (developmentEnvironment ? "development" : "production");
+        if (newUrl != null) {
+            String message = "Environment switched to " + newUrl;
 
             Log.d("MainActivity", message);
 
             Snackbar.make(
                     findViewById(R.id.mainLayout),
                     message,
-                    Snackbar.LENGTH_SHORT)
+                    Snackbar.LENGTH_LONG)
                     .show();
-
-            String newUrl = developmentEnvironment ? devUrl : prodUrl;
 
             webview.loadUrl(newUrl);
         }
