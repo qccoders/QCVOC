@@ -27,12 +27,7 @@ class BarcodeHandler {
     }
 
     public String returnBarcode(Intent data) {
-        if (data != null) {
-            Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-
-            return callback + "('" + barcode.displayValue + "')";
-        }
-
-        return null;
+        Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+        return callback + "('" + barcode.displayValue + "')";
     }
 }
