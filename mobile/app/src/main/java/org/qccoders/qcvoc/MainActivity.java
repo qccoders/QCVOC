@@ -31,12 +31,10 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.samples.vision.barcodereader.BarcodeCaptureActivity;
-import com.google.android.gms.vision.barcode.Barcode;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import static org.qccoders.qcvoc.Constants.BARCODE_REQUEST;
 import static org.qccoders.qcvoc.Constants.prodUrl;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private String callback;
     private Uri mImageUri;
 
-    private static final int BARCODE_REQUEST = 42;
+    private BarcodeHandler barcodeHandler = new BarcodeHandler(this);
+
     private static final int PHOTO_REQUEST = 1888;
     private static final int PHOTO_PERMISSION_CODE = 100;
 
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     callback = query.substring(query.indexOf('=') + 1);
 
                     if (queryCommand.equals("scan")) {
-                        scanBarcode();
+                        barcodeHandler.scanBarcode(callback);
                         return true;
                     } else if (queryCommand.equals("acquirePhoto")) {
                         takePhoto();
@@ -99,13 +98,6 @@ public class MainActivity extends AppCompatActivity {
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setDomStorageEnabled(true);
         webview.loadUrl(prodUrl);
-    }
-
-    public void scanBarcode() {
-        Intent intent = new Intent(this, BarcodeCaptureActivity.class);
-        intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
-
-        startActivityForResult(intent, BARCODE_REQUEST);
     }
 
     public void takePhoto() {
@@ -206,27 +198,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == BARCODE_REQUEST) {
-            if (data != null) {
-                Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
-
-                Log.d("MainActivity", barcode.displayValue);
-
-                try {
-                    // Javascript interprets numbers with leading zeroes as octal, so remove them by parsing
-                    int barcodeNumber = Integer.parseInt(barcode.displayValue);
-
-                    webview.evaluateJavascript(
-                            callback + "('" + barcodeNumber + "');",
-                            null);
-                }
-                catch (NumberFormatException e) {
-                    Snackbar.make(
-                            findViewById(R.id.mainLayout),
-                            "Invalid barcode",
-                            Snackbar.LENGTH_LONG)
-                            .show();
-                }
-
+            String returnJavascript = barcodeHandler.returnBarcode(data);
+            if (returnJavascript != null) {
+                webview.evaluateJavascript(returnJavascript, null);
             }
         }
         if (requestCode == PHOTO_REQUEST && resultCode == Activity.RESULT_OK) {
