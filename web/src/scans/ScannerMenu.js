@@ -15,7 +15,7 @@ import {
     Divider, 
     IconButton,
 } from '@material-ui/core';
-import { MoreVert, Replay, History, ArrowBack }  from '@material-ui/icons';
+import { MoreVert, RemoveFromQueue, Schedule, ArrowBack }  from '@material-ui/icons';
 
 import ConfirmDialog from '../shared/ConfirmDialog';
 
@@ -100,15 +100,15 @@ class ScannerMenu extends Component {
                         <div style={{ outline: 'none' }}>
                             {lastScan && lastScan.status && <MenuItem onClick={this.handleClearLastScanClick}>
                                 <ListItemIcon>
-                                    <Replay/>
+                                    <RemoveFromQueue/>
                                 </ListItemIcon>
                                 <ListItemText>
-                                    Clear Last Scan
+                                    Clear Display
                                 </ListItemText>
                             </MenuItem>}
                             <MenuItem onClick={this.handleHistoryClick}>
                                 <ListItemIcon>
-                                    <History/>
+                                    <Schedule/>
                                 </ListItemIcon>
                                 <ListItemText>
                                     View Scan History
@@ -122,7 +122,7 @@ class ScannerMenu extends Component {
                             <ArrowBack/>
                         </ListItemIcon>
                         <ListItemText>
-                            Reset Scanner
+                            Reset Event or Service
                         </ListItemText>
                     </MenuItem>
                 </Menu>
