@@ -53,7 +53,7 @@ class ScannerHistoryDialog extends Component {
                             <ListItem key={index}>
                                 <Avatar style={{ backgroundColor: getScanResult(scan).color }}>{getScanResult(scan).icon}</Avatar>
                                 <ListItemText 
-                                    primary={(scan.response.veteran ? scan.response.veteran : scan.cardNumber) + ' ' + (scan.response.plusOne ? '+1' : '')}
+                                    primary={(scan.response.veteran && scan.response.veteran.fullName ? scan.response.veteran.fullName : scan.cardNumber) + ' ' + (scan.response.plusOne ? '+1' : '')}
                                     secondary={getScanResult(scan).message}
                                 />
                             </ListItem>
