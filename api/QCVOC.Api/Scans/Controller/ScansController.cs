@@ -94,6 +94,11 @@ namespace QCVOC.Api.Scans.Controller
                 return BadRequest(ModelState.GetReadableString());
             }
 
+            if (!int.TryParse(scan.CardNumber, out var cardNumber))
+            {
+                return BadRequest("The specified card number is not a valid integer.");
+            }
+
             var @event = EventRepository.Get((Guid)scan.EventId);
 
             if (@event == default(Event))
@@ -102,7 +107,7 @@ namespace QCVOC.Api.Scans.Controller
             }
 
             var veteran = VeteranRepository
-                .GetAll(new VeteranFilters() { CardNumber = scan.CardNumber, IncludePhotoBase64 = true })
+                .GetAll(new VeteranFilters() { CardNumber = cardNumber, IncludePhotoBase64 = true })
                 .SingleOrDefault();
 
             if (veteran == default(Veteran))
