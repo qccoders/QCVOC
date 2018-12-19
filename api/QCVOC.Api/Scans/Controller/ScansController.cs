@@ -96,7 +96,7 @@ namespace QCVOC.Api.Scans.Controller
 
             if (!int.TryParse(scan.CardNumber, out var cardNumber))
             {
-                return BadRequest("The specified card number is not a valid integer.");
+                return BadRequest($"Card Number {scan.CardNumber} is not a valid integer.");
             }
 
             var @event = EventRepository.Get((Guid)scan.EventId);
