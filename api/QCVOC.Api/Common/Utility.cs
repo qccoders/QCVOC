@@ -190,11 +190,23 @@ namespace QCVOC.Api.Common
                 .Select(key => (key, dictionary.Root.GetModelStateForProperty(key)))
                 .Select(field => field.key + ": " +
                     field.Item2.Errors
-                        .Select(error => error.ErrorMessage)
+                        .Select(error => error.GetErrorAndOrExceptionMessage())
                         .Select(error => error.TrimEnd('.'))
                         .Aggregate((a, b) => a + ", " + b));
 
             return fields.Aggregate((a, b) => a + "; " + b);
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="ModelError.ErrorMessage"/>, the <see cref="Exception.Message"/> for the ModelError, or both if both are present.
+        /// </summary>
+        /// <param name="error">The ModelError from which to retrieve the error message.</param>
+        /// <returns>The retrieved error message.</returns>
+        public static string GetErrorAndOrExceptionMessage(this ModelError error)
+        {
+            var ex = error?.Exception?.Message;
+            return string.IsNullOrEmpty(error.ErrorMessage) ? ex :
+                string.IsNullOrEmpty(ex) ? error.ErrorMessage : $"{error.ErrorMessage} ({ex})";
         }
     }
 }
