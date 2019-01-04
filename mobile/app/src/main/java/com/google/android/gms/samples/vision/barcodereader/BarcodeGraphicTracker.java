@@ -73,6 +73,7 @@ public class BarcodeGraphicTracker extends Tracker<Barcode> {
     public void onUpdate(Detector.Detections<Barcode> detectionResults, Barcode item) {
         mOverlay.add(mGraphic);
         mGraphic.updateItem(item);
+        mBarcodeUpdateListener.onBarcodeDetected(item);
     }
 
     /**
