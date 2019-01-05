@@ -66,7 +66,6 @@ jobs:
     cache:
       directories:
       - web/node_modules
-      - web/build
     script:
     - npm test
     - npm run build
@@ -76,7 +75,9 @@ jobs:
     - stable
     before_script:
     - cd web
-    script: skip
+    - npm install
+    script:
+    - npm run build
     deploy:
       - provider: s3
         access_key_id: AKIAJGLMJSQ5HROL7PTQ
