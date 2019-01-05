@@ -13,7 +13,8 @@ matrix:
     script:
     - npm test
     - npm run build
-  - stage: Deploy
+  - language: node_js
+    stage: Deploy
     before_script:
     - cd web
     script: skip
@@ -52,7 +53,8 @@ matrix:
     script:
     - dotnet build --no-restore --no-incremental
     - dotnet test QCVOC.Api.Tests.Unit/QCVOC.Api.Tests.Unit.csproj
-  - stage: Deploy
+  - language: csharp
+    stage: Deploy
     mono: none
     dotnet: 2.1
     before_script:
