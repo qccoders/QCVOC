@@ -1,7 +1,7 @@
 matrix:
   include:
   - language: node_js
-    stage: Web
+    stage: Build and Test
     node_js:
     - stable
     before_script:
@@ -13,6 +13,11 @@ matrix:
     script:
     - npm test
     - npm run build
+  - language: node_js
+    stage: Deploy
+    before_script:
+    - cd web
+    script: skip
     deploy:
       - provider: s3
         access_key_id: AKIAJGLMJSQ5HROL7PTQ
@@ -39,7 +44,7 @@ matrix:
           repo: qccoders/QCVOC
           branch: develop
   - language: csharp
-    stage: Api
+    stage: Build and Test
     mono: none
     dotnet: 2.1
     before_script:
@@ -48,6 +53,13 @@ matrix:
     script:
     - dotnet build --no-restore --no-incremental
     - dotnet test QCVOC.Api.Tests.Unit/QCVOC.Api.Tests.Unit.csproj
+  - language: csharp
+    stage: Deploy
+    mono: none
+    dotnet: 2.1
+    before_script:
+    - cd api
+    script: skip
     before_deploy:
     - dotnet publish --configuration Release
     - cd QCVOC.Api/bin/Release/netcoreapp2.1/publish
@@ -83,7 +95,7 @@ matrix:
           repo: qccoders/QCVOC
           branch: master
   - language: android
-    stage: Android
+    stage: Build and Test
     android:
       components:
         - build-tools-28.0.2
