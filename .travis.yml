@@ -13,6 +13,10 @@ matrix:
     script:
     - npm test
     - npm run build
+  - stage: Deploy
+    before_script:
+    - cd web
+    script: skip
     deploy:
       - provider: s3
         access_key_id: AKIAJGLMJSQ5HROL7PTQ
@@ -48,6 +52,12 @@ matrix:
     script:
     - dotnet build --no-restore --no-incremental
     - dotnet test QCVOC.Api.Tests.Unit/QCVOC.Api.Tests.Unit.csproj
+  - stage: Deploy
+    mono: none
+    dotnet: 2.1
+    before_script:
+    - cd api
+    script: skip
     before_deploy:
     - dotnet publish --configuration Release
     - cd QCVOC.Api/bin/Release/netcoreapp2.1/publish
