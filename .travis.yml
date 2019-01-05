@@ -79,30 +79,30 @@ jobs:
     script:
     - npm run build
     deploy:
-      - provider: s3
-        access_key_id: AKIAJGLMJSQ5HROL7PTQ
-        secret_access_key:
-          secure: Xd6dEKIV6PS8dpZnG234m0R/9OE0Niqz/1kxGDvH2k4sRY0l3yF4WGf3DPvxI5I0jRuJuA/bFgAcGkhvhUG2wmTUawM58TO4jnDkQlSlj5pXuGRiyJiSVxnanRSp63dbfNDM7KCw8M1Tw5XQXKZVUynzbne/EeYs/c+jyAIX8OMMyHMPm1wE5m/cYiAl97AePlLtJhFB0hxG4GbmzNqiBHSuppPViY63wnfv0sfs0leXnPZ9UNEahfbuuFWymZxvJTmpdD5/4UrAw68C7GH8IQ5Z+2oWIlooTteNiDyNiFzX4aCKZ6SfQJAH+HInpPDfR2LKi0xKChb2RLccvW3FnCENyEihNYmELE0uiGHrELBIBZXWFH/8qH+2+4nOWuhEGhmdywTOpIYdOrXTpwxsMCc+42eD12NNeGFRSoOu+nqsDl3ifI3C0ZYrKYb70i78IlAcnki68UwWhvJhSA9TymwXV4INhiiTE3TQhw9duwlwMnxk+PTIhBt2tEjggDIcjCc75r6GTYdhex/r/PEYBL24qVM82GHeOKz0u4Ew85XpU/W9BwKu7tFzI8pxow8F0UCoKkcqDfNioqFx91qmrimFh5Z0GAsh4honixBWqEzBhKRVBNkHVrJ23PxPQBoX8n7EI7ehXGPnb2rVvcSkoQkHsl8NmYZkjYviv2y9ezc=
-        region: us-east-1
-        bucket: qcvoc-dev
-        skip_cleanup: true
-        local_dir: build
-        acl: public_read
-        on:
-          repo: qccoders/QCVOC
-          branch: develop
-      - provider: s3
-        access_key_id: AKIAJGLMJSQ5HROL7PTQ
-        secret_access_key:
-          secure: Xd6dEKIV6PS8dpZnG234m0R/9OE0Niqz/1kxGDvH2k4sRY0l3yF4WGf3DPvxI5I0jRuJuA/bFgAcGkhvhUG2wmTUawM58TO4jnDkQlSlj5pXuGRiyJiSVxnanRSp63dbfNDM7KCw8M1Tw5XQXKZVUynzbne/EeYs/c+jyAIX8OMMyHMPm1wE5m/cYiAl97AePlLtJhFB0hxG4GbmzNqiBHSuppPViY63wnfv0sfs0leXnPZ9UNEahfbuuFWymZxvJTmpdD5/4UrAw68C7GH8IQ5Z+2oWIlooTteNiDyNiFzX4aCKZ6SfQJAH+HInpPDfR2LKi0xKChb2RLccvW3FnCENyEihNYmELE0uiGHrELBIBZXWFH/8qH+2+4nOWuhEGhmdywTOpIYdOrXTpwxsMCc+42eD12NNeGFRSoOu+nqsDl3ifI3C0ZYrKYb70i78IlAcnki68UwWhvJhSA9TymwXV4INhiiTE3TQhw9duwlwMnxk+PTIhBt2tEjggDIcjCc75r6GTYdhex/r/PEYBL24qVM82GHeOKz0u4Ew85XpU/W9BwKu7tFzI8pxow8F0UCoKkcqDfNioqFx91qmrimFh5Z0GAsh4honixBWqEzBhKRVBNkHVrJ23PxPQBoX8n7EI7ehXGPnb2rVvcSkoQkHsl8NmYZkjYviv2y9ezc=
-        region: us-east-1
-        bucket: qcvoc-prod
-        skip_cleanup: true
-        local_dir: build
-        acl: public_read
-        on:
-          repo: qccoders/QCVOC
-          branch: master
+    - provider: s3
+      access_key_id: AKIAJGLMJSQ5HROL7PTQ
+      secret_access_key:
+        secure: Xd6dEKIV6PS8dpZnG234m0R/9OE0Niqz/1kxGDvH2k4sRY0l3yF4WGf3DPvxI5I0jRuJuA/bFgAcGkhvhUG2wmTUawM58TO4jnDkQlSlj5pXuGRiyJiSVxnanRSp63dbfNDM7KCw8M1Tw5XQXKZVUynzbne/EeYs/c+jyAIX8OMMyHMPm1wE5m/cYiAl97AePlLtJhFB0hxG4GbmzNqiBHSuppPViY63wnfv0sfs0leXnPZ9UNEahfbuuFWymZxvJTmpdD5/4UrAw68C7GH8IQ5Z+2oWIlooTteNiDyNiFzX4aCKZ6SfQJAH+HInpPDfR2LKi0xKChb2RLccvW3FnCENyEihNYmELE0uiGHrELBIBZXWFH/8qH+2+4nOWuhEGhmdywTOpIYdOrXTpwxsMCc+42eD12NNeGFRSoOu+nqsDl3ifI3C0ZYrKYb70i78IlAcnki68UwWhvJhSA9TymwXV4INhiiTE3TQhw9duwlwMnxk+PTIhBt2tEjggDIcjCc75r6GTYdhex/r/PEYBL24qVM82GHeOKz0u4Ew85XpU/W9BwKu7tFzI8pxow8F0UCoKkcqDfNioqFx91qmrimFh5Z0GAsh4honixBWqEzBhKRVBNkHVrJ23PxPQBoX8n7EI7ehXGPnb2rVvcSkoQkHsl8NmYZkjYviv2y9ezc=
+      region: us-east-1
+      bucket: qcvoc-dev
+      skip_cleanup: true
+      local_dir: build
+      acl: public_read
+      on:
+        repo: qccoders/QCVOC
+        branch: develop
+    - provider: s3
+      access_key_id: AKIAJGLMJSQ5HROL7PTQ
+      secret_access_key:
+        secure: Xd6dEKIV6PS8dpZnG234m0R/9OE0Niqz/1kxGDvH2k4sRY0l3yF4WGf3DPvxI5I0jRuJuA/bFgAcGkhvhUG2wmTUawM58TO4jnDkQlSlj5pXuGRiyJiSVxnanRSp63dbfNDM7KCw8M1Tw5XQXKZVUynzbne/EeYs/c+jyAIX8OMMyHMPm1wE5m/cYiAl97AePlLtJhFB0hxG4GbmzNqiBHSuppPViY63wnfv0sfs0leXnPZ9UNEahfbuuFWymZxvJTmpdD5/4UrAw68C7GH8IQ5Z+2oWIlooTteNiDyNiFzX4aCKZ6SfQJAH+HInpPDfR2LKi0xKChb2RLccvW3FnCENyEihNYmELE0uiGHrELBIBZXWFH/8qH+2+4nOWuhEGhmdywTOpIYdOrXTpwxsMCc+42eD12NNeGFRSoOu+nqsDl3ifI3C0ZYrKYb70i78IlAcnki68UwWhvJhSA9TymwXV4INhiiTE3TQhw9duwlwMnxk+PTIhBt2tEjggDIcjCc75r6GTYdhex/r/PEYBL24qVM82GHeOKz0u4Ew85XpU/W9BwKu7tFzI8pxow8F0UCoKkcqDfNioqFx91qmrimFh5Z0GAsh4honixBWqEzBhKRVBNkHVrJ23PxPQBoX8n7EI7ehXGPnb2rVvcSkoQkHsl8NmYZkjYviv2y9ezc=
+      region: us-east-1
+      bucket: qcvoc-prod
+      skip_cleanup: true
+      local_dir: build
+      acl: public_read
+      on:
+        repo: qccoders/QCVOC
+        branch: master
   # - language: android
   #   stage: "Build and Test"
   #   android:
