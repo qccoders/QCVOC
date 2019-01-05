@@ -67,6 +67,93 @@ namespace QCVOC.Api.Scans.Controller
         }
 
         /// <summary>
+        ///     Deletes a Check-In Scan.
+        /// </summary>
+        /// <param name="eventId">The Id of the Event.</param>
+        /// <param name="id">Either the Veteran Id or Card Number of the Veteran.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="204">The Scan was deleted successfully.</response>
+        /// <response code="400">The Veteran Id or Card Number is invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="404">The specified Card Number or Veteran Id doesn't match an enrolled Veteran.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpDelete("{eventId}/{id}")]
+        [Authorize]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Delete(Guid eventId, string id)
+        {
+            return Delete(eventId, id, null);
+        }
+
+        /// <summary>
+        ///     Deletes a Service Scan.
+        /// </summary>
+        /// <param name="eventId">The Id of the Event.</param>
+        /// <param name="id">Either the Veteran Id or Card Number of the Veteran.</param>
+        /// <param name="serviceId">The optional Service Id.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="204">The Scan was deleted successfully.</response>
+        /// <response code="400">The Veteran Id or Card Number is invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="404">The specified Card Number or Veteran Id doesn't match an enrolled Veteran.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpDelete("{eventId}/{id}/{serviceId}")]
+        [Authorize]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult Delete(Guid eventId, string id, Guid? serviceId = null)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest($"The card or veteran ID is null or empty.");
+            }
+
+            var veteran = default(Veteran);
+
+            if (int.TryParse(id, out var cardNumber))
+            {
+                veteran = VeteranRepository
+                    .GetAll(new VeteranFilters() { CardNumber = cardNumber })
+                    .SingleOrDefault();
+            }
+            else if (Guid.TryParse(id, out var veteranId))
+            {
+                veteran = VeteranRepository.Get(veteranId);
+            }
+            else
+            {
+                return BadRequest($"The provided ID is neither a Card Number nor Veteran ID.");
+            }
+
+            if (veteran == default(Veteran))
+            {
+                return StatusCode(404, $"The specified Card Number or Veteran Id doesn't match an enrolled Veteran.");
+            }
+
+            var scan = ScanRepository.Get(eventId, veteran.Id, serviceId);
+
+            if (scan == default(Scan))
+            {
+                return StatusCode(404, $"A Scan matching the specified information could not be found.");
+            }
+
+            try
+            {
+                ScanRepository.Delete(eventId, veteran.Id, serviceId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error deleting the Scan matching the specified information: {ex.Message}.  See inner Exception for details.", ex);
+            }
+        }
+
+        /// <summary>
         ///     Performs an Event Scan.
         /// </summary>
         /// <param name="scan">The scan context.</param>
