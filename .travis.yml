@@ -10,6 +10,7 @@ matrix:
     cache:
       directories:
       - web/node_modules
+      - web/build
     script:
     - npm test
     - npm run build
@@ -19,6 +20,9 @@ matrix:
     before_script:
     - cd web
     - ls
+    cache:
+      directories:
+      - web/build
     script: skip
     deploy:
       - provider: s3
