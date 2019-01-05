@@ -1,4 +1,9 @@
-matrix:
+stages:
+  - Build and Test
+  - Deploy API
+  - Deploy Web
+
+jobs:
   include:
   - language: node_js
     stage: Build and Test
@@ -14,7 +19,7 @@ matrix:
     - npm test
     - npm run build
   - language: node_js
-    stage: Deploy
+    stage: Deploy Web
     before_script:
     - cd web
     script: skip
@@ -54,7 +59,7 @@ matrix:
     - dotnet build --no-restore --no-incremental
     - dotnet test QCVOC.Api.Tests.Unit/QCVOC.Api.Tests.Unit.csproj
   - language: csharp
-    stage: Deploy
+    stage: Deploy API
     mono: none
     dotnet: 2.1
     before_script:
