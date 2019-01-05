@@ -56,19 +56,19 @@ jobs:
   #       on:
   #         repo: qccoders/QCVOC
   #         branch: master
-  - language: node_js
-    stage: "Build and Test"
-    node_js:
-    - stable
-    before_script:
-    - cd web
-    - npm install
-    cache:
-      directories:
-      - web/node_modules
-    script:
-    - npm test
-    - npm run build
+  # - language: node_js
+  #   stage: "Build and Test"
+  #   node_js:
+  #   - stable
+  #   before_script:
+  #   - cd web
+  #   - npm install
+  #   cache:
+  #     directories:
+  #     - web/node_modules
+  #   script:
+  #   - npm test
+  #   - npm run build
   - language: node_js
     stage: "Deploy Web"
     node_js:
