@@ -13,10 +13,12 @@ matrix:
     script:
     - npm test
     - npm run build
+    - ls
   - language: node_js
     stage: Deploy
     before_script:
     - cd web
+    - ls
     script: skip
     deploy:
       - provider: s3
