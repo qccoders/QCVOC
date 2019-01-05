@@ -66,6 +66,7 @@ jobs:
     cache:
       directories:
       - web/node_modules
+      - web/build
     script:
     - npm test
     - npm run build
