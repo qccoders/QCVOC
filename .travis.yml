@@ -93,7 +93,7 @@ jobs:
         region: us-east-1
         acl: public_read
         on:
-          branch: master
+          branch: "master"
       - provider: s3
         access_key_id: AKIAJGLMJSQ5HROL7PTQ
         secret_access_key:
@@ -104,7 +104,7 @@ jobs:
         region: us-east-1
         acl: public_read
         on:
-          branch: develop
+          branch: "develop"
   # - language: android
   #   stage: "Build and Test"
   #   android:
