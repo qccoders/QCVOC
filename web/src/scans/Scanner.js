@@ -200,8 +200,13 @@ class Scanner extends Component {
     }
 
     deleteScan = (scan) => {
-        // TODO: remove the given scan from history
-        console.log(scan, this.state.history);
+        this.setState({ 
+            history: this.state.history.filter(oldScan => oldScan.cardNumber !== scan.cardNumber),
+        }, () => {
+            if (this.state.scan.cardNumber === scan.cardNumber) {
+                this.clearLastScan();
+            }
+        });
     }
 
     fetchEvents = (apiType) => {
@@ -371,6 +376,7 @@ class Scanner extends Component {
                     />
                     <ScannerHistoryDialog
                         open={historyDialog.open}
+                        service={scanner && scanner.service ? scanner.service.name : ''}
                         history={history}
                         onDelete={this.deleteScan}
                         onClose={() => this.setState({ historyDialog: { open: false }})}

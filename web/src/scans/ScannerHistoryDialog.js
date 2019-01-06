@@ -75,7 +75,7 @@ class ScannerHistoryDialog extends Component {
                 .then(response => {
                     this.setState({ api: { isExecuting: false, isErrored: false }}, () => {
                         this.props.onDelete(scan);
-                        this.props.context.showMessage('Scan for ' + scan.response.veteran.fullName + ' deleted.');
+                        this.props.context.showMessage('Scan(s) for ' + scan.response.veteran.fullName + ' deleted.');
                         resolve(response);
                     });
                 }, error => {
@@ -136,7 +136,7 @@ class ScannerHistoryDialog extends Component {
                     onConfirm={() => this.handleDeleteConfirmation(selectedScan)}
                     onClose={this.handleConfirmDialogClose}
                 >
-                    <p>Are you sure you want to delete the Scan for '{selectedVeteran}'?</p>
+                    <p>Are you sure you want to delete {this.props.service} Scan(s) for '{selectedVeteran}'?</p>
                 </ConfirmDialog>
             </Dialog>
         );
@@ -146,6 +146,7 @@ class ScannerHistoryDialog extends Component {
 ScannerHistoryDialog.propTypes = {
     classes: PropTypes.object.isRequired,
     open: PropTypes.bool.isRequired,
+    service: PropTypes.string.isRequired,
     history: PropTypes.arrayOf(PropTypes.object),
     onDelete: PropTypes.func.isRequired,
 };
