@@ -70,8 +70,8 @@ class PlusOneDialog extends Component {
                         style={{ marginBottom: 20 }} 
                         onClick={() => this.handleSelect(false)}
                         size={'large'}
-                        color={plusOne === false && 'primary'}
-                        variant={plusOne === false && 'contained'}
+                        color={plusOne === false ? 'primary' : 'default' }
+                        variant={plusOne === false ? 'contained' : 'text' }
                     >
                         Veteran Only
                     </Button>
@@ -79,8 +79,8 @@ class PlusOneDialog extends Component {
                         fullWidth 
                         onClick={() => this.handleSelect(true)}
                         size={'large'}
-                        color={plusOne === true && 'primary'}
-                        variant={plusOne === true && 'contained'}
+                        color={plusOne === true ? 'primary' : 'default' }
+                        variant={plusOne === true ? 'contained' : 'text' }
                     >
                         Veteran +1
                     </Button>
