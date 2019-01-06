@@ -8,16 +8,19 @@ import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
+    Avatar,
+    Button,
     Dialog,
     DialogTitle,
     DialogActions,
-    Button,
     DialogContent,
+    IconButton,
     List,
     ListItem,
     ListItemText,
-    Avatar,
+    ListItemSecondaryAction,
 } from '@material-ui/core';
+import { Delete } from '@material-ui/icons';
 
 import { getScanResult } from './scannerUtil';
 
@@ -56,6 +59,11 @@ class ScannerHistoryDialog extends Component {
                                     primary={(scan.response.veteran && scan.response.veteran.fullName ? scan.response.veteran.fullName : scan.cardNumber) + ' ' + (scan.response.plusOne ? '+1' : '')}
                                     secondary={getScanResult(scan).message}
                                 />
+                                <ListItemSecondaryAction>
+                                    <IconButton onClick={() => {}}>
+                                        <Delete/>
+                                    </IconButton>
+                                </ListItemSecondaryAction>
                             </ListItem>
                         )}
                     </List>
