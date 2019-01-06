@@ -199,6 +199,11 @@ class Scanner extends Component {
         this.setState({ scan: initialState.scan });
     }
 
+    deleteScan = (scan) => {
+        // TODO: remove the given scan from history
+        console.log(scan, this.state.history);
+    }
+
     fetchEvents = (apiType) => {
         let start = moment().startOf('day').format();
         let end = moment().endOf('day').format();
@@ -367,6 +372,7 @@ class Scanner extends Component {
                     <ScannerHistoryDialog
                         open={historyDialog.open}
                         history={history}
+                        onDelete={this.deleteScan}
                         onClose={() => this.setState({ historyDialog: { open: false }})}
                     />
                 </ContentWrapper>
