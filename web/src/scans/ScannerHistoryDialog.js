@@ -73,7 +73,10 @@ class ScannerHistoryDialog extends Component {
             this.setState({ api: { isExecuting: true}}, () => {
                 this.props.context.api.delete('/v1/scans/' + eventId + '/' + veteranId + (serviceId !== undefined ? '/' + serviceId : ''))
                 .then(response => {
-                    this.setState({ api: { isExecuting: false, isErrored: false }}, () => resolve(response));
+                    this.setState({ api: { isExecuting: false, isErrored: false }}, () => {
+                        this.props.onDelete(scan);
+                        resolve(response);
+                    });
                 }, error => {
                     this.setState({ api: { isExecuting: false, isErrored: true }}, () => reject(error));
                 });
@@ -143,6 +146,7 @@ ScannerHistoryDialog.propTypes = {
     classes: PropTypes.object.isRequired,
     open: PropTypes.bool.isRequired,
     history: PropTypes.arrayOf(PropTypes.object),
+    onDelete: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(withContext(ScannerHistoryDialog)); 
