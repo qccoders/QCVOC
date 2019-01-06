@@ -85,7 +85,7 @@ namespace QCVOC.Api.Scans.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate($@"
-                UPDATE events
+                UPDATE scans
                 SET
                     deleted = true
                 WHERE eventid = @eventid
