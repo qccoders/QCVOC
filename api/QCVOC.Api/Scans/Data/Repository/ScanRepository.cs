@@ -41,9 +41,9 @@ namespace QCVOC.Api.Scans.Data.Repository
 
             var query = builder.AddTemplate(@"
                 INSERT INTO scans
-                    (eventid, veteranid, serviceid, plusone, scandate, scanbyid, deleted)
+                    (eventid, veteranid, serviceid, plusone, scandate, scanbyid)
                 VALUES
-                    (@eventid, @veteranid, @serviceid, @plusone, @scandate, @scanbyid, @deleted)
+                    (@eventid, @veteranid, @serviceid, @plusone, @scandate, @scanbyid)
             ");
 
             builder.AddParameters(new
@@ -54,7 +54,6 @@ namespace QCVOC.Api.Scans.Data.Repository
                 plusone = scan.PlusOne,
                 scandate = scan.ScanDate,
                 scanbyid = scan.ScanById,
-                deleted = false,
             });
 
             using (var db = ConnectionFactory.CreateConnection())
@@ -150,8 +149,6 @@ namespace QCVOC.Api.Scans.Data.Repository
                 offset = filters.Offset,
                 orderby = filters.OrderBy.ToString(),
             });
-
-            builder.ApplyFilter(FilterType.Equals, "s.deleted", false);
 
             if (filters is ScanFilters scanFilters)
             {
