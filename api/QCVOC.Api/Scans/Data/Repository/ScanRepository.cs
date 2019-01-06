@@ -85,9 +85,7 @@ namespace QCVOC.Api.Scans.Data.Repository
             var builder = new SqlBuilder();
 
             var query = builder.AddTemplate($@"
-                UPDATE scans
-                SET
-                    deleted = true
+                DELETE FROM scans
                 WHERE eventid = @eventid
                 AND veteranid = @veteranid
                 {(serviceId != null ? "AND serviceid = @serviceid" : string.Empty)}
