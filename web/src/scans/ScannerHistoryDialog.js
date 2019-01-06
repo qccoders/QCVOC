@@ -108,11 +108,11 @@ class ScannerHistoryDialog extends Component {
                                     primary={(scan.response.veteran && scan.response.veteran.fullName ? scan.response.veteran.fullName : scan.cardNumber) + ' ' + (scan.response.plusOne ? '+1' : '')}
                                     secondary={getScanResult(scan).message}
                                 />
-                                <ListItemSecondaryAction>
+                                {getScanResult(scan).accepted && <ListItemSecondaryAction>
                                     <IconButton onClick={() => this.handleDeleteClick(scan)}>
                                         <Delete/>
                                     </IconButton>
-                                </ListItemSecondaryAction>
+                                </ListItemSecondaryAction>}
                             </ListItem>
                         )}
                     </List>
