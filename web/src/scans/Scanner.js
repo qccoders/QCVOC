@@ -376,6 +376,7 @@ class Scanner extends Component {
                     />
                     <ScannerHistoryDialog
                         open={historyDialog.open}
+                        service={scanner && scanner.service ? scanner.service.name : ''}
                         history={history}
                         onDelete={this.deleteScan}
                         onClose={() => this.setState({ historyDialog: { open: false }})}
