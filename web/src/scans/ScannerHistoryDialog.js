@@ -75,7 +75,7 @@ class ScannerHistoryDialog extends Component {
                 .then(response => {
                     this.setState({ api: { isExecuting: false, isErrored: false }}, () => {
                         this.props.onDelete(scan);
-                        this.props.context.showMessage('Scan for ' + scan.response.veteran.fullName + ' deleted.');
+                        this.props.context.showMessage('Scan(s) for ' + scan.response.veteran.fullName + ' deleted.');
                         resolve(response);
                     });
                 }, error => {
