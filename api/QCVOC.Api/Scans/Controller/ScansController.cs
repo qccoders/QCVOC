@@ -202,22 +202,21 @@ namespace QCVOC.Api.Scans.Controller
                 return StatusCode(404, $"Card Number {scan.CardNumber} doesn't match an enrolled Veteran.");
             }
 
+            var previousScans = ScanRepository.GetAll(new ScanFilters() { EventId = scan.EventId, VeteranId = veteran.Id });
+            var existingCheckIn = previousScans.Where(s => s.ServiceId == Guid.Empty).SingleOrDefault();
+
             var scanRecord = new Scan()
             {
                 EventId = (Guid)scan.EventId,
                 VeteranId = veteran.Id,
                 ServiceId = scan.ServiceId,
-                PlusOne = scan.PlusOne,
+                PlusOne = scan.ServiceId == Guid.Empty ? scan.PlusOne : existingCheckIn.PlusOne,
                 ScanById = User.GetId(),
                 ScanDate = DateTime.UtcNow,
             };
 
-            var previousScans = ScanRepository.GetAll(new ScanFilters() { EventId = scan.EventId, VeteranId = veteran.Id });
-
             if (scan.ServiceId == Guid.Empty)
             {
-                var existingCheckIn = previousScans.Where(s => s.ServiceId == Guid.Empty).SingleOrDefault();
-
                 if (existingCheckIn == default(Scan))
                 {
                     return CreateScan(scanRecord, veteran);
@@ -232,6 +231,11 @@ namespace QCVOC.Api.Scans.Controller
                 }
             }
 
+            if (existingCheckIn == default(Scan))
+            {
+                return StatusCode(403, "The Veteran has not checked in for this Event.");
+            }
+
             var service = ServiceRepository.Get(scan.ServiceId);
 
             if (service == default(Service))
@@ -239,14 +243,11 @@ namespace QCVOC.Api.Scans.Controller
                 return StatusCode(404, "The specified Service could not be found.");
             }
 
-            if (!previousScans.Where(s => s.ServiceId == Guid.Empty).Any())
-            {
-                return StatusCode(403, "The Veteran has not checked in for this Event.");
-            }
+            var previousServiceScan = previousScans.Where(s => s.ServiceId == scan.ServiceId).SingleOrDefault();
 
-            if (previousScans.Where(s => s.ServiceId == scan.ServiceId).Any())
+            if (previousServiceScan != default(Scan))
             {
-                return StatusCode(200, previousScans.Where(s => s.ServiceId == scan.ServiceId).SingleOrDefault());
+                return StatusCode(200, previousServiceScan);
             }
 
             return CreateScan(scanRecord, veteran);
