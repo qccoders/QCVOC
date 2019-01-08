@@ -158,21 +158,21 @@ namespace QCVOC.Api.Scans.Controller
         /// </summary>
         /// <param name="scan">The scan context.</param>
         /// <returns>See attributes.</returns>
-        /// <response code="200">The Scan has already been recorded.</response>
         /// <response code="201">The Scan was recorded or updated.</response>
         /// <response code="400">The specified Scan was invalid.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="403">The Veteran has not checked in for the Event.</response>
         /// <response code="404">The specified Veteran, Event or Service was invalid.</response>
+        /// <response code="409">The Scan has already been recorded.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
         [HttpPut("")]
         [Authorize]
-        [ProducesResponseType(typeof(Scan), 200)]
         [ProducesResponseType(typeof(Scan), 201)]
         [ProducesResponseType(typeof(string), 400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(403)]
         [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(ScanError), 409)]
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Scan([FromBody]ScanRequest scan)
         {
@@ -227,7 +227,7 @@ namespace QCVOC.Api.Scans.Controller
                 }
                 else
                 {
-                    return StatusCode(200, new ScanResponse(existingCheckIn, veteran));
+                    return Conflict(new ScanError(existingCheckIn, veteran, "Duplicate Scan"));
                 }
             }
 
@@ -247,7 +247,7 @@ namespace QCVOC.Api.Scans.Controller
 
             if (previousServiceScan != default(Scan))
             {
-                return StatusCode(200, previousServiceScan);
+                return Conflict(new ScanError(previousServiceScan, veteran, "Duplicate Scan"));
             }
 
             return CreateScan(scanRecord, veteran);
