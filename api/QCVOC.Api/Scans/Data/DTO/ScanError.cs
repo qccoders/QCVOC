@@ -1,4 +1,4 @@
-﻿// <copyright file="ScanResponse.cs" company="QC Coders">
+﻿// <copyright file="ScanError.cs" company="QC Coders">
 //     Copyright (c) QC Coders. All rights reserved. Licensed under the GPLv3 license. See LICENSE file
 //     in the project root for full license information.
 // </copyright>
@@ -10,25 +10,24 @@ namespace QCVOC.Api.Scans.Data.DTO
     using QCVOC.Api.Veterans.Data.Model;
 
     /// <summary>
-    ///     DTO containing the result of a Scan.
+    ///     DTO containing a Scan error.
     /// </summary>
-    public class ScanResponse
+    public class ScanError
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ScanResponse"/> class with the specified <paramref name="scan"/> and <paramref name="veteran"/>.
+        ///     Initializes a new instance of the <see cref="ScanError"/> class with the specified <paramref name="scan"/>, <paramref name="veteran"/>, and <paramref name="message"/>.
         /// </summary>
         /// <param name="scan">The Scan to include in the response.</param>
         /// <param name="veteran">The Veteran associated with the scan, if applicable.</param>
-        public ScanResponse(Scan scan, Veteran veteran)
+        /// <param name="message">The error message associated with the scan.</param>
+        public ScanError(Scan scan, Veteran veteran, string message)
         {
             EventId = scan.EventId;
             VeteranId = scan.VeteranId;
             Veteran = veteran;
             ServiceId = scan.ServiceId;
             PlusOne = scan.PlusOne;
-            ScanBy = scan.ScanBy;
-            ScanById = scan.ScanById;
-            ScanDate = scan.ScanDate;
+            Message = message;
         }
 
         /// <summary>
@@ -57,18 +56,8 @@ namespace QCVOC.Api.Scans.Data.DTO
         public bool PlusOne { get; set; }
 
         /// <summary>
-        ///     Gets or sets the name of the user who performed the Scan.
+        ///     Gets or sets an error message.
         /// </summary>
-        public string ScanBy { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the id of the user who performed the Scan.
-        /// </summary>
-        public Guid ScanById { get; set; }
-
-        /// <summary>
-        ///     Gets or sets the date on which the Scan was performed.
-        /// </summary>
-        public DateTime ScanDate { get; set; }
+        public string Message { get; set; }
     }
 }
