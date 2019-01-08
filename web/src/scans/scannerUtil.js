@@ -9,7 +9,7 @@ export const getScanResult = (scan) => {
             return undefined;
         case 201:
             return { accepted: true, message: 'Scan Accepted', color: green['A700'], icon: <Done/> };
-        case 200:
+        case 409:
             return { accepted: false, message: 'Duplicate Scan', color: yellow['A700'], icon: <Pause/> };
         default:
             return { accepted: false, message: scan.response, color: red['A700'], icon: <Clear/> };
