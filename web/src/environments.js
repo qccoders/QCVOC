@@ -16,3 +16,11 @@ export const DEV = {
     apiRoot: 'https://p0krgyy73g.execute-api.us-east-1.amazonaws.com/dev/api',
     color: 'default',
 };
+
+// to debug locally, swap this configuration for DEV.
+export const LOCAL = {
+    name: 'local',
+    hostname: 'localhost',
+    apiRoot: 'https://localhost:5000/api',
+    color: 'secondary',
+};
