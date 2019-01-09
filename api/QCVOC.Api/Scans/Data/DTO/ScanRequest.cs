@@ -23,7 +23,7 @@ namespace QCVOC.Api.Scans.Data.DTO
         ///     Gets or sets the Veteran's card number.
         /// </summary>
         [Required]
-        public int CardNumber { get; set; }
+        public string CardNumber { get; set; }
 
         /// <summary>
         ///     Gets or sets the id of the Service.

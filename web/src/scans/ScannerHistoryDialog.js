@@ -8,18 +8,23 @@ import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
 import { 
+    Avatar,
+    Button,
     Dialog,
     DialogTitle,
     DialogActions,
-    Button,
     DialogContent,
+    IconButton,
     List,
     ListItem,
     ListItemText,
-    Avatar,
+    ListItemSecondaryAction,
 } from '@material-ui/core';
+import { Delete } from '@material-ui/icons';
 
 import { getScanResult } from './scannerUtil';
+import { withContext } from '../shared/ContextProvider';
+import ConfirmDialog from '../shared/ConfirmDialog';
 
 const styles = {
     dialog: {
@@ -31,13 +36,64 @@ const styles = {
     },
 };
 
+const initialState = {
+    api: {
+        isExecuting: false,
+        isErrored: false,
+    },
+    confirmDialog: {
+        open: false,
+        scan: undefined,
+    },
+};
+
 class ScannerHistoryDialog extends Component {
+    state = initialState;
+
     handleCancelClick = () => {
         this.props.onClose();
     }
-    
+
+    handleDeleteClick = (scan) => {
+        this.setState({ 
+            ...this.state,
+            confirmDialog: {
+                open: true,
+                scan: scan,
+            },
+        });
+    }
+
+    handleDeleteConfirmation = (scan) => {
+        let eventId = scan.response.eventId;
+        let veteranId = scan.response.veteranId;
+        let serviceId = scan.response.serviceId;
+
+        return new Promise((resolve, reject) => {
+            this.setState({ api: { isExecuting: true}}, () => {
+                this.props.context.api.delete('/v1/scans/' + eventId + '/' + veteranId + (serviceId !== undefined ? '/' + serviceId : ''))
+                .then(response => {
+                    this.setState({ api: { isExecuting: false, isErrored: false }}, () => {
+                        this.props.onDelete(scan);
+                        this.props.context.showMessage('Scan(s) for ' + scan.response.veteran.fullName + ' deleted.');
+                        resolve(response);
+                    });
+                }, error => {
+                    this.setState({ api: { isExecuting: false, isErrored: true }}, () => reject(error));
+                });
+            });
+        });
+    }
+
+    handleConfirmDialogClose = (result) => {
+        this.setState({ confirmDialog: { open: false }});
+    }
+   
     render() {
         let { classes, open, history } = this.props;
+
+        let selectedScan = this.state.confirmDialog.scan;
+        let selectedVeteran = selectedScan && selectedScan.response && selectedScan.response.veteran ? selectedScan.response.veteran.fullName : '';
 
         return (
             <Dialog 
@@ -53,9 +109,14 @@ class ScannerHistoryDialog extends Component {
                             <ListItem key={index}>
                                 <Avatar style={{ backgroundColor: getScanResult(scan).color }}>{getScanResult(scan).icon}</Avatar>
                                 <ListItemText 
-                                    primary={(scan.response.veteran ? scan.response.veteran : scan.cardNumber) + ' ' + (scan.response.plusOne ? '+1' : '')}
+                                    primary={(scan.response.veteran && scan.response.veteran.fullName ? scan.response.veteran.fullName : scan.cardNumber) + ' ' + (scan.response.plusOne ? '+1' : '')}
                                     secondary={getScanResult(scan).message}
                                 />
+                                {getScanResult(scan).accepted && <ListItemSecondaryAction>
+                                    <IconButton onClick={() => this.handleDeleteClick(scan)}>
+                                        <Delete/>
+                                    </IconButton>
+                                </ListItemSecondaryAction>}
                             </ListItem>
                         )}
                     </List>
@@ -68,6 +129,15 @@ class ScannerHistoryDialog extends Component {
                         Close
                     </Button>
                 </DialogActions>
+                <ConfirmDialog
+                    title={'Confirm Scan Deletion'}
+                    prompt={'Delete'}
+                    open={this.state.confirmDialog.open}
+                    onConfirm={() => this.handleDeleteConfirmation(selectedScan)}
+                    onClose={this.handleConfirmDialogClose}
+                >
+                    <p>Are you sure you want to delete {this.props.service} Scan(s) for '{selectedVeteran}'?</p>
+                </ConfirmDialog>
             </Dialog>
         );
     }
@@ -76,7 +146,9 @@ class ScannerHistoryDialog extends Component {
 ScannerHistoryDialog.propTypes = {
     classes: PropTypes.object.isRequired,
     open: PropTypes.bool.isRequired,
+    service: PropTypes.string.isRequired,
     history: PropTypes.arrayOf(PropTypes.object),
+    onDelete: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles)(ScannerHistoryDialog); 
+export default withStyles(styles)(withContext(ScannerHistoryDialog)); 

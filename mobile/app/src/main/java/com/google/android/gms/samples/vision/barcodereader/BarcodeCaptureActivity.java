@@ -43,7 +43,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.samples.vision.barcodereader.ui.camera.CameraSource;
 import com.google.android.gms.samples.vision.barcodereader.ui.camera.CameraSourcePreview;
 
@@ -82,6 +81,9 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
     // helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
+
+    private String currentBarcode;
+    private int frameCounter = 0;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -365,7 +367,7 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
         if (best != null) {
             Intent data = new Intent();
             data.putExtra(BarcodeObject, best);
-            setResult(CommonStatusCodes.SUCCESS, data);
+            setResult(Activity.RESULT_OK, data);
             finish();
             return true;
         }
@@ -435,6 +437,17 @@ public final class BarcodeCaptureActivity extends AppCompatActivity implements B
 
     @Override
     public void onBarcodeDetected(Barcode barcode) {
-        //do something with barcode data returned
+        if (barcode.displayValue.equals(currentBarcode)) {
+            frameCounter++;
+            if (frameCounter == 5) {
+                Intent data = new Intent();
+                data.putExtra(BarcodeObject, barcode);
+                setResult(Activity.RESULT_OK, data);
+                finish();
+            }
+        } else {
+            currentBarcode = barcode.displayValue;
+            frameCounter = 0;
+        }
     }
 }

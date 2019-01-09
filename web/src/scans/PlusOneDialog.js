@@ -44,12 +44,17 @@ class PlusOneDialog extends Component {
         this.props.onClose(undefined);
     }
 
-    handleSelectClick = (plusOne) => {
-        this.props.onClose(plusOne);
+    handleSelect = (plusOne) => {
+        this.setState({ plusOne: plusOne });
+    }
+
+    handleNextClick = () => {
+        this.props.onClose(this.state.plusOne);
     }
     
     render() {
         let { classes, open } = this.props;
+        let { plusOne } = this.state;
         
         return (
             <Dialog 
@@ -60,8 +65,25 @@ class PlusOneDialog extends Component {
             >
                 <DialogTitle>Plus One?</DialogTitle>
                 <DialogContent>
-                    <Button fullWidth style={{ marginBottom: 20 }} onClick={() => this.handleSelectClick(false)}>Veteran Only</Button>
-                    <Button fullWidth onClick={() => this.handleSelectClick(true)}>Veteran +1</Button>
+                    <Button 
+                        fullWidth 
+                        style={{ marginBottom: 20 }} 
+                        onClick={() => this.handleSelect(false)}
+                        size={'large'}
+                        color={plusOne === false ? 'primary' : 'default' }
+                        variant={plusOne === false ? 'contained' : 'text' }
+                    >
+                        Veteran Only
+                    </Button>
+                    <Button 
+                        fullWidth 
+                        onClick={() => this.handleSelect(true)}
+                        size={'large'}
+                        color={plusOne === true ? 'primary' : 'default' }
+                        variant={plusOne === true ? 'contained' : 'text' }
+                    >
+                        Veteran +1
+                    </Button>
                 </DialogContent>
                 <DialogActions>
                     <Button 
@@ -69,6 +91,12 @@ class PlusOneDialog extends Component {
                         color="primary"
                     >
                         Cancel
+                    </Button>
+                    <Button
+                        onClick={this.handleNextClick}
+                        color="primary"
+                    >
+                        Next
                     </Button>
                 </DialogActions>
             </Dialog>
