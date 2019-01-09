@@ -193,6 +193,13 @@ namespace QCVOC.Api.Scans.Controller
                 StatusCode(404, "The specified Event could not be found.");
             }
 
+            var service = ServiceRepository.Get(scan.ServiceId);
+
+            if (service == default(Service))
+            {
+                return StatusCode(404, "The specified Service could not be found.");
+            }
+
             var veteran = VeteranRepository
                 .GetAll(new VeteranFilters() { CardNumber = cardNumber, IncludePhotoBase64 = true })
                 .SingleOrDefault();
@@ -210,13 +217,15 @@ namespace QCVOC.Api.Scans.Controller
                 EventId = (Guid)scan.EventId,
                 VeteranId = veteran.Id,
                 ServiceId = scan.ServiceId,
-                PlusOne = scan.ServiceId == Guid.Empty ? scan.PlusOne : existingCheckIn.PlusOne,
                 ScanById = User.GetId(),
                 ScanDate = DateTime.UtcNow,
             };
 
+            // check in scan
             if (scan.ServiceId == Guid.Empty)
             {
+                scanRecord.PlusOne = scan.PlusOne;
+
                 if (existingCheckIn == default(Scan))
                 {
                     return CreateScan(scanRecord, veteran);
@@ -231,16 +240,10 @@ namespace QCVOC.Api.Scans.Controller
                 }
             }
 
+            // service scan
             if (existingCheckIn == default(Scan))
             {
-                return StatusCode(403, "The Veteran has not checked in for this Event.");
-            }
-
-            var service = ServiceRepository.Get(scan.ServiceId);
-
-            if (service == default(Service))
-            {
-                return StatusCode(404, "The specified Service could not be found.");
+                return StatusCode(403, new ScanError(scanRecord, veteran, "The Veteran has not checked in for this Event."));
             }
 
             var previousServiceScan = previousScans.Where(s => s.ServiceId == scan.ServiceId).SingleOrDefault();
@@ -250,6 +253,7 @@ namespace QCVOC.Api.Scans.Controller
                 return Conflict(new ScanError(previousServiceScan, veteran, "Duplicate Scan"));
             }
 
+            scanRecord.PlusOne = existingCheckIn.PlusOne;
             return CreateScan(scanRecord, veteran);
         }
 
