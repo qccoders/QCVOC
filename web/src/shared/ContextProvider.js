@@ -31,6 +31,8 @@ class ContextProvider extends Component {
                 this.showMessage(error.response.data.Message);
             } else if (error.response.data.error) {
                 this.showMessage(error.response.data.error.message);
+            } else if (error.response.data.message) {
+                this.showMessage(error.response.data.message);
             } else {
                 this.showMessage(error.response.data);
             }
