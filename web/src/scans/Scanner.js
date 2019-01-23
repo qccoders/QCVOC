@@ -105,6 +105,7 @@ const initialState = {
     },
     plusOneDialog: {
         open: false,
+        intent: undefined,
     },
 };
 
@@ -123,6 +124,35 @@ class Scanner extends Component {
         let { event, service } = this.state.scanner;
         let scan = { eventId: event && event.id, serviceId: service && service.id, cardNumber: barcode, plusOne: this.state.plusOne === undefined ? false : this.state.plusOne };
 
+        if (scan.serviceId !== CHECKIN_SERVICE_ID) {
+            this.setState({
+                scan: scan,
+                scanApi: { ...this.state.scanApi, isExecuting: true },
+            }, () => {
+                this.props.context.api.get('/v1/scans/' + scan.eventId + '/' + scan.cardNumber + '/checkin')
+                .then(response => {
+                    if (response.data.plusOne) {
+                        this.setState({ 
+                            scanApi: { isExecuting: false, isErrored: false },
+                            plusOneDialog: { open: true, intent: 'service' },
+                        });
+                    }
+                    else {
+                        this.sendScan(scan, barcode);
+                    }
+                }, error => {
+                    this.setState({ scanApi: { isExecuting: false, isErrored: true }}, () => {
+                        this.handleScanResponse(barcode, error.response);
+                    });
+                });
+            });
+        }
+        else {
+            this.sendScan(scan, barcode);
+        }
+    }
+
+    sendScan = (scan, barcode) => {
         this.setState({ 
             scan: initialState.scan,
             scanDialog: { open: false },
@@ -143,7 +173,7 @@ class Scanner extends Component {
 
     handleScanClick = () => {
         if (this.state.scanner.service && this.state.scanner.service.id === CHECKIN_SERVICE_ID) { 
-            this.setState({ plusOneDialog: { open: true }});
+            this.setState({ plusOneDialog: { open: true, intent: 'checkin' }});
         }
         else {
             this.scan();
@@ -168,9 +198,22 @@ class Scanner extends Component {
     }
 
     handlePlusOneDialogClose = (result) => {
-        this.setState({ plusOneDialog: { open: false }, plusOne: result === undefined ? false : result }, () => {
+        let intent = this.state.plusOneDialog.intent;
+
+        this.setState({ 
+            plusOneDialog: { open: false, intent: undefined }, 
+            plusOne: result === undefined ? false : result, 
+        }, () => {
             if (result !== undefined) {
-                this.scan();
+                if (intent === 'checkin') {
+                    // for checkin scans, +1 selection comes before card entry
+                    this.scan();
+                }
+                else if (intent === 'service') {
+                    // for service scans, +1 selection comes after card entry, and only if the veteran
+                    // checked in with a +1.
+                    this.sendScan({ ...this.state.scan, plusOne: result });
+                }
             }
         });
     }
