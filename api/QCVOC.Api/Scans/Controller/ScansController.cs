@@ -99,7 +99,7 @@ namespace QCVOC.Api.Scans.Controller
 
             if (scan == default(Scan))
             {
-                return StatusCode(404, $"A Scan matching the specified information could not be found.");
+                return StatusCode(404, $"The Veteran has not checked in for this event.");
             }
 
             return Ok(scan);
