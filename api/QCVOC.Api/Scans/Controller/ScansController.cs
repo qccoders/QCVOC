@@ -85,28 +85,28 @@ namespace QCVOC.Api.Scans.Controller
         [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult Delete(Guid eventId, string id)
         {
-            return Delete(eventId, id, null);
+            return Delete(eventId, Guid.Empty, id);
         }
 
         /// <summary>
         ///     Deletes a Service Scan.
         /// </summary>
         /// <param name="eventId">The Id of the Event.</param>
+        /// <param name="serviceId">The Id of the Service.</param>
         /// <param name="id">Either the Veteran Id or Card Number of the Veteran.</param>
-        /// <param name="serviceId">The optional Service Id.</param>
         /// <returns>See attributes.</returns>
         /// <response code="204">The Scan was deleted successfully.</response>
         /// <response code="400">The Veteran Id or Card Number is invalid.</response>
         /// <response code="401">Unauthorized.</response>
         /// <response code="404">The specified Card Number or Veteran Id doesn't match an enrolled Veteran.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
-        [HttpDelete("{eventId}/{id}/{serviceId}")]
+        [HttpDelete("{eventId}/{serviceId}/{id}")]
         [Authorize]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [ProducesResponseType(404)]
         [ProducesResponseType(typeof(Exception), 500)]
-        public IActionResult Delete(Guid eventId, string id, Guid? serviceId = null)
+        public IActionResult Delete(Guid eventId, Guid serviceId, string id)
         {
             if (string.IsNullOrEmpty(id))
             {
