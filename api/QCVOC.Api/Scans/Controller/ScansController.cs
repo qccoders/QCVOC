@@ -218,7 +218,7 @@ namespace QCVOC.Api.Scans.Controller
         /// <response code="201">The Scan was recorded or updated.</response>
         /// <response code="400">The specified Scan was invalid.</response>
         /// <response code="401">Unauthorized.</response>
-        /// <response code="403">The Veteran has not checked in for the Event.</response>
+        /// <response code="403">The Veteran has not checked in for the Event, or did not check in with a guest and is attempting to use a service with a guest.</response>
         /// <response code="404">The specified Veteran, Event or Service was invalid.</response>
         /// <response code="409">The Scan has already been recorded.</response>
         /// <response code="500">The server encountered an error while processing the request.</response>
@@ -300,6 +300,11 @@ namespace QCVOC.Api.Scans.Controller
             if (existingCheckIn == default(Scan))
             {
                 return StatusCode(403, new ScanError(scanRecord, veteran, "The Veteran has not checked in for this Event."));
+            }
+
+            if (scanRecord.PlusOne && !existingCheckIn.PlusOne)
+            {
+                return StatusCode(403, new ScanError(scanRecord, veteran, "The Veteran did not check in with a +1."));
             }
 
             var previousServiceScan = previousScans.Where(s => s.ServiceId == scan.ServiceId).SingleOrDefault();
