@@ -49,6 +49,63 @@ namespace QCVOC.Api.Scans.Controller
         private ISingleKeyRepository<Service> ServiceRepository { get; set; }
 
         /// <summary>
+        ///     Returns a check in scan for the specified Veteran.
+        /// </summary>
+        /// <param name="eventId">The Id of the Event.</param>
+        /// <param name="id">Either the Veteran Id or Card Number of the Veteran.</param>
+        /// <returns>See attributes.</returns>
+        /// <response code="200">The Scan was retrieved successfully.</response>
+        /// <response code="400">The Veteran Id or Card Number is invalid.</response>
+        /// <response code="401">Unauthorized.</response>
+        /// <response code="404">The specified Card Number or Veteran Id doesn't match an enrolled Veteran, or the Veteran has not checked in to the specified event.</response>
+        /// <response code="500">The server encountered an error while processing the request.</response>
+        [HttpGet("{eventId}/{id}/checkin")]
+        [Authorize]
+        [ProducesResponseType(typeof(Scan), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(Exception), 500)]
+        public IActionResult GetCheckIn(Guid eventId, string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest($"The card or veteran ID is null or empty.");
+            }
+
+            var veteran = default(Veteran);
+
+            if (int.TryParse(id, out var cardNumber))
+            {
+                veteran = VeteranRepository
+                    .GetAll(new VeteranFilters() { CardNumber = cardNumber })
+                    .SingleOrDefault();
+            }
+            else if (Guid.TryParse(id, out var veteranId))
+            {
+                veteran = VeteranRepository.Get(veteranId);
+            }
+            else
+            {
+                return BadRequest($"The provided ID is neither a Card Number nor Veteran ID.");
+            }
+
+            if (veteran == default(Veteran))
+            {
+                return StatusCode(404, $"The specified Card Number or Veteran Id doesn't match an enrolled Veteran.");
+            }
+
+            var scan = ScanRepository.Get(eventId, veteran.Id, Guid.Empty);
+
+            if (scan == default(Scan))
+            {
+                return StatusCode(404, $"A Scan matching the specified information could not be found.");
+            }
+
+            return Ok(scan);
+        }
+
+        /// <summary>
         ///     Returns a list of Scans.
         /// </summary>
         /// <param name="filters">Optional filtering and pagination options.</param>
