@@ -99,7 +99,7 @@ namespace QCVOC.Api.Scans.Controller
 
             if (scan == default(Scan))
             {
-                return StatusCode(404, $"The Veteran has not checked in for this event.");
+                return StatusCode(404, $"The Veteran has not checked in for this Event.");
             }
 
             return Ok(scan);
@@ -276,18 +276,17 @@ namespace QCVOC.Api.Scans.Controller
                 ServiceId = scan.ServiceId,
                 ScanById = User.GetId(),
                 ScanDate = DateTime.UtcNow,
+                PlusOne = scan.PlusOne,
             };
 
             // check in scan
             if (scan.ServiceId == Guid.Empty)
             {
-                scanRecord.PlusOne = scan.PlusOne;
-
                 if (existingCheckIn == default(Scan))
                 {
                     return CreateScan(scanRecord, veteran);
                 }
-                else if (existingCheckIn.PlusOne != scan.PlusOne)
+                else if (existingCheckIn.PlusOne != scanRecord.PlusOne)
                 {
                     return UpdateScan(scanRecord, veteran);
                 }
@@ -310,7 +309,6 @@ namespace QCVOC.Api.Scans.Controller
                 return Conflict(new ScanError(previousServiceScan, veteran, "Duplicate Scan"));
             }
 
-            scanRecord.PlusOne = existingCheckIn.PlusOne;
             return CreateScan(scanRecord, veteran);
         }
 
