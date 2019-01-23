@@ -123,6 +123,31 @@ class Scanner extends Component {
         let { event, service } = this.state.scanner;
         let scan = { eventId: event && event.id, serviceId: service && service.id, cardNumber: barcode, plusOne: this.state.plusOne === undefined ? false : this.state.plusOne };
 
+        if (scan.serviceId !== CHECKIN_SERVICE_ID) {
+            this.setState({
+                scanApi: { ...this.state.scanApi, isExecuting: true },
+            }, () => {
+                this.props.context.api.get('/v1/scans/' + scan.eventId + '/' + scan.cardNumber + '/checkin')
+                .then(response => {
+                    if (response.data.plusOne) {
+                        console.log("prompt for plusone");
+                    }
+                    else {
+                        this.sendScan(scan, barcode);
+                    }
+                }, error => {
+                    this.setState({ scanApi: { isExecuting: false, isErrored: true }}, () => {
+                        this.handleScanResponse(barcode, error.response);
+                    });
+                });
+            });
+        }
+        else {
+            this.sendScan(scan, barcode);
+        }
+    }
+
+    sendScan = (scan, barcode) => {
         this.setState({ 
             scan: initialState.scan,
             scanDialog: { open: false },
@@ -176,6 +201,7 @@ class Scanner extends Component {
     }
 
     handleScanResponse = (cardNumber, response) => {
+        console.log(response);
         let scan = { cardNumber: cardNumber, status: response.status, response: response.data };
 
         let history = this.state.history.slice(0);
