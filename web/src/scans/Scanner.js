@@ -115,7 +115,14 @@ class Scanner extends Component {
     componentDidMount = () => {
         window.inputBarcodeScanner = this.handleBarcodeScanned;
 
-        this.fetchEvents('refreshApi');
+        let scanner = JSON.parse(sessionStorage.getItem('scanner'));
+
+        if (scanner && scanner.event && scanner.service) {
+            this.setState({ scanner: scanner });
+        }
+        else {
+            this.fetchEvents('refreshApi');
+        }
     }
 
     handleBarcodeScanned = (barcode) => {
@@ -233,6 +240,8 @@ class Scanner extends Component {
 
     resetScanner = (resolve) => { 
         this.setState({ ...initialState }, () => {
+            sessionStorage.removeItem('scanner');
+
             this.fetchEvents('refreshApi')
             .then(() => resolve());
         });
@@ -333,7 +342,11 @@ class Scanner extends Component {
     }
 
     handleServiceItemClick = (service) => {
-        this.setState({ scanner: { ...this.state.scanner, service: service }});
+        let scanner = { ...this.state.scanner, service: service };
+
+        this.setState({ scanner: scanner }, () => {
+            sessionStorage.setItem('scanner', JSON.stringify(scanner));
+        });
     }
 
     render() {
