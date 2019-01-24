@@ -238,8 +238,13 @@ class Scanner extends Component {
     handleScanResponse = (cardNumber, response) => {
         let scan = { cardNumber: cardNumber, status: response.status, response: response.data };
 
+        let historyScan = JSON.parse(JSON.stringify(scan));
+        if (historyScan && historyScan.response && historyScan.response.veteran && historyScan.response.veteran.photoBase64) {
+            delete historyScan.response.veteran.photoBase64;
+        }
+
         let history = this.state.scanner.history.slice(0);
-        history.unshift(scan);
+        history.unshift(historyScan);
         history = history.slice(0, historyLimit);
 
         this.setState({ 
