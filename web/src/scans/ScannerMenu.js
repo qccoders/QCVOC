@@ -122,7 +122,7 @@ class ScannerMenu extends Component {
                             <ArrowBack/>
                         </ListItemIcon>
                         <ListItemText>
-                            Reset Event or Service
+                            Reset Scanner
                         </ListItemText>
                     </MenuItem>
                 </Menu>
@@ -133,7 +133,10 @@ class ScannerMenu extends Component {
                     onConfirm={this.resetScanner}
                     onClose={this.handleConfirmDialogClose}
                 >
-                    <p>Are you sure you want reset the Scanner?</p>
+                    <div>
+                        <p>Are you sure you want reset the Scanner?</p>
+                        <p>This will clear the scan history and prompt you to select the Event and Service again.</p>
+                    </div>
                 </ConfirmDialog>
             </div>
         );
