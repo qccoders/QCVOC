@@ -86,6 +86,7 @@ const initialState = {
     scanner: {
         event: undefined,
         service: undefined,
+        history: [],
     },
     scan: {
         cardNumber: undefined,
@@ -95,7 +96,6 @@ const initialState = {
     },
     events: [],
     services: [],
-    history: [],
     plusOne: undefined,
     historyDialog: {
         open: false,
@@ -228,13 +228,15 @@ class Scanner extends Component {
     handleScanResponse = (cardNumber, response) => {
         let scan = { cardNumber: cardNumber, status: response.status, response: response.data };
 
-        let history = this.state.history.slice(0);
+        let history = this.state.scanner.history.slice(0);
         history.unshift(scan);
         history = history.slice(0, historyLimit);
 
         this.setState({ 
             scan: scan,
-            history: history,
+            scanner: { ...this.state.scanner, history: history },
+        }, () => {
+            sessionStorage.setItem('scanner', JSON.stringify(this.state.scanner));
         });
     }
 
@@ -253,7 +255,7 @@ class Scanner extends Component {
 
     deleteScan = (scan) => {
         this.setState({ 
-            history: this.state.history.filter(oldScan => oldScan.cardNumber !== scan.cardNumber),
+            scanner: { ...this.state.scanner, history: this.state.scanner.history.filter(oldScan => oldScan.cardNumber !== scan.cardNumber) },
         }, () => {
             if (this.state.scan.cardNumber === scan.cardNumber) {
                 this.clearLastScan();
@@ -351,7 +353,7 @@ class Scanner extends Component {
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, history, historyDialog, scanDialog, plusOneDialog } = this.state;
+        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, historyDialog, scanDialog, plusOneDialog } = this.state;
 
         let title = this.getTitle(scanner);
 
@@ -433,7 +435,7 @@ class Scanner extends Component {
                     <ScannerHistoryDialog
                         open={historyDialog.open}
                         service={scanner && scanner.service ? scanner.service.name : ''}
-                        history={history}
+                        history={scanner.history}
                         onDelete={this.deleteScan}
                         onClose={() => this.setState({ historyDialog: { open: false }})}
                     />
