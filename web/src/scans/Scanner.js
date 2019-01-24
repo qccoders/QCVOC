@@ -257,6 +257,8 @@ class Scanner extends Component {
         this.setState({ 
             scanner: { ...this.state.scanner, history: this.state.scanner.history.filter(oldScan => oldScan.cardNumber !== scan.cardNumber) },
         }, () => {
+            sessionStorage.setItem('scanner', JSON.stringify(this.state.scanner));
+            
             if (this.state.scan.cardNumber === scan.cardNumber) {
                 this.clearLastScan();
             }
