@@ -115,7 +115,17 @@ class Scanner extends Component {
     componentDidMount = () => {
         window.inputBarcodeScanner = this.handleBarcodeScanned;
 
-        let scanner = JSON.parse(sessionStorage.getItem('scanner'));
+        let scanner = undefined;
+
+        try {
+            scanner = JSON.parse(sessionStorage.getItem('scanner'));
+
+            if (scanner === undefined || scanner.event === undefined || scanner.service === undefined || scanner.history === undefined) {
+                throw scanner;
+            }
+        } catch {
+            sessionStorage.removeItem('scanner');
+        }
 
         if (scanner && scanner.event && scanner.service) {
             this.setState({ scanner: scanner });
@@ -258,7 +268,7 @@ class Scanner extends Component {
             scanner: { ...this.state.scanner, history: this.state.scanner.history.filter(oldScan => oldScan.cardNumber !== scan.cardNumber) },
         }, () => {
             sessionStorage.setItem('scanner', JSON.stringify(this.state.scanner));
-            
+
             if (this.state.scan.cardNumber === scan.cardNumber) {
                 this.clearLastScan();
             }
