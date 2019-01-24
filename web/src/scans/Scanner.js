@@ -86,6 +86,7 @@ const initialState = {
     scanner: {
         event: undefined,
         service: undefined,
+        history: [],
     },
     scan: {
         cardNumber: undefined,
@@ -95,7 +96,6 @@ const initialState = {
     },
     events: [],
     services: [],
-    history: [],
     plusOne: undefined,
     historyDialog: {
         open: false,
@@ -115,7 +115,24 @@ class Scanner extends Component {
     componentDidMount = () => {
         window.inputBarcodeScanner = this.handleBarcodeScanned;
 
-        this.fetchEvents('refreshApi');
+        let scanner = undefined;
+
+        try {
+            scanner = JSON.parse(sessionStorage.getItem('scanner'));
+
+            if (scanner === undefined || scanner.event === undefined || scanner.service === undefined || scanner.history === undefined) {
+                throw scanner;
+            }
+        } catch {
+            sessionStorage.removeItem('scanner');
+        }
+
+        if (scanner && scanner.event && scanner.service) {
+            this.setState({ scanner: scanner });
+        }
+        else {
+            this.fetchEvents('refreshApi');
+        }
     }
 
     handleBarcodeScanned = (barcode) => {
@@ -221,18 +238,27 @@ class Scanner extends Component {
     handleScanResponse = (cardNumber, response) => {
         let scan = { cardNumber: cardNumber, status: response.status, response: response.data };
 
-        let history = this.state.history.slice(0);
-        history.unshift(scan);
+        let historyScan = JSON.parse(JSON.stringify(scan));
+        if (historyScan && historyScan.response && historyScan.response.veteran && historyScan.response.veteran.photoBase64) {
+            delete historyScan.response.veteran.photoBase64;
+        }
+
+        let history = this.state.scanner.history.slice(0);
+        history.unshift(historyScan);
         history = history.slice(0, historyLimit);
 
         this.setState({ 
             scan: scan,
-            history: history,
+            scanner: { ...this.state.scanner, history: history },
+        }, () => {
+            sessionStorage.setItem('scanner', JSON.stringify(this.state.scanner));
         });
     }
 
     resetScanner = (resolve) => { 
         this.setState({ ...initialState }, () => {
+            sessionStorage.removeItem('scanner');
+
             this.fetchEvents('refreshApi')
             .then(() => resolve());
         });
@@ -244,8 +270,10 @@ class Scanner extends Component {
 
     deleteScan = (scan) => {
         this.setState({ 
-            history: this.state.history.filter(oldScan => oldScan.cardNumber !== scan.cardNumber),
+            scanner: { ...this.state.scanner, history: this.state.scanner.history.filter(oldScan => oldScan.cardNumber !== scan.cardNumber) },
         }, () => {
+            sessionStorage.setItem('scanner', JSON.stringify(this.state.scanner));
+
             if (this.state.scan.cardNumber === scan.cardNumber) {
                 this.clearLastScan();
             }
@@ -333,12 +361,16 @@ class Scanner extends Component {
     }
 
     handleServiceItemClick = (service) => {
-        this.setState({ scanner: { ...this.state.scanner, service: service }});
+        let scanner = { ...this.state.scanner, service: service };
+
+        this.setState({ scanner: scanner }, () => {
+            sessionStorage.setItem('scanner', JSON.stringify(scanner));
+        });
     }
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, history, historyDialog, scanDialog, plusOneDialog } = this.state;
+        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, historyDialog, scanDialog, plusOneDialog } = this.state;
 
         let title = this.getTitle(scanner);
 
@@ -420,7 +452,7 @@ class Scanner extends Component {
                     <ScannerHistoryDialog
                         open={historyDialog.open}
                         service={scanner && scanner.service ? scanner.service.name : ''}
-                        history={history}
+                        history={scanner.history}
                         onDelete={this.deleteScan}
                         onClose={() => this.setState({ historyDialog: { open: false }})}
                     />
