@@ -86,6 +86,7 @@ const initialState = {
     scanner: {
         event: undefined,
         service: undefined,
+        history: [],
     },
     scan: {
         cardNumber: undefined,
@@ -95,7 +96,6 @@ const initialState = {
     },
     events: [],
     services: [],
-    history: [],
     plusOne: undefined,
     historyDialog: {
         open: false,
@@ -105,6 +105,7 @@ const initialState = {
     },
     plusOneDialog: {
         open: false,
+        intent: undefined,
     },
 };
 
@@ -114,7 +115,24 @@ class Scanner extends Component {
     componentDidMount = () => {
         window.inputBarcodeScanner = this.handleBarcodeScanned;
 
-        this.fetchEvents('refreshApi');
+        let scanner = undefined;
+
+        try {
+            scanner = JSON.parse(sessionStorage.getItem('scanner'));
+
+            if (scanner === undefined || scanner.event === undefined || scanner.service === undefined || scanner.history === undefined) {
+                throw scanner;
+            }
+        } catch {
+            sessionStorage.removeItem('scanner');
+        }
+
+        if (scanner && scanner.event && scanner.service) {
+            this.setState({ scanner: scanner });
+        }
+        else {
+            this.fetchEvents('refreshApi');
+        }
     }
 
     handleBarcodeScanned = (barcode) => {
@@ -123,6 +141,35 @@ class Scanner extends Component {
         let { event, service } = this.state.scanner;
         let scan = { eventId: event && event.id, serviceId: service && service.id, cardNumber: barcode, plusOne: this.state.plusOne === undefined ? false : this.state.plusOne };
 
+        if (scan.serviceId !== CHECKIN_SERVICE_ID) {
+            this.setState({
+                scan: scan,
+                scanApi: { ...this.state.scanApi, isExecuting: true },
+            }, () => {
+                this.props.context.api.get('/v1/scans/' + scan.eventId + '/' + scan.cardNumber + '/checkin')
+                .then(response => {
+                    if (response.data.plusOne) {
+                        this.setState({ 
+                            scanApi: { isExecuting: false, isErrored: false },
+                            plusOneDialog: { open: true, intent: 'service' },
+                        });
+                    }
+                    else {
+                        this.sendScan(scan, barcode);
+                    }
+                }, error => {
+                    this.setState({ scanApi: { isExecuting: false, isErrored: true }}, () => {
+                        this.handleScanResponse(barcode, error.response);
+                    });
+                });
+            });
+        }
+        else {
+            this.sendScan(scan, barcode);
+        }
+    }
+
+    sendScan = (scan, barcode) => {
         this.setState({ 
             scan: initialState.scan,
             scanDialog: { open: false },
@@ -143,7 +190,7 @@ class Scanner extends Component {
 
     handleScanClick = () => {
         if (this.state.scanner.service && this.state.scanner.service.id === CHECKIN_SERVICE_ID) { 
-            this.setState({ plusOneDialog: { open: true }});
+            this.setState({ plusOneDialog: { open: true, intent: 'checkin' }});
         }
         else {
             this.scan();
@@ -168,9 +215,22 @@ class Scanner extends Component {
     }
 
     handlePlusOneDialogClose = (result) => {
-        this.setState({ plusOneDialog: { open: false }, plusOne: result === undefined ? false : result }, () => {
+        let intent = this.state.plusOneDialog.intent;
+
+        this.setState({ 
+            plusOneDialog: { open: false, intent: undefined }, 
+            plusOne: result === undefined ? false : result, 
+        }, () => {
             if (result !== undefined) {
-                this.scan();
+                if (intent === 'checkin') {
+                    // for checkin scans, +1 selection comes before card entry
+                    this.scan();
+                }
+                else if (intent === 'service') {
+                    // for service scans, +1 selection comes after card entry, and only if the veteran
+                    // checked in with a +1.
+                    this.sendScan({ ...this.state.scan, plusOne: result });
+                }
             }
         });
     }
@@ -178,18 +238,27 @@ class Scanner extends Component {
     handleScanResponse = (cardNumber, response) => {
         let scan = { cardNumber: cardNumber, status: response.status, response: response.data };
 
-        let history = this.state.history.slice(0);
-        history.unshift(scan);
+        let historyScan = JSON.parse(JSON.stringify(scan));
+        if (historyScan && historyScan.response && historyScan.response.veteran && historyScan.response.veteran.photoBase64) {
+            delete historyScan.response.veteran.photoBase64;
+        }
+
+        let history = this.state.scanner.history.slice(0);
+        history.unshift(historyScan);
         history = history.slice(0, historyLimit);
 
         this.setState({ 
             scan: scan,
-            history: history,
+            scanner: { ...this.state.scanner, history: history },
+        }, () => {
+            sessionStorage.setItem('scanner', JSON.stringify(this.state.scanner));
         });
     }
 
     resetScanner = (resolve) => { 
         this.setState({ ...initialState }, () => {
+            sessionStorage.removeItem('scanner');
+
             this.fetchEvents('refreshApi')
             .then(() => resolve());
         });
@@ -201,8 +270,10 @@ class Scanner extends Component {
 
     deleteScan = (scan) => {
         this.setState({ 
-            history: this.state.history.filter(oldScan => oldScan.cardNumber !== scan.cardNumber),
+            scanner: { ...this.state.scanner, history: this.state.scanner.history.filter(oldScan => oldScan.cardNumber !== scan.cardNumber) },
         }, () => {
+            sessionStorage.setItem('scanner', JSON.stringify(this.state.scanner));
+
             if (this.state.scan.cardNumber === scan.cardNumber) {
                 this.clearLastScan();
             }
@@ -290,12 +361,16 @@ class Scanner extends Component {
     }
 
     handleServiceItemClick = (service) => {
-        this.setState({ scanner: { ...this.state.scanner, service: service }});
+        let scanner = { ...this.state.scanner, service: service };
+
+        this.setState({ scanner: scanner }, () => {
+            sessionStorage.setItem('scanner', JSON.stringify(scanner));
+        });
     }
 
     render() {
         let classes = this.props.classes;
-        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, history, historyDialog, scanDialog, plusOneDialog } = this.state;
+        let { loadApi, refreshApi, scanApi, scanner, scan, events, services, historyDialog, scanDialog, plusOneDialog } = this.state;
 
         let title = this.getTitle(scanner);
 
@@ -377,7 +452,7 @@ class Scanner extends Component {
                     <ScannerHistoryDialog
                         open={historyDialog.open}
                         service={scanner && scanner.service ? scanner.service.name : ''}
-                        history={history}
+                        history={scanner.history}
                         onDelete={this.deleteScan}
                         onClose={() => this.setState({ historyDialog: { open: false }})}
                     />
