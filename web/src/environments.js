@@ -6,7 +6,7 @@
 export const PROD = {
     name: 'prod',
     hostname: 'qcvoc-prod.s3-website-us-east-1.amazonaws.com',
-    apiRoot: 'https://4olgsguu53.execute-api.us-east-1.amazonaws.com/prod/api',
+    apiRoot: 'https://lv8t84qik7.execute-api.us-east-2.amazonaws.com/prod/api',
     color: 'primary',
 };
 
