@@ -27,12 +27,12 @@ jobs:
     - cd QCVOC.Api/bin/Release/netcoreapp2.1/publish
     deploy:
       - provider: lambda
-        access_key_id: AKIAJGLMJSQ5HROL7PTQ
+        access_key_id: AKIAQ6CU6LZRQ5IJHL5N
         secret_access_key:
-          secure: Xd6dEKIV6PS8dpZnG234m0R/9OE0Niqz/1kxGDvH2k4sRY0l3yF4WGf3DPvxI5I0jRuJuA/bFgAcGkhvhUG2wmTUawM58TO4jnDkQlSlj5pXuGRiyJiSVxnanRSp63dbfNDM7KCw8M1Tw5XQXKZVUynzbne/EeYs/c+jyAIX8OMMyHMPm1wE5m/cYiAl97AePlLtJhFB0hxG4GbmzNqiBHSuppPViY63wnfv0sfs0leXnPZ9UNEahfbuuFWymZxvJTmpdD5/4UrAw68C7GH8IQ5Z+2oWIlooTteNiDyNiFzX4aCKZ6SfQJAH+HInpPDfR2LKi0xKChb2RLccvW3FnCENyEihNYmELE0uiGHrELBIBZXWFH/8qH+2+4nOWuhEGhmdywTOpIYdOrXTpwxsMCc+42eD12NNeGFRSoOu+nqsDl3ifI3C0ZYrKYb70i78IlAcnki68UwWhvJhSA9TymwXV4INhiiTE3TQhw9duwlwMnxk+PTIhBt2tEjggDIcjCc75r6GTYdhex/r/PEYBL24qVM82GHeOKz0u4Ew85XpU/W9BwKu7tFzI8pxow8F0UCoKkcqDfNioqFx91qmrimFh5Z0GAsh4honixBWqEzBhKRVBNkHVrJ23PxPQBoX8n7EI7ehXGPnb2rVvcSkoQkHsl8NmYZkjYviv2y9ezc=
-        region: us-east-1
-        function_name: QCVOC-DEV
-        role: arn:aws:iam::620048899897:role/service-role/QCVOC-Prod-Lambda
+          secure: fBEtYqaGUU6tsG58XoWzczn39WbNMANIcKhhYL1sAsyfGORFZ3oX36b2v62I1aCW2XDQ6uPTxkyAN7KxcUlPscyp7bULOjmMQ8A8YozTRjzacf1+3oII9dyWudfE4ETjPTcg4gyj+bkgJmOjwBxaTNvh37WfB+FM9jcvLhkBSbMszd/wHQdy1g9592GO4lj2OAkBfFBvNSl+8xH/AAh/U28Kc6HUaQfdpDL5dMY6ZLDZ46E6dADIJbJE4fgb1wu0oJdU7x2fana/ts6aYakvDS4Wika6NOaa1X8AjY6QAejRM+pQ/IAJ4cOD8WV/EGQ6Ev8lN8ucwtT2UmATGLGn30fKciOhSmfBFB/Z3JklVTiQARaMzwHOA4R5CGj7K5mF4FDnxJtg7Q81CFzC3WJe2IAw2sd3XuLFAzXoC5EsqTIkadgnYV1weMDlt5XwMs6sJ/CBjA1AIvT5EceoJEAWiDgS9FYyOM4Xl8/pGtb61Qeaw4CzeJpkKG5J6PrxKb5BH7i1mVwOnt3jEK8v5p447sjIhARpiujb1pLQBLxlTBSQPzAr8mvxS1wnRMFyIz6MXOWMKJ9QwyUtT/K1WTjCLFNCrtY1GE5wSs7+pSjklcT+w1JL1CXO96QHV9cxuSUpK53xAmjc5hZuIGstNEjWSB4lnOp8JThTV9Fk+N+SpoE=
+        region: us-east-2
+        function_name: qcvoc-dev
+        role: arn:aws:iam::064602660451:role/qcvoc-lambda
         runtime: dotnetcore2.1
         timeout: 30
         memory_size: 256
@@ -42,12 +42,12 @@ jobs:
           repo: qccoders/QCVOC
           branch: develop
       - provider: lambda
-        access_key_id: AKIAJGLMJSQ5HROL7PTQ
+        access_key_id: AKIAQ6CU6LZRQ5IJHL5N
         secret_access_key:
-          secure: Xd6dEKIV6PS8dpZnG234m0R/9OE0Niqz/1kxGDvH2k4sRY0l3yF4WGf3DPvxI5I0jRuJuA/bFgAcGkhvhUG2wmTUawM58TO4jnDkQlSlj5pXuGRiyJiSVxnanRSp63dbfNDM7KCw8M1Tw5XQXKZVUynzbne/EeYs/c+jyAIX8OMMyHMPm1wE5m/cYiAl97AePlLtJhFB0hxG4GbmzNqiBHSuppPViY63wnfv0sfs0leXnPZ9UNEahfbuuFWymZxvJTmpdD5/4UrAw68C7GH8IQ5Z+2oWIlooTteNiDyNiFzX4aCKZ6SfQJAH+HInpPDfR2LKi0xKChb2RLccvW3FnCENyEihNYmELE0uiGHrELBIBZXWFH/8qH+2+4nOWuhEGhmdywTOpIYdOrXTpwxsMCc+42eD12NNeGFRSoOu+nqsDl3ifI3C0ZYrKYb70i78IlAcnki68UwWhvJhSA9TymwXV4INhiiTE3TQhw9duwlwMnxk+PTIhBt2tEjggDIcjCc75r6GTYdhex/r/PEYBL24qVM82GHeOKz0u4Ew85XpU/W9BwKu7tFzI8pxow8F0UCoKkcqDfNioqFx91qmrimFh5Z0GAsh4honixBWqEzBhKRVBNkHVrJ23PxPQBoX8n7EI7ehXGPnb2rVvcSkoQkHsl8NmYZkjYviv2y9ezc=
-        region: us-east-1
-        function_name: QCVOC-PROD
-        role: arn:aws:iam::620048899897:role/service-role/QCVOC-Prod-Lambda
+          secure: fBEtYqaGUU6tsG58XoWzczn39WbNMANIcKhhYL1sAsyfGORFZ3oX36b2v62I1aCW2XDQ6uPTxkyAN7KxcUlPscyp7bULOjmMQ8A8YozTRjzacf1+3oII9dyWudfE4ETjPTcg4gyj+bkgJmOjwBxaTNvh37WfB+FM9jcvLhkBSbMszd/wHQdy1g9592GO4lj2OAkBfFBvNSl+8xH/AAh/U28Kc6HUaQfdpDL5dMY6ZLDZ46E6dADIJbJE4fgb1wu0oJdU7x2fana/ts6aYakvDS4Wika6NOaa1X8AjY6QAejRM+pQ/IAJ4cOD8WV/EGQ6Ev8lN8ucwtT2UmATGLGn30fKciOhSmfBFB/Z3JklVTiQARaMzwHOA4R5CGj7K5mF4FDnxJtg7Q81CFzC3WJe2IAw2sd3XuLFAzXoC5EsqTIkadgnYV1weMDlt5XwMs6sJ/CBjA1AIvT5EceoJEAWiDgS9FYyOM4Xl8/pGtb61Qeaw4CzeJpkKG5J6PrxKb5BH7i1mVwOnt3jEK8v5p447sjIhARpiujb1pLQBLxlTBSQPzAr8mvxS1wnRMFyIz6MXOWMKJ9QwyUtT/K1WTjCLFNCrtY1GE5wSs7+pSjklcT+w1JL1CXO96QHV9cxuSUpK53xAmjc5hZuIGstNEjWSB4lnOp8JThTV9Fk+N+SpoE=
+        region: us-east-2
+        function_name: qcvoc-prod
+        role: arn:aws:iam::064602660451:role/qcvoc-lambda
         runtime: dotnetcore2.1
         timeout: 30
         memory_size: 256
@@ -85,8 +85,8 @@ jobs:
       - provider: s3
         access_key_id: AKIAJGLMJSQ5HROL7PTQ
         secret_access_key:
-          secure: Xd6dEKIV6PS8dpZnG234m0R/9OE0Niqz/1kxGDvH2k4sRY0l3yF4WGf3DPvxI5I0jRuJuA/bFgAcGkhvhUG2wmTUawM58TO4jnDkQlSlj5pXuGRiyJiSVxnanRSp63dbfNDM7KCw8M1Tw5XQXKZVUynzbne/EeYs/c+jyAIX8OMMyHMPm1wE5m/cYiAl97AePlLtJhFB0hxG4GbmzNqiBHSuppPViY63wnfv0sfs0leXnPZ9UNEahfbuuFWymZxvJTmpdD5/4UrAw68C7GH8IQ5Z+2oWIlooTteNiDyNiFzX4aCKZ6SfQJAH+HInpPDfR2LKi0xKChb2RLccvW3FnCENyEihNYmELE0uiGHrELBIBZXWFH/8qH+2+4nOWuhEGhmdywTOpIYdOrXTpwxsMCc+42eD12NNeGFRSoOu+nqsDl3ifI3C0ZYrKYb70i78IlAcnki68UwWhvJhSA9TymwXV4INhiiTE3TQhw9duwlwMnxk+PTIhBt2tEjggDIcjCc75r6GTYdhex/r/PEYBL24qVM82GHeOKz0u4Ew85XpU/W9BwKu7tFzI8pxow8F0UCoKkcqDfNioqFx91qmrimFh5Z0GAsh4honixBWqEzBhKRVBNkHVrJ23PxPQBoX8n7EI7ehXGPnb2rVvcSkoQkHsl8NmYZkjYviv2y9ezc=
-        bucket: qcvoc-prod
+          secure: fBEtYqaGUU6tsG58XoWzczn39WbNMANIcKhhYL1sAsyfGORFZ3oX36b2v62I1aCW2XDQ6uPTxkyAN7KxcUlPscyp7bULOjmMQ8A8YozTRjzacf1+3oII9dyWudfE4ETjPTcg4gyj+bkgJmOjwBxaTNvh37WfB+FM9jcvLhkBSbMszd/wHQdy1g9592GO4lj2OAkBfFBvNSl+8xH/AAh/U28Kc6HUaQfdpDL5dMY6ZLDZ46E6dADIJbJE4fgb1wu0oJdU7x2fana/ts6aYakvDS4Wika6NOaa1X8AjY6QAejRM+pQ/IAJ4cOD8WV/EGQ6Ev8lN8ucwtT2UmATGLGn30fKciOhSmfBFB/Z3JklVTiQARaMzwHOA4R5CGj7K5mF4FDnxJtg7Q81CFzC3WJe2IAw2sd3XuLFAzXoC5EsqTIkadgnYV1weMDlt5XwMs6sJ/CBjA1AIvT5EceoJEAWiDgS9FYyOM4Xl8/pGtb61Qeaw4CzeJpkKG5J6PrxKb5BH7i1mVwOnt3jEK8v5p447sjIhARpiujb1pLQBLxlTBSQPzAr8mvxS1wnRMFyIz6MXOWMKJ9QwyUtT/K1WTjCLFNCrtY1GE5wSs7+pSjklcT+w1JL1CXO96QHV9cxuSUpK53xAmjc5hZuIGstNEjWSB4lnOp8JThTV9Fk+N+SpoE=
+        bucket: qcvoc-web-prod
         skip_cleanup: true
         local_dir: build
         region: us-east-1
@@ -97,8 +97,8 @@ jobs:
       - provider: s3
         access_key_id: AKIAJGLMJSQ5HROL7PTQ
         secret_access_key:
-          secure: Xd6dEKIV6PS8dpZnG234m0R/9OE0Niqz/1kxGDvH2k4sRY0l3yF4WGf3DPvxI5I0jRuJuA/bFgAcGkhvhUG2wmTUawM58TO4jnDkQlSlj5pXuGRiyJiSVxnanRSp63dbfNDM7KCw8M1Tw5XQXKZVUynzbne/EeYs/c+jyAIX8OMMyHMPm1wE5m/cYiAl97AePlLtJhFB0hxG4GbmzNqiBHSuppPViY63wnfv0sfs0leXnPZ9UNEahfbuuFWymZxvJTmpdD5/4UrAw68C7GH8IQ5Z+2oWIlooTteNiDyNiFzX4aCKZ6SfQJAH+HInpPDfR2LKi0xKChb2RLccvW3FnCENyEihNYmELE0uiGHrELBIBZXWFH/8qH+2+4nOWuhEGhmdywTOpIYdOrXTpwxsMCc+42eD12NNeGFRSoOu+nqsDl3ifI3C0ZYrKYb70i78IlAcnki68UwWhvJhSA9TymwXV4INhiiTE3TQhw9duwlwMnxk+PTIhBt2tEjggDIcjCc75r6GTYdhex/r/PEYBL24qVM82GHeOKz0u4Ew85XpU/W9BwKu7tFzI8pxow8F0UCoKkcqDfNioqFx91qmrimFh5Z0GAsh4honixBWqEzBhKRVBNkHVrJ23PxPQBoX8n7EI7ehXGPnb2rVvcSkoQkHsl8NmYZkjYviv2y9ezc=
-        bucket: qcvoc-dev
+          secure: fBEtYqaGUU6tsG58XoWzczn39WbNMANIcKhhYL1sAsyfGORFZ3oX36b2v62I1aCW2XDQ6uPTxkyAN7KxcUlPscyp7bULOjmMQ8A8YozTRjzacf1+3oII9dyWudfE4ETjPTcg4gyj+bkgJmOjwBxaTNvh37WfB+FM9jcvLhkBSbMszd/wHQdy1g9592GO4lj2OAkBfFBvNSl+8xH/AAh/U28Kc6HUaQfdpDL5dMY6ZLDZ46E6dADIJbJE4fgb1wu0oJdU7x2fana/ts6aYakvDS4Wika6NOaa1X8AjY6QAejRM+pQ/IAJ4cOD8WV/EGQ6Ev8lN8ucwtT2UmATGLGn30fKciOhSmfBFB/Z3JklVTiQARaMzwHOA4R5CGj7K5mF4FDnxJtg7Q81CFzC3WJe2IAw2sd3XuLFAzXoC5EsqTIkadgnYV1weMDlt5XwMs6sJ/CBjA1AIvT5EceoJEAWiDgS9FYyOM4Xl8/pGtb61Qeaw4CzeJpkKG5J6PrxKb5BH7i1mVwOnt3jEK8v5p447sjIhARpiujb1pLQBLxlTBSQPzAr8mvxS1wnRMFyIz6MXOWMKJ9QwyUtT/K1WTjCLFNCrtY1GE5wSs7+pSjklcT+w1JL1CXO96QHV9cxuSUpK53xAmjc5hZuIGstNEjWSB4lnOp8JThTV9Fk+N+SpoE=
+        bucket: qcvoc-web-dev
         skip_cleanup: true
         local_dir: build
         region: us-east-1
