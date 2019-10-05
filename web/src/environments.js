@@ -5,14 +5,14 @@
 
 export const PROD = {
     name: 'prod',
-    hostname: 'qcvoc-web-prod.s3-website.us-east-2.amazonaws.com/',
+    hostname: 'qcvoc-web-prod.s3-website.us-east-2.amazonaws.com',
     apiRoot: 'https://lv8t84qik7.execute-api.us-east-2.amazonaws.com/prod/api',
     color: 'primary',
 };
 
 export const DEV = {
     name: 'dev',
-    hostname: 'qcvoc-web-dev.s3-website.us-east-2.amazonaws.com/',
+    hostname: 'qcvoc-web-dev.s3-website.us-east-2.amazonaws.com',
     apiRoot: 'https://qz8rgrk8j9.execute-api.us-east-2.amazonaws.com/dev/api',
     color: 'default',
 };
