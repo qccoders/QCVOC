@@ -89,7 +89,7 @@ jobs:
         bucket: qcvoc-web-prod
         skip_cleanup: true
         local_dir: build
-        region: us-east-1
+        region: us-east-2
         acl: public_read
         on:
           repo: qccoders/QCVOC
@@ -101,7 +101,7 @@ jobs:
         bucket: qcvoc-web-dev
         skip_cleanup: true
         local_dir: build
-        region: us-east-1
+        region: us-east-2
         acl: public_read
         on:
           repo: qccoders/QCVOC
