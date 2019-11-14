@@ -21,7 +21,7 @@ Veterans are onboarded and assigned a membership card with a barcode.
     <img src="https://github.com/qccoders/QCVOC/blob/master/docs/img/main.png?raw=true"/>
 </center>
 
-Center staff maintain contact information, and verify veteran status by reviewing applicable documents.  A photo of each veteran is taken during onboarding to ensure cards and cardhoders match.
+Center staff maintain contact information, and verify veteran status by reviewing applicable documents.  A photo of each veteran is taken during onboarding to ensure cards and cardholders match.
 
 <center>
     <img src="https://github.com/qccoders/QCVOC/blob/master/docs/img/vet.png?raw=true"/>
