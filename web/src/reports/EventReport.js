@@ -136,17 +136,7 @@ class EventReport extends Component {
 
   render() {
     let classes = this.props.classes;
-    let { events, loadApi, refreshApi } = this.state;
-
-    events = events.map(e => ({
-      ...e,
-      startDate: new Date(e.startDate).getTime(),
-      endDate: new Date(e.endDate).getTime()
-    }));
-
-    let now = new Date().getTime();
-
-    let past = events.filter(e => e.endDate < now);
+    let { loadApi, refreshApi } = this.state;
 
     return (
       <div className={classes.root}>
