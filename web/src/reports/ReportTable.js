@@ -6,14 +6,8 @@ import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
 
 const styles = theme => ({
-  root: {
-    width: "100%",
-    marginTop: theme.spacing.unit * 3,
-    overflowX: "auto"
-  },
   table: {
     minWidth: 700
   }
@@ -37,31 +31,30 @@ function ReportTable(props) {
   const { classes } = props;
 
   return (
-    <Paper className={classes.root}>
-      <Table className={classes.table}>
-        <TableHead>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell align="right">Event</TableCell>
-            <TableCell align="right">Vets</TableCell>
-            <TableCell align="right">Total</TableCell>
+    <Table className={classes.table}>
+      <TableHead>
+        <TableRow>
+          <TableCell>Date</TableCell>
+          <TableCell align="right">Event</TableCell>
+          <TableCell align="right">Checkins</TableCell>
+          <TableCell align="right">Plus 1</TableCell>
+          <TableCell align="right">Total Scans</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rows.map(row => (
+          <TableRow key={row.id} hover>
+            <TableCell component="th" scope="row">
+              {row.name}
+            </TableCell>
+            <TableCell align="right">{row.calories}</TableCell>
+            <TableCell align="right">{row.fat}</TableCell>
+            <TableCell align="right">{row.carbs}</TableCell>
+            <TableCell align="right">{row.protein}</TableCell>
           </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map(row => (
-            <TableRow key={row.id}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Paper>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 
