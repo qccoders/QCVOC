@@ -12,16 +12,13 @@ import {
   CardContent,
   Typography,
   CircularProgress,
-  ListSubheader,
-  Button,
   Fab
 } from "@material-ui/core";
-import { Add, EventAvailable, Event, Today } from "@material-ui/icons";
+import { Add } from "@material-ui/icons";
 
 import { withContext } from "../shared/ContextProvider";
 import { userCanView } from "../util";
 import ContentWrapper from "../shared/ContentWrapper";
-import EventList from "../events/EventList";
 import ReportTable from "./ReportTable";
 
 const styles = {
@@ -139,7 +136,7 @@ class EventReport extends Component {
 
   render() {
     let classes = this.props.classes;
-    let { events, loadApi, refreshApi, show, eventDialog } = this.state;
+    let { events, loadApi, refreshApi } = this.state;
 
     events = events.map(e => ({
       ...e,
@@ -149,11 +146,7 @@ class EventReport extends Component {
 
     let now = new Date().getTime();
 
-    let current = events.filter(e => e.startDate <= now && e.endDate >= now);
-    let upcoming = events.filter(e => e.startDate > now);
-
     let past = events.filter(e => e.endDate < now);
-    let shownPastList = past.slice(0, show);
 
     return (
       <div className={classes.root}>
