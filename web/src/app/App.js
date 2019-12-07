@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import { withStyles } from '@material-ui/core/styles';
 import { CircularProgress, ListSubheader, Drawer } from '@material-ui/core';
-import { People, VerifiedUser, Assignment, InsertInvitation, SpeakerPhone } from '@material-ui/icons';
+import { People, VerifiedUser, Assignment, InsertInvitation, SpeakerPhone, InsertChart } from '@material-ui/icons';
 
 import { getCredentials, saveLocalCredentials, saveSessionCredentials, deleteCredentials, updateCredentials } from '../credentials';
 import { getEnvironment, userCanView } from '../util';
@@ -23,6 +23,7 @@ import LoginForm from '../security/LoginForm';
 import SecurityMenu from '../security/SecurityMenu';
 import NotFound from './errors/NotFound';
 import Forbidden from './errors/Forbidden';
+import EventReport from '../reports/EventReport';
 
 import Accounts from '../accounts/Accounts';
 import Veterans from '../veterans/Veterans';
@@ -155,6 +156,8 @@ class App extends Component {
                                     <Link to='/veterans' icon={<People/>}>Veterans</Link>
                                     <Link to='/events' icon={<InsertInvitation/>}>Events</Link>
                                     <Link to='/scanner' icon={<SpeakerPhone/>}>Scanner</Link>
+                                    <ListSubheader>Reports</ListSubheader>
+                                    <Link to='/reports/event' icon={<InsertChart/>}>Event Report</Link>
                                     {userCanView() && 
                                         <div>
                                             <ListSubheader>Administration</ListSubheader>                               
@@ -175,6 +178,7 @@ class App extends Component {
                                         (props) => <Accounts {...props} onPasswordReset={this.handlePasswordReset}/>
                                     }
                                 />
+                                <Route path='/reports/event' component={EventReport}/>
                                 <Route path='*' component={NotFound}/>
                             </Switch>
                         </div> :
