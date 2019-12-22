@@ -11,8 +11,7 @@ import {
   Card,
   CardContent,
   Typography,
-  CircularProgress,
-  Fab
+  CircularProgress
 } from "@material-ui/core";
 
 import { withContext } from "../shared/ContextProvider";
@@ -56,57 +55,11 @@ class EventReport extends Component {
     refreshApi: {
       isExecuting: false,
       isErrored: false
-    },
-    eventDialog: {
-      open: false,
-      intent: "add",
-      event: undefined
-    },
-    show: showCount
+    }
   };
 
   componentWillMount = () => {
     this.refresh("refreshApi");
-  };
-
-  handleEditClick = event => {
-    this.setState({
-      eventDialog: {
-        open: true,
-        intent: "update",
-        event: event
-      }
-    });
-  };
-
-  handleAddClick = () => {
-    this.setState({
-      eventDialog: {
-        open: true,
-        intent: "add",
-        event: undefined
-      }
-    });
-  };
-
-  handleShowMoreClick = () => {
-    this.setState({ show: this.state.show + showCount });
-  };
-
-  handleEventDialogClose = result => {
-    this.setState(
-      {
-        eventDialog: {
-          ...this.state.eventDialog,
-          open: false
-        }
-      },
-      () => {
-        if (!result) return;
-        this.props.context.showMessage(result);
-        this.refresh("refreshApi");
-      }
-    );
   };
 
   refresh = apiType => {
@@ -143,8 +96,6 @@ class EventReport extends Component {
     }));
 
     let now = new Date().getTime();
-
-    let past = events.filter(e => e.endDate < now);
 
     return (
       <div className={classes.root}>
