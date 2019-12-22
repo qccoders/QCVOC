@@ -26,7 +26,7 @@ const getDate = (date) => {
 const EventReportTable = (props) => {
   const { classes, data } = props;
 
-  const sorted = data.sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+  const sorted = data.sort((a, b) => a.startDate - b.startDate);
 
   return (
     <Table className={classes.table}>

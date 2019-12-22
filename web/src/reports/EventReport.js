@@ -43,8 +43,6 @@ const styles = {
   }
 };
 
-const showCount = 3;
-
 class EventReport extends Component {
   state = {
     events: [],
@@ -95,7 +93,7 @@ class EventReport extends Component {
       endDate: new Date(e.endDate).getTime()
     }));
 
-    let now = new Date().getTime();
+    //let now = new Date().getTime();
 
     return (
       <div className={classes.root}>
@@ -112,7 +110,7 @@ class EventReport extends Component {
                   className={classes.refreshSpinner}
                 />
               ) : (
-                <EventReportTable data={this.state.events || []} />
+                <EventReportTable data={events || []} />
               )}
             </CardContent>
           </Card>
