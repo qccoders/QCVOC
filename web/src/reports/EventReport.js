@@ -11,15 +11,12 @@ import {
   Card,
   CardContent,
   Typography,
-  CircularProgress,
-  Fab
+  CircularProgress
 } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
 
 import { withContext } from "../shared/ContextProvider";
-import { userCanView } from "../util";
 import ContentWrapper from "../shared/ContentWrapper";
-import ReportTable from "./ReportTable";
+import EventReportTable from "./EventReportTable";
 
 const styles = {
   fab: {
@@ -46,8 +43,6 @@ const styles = {
   }
 };
 
-const showCount = 3;
-
 class EventReport extends Component {
   state = {
     events: [],
@@ -58,57 +53,11 @@ class EventReport extends Component {
     refreshApi: {
       isExecuting: false,
       isErrored: false
-    },
-    eventDialog: {
-      open: false,
-      intent: "add",
-      event: undefined
-    },
-    show: showCount
+    }
   };
 
   componentWillMount = () => {
     this.refresh("refreshApi");
-  };
-
-  handleEditClick = event => {
-    this.setState({
-      eventDialog: {
-        open: true,
-        intent: "update",
-        event: event
-      }
-    });
-  };
-
-  handleAddClick = () => {
-    this.setState({
-      eventDialog: {
-        open: true,
-        intent: "add",
-        event: undefined
-      }
-    });
-  };
-
-  handleShowMoreClick = () => {
-    this.setState({ show: this.state.show + showCount });
-  };
-
-  handleEventDialogClose = result => {
-    this.setState(
-      {
-        eventDialog: {
-          ...this.state.eventDialog,
-          open: false
-        }
-      },
-      () => {
-        if (!result) return;
-        this.props.context.showMessage(result);
-        this.refresh("refreshApi");
-      }
-    );
   };
 
   refresh = apiType => {
@@ -116,7 +65,7 @@ class EventReport extends Component {
       { [apiType]: { ...this.state[apiType], isExecuting: true } },
       () => {
         this.props.context.api
-          .get("/v1/events?offset=0&limit=100&orderBy=DESC")
+          .get("/v1/reports/event/master?startTime=1/1/2019&endTime=1/1/2020")
           .then(
             response => {
               this.setState({
@@ -136,7 +85,15 @@ class EventReport extends Component {
 
   render() {
     let classes = this.props.classes;
-    let { loadApi, refreshApi } = this.state;
+    let { events, loadApi, refreshApi } = this.state;
+
+    events = events.map(e => ({
+      ...e,
+      startDate: new Date(e.startDate).getTime(),
+      endDate: new Date(e.endDate).getTime()
+    }));
+
+    //let now = new Date().getTime();
 
     return (
       <div className={classes.root}>
@@ -153,19 +110,10 @@ class EventReport extends Component {
                   className={classes.refreshSpinner}
                 />
               ) : (
-                <ReportTable />
+                <EventReportTable data={events || []} />
               )}
             </CardContent>
           </Card>
-          {userCanView() && (
-            <Fab
-              color="secondary"
-              className={classes.fab}
-              onClick={this.handleAddClick}
-            >
-              <Add />
-            </Fab>
-          )}
         </ContentWrapper>
       </div>
     );
