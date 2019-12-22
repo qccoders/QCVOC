@@ -30,6 +30,7 @@ namespace QCVOC.Api
     using QCVOC.Api.Common.Middleware;
     using QCVOC.Api.Events.Data.Model;
     using QCVOC.Api.Events.Data.Repository;
+    using QCVOC.Api.Reports.Data;
     using QCVOC.Api.Scans.Data.Model;
     using QCVOC.Api.Scans.Data.Repository;
     using QCVOC.Api.Security;
@@ -113,6 +114,8 @@ namespace QCVOC.Api
                 new EventRepository(serviceProvider.GetService<IDbConnectionFactory>()));
             services.AddScoped<ITripleKeyRepository<Scan>, ScanRepository>(serviceProvider =>
                 new ScanRepository(serviceProvider.GetService<IDbConnectionFactory>()));
+            services.AddScoped<IReportRepository, ReportRepository>(serviceProvider =>
+                new ReportRepository(serviceProvider.GetService<IDbConnectionFactory>()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => ConfigureJwtBearerOptions(options));
