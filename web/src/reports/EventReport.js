@@ -14,12 +14,10 @@ import {
   CircularProgress,
   Fab
 } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
 
 import { withContext } from "../shared/ContextProvider";
-import { userCanView } from "../util";
 import ContentWrapper from "../shared/ContentWrapper";
-import ReportTable from "./ReportTable";
+import EventReportTable from "./EventReportTable";
 
 const styles = {
   fab: {
@@ -116,7 +114,7 @@ class EventReport extends Component {
       { [apiType]: { ...this.state[apiType], isExecuting: true } },
       () => {
         this.props.context.api
-          .get("/v1/events?offset=0&limit=100&orderBy=DESC")
+          .get("/v1/reports/event/master?startTime=1/1/2019&endTime=1/1/2020")
           .then(
             response => {
               this.setState({
@@ -163,19 +161,10 @@ class EventReport extends Component {
                   className={classes.refreshSpinner}
                 />
               ) : (
-                <ReportTable />
+                <EventReportTable data={this.state.events || []} />
               )}
             </CardContent>
           </Card>
-          {userCanView() && (
-            <Fab
-              color="secondary"
-              className={classes.fab}
-              onClick={this.handleAddClick}
-            >
-              <Add />
-            </Fab>
-          )}
         </ContentWrapper>
       </div>
     );
