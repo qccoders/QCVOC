@@ -26,6 +26,7 @@ export const sortByProp = (prop, predicate = 'asc') => {
 
 export const getEnvironment = () => {
     if (window.location.hostname !== PROD.hostname) {
+        console.log(`hostname ${window.location.hostname} !== ${PROD.hostname}; using environment DEV`);
         return DEV;
     }
 
