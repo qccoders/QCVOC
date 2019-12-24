@@ -11,7 +11,7 @@ import {
   Card,
   CardContent,
   Button,
-  Typography
+  Typography,
 } from "@material-ui/core";
 
 import { withContext } from "../shared/ContextProvider";
@@ -21,27 +21,31 @@ const styles = {
   card: {
     minHeight: 273,
     maxWidth: 800,
-    margin: "auto"
+    margin: "auto",
   },
   button: {
     display: 'block',
     margin: "auto",
     marginTop: 30,
     width: "100%",
-    maxWidth: 500
+    maxWidth: 500,
   }
 };
 
 class VeteranReport extends Component {
   getReport = () => {
-    api.get('/v1/reports/veteran?format=json')
+    api.get('/v1/reports/veteran?format=csv')
     .then (response => {
-      const type = response.headers['content-type']
-      const blob = new Blob([response.data], { type: type, encoding: 'UTF-8' })
-      const link = document.createElement('a')
-      link.href = window.URL.createObjectURL(blob)
-      link.download = 'file.csv'
-      link.click()
+      const now = new Date();
+      const filename = `qcvoc-veterans-${now.getMonth()}-${now.getDay()}-${now.getFullYear()}.csv`;
+
+      const blob = new Blob([response.data], { type: response.headers['content-type'], encoding: 'UTF-8' });
+
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = filename;
+
+      link.click();
     });
   };
 
