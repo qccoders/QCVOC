@@ -19,15 +19,6 @@ import ContentWrapper from "../shared/ContentWrapper";
 import EventReportTable from "./EventReportTable";
 
 const styles = {
-  fab: {
-    margin: 0,
-    top: "auto",
-    right: 20,
-    bottom: 20,
-    left: "auto",
-    position: "fixed",
-    zIndex: 1000
-  },
   card: {
     minHeight: 273,
     maxWidth: 800,
