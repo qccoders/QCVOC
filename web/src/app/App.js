@@ -24,6 +24,7 @@ import SecurityMenu from '../security/SecurityMenu';
 import NotFound from './errors/NotFound';
 import Forbidden from './errors/Forbidden';
 import EventReport from '../reports/EventReport';
+import VeteranReport from '../reports/VeteranReport';
 
 import Accounts from '../accounts/Accounts';
 import Veterans from '../veterans/Veterans';
@@ -158,6 +159,7 @@ class App extends Component {
                                     <Link to='/scanner' icon={<SpeakerPhone/>}>Scanner</Link>
                                     <ListSubheader>Reports</ListSubheader>
                                     <Link to='/reports/event' icon={<InsertChart/>}>Event Report</Link>
+                                    <Link to='/reports/veteran' icon={<InsertChart/>}>Veteran Report</Link>
                                     {userCanView() && 
                                         <div>
                                             <ListSubheader>Administration</ListSubheader>                               
@@ -179,6 +181,7 @@ class App extends Component {
                                     }
                                 />
                                 <Route path='/reports/event' component={EventReport}/>
+                                <Route path='/reports/veteran' component={VeteranReport}/>
                                 <Route path='*' component={NotFound}/>
                             </Switch>
                         </div> :

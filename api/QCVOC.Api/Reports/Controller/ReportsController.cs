@@ -17,7 +17,7 @@ namespace QCVOC.Api.Reports.Controller
     /// </summary>
     [ApiVersion("1")]
     [Route("api/v{version:apiVersion}/[controller]")]
-    [Produces("application/json", "text/plain", "application/octet")]
+    [Produces("application/json", "text/plain")]
     [Consumes("application/json")]
     public class ReportsController : Controller
     {
@@ -62,6 +62,8 @@ namespace QCVOC.Api.Reports.Controller
         /// <returns>See attributes.</returns>
         [HttpGet("veteran")]
         [Authorize]
+        [ProducesResponseType(401)]
+        [ProducesResponseType(typeof(Exception), 500)]
         public IActionResult GetVeterans([FromQuery]string format = "csv")
         {
             var vets = ReportRepository.GetVeterans();
@@ -93,7 +95,7 @@ namespace QCVOC.Api.Reports.Controller
                     csv.AppendLine();
                 }
 
-                return File(Encoding.UTF8.GetBytes(csv.ToString()), "application/octet-stream", $"veterans-{DateTime.Now.ToString("MM-dd-yyyy")}.csv");
+                return Ok(csv.ToString());
             }
 
             return Ok(vets);
