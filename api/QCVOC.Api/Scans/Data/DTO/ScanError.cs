@@ -24,10 +24,12 @@ namespace QCVOC.Api.Scans.Data.DTO
         {
             EventId = scan.EventId;
             VeteranId = scan.VeteranId;
-            Veteran = veteran;
             ServiceId = scan.ServiceId;
             PlusOne = scan.PlusOne;
             Message = message;
+            Veteran = veteran;
+
+            Veteran.PhotoBase64 = string.Empty;
         }
 
         /// <summary>

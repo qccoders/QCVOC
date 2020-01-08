@@ -80,7 +80,7 @@ namespace QCVOC.Api.Common.Middleware
                         memStream.Position = 0;
                         string responseBody = new StreamReader(memStream).ReadToEnd();
 
-                        logger.Info($"[Error Body] [{context.Response.StatusCode}] {responseBody}");
+                        logger.Info($"[{context.Response.StatusCode}] {responseBody}");
                     }
 
                     memStream.Position = 0;
