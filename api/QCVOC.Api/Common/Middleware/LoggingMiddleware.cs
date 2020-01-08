@@ -8,6 +8,7 @@ namespace QCVOC.Api.Common.Middleware
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
+    using System.IO;
     using System.Text;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
@@ -56,15 +57,40 @@ namespace QCVOC.Api.Common.Middleware
         /// <returns>The result of the asynchronous middleware function.</returns>
         public async Task InvokeAsync(HttpContext context)
         {
-            Stopwatch benchmark = new Stopwatch();
-            benchmark.Start();
+            Stream originalBody = context.Response.Body;
 
-            await next.Invoke(context);
+            try
+            {
+                using (var memStream = new MemoryStream())
+                {
+                    context.Response.Body = memStream;
 
-            benchmark.Stop();
+                    Stopwatch benchmark = new Stopwatch();
+                    benchmark.Start();
 
-            string logString = GetLogString(context, benchmark.Elapsed);
-            logger.Info(logString);
+                    await next.Invoke(context);
+
+                    benchmark.Stop();
+
+                    string logString = GetLogString(context, benchmark.Elapsed);
+                    logger.Info(logString);
+
+                    if (context.Response.StatusCode >= 400)
+                    {
+                        memStream.Position = 0;
+                        string responseBody = new StreamReader(memStream).ReadToEnd();
+
+                        logger.Info($"[Error Body] [{context.Response.StatusCode}] {responseBody}");
+                    }
+
+                    memStream.Position = 0;
+                    await memStream.CopyToAsync(originalBody);
+                }
+            }
+            finally
+            {
+                context.Response.Body = originalBody;
+            }
         }
 
         private string GetFormattedSize(double value, int decimalPlaces = 1)
