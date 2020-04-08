@@ -56,7 +56,7 @@ class EventReport extends Component {
       { [apiType]: { ...this.state[apiType], isExecuting: true } },
       () => {
         this.props.context.api
-          .get("/v1/reports/event/master?startTime=1/1/2019&endTime=1/1/2020")
+          .get("/v1/reports/event/master?startTime=1/1/2019&endTime=1/1/2021")
           .then(
             response => {
               this.setState({

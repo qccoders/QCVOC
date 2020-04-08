@@ -70,7 +70,6 @@ namespace QCVOC.Api.Reports.Controller
 
             if (format == "csv")
             {
-
                 var csv = new StringBuilder();
 
                 csv.AppendLine("Id,CardNumber,FirstName,LastName,Address,PrimaryPhone,Email,VerificationMethod,EnrollmentDate,EnrollmentBy,LastUpdateDate,LastUpdateBy");
