@@ -11,6 +11,7 @@ namespace QCVOC.Api
     using System.Linq;
     using System.Reflection;
     using System.Text;
+    using System.Text.Json.Serialization;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -21,8 +22,6 @@ namespace QCVOC.Api
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.IdentityModel.Tokens;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
     using NLog;
     using QCVOC.Api.Common;
     using QCVOC.Api.Common.Data.ConnectionFactory;
@@ -72,7 +71,7 @@ namespace QCVOC.Api
         /// <param name="app">The default application builder.</param>
         /// <param name="env">The hosting environment.</param>
         /// <param name="provider">The API version information provider.</param>
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             app.UseExceptionMiddleware(options => options.Verbosity = ExceptionMiddlwareVerbosity.Terse);
 
@@ -81,7 +80,10 @@ namespace QCVOC.Api
             app.UseAuthentication();
             app.UseCors("AllowAll");
 
-            app.UseMvc();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
             app.UseSwagger(options => ConfigureSwaggerOptions(options));
             app.UseSwaggerUI(options => ConfigureSwaggerUIOptions(options, provider));
@@ -153,10 +155,10 @@ namespace QCVOC.Api
             });
         }
 
-        private static void ConfigureJsonOptions(MvcJsonOptions options)
+        private static void ConfigureJsonOptions(JsonOptions options)
         {
-            options.SerializerSettings.Converters.Add(new StringEnumConverter());
-            options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            options.JsonSerializerOptions.IgnoreNullValues = true;
         }
 
         private static void ConfigureJwtBearerOptions(JwtBearerOptions options)
