@@ -27,7 +27,7 @@ jobs:
         run: |
           cd api
           cd QCVOC.Api/bin/Release/netcoreapp3.1/publish
-          zip -r ../../../../../api.zip .
+          zip -r ../../../../../../api.zip .
       - name: Upload API Zip
         uses: actions/upload-artifact@v2
         with:
