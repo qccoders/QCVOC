@@ -50,3 +50,9 @@ jobs:
         with:
           name: web
           path: web/build
+  deploy-dev:
+    name: Deploy to Dev
+    runs-on: ubuntu-latest
+    needs: [api, web]
+    if: github.ref == 'refs/heads/develop'
+
